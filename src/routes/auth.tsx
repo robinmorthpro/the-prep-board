@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { Outlet, createFileRoute, useLocation, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -50,10 +50,15 @@ function AuthPage() {
     return next ? `${base}?next=${encodeURIComponent(next)}` : base;
   }
 
+  // /auth/callback est une sous-route de /auth : sur la page de retour, on lui
+  // laisse la main (rendu via <Outlet />) et on ne redirige pas d'ici.
+  const { pathname } = useLocation();
+  const onCallback = pathname.startsWith("/auth/callback");
+
   useEffect(() => {
-    if (!session) return;
+    if (!session || onCallback) return;
     navigate({ to: destination, replace: true });
-  }, [session, destination, navigate]);
+  }, [session, destination, navigate, onCallback]);
 
   // Relais OAuth (aperçu de l'éditeur) : minuterie d'interrogation, arrêtée au démontage.
   const handoffTimer = useRef<number | null>(null);
@@ -167,6 +172,8 @@ function AuthPage() {
     }
     // Succès : le navigateur est redirigé vers Google, puis vers /auth/callback.
   }
+
+  if (onCallback) return <Outlet />;
 
   return (
     <main className="surface-grid flex min-h-screen items-center justify-center px-6 py-16">
