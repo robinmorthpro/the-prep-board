@@ -1,6 +1,8 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import type { Session } from "@supabase/supabase-js";
+import { isSameOriginPopup, sendSessionToOpener } from "@/lib/oauth-popup";
 
 function safePath(value: unknown): string | undefined {
   if (typeof value !== "string") return undefined;
@@ -35,13 +37,25 @@ function AuthCallback() {
       done = true;
       navigate({ to, replace: true });
     };
+    // Ouverte en pop-up depuis l'aperçu de l'éditeur Lovable : on renvoie la
+    // session à la fenêtre d'origine au lieu de naviguer ici.
+    const popup = isSameOriginPopup();
+    const handle = (session: Session) => {
+      if (popup) {
+        if (done) return;
+        done = true;
+        sendSessionToOpener(session);
+        return;
+      }
+      go(next ?? "/dashboard");
+    };
 
     void supabase.auth.getSession().then(({ data }) => {
-      if (data.session) go(next ?? "/dashboard");
+      if (data.session) handle(data.session);
     });
 
     const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session) go(next ?? "/dashboard");
+      if (session) handle(session);
     });
 
     const timer = setTimeout(() => {

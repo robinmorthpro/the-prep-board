@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useSession } from "@/hooks/useSession";
+import { OAUTH_POPUP_MESSAGE } from "@/lib/oauth-popup";
 
 export const Route = createFileRoute("/auth")({
   validateSearch: (search: Record<string, unknown>): { mode?: "signin" | "signup"; next?: string } => {
@@ -104,6 +105,41 @@ function AuthPage() {
   async function google() {
     rememberDestination();
     // OAuth Google géré par Supabase (projet perso), plus par Lovable Cloud.
+    // Dans l'iframe de l'éditeur Lovable, Google refuse de s'afficher (403) :
+    // on ouvre alors la connexion dans une pop-up, qui renvoie la session ici.
+    if (window.self !== window.top) {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo: callbackUrl(), skipBrowserRedirect: true },
+      });
+      if (error || !data?.url) {
+        window.sessionStorage.removeItem("repetia_auth_destination");
+        toast.error("Connexion Google impossible.");
+        return;
+      }
+      const popup = window.open(data.url, "prepboard-google-auth", "width=500,height=680");
+      if (!popup) {
+        toast.error("Autorisez les fenêtres pop-up pour vous connecter avec Google.");
+        return;
+      }
+      const onMessage = async (e: MessageEvent) => {
+        if (e.origin !== window.location.origin || e.source !== popup) return;
+        const msg = e.data as { type?: string; access_token?: string; refresh_token?: string };
+        if (msg?.type !== OAUTH_POPUP_MESSAGE || !msg.access_token || !msg.refresh_token) return;
+        window.removeEventListener("message", onMessage);
+        const { error: setError } = await supabase.auth.setSession({
+          access_token: msg.access_token,
+          refresh_token: msg.refresh_token,
+        });
+        if (setError) {
+          toast.error("Connexion Google impossible.");
+          return;
+        }
+        navigate({ to: destination, replace: true });
+      };
+      window.addEventListener("message", onMessage);
+      return;
+    }
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: { redirectTo: callbackUrl() },
