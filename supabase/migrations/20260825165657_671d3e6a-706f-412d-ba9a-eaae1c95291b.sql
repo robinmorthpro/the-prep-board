@@ -1,0 +1,1 @@
+ALTER TABLE public.school_sheets ADD COLUMN IF NOT EXISTS items jsonb NOT NULL DEFAULT '[]'::jsonb;

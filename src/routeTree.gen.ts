@@ -9,50 +9,661 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppRouteImport } from './routes/_app'
+import { Route as SiteRouteImport } from './routes/_site'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as LlmsDottxtRouteImport } from './routes/llms[.]txt'
+import { Route as McpRouteImport } from './routes/mcp'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
+import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
+import { Route as AppDashboardRouteImport } from './routes/_app.dashboard'
+import { Route as AppInformationsPersonnellesRouteImport } from './routes/_app.informations-personnelles'
+import { Route as AppJeMEntraineRouteImport } from './routes/_app.je-m-entraine'
+import { Route as AppJeMePrepareRouteImport } from './routes/_app.je-me-prepare'
+import { Route as AppMonTableauDeBordRouteImport } from './routes/_app.mon-tableau-de-bord'
+import { Route as AppPartie1RouteImport } from './routes/_app.partie-1'
+import { Route as AppPartie2RouteImport } from './routes/_app.partie-2'
+import { Route as AppPartie3RouteImport } from './routes/_app.partie-3'
+import { Route as AppPartie4RouteImport } from './routes/_app.partie-4'
+import { Route as AppPartie5RouteImport } from './routes/_app.partie-5'
+import { Route as AppPartie6RouteImport } from './routes/_app.partie-6'
+import { Route as AppPartie7RouteImport } from './routes/_app.partie-7'
+import { Route as AppPartie8RouteImport } from './routes/_app.partie-8'
+import { Route as AppPremiumRouteImport } from './routes/_app.premium'
+import { Route as AppRessourcesRouteImport } from './routes/_app.ressources'
+import { Route as SiteIndexRouteImport } from './routes/_site.index'
+import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
+import { Route as BlogIndexRouteImport } from './routes/blog.index'
+import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
+import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
+import { Route as SiteConcoursSlugRouteImport } from './routes/_site.concours.$slug'
 
-const IndexRoute = IndexRouteImport.update({
+const AppRoute = AppRouteImport.update({
+  id: '/_app',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SiteRoute = SiteRouteImport.update({
+  id: '/_site',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LlmsDottxtRoute = LlmsDottxtRouteImport.update({
+  id: '/llms.txt',
+  path: '/llms.txt',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const McpRoute = McpRouteImport.update({
+  id: '/mcp',
+  path: '/mcp',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Char91DotmcpChar93ListToolsRoute =
+  Char91DotmcpChar93ListToolsRouteImport.update({
+    id: '/.mcp/list-tools',
+    path: '/.mcp/list-tools',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const Char91DotwellKnownChar93OauthProtectedResourceRoute =
+  Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
+    id: '/.well-known/oauth-protected-resource',
+    path: '/.well-known/oauth-protected-resource',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const AppDashboardRoute = AppDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppInformationsPersonnellesRoute =
+  AppInformationsPersonnellesRouteImport.update({
+    id: '/informations-personnelles',
+    path: '/informations-personnelles',
+    getParentRoute: () => AppRoute,
+  } as any)
+const AppJeMEntraineRoute = AppJeMEntraineRouteImport.update({
+  id: '/je-m-entraine',
+  path: '/je-m-entraine',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppJeMePrepareRoute = AppJeMePrepareRouteImport.update({
+  id: '/je-me-prepare',
+  path: '/je-me-prepare',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppMonTableauDeBordRoute = AppMonTableauDeBordRouteImport.update({
+  id: '/mon-tableau-de-bord',
+  path: '/mon-tableau-de-bord',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPartie1Route = AppPartie1RouteImport.update({
+  id: '/partie-1',
+  path: '/partie-1',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPartie2Route = AppPartie2RouteImport.update({
+  id: '/partie-2',
+  path: '/partie-2',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPartie3Route = AppPartie3RouteImport.update({
+  id: '/partie-3',
+  path: '/partie-3',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPartie4Route = AppPartie4RouteImport.update({
+  id: '/partie-4',
+  path: '/partie-4',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPartie5Route = AppPartie5RouteImport.update({
+  id: '/partie-5',
+  path: '/partie-5',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPartie6Route = AppPartie6RouteImport.update({
+  id: '/partie-6',
+  path: '/partie-6',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPartie7Route = AppPartie7RouteImport.update({
+  id: '/partie-7',
+  path: '/partie-7',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPartie8Route = AppPartie8RouteImport.update({
+  id: '/partie-8',
+  path: '/partie-8',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPremiumRoute = AppPremiumRouteImport.update({
+  id: '/premium',
+  path: '/premium',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppRessourcesRoute = AppRessourcesRouteImport.update({
+  id: '/ressources',
+  path: '/ressources',
+  getParentRoute: () => AppRoute,
+} as any)
+const SiteIndexRoute = SiteIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => SiteRoute,
+} as any)
+const AuthCallbackRoute = AuthCallbackRouteImport.update({
+  id: '/callback',
+  path: '/callback',
+  getParentRoute: () => AuthRoute,
+} as any)
+const BlogIndexRoute = BlogIndexRouteImport.update({
+  id: '/blog/',
+  path: '/blog/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
+  id: '/.lovable/oauth/consent',
+  path: '/.lovable/oauth/consent',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Char91DotmcpChar93InvokeToolToolRoute =
+  Char91DotmcpChar93InvokeToolToolRouteImport.update({
+    id: '/.mcp/invoke-tool/$tool',
+    path: '/.mcp/invoke-tool/$tool',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const SiteConcoursSlugRoute = SiteConcoursSlugRouteImport.update({
+  id: '/concours/$slug',
+  path: '/concours/$slug',
+  getParentRoute: () => SiteRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
+  '/': typeof SiteIndexRoute
+  '/auth': typeof AuthRouteWithChildren
+  '/llms.txt': typeof LlmsDottxtRoute
+  '/mcp': typeof McpRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/dashboard': typeof AppDashboardRoute
+  '/informations-personnelles': typeof AppInformationsPersonnellesRoute
+  '/je-m-entraine': typeof AppJeMEntraineRoute
+  '/je-me-prepare': typeof AppJeMePrepareRoute
+  '/mon-tableau-de-bord': typeof AppMonTableauDeBordRoute
+  '/partie-1': typeof AppPartie1Route
+  '/partie-2': typeof AppPartie2Route
+  '/partie-3': typeof AppPartie3Route
+  '/partie-4': typeof AppPartie4Route
+  '/partie-5': typeof AppPartie5Route
+  '/partie-6': typeof AppPartie6Route
+  '/partie-7': typeof AppPartie7Route
+  '/partie-8': typeof AppPartie8Route
+  '/premium': typeof AppPremiumRoute
+  '/ressources': typeof AppRessourcesRoute
+  '/auth/callback': typeof AuthCallbackRoute
+  '/blog/': typeof BlogIndexRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
+  '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/concours/$slug': typeof SiteConcoursSlugRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
+  '/': typeof SiteIndexRoute
+  '/auth': typeof AuthRouteWithChildren
+  '/llms.txt': typeof LlmsDottxtRoute
+  '/mcp': typeof McpRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/dashboard': typeof AppDashboardRoute
+  '/informations-personnelles': typeof AppInformationsPersonnellesRoute
+  '/je-m-entraine': typeof AppJeMEntraineRoute
+  '/je-me-prepare': typeof AppJeMePrepareRoute
+  '/mon-tableau-de-bord': typeof AppMonTableauDeBordRoute
+  '/partie-1': typeof AppPartie1Route
+  '/partie-2': typeof AppPartie2Route
+  '/partie-3': typeof AppPartie3Route
+  '/partie-4': typeof AppPartie4Route
+  '/partie-5': typeof AppPartie5Route
+  '/partie-6': typeof AppPartie6Route
+  '/partie-7': typeof AppPartie7Route
+  '/partie-8': typeof AppPartie8Route
+  '/premium': typeof AppPremiumRoute
+  '/ressources': typeof AppRessourcesRoute
+  '/auth/callback': typeof AuthCallbackRoute
+  '/blog': typeof BlogIndexRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
+  '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/concours/$slug': typeof SiteConcoursSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
+  '/_app': typeof AppRouteWithChildren
+  '/_site': typeof SiteRouteWithChildren
+  '/auth': typeof AuthRouteWithChildren
+  '/llms.txt': typeof LlmsDottxtRoute
+  '/mcp': typeof McpRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/_app/dashboard': typeof AppDashboardRoute
+  '/_app/informations-personnelles': typeof AppInformationsPersonnellesRoute
+  '/_app/je-m-entraine': typeof AppJeMEntraineRoute
+  '/_app/je-me-prepare': typeof AppJeMePrepareRoute
+  '/_app/mon-tableau-de-bord': typeof AppMonTableauDeBordRoute
+  '/_app/partie-1': typeof AppPartie1Route
+  '/_app/partie-2': typeof AppPartie2Route
+  '/_app/partie-3': typeof AppPartie3Route
+  '/_app/partie-4': typeof AppPartie4Route
+  '/_app/partie-5': typeof AppPartie5Route
+  '/_app/partie-6': typeof AppPartie6Route
+  '/_app/partie-7': typeof AppPartie7Route
+  '/_app/partie-8': typeof AppPartie8Route
+  '/_app/premium': typeof AppPremiumRoute
+  '/_app/ressources': typeof AppRessourcesRoute
+  '/auth/callback': typeof AuthCallbackRoute
+  '/_site/': typeof SiteIndexRoute
+  '/blog/': typeof BlogIndexRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
+  '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/_site/concours/$slug': typeof SiteConcoursSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/llms.txt'
+    | '/mcp'
+    | '/sitemap.xml'
+    | '/.mcp/list-tools'
+    | '/.well-known/oauth-protected-resource'
+    | '/dashboard'
+    | '/informations-personnelles'
+    | '/je-m-entraine'
+    | '/je-me-prepare'
+    | '/mon-tableau-de-bord'
+    | '/partie-1'
+    | '/partie-2'
+    | '/partie-3'
+    | '/partie-4'
+    | '/partie-5'
+    | '/partie-6'
+    | '/partie-7'
+    | '/partie-8'
+    | '/premium'
+    | '/ressources'
+    | '/auth/callback'
+    | '/blog/'
+    | '/.lovable/oauth/consent'
+    | '/.mcp/invoke-tool/$tool'
+    | '/concours/$slug'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/auth'
+    | '/llms.txt'
+    | '/mcp'
+    | '/sitemap.xml'
+    | '/.mcp/list-tools'
+    | '/.well-known/oauth-protected-resource'
+    | '/dashboard'
+    | '/informations-personnelles'
+    | '/je-m-entraine'
+    | '/je-me-prepare'
+    | '/mon-tableau-de-bord'
+    | '/partie-1'
+    | '/partie-2'
+    | '/partie-3'
+    | '/partie-4'
+    | '/partie-5'
+    | '/partie-6'
+    | '/partie-7'
+    | '/partie-8'
+    | '/premium'
+    | '/ressources'
+    | '/auth/callback'
+    | '/blog'
+    | '/.lovable/oauth/consent'
+    | '/.mcp/invoke-tool/$tool'
+    | '/concours/$slug'
+  id:
+    | '__root__'
+    | '/_app'
+    | '/_site'
+    | '/auth'
+    | '/llms.txt'
+    | '/mcp'
+    | '/sitemap.xml'
+    | '/.mcp/list-tools'
+    | '/.well-known/oauth-protected-resource'
+    | '/_app/dashboard'
+    | '/_app/informations-personnelles'
+    | '/_app/je-m-entraine'
+    | '/_app/je-me-prepare'
+    | '/_app/mon-tableau-de-bord'
+    | '/_app/partie-1'
+    | '/_app/partie-2'
+    | '/_app/partie-3'
+    | '/_app/partie-4'
+    | '/_app/partie-5'
+    | '/_app/partie-6'
+    | '/_app/partie-7'
+    | '/_app/partie-8'
+    | '/_app/premium'
+    | '/_app/ressources'
+    | '/auth/callback'
+    | '/_site/'
+    | '/blog/'
+    | '/.lovable/oauth/consent'
+    | '/.mcp/invoke-tool/$tool'
+    | '/_site/concours/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
+  AppRoute: typeof AppRouteWithChildren
+  SiteRoute: typeof SiteRouteWithChildren
+  AuthRoute: typeof AuthRouteWithChildren
+  LlmsDottxtRoute: typeof LlmsDottxtRoute
+  McpRoute: typeof McpRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
+  Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  BlogIndexRoute: typeof BlogIndexRoute
+  DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
+  Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
+    '/_app': {
+      id: '/_app'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_site': {
+      id: '/_site'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof SiteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/llms.txt': {
+      id: '/llms.txt'
+      path: '/llms.txt'
+      fullPath: '/llms.txt'
+      preLoaderRoute: typeof LlmsDottxtRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mcp': {
+      id: '/mcp'
+      path: '/mcp'
+      fullPath: '/mcp'
+      preLoaderRoute: typeof McpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.mcp/list-tools': {
+      id: '/.mcp/list-tools'
+      path: '/.mcp/list-tools'
+      fullPath: '/.mcp/list-tools'
+      preLoaderRoute: typeof Char91DotmcpChar93ListToolsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.well-known/oauth-protected-resource': {
+      id: '/.well-known/oauth-protected-resource'
+      path: '/.well-known/oauth-protected-resource'
+      fullPath: '/.well-known/oauth-protected-resource'
+      preLoaderRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_app/dashboard': {
+      id: '/_app/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AppDashboardRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/informations-personnelles': {
+      id: '/_app/informations-personnelles'
+      path: '/informations-personnelles'
+      fullPath: '/informations-personnelles'
+      preLoaderRoute: typeof AppInformationsPersonnellesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/je-m-entraine': {
+      id: '/_app/je-m-entraine'
+      path: '/je-m-entraine'
+      fullPath: '/je-m-entraine'
+      preLoaderRoute: typeof AppJeMEntraineRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/je-me-prepare': {
+      id: '/_app/je-me-prepare'
+      path: '/je-me-prepare'
+      fullPath: '/je-me-prepare'
+      preLoaderRoute: typeof AppJeMePrepareRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/mon-tableau-de-bord': {
+      id: '/_app/mon-tableau-de-bord'
+      path: '/mon-tableau-de-bord'
+      fullPath: '/mon-tableau-de-bord'
+      preLoaderRoute: typeof AppMonTableauDeBordRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/partie-1': {
+      id: '/_app/partie-1'
+      path: '/partie-1'
+      fullPath: '/partie-1'
+      preLoaderRoute: typeof AppPartie1RouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/partie-2': {
+      id: '/_app/partie-2'
+      path: '/partie-2'
+      fullPath: '/partie-2'
+      preLoaderRoute: typeof AppPartie2RouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/partie-3': {
+      id: '/_app/partie-3'
+      path: '/partie-3'
+      fullPath: '/partie-3'
+      preLoaderRoute: typeof AppPartie3RouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/partie-4': {
+      id: '/_app/partie-4'
+      path: '/partie-4'
+      fullPath: '/partie-4'
+      preLoaderRoute: typeof AppPartie4RouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/partie-5': {
+      id: '/_app/partie-5'
+      path: '/partie-5'
+      fullPath: '/partie-5'
+      preLoaderRoute: typeof AppPartie5RouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/partie-6': {
+      id: '/_app/partie-6'
+      path: '/partie-6'
+      fullPath: '/partie-6'
+      preLoaderRoute: typeof AppPartie6RouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/partie-7': {
+      id: '/_app/partie-7'
+      path: '/partie-7'
+      fullPath: '/partie-7'
+      preLoaderRoute: typeof AppPartie7RouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/partie-8': {
+      id: '/_app/partie-8'
+      path: '/partie-8'
+      fullPath: '/partie-8'
+      preLoaderRoute: typeof AppPartie8RouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/premium': {
+      id: '/_app/premium'
+      path: '/premium'
+      fullPath: '/premium'
+      preLoaderRoute: typeof AppPremiumRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/ressources': {
+      id: '/_app/ressources'
+      path: '/ressources'
+      fullPath: '/ressources'
+      preLoaderRoute: typeof AppRessourcesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_site/': {
+      id: '/_site/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+      preLoaderRoute: typeof SiteIndexRouteImport
+      parentRoute: typeof SiteRoute
+    }
+    '/auth/callback': {
+      id: '/auth/callback'
+      path: '/callback'
+      fullPath: '/auth/callback'
+      preLoaderRoute: typeof AuthCallbackRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/blog/': {
+      id: '/blog/'
+      path: '/blog'
+      fullPath: '/blog/'
+      preLoaderRoute: typeof BlogIndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/.lovable/oauth/consent': {
+      id: '/.lovable/oauth/consent'
+      path: '/.lovable/oauth/consent'
+      fullPath: '/.lovable/oauth/consent'
+      preLoaderRoute: typeof DotlovableOauthConsentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.mcp/invoke-tool/$tool': {
+      id: '/.mcp/invoke-tool/$tool'
+      path: '/.mcp/invoke-tool/$tool'
+      fullPath: '/.mcp/invoke-tool/$tool'
+      preLoaderRoute: typeof Char91DotmcpChar93InvokeToolToolRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_site/concours/$slug': {
+      id: '/_site/concours/$slug'
+      path: '/concours/$slug'
+      fullPath: '/concours/$slug'
+      preLoaderRoute: typeof SiteConcoursSlugRouteImport
+      parentRoute: typeof SiteRoute
     }
   }
 }
 
+interface AppRouteChildren {
+  AppDashboardRoute: typeof AppDashboardRoute
+  AppInformationsPersonnellesRoute: typeof AppInformationsPersonnellesRoute
+  AppJeMEntraineRoute: typeof AppJeMEntraineRoute
+  AppJeMePrepareRoute: typeof AppJeMePrepareRoute
+  AppMonTableauDeBordRoute: typeof AppMonTableauDeBordRoute
+  AppPartie1Route: typeof AppPartie1Route
+  AppPartie2Route: typeof AppPartie2Route
+  AppPartie3Route: typeof AppPartie3Route
+  AppPartie4Route: typeof AppPartie4Route
+  AppPartie5Route: typeof AppPartie5Route
+  AppPartie6Route: typeof AppPartie6Route
+  AppPartie7Route: typeof AppPartie7Route
+  AppPartie8Route: typeof AppPartie8Route
+  AppPremiumRoute: typeof AppPremiumRoute
+  AppRessourcesRoute: typeof AppRessourcesRoute
+}
+
+const AppRouteChildren: AppRouteChildren = {
+  AppDashboardRoute: AppDashboardRoute,
+  AppInformationsPersonnellesRoute: AppInformationsPersonnellesRoute,
+  AppJeMEntraineRoute: AppJeMEntraineRoute,
+  AppJeMePrepareRoute: AppJeMePrepareRoute,
+  AppMonTableauDeBordRoute: AppMonTableauDeBordRoute,
+  AppPartie1Route: AppPartie1Route,
+  AppPartie2Route: AppPartie2Route,
+  AppPartie3Route: AppPartie3Route,
+  AppPartie4Route: AppPartie4Route,
+  AppPartie5Route: AppPartie5Route,
+  AppPartie6Route: AppPartie6Route,
+  AppPartie7Route: AppPartie7Route,
+  AppPartie8Route: AppPartie8Route,
+  AppPremiumRoute: AppPremiumRoute,
+  AppRessourcesRoute: AppRessourcesRoute,
+}
+
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+
+interface SiteRouteChildren {
+  SiteIndexRoute: typeof SiteIndexRoute
+  SiteConcoursSlugRoute: typeof SiteConcoursSlugRoute
+}
+
+const SiteRouteChildren: SiteRouteChildren = {
+  SiteIndexRoute: SiteIndexRoute,
+  SiteConcoursSlugRoute: SiteConcoursSlugRoute,
+}
+
+const SiteRouteWithChildren = SiteRoute._addFileChildren(SiteRouteChildren)
+
+interface AuthRouteChildren {
+  AuthCallbackRoute: typeof AuthCallbackRoute
+}
+
+const AuthRouteChildren: AuthRouteChildren = {
+  AuthCallbackRoute: AuthCallbackRoute,
+}
+
+const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
+  AppRoute: AppRouteWithChildren,
+  SiteRoute: SiteRouteWithChildren,
+  AuthRoute: AuthRouteWithChildren,
+  LlmsDottxtRoute: LlmsDottxtRoute,
+  McpRoute: McpRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
+  Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
+  Char91DotwellKnownChar93OauthProtectedResourceRoute:
+    Char91DotwellKnownChar93OauthProtectedResourceRoute,
+  BlogIndexRoute: BlogIndexRoute,
+  DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
+  Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -1,0 +1,1 @@
+DROP TABLE IF EXISTS public.draw_cursors CASCADE;

@@ -10,11 +10,466 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.18"
+    PostgrestVersion: "14.5"
   }
   public: {
     Tables: {
-      [_ in never]: never
+      career_projects: {
+        Row: {
+          companies: string
+          company_role: string
+          created_at: string
+          deepened: boolean
+          description: string
+          extra_info: string
+          job_names: string
+          job_or_field: string
+          news: string
+          qualities: string
+          sector: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          companies?: string
+          company_role?: string
+          created_at?: string
+          deepened?: boolean
+          description?: string
+          extra_info?: string
+          job_names?: string
+          job_or_field?: string
+          news?: string
+          qualities?: string
+          sector?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          companies?: string
+          company_role?: string
+          created_at?: string
+          deepened?: boolean
+          description?: string
+          extra_info?: string
+          job_names?: string
+          job_or_field?: string
+          news?: string
+          qualities?: string
+          sector?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      experiences: {
+        Row: {
+          ai_feedback: string
+          anecdotes: Json
+          category: string
+          context: string
+          created_at: string
+          end_date: string
+          id: string
+          name: string
+          start_date: string
+          status: string
+          story: string
+          story_title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          ai_feedback?: string
+          anecdotes?: Json
+          category: string
+          context?: string
+          created_at?: string
+          end_date?: string
+          id?: string
+          name: string
+          start_date?: string
+          status?: string
+          story?: string
+          story_title?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          ai_feedback?: string
+          anecdotes?: Json
+          category?: string
+          context?: string
+          created_at?: string
+          end_date?: string
+          id?: string
+          name?: string
+          start_date?: string
+          status?: string
+          story?: string
+          story_title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      interview_sessions: {
+        Row: {
+          created_at: string
+          debrief: string
+          difficulty: string
+          format: string
+          id: string
+          inseec_image: string
+          phase_timings: Json
+          school: string
+          status: string
+          support_label: string
+          support_path: string
+          support_text: string
+          turns: Json
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          debrief?: string
+          difficulty?: string
+          format?: string
+          id?: string
+          inseec_image?: string
+          phase_timings?: Json
+          school?: string
+          status?: string
+          support_label?: string
+          support_path?: string
+          support_text?: string
+          turns?: Json
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          debrief?: string
+          difficulty?: string
+          format?: string
+          id?: string
+          inseec_image?: string
+          phase_timings?: Json
+          school?: string
+          status?: string
+          support_label?: string
+          support_path?: string
+          support_text?: string
+          turns?: Json
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      interview_supports: {
+        Row: {
+          ai_feedback: string
+          answers: Json
+          created_at: string
+          cv: Json
+          id: string
+          kind: string
+          school: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          ai_feedback?: string
+          answers?: Json
+          created_at?: string
+          cv?: Json
+          id?: string
+          kind?: string
+          school: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          ai_feedback?: string
+          answers?: Json
+          created_at?: string
+          cv?: Json
+          id?: string
+          kind?: string
+          school?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      news_topics: {
+        Row: {
+          ai_feedback: string
+          causes: string
+          consequences: string
+          created_at: string
+          event_date: string
+          id: string
+          interview_link: string
+          personal_interest: string
+          stakes: string
+          status: string
+          title: string
+          updated_at: string
+          urls: Json
+          user_id: string
+          why_important: string
+        }
+        Insert: {
+          ai_feedback?: string
+          causes?: string
+          consequences?: string
+          created_at?: string
+          event_date?: string
+          id?: string
+          interview_link?: string
+          personal_interest?: string
+          stakes?: string
+          status?: string
+          title?: string
+          updated_at?: string
+          urls?: Json
+          user_id: string
+          why_important?: string
+        }
+        Update: {
+          ai_feedback?: string
+          causes?: string
+          consequences?: string
+          created_at?: string
+          event_date?: string
+          id?: string
+          interview_link?: string
+          personal_interest?: string
+          stakes?: string
+          status?: string
+          title?: string
+          updated_at?: string
+          urls?: Json
+          user_id?: string
+          why_important?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          acquisition_channel: string
+          choice_1: string
+          choice_2: string
+          choice_3: string
+          created_at: string
+          expectations: string[]
+          expectations_other: string
+          first_name: string
+          full_name: string
+          id: string
+          last_name: string
+          other_prep: string
+          part1_completed: boolean
+          part2_completed: boolean
+          plan: string
+          prepa_class: string
+          prepa_lycee: string
+          target_schools: string[]
+          updated_at: string
+        }
+        Insert: {
+          acquisition_channel?: string
+          choice_1?: string
+          choice_2?: string
+          choice_3?: string
+          created_at?: string
+          expectations?: string[]
+          expectations_other?: string
+          first_name?: string
+          full_name?: string
+          id: string
+          last_name?: string
+          other_prep?: string
+          part1_completed?: boolean
+          part2_completed?: boolean
+          plan?: string
+          prepa_class?: string
+          prepa_lycee?: string
+          target_schools?: string[]
+          updated_at?: string
+        }
+        Update: {
+          acquisition_channel?: string
+          choice_1?: string
+          choice_2?: string
+          choice_3?: string
+          created_at?: string
+          expectations?: string[]
+          expectations_other?: string
+          first_name?: string
+          full_name?: string
+          id?: string
+          last_name?: string
+          other_prep?: string
+          part1_completed?: boolean
+          part2_completed?: boolean
+          plan?: string
+          prepa_class?: string
+          prepa_lycee?: string
+          target_schools?: string[]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      question_answers: {
+        Row: {
+          ai_feedback: string
+          answer: string
+          created_at: string
+          id: string
+          question_id: string
+          school: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          ai_feedback?: string
+          answer?: string
+          created_at?: string
+          id?: string
+          question_id: string
+          school?: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          ai_feedback?: string
+          answer?: string
+          created_at?: string
+          id?: string
+          question_id?: string
+          school?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      question_attempts: {
+        Row: {
+          ai_feedback: string
+          answer: string
+          created_at: string
+          id: string
+          question_id: string
+          school: string
+          user_id: string
+        }
+        Insert: {
+          ai_feedback?: string
+          answer?: string
+          created_at?: string
+          id?: string
+          question_id: string
+          school?: string
+          user_id: string
+        }
+        Update: {
+          ai_feedback?: string
+          answer?: string
+          created_at?: string
+          id?: string
+          question_id?: string
+          school?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      school_sheets: {
+        Row: {
+          associations: string
+          baseline: string
+          campuses: string
+          created_at: string
+          director: string
+          exchanges: string
+          finished: boolean
+          founded_year: string
+          generic_other: string
+          id: string
+          items: Json
+          master_url: string
+          masters: string
+          partners: string
+          school: string
+          specifics: string
+          updated_at: string
+          user_id: string
+          why_association: string
+          why_exchange: string
+          why_master: string
+          why_partner: string
+          why_specific: string
+        }
+        Insert: {
+          associations?: string
+          baseline?: string
+          campuses?: string
+          created_at?: string
+          director?: string
+          exchanges?: string
+          finished?: boolean
+          founded_year?: string
+          generic_other?: string
+          id?: string
+          items?: Json
+          master_url?: string
+          masters?: string
+          partners?: string
+          school: string
+          specifics?: string
+          updated_at?: string
+          user_id: string
+          why_association?: string
+          why_exchange?: string
+          why_master?: string
+          why_partner?: string
+          why_specific?: string
+        }
+        Update: {
+          associations?: string
+          baseline?: string
+          campuses?: string
+          created_at?: string
+          director?: string
+          exchanges?: string
+          finished?: boolean
+          founded_year?: string
+          generic_other?: string
+          id?: string
+          items?: Json
+          master_url?: string
+          masters?: string
+          partners?: string
+          school?: string
+          specifics?: string
+          updated_at?: string
+          user_id?: string
+          why_association?: string
+          why_exchange?: string
+          why_master?: string
+          why_partner?: string
+          why_specific?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

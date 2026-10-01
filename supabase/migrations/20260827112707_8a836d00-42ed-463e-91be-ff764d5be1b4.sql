@@ -1,0 +1,1 @@
+ALTER TABLE public.news_topics ADD COLUMN IF NOT EXISTS event_date text NOT NULL DEFAULT ''::text;

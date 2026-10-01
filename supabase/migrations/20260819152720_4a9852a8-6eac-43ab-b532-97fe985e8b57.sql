@@ -1,0 +1,15 @@
+ALTER TABLE public.profiles
+  ADD COLUMN IF NOT EXISTS prepa_lycee text NOT NULL DEFAULT '',
+  ADD COLUMN IF NOT EXISTS expectations_other text NOT NULL DEFAULT '';
+
+ALTER TABLE public.school_sheets
+  ADD COLUMN IF NOT EXISTS baseline text NOT NULL DEFAULT '',
+  ADD COLUMN IF NOT EXISTS founded_year text NOT NULL DEFAULT '',
+  ADD COLUMN IF NOT EXISTS director text NOT NULL DEFAULT '',
+  ADD COLUMN IF NOT EXISTS campuses text NOT NULL DEFAULT '',
+  ADD COLUMN IF NOT EXISTS generic_other text NOT NULL DEFAULT '',
+  ADD COLUMN IF NOT EXISTS why_master text NOT NULL DEFAULT '',
+  ADD COLUMN IF NOT EXISTS why_association text NOT NULL DEFAULT '',
+  ADD COLUMN IF NOT EXISTS why_exchange text NOT NULL DEFAULT '',
+  ADD COLUMN IF NOT EXISTS why_partner text NOT NULL DEFAULT '',
+  ADD COLUMN IF NOT EXISTS why_specific text NOT NULL DEFAULT '';

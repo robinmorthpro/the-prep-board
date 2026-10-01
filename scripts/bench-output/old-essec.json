@@ -1,0 +1,146 @@
+{
+  "school": "ESSEC",
+  "version": "old",
+  "turns": [
+    {
+      "question": "Bonjour Camille, et bienvenue à l'entretien de l'ESSEC. Cet entretien va durer 45 minutes. Je vais vous demander de vous présenter, puis nous échangerons sur votre parcours, vos motivations et vos projets. Nous vous proposerons également de travailler sur deux mises en situation. Est-ce que c'est clair pour vous ?",
+      "answer": "Oui, c'est très clair, merci.",
+      "askedAt": "2026-01-06T09:00:15.000Z",
+      "answeredAt": "2026-01-06T09:01:45.000Z"
+    },
+    {
+      "question": "Très bien. Vous disposez d'environ cinq minutes pour vous présenter, je vous écoute.",
+      "answer": "Je m'appelle Camille Perrin, j'ai vingt ans et je suis en deuxième année de prépa ECG au lycée Montaigne à Bordeaux, spécialité maths appliquées et géopolitique. Avant la prépa, j'ai passé un bac général avec les spécialités maths et SES, mention bien. En dehors des cours, je suis trésorière du bureau des élèves de la prépa, je danse depuis douze ans au conservatoire de Bordeaux, et j'anime depuis deux ans un atelier de danse pour une vingtaine de collégiens dans un collège du quartier Bacalan. L'été dernier, j'ai fait six semaines de stage dans un petit cabinet de conseil bordelais, Astera Conseil, sur un audit de processus pour une PME viticole. C'est là que mon projet s'est précisé : je veux travailler dans le conseil en organisation, auprès d'entreprises de taille intermédiaire.",
+      "askedAt": "2026-01-06T09:02:00.000Z",
+      "answeredAt": "2026-01-06T09:03:30.000Z"
+    },
+    {
+      "question": "Merci pour cette présentation. Concrètement, en quoi consistait votre rôle sur cet audit de processus chez Astera Conseil ?",
+      "answer": "Ma méthode de travail a beaucoup changé entre la première et la deuxième année. En première année, je relisais mes cours sans jamais me tester, et je perdais deux heures par soir à recopier des fiches. Depuis septembre, je fonctionne par blocs de cinquante minutes, avec un objectif écrit avant de commencer : refaire trois exercices de probabilités, ou restituer de mémoire un plan de géopolitique sur le détroit de Malacca. Je me réinterroge le lendemain matin pendant dix minutes sur ce que j'ai travaillé la veille, et le week-end sur la semaine entière. Concrètement, ma moyenne de maths est passée de neuf à treize entre décembre et mars, et surtout je ne finis plus mes copies en panique.",
+      "askedAt": "2026-01-06T09:03:45.000Z",
+      "answeredAt": "2026-01-06T09:05:15.000Z"
+    },
+    {
+      "question": "Cette réponse porte sur votre méthode de travail, ce n'est pas ce que je vous demandais. Concrètement, chez Astera Conseil, quelles étaient vos missions précises sur cet audit ?",
+      "answer": "Je suis trésorière du bureau des élèves depuis un an. Quand j'ai pris le poste, nous avions quatre cent vingt euros en caisse, aucun suivi écrit et deux factures impayées de la soirée de rentrée. J'ai commencé par reconstituer les comptes sur un tableur, ligne par ligne, avec les justificatifs. Ensuite j'ai fixé une règle simple : aucune dépense au-dessus de cinquante euros sans l'accord de deux membres du bureau. On a monté une vente de gâteaux et une tombola qui ont rapporté environ neuf cents euros, et renégocié le prestataire du gala, ce qui nous a fait économiser trois cents euros. Nous avons terminé l'année avec mille cent euros, et j'ai laissé un fichier de suivi à mon successeur.",
+      "askedAt": "2026-01-06T09:05:30.000Z",
+      "answeredAt": "2026-01-06T09:07:00.000Z"
+    },
+    {
+      "question": "Vous m'avez parlé de votre méthode de travail, puis de votre rôle de trésorière, mais toujours pas de votre mission chez Astera Conseil. Racontez-moi une scène précise, un jour donné, où vous avez travaillé sur cet audit de la PME viticole.",
+      "answer": "La danse, c'est douze ans de conservatoire, à raison de six heures par semaine en plus de la prépa. C'est ce qui m'a appris la répétition et la correction : on refait le même enchaînement trente fois pour gagner un quart de seconde de précision. Depuis deux ans, j'anime un atelier hebdomadaire pour une vingtaine de collégiens de cinquième et quatrième à Bacalan. Au début je préparais des chorégraphies trop difficiles, et la moitié du groupe décrochait au bout de vingt minutes. J'ai changé : je découpe chaque mouvement, je fais travailler par binômes, et je termine toujours par un passage filmé qu'ils regardent. Le groupe est passé de huit à vingt-deux participants, et douze sont revenus cette année.",
+      "askedAt": "2026-01-06T09:07:15.000Z",
+      "answeredAt": "2026-01-06T09:08:45.000Z"
+    },
+    {
+      "question": "Camille, je vous repose ma question précisément, sans changer de sujet : le jour de votre stage chez Astera Conseil, sur l'audit de la PME viticole, qu'avez-vous fait vous-même, concrètement, de vos mains ?",
+      "answer": "Mon stage s'est déroulé l'été dernier, six semaines chez Astera Conseil, un cabinet bordelais de neuf consultants. J'étais sur une mission d'audit des processus d'une PME viticole de quarante salariés. Mon travail concret : mener sept entretiens avec des opérateurs de la chaîne d'embouteillage, reconstituer le circuit de validation des commandes, et repérer où se perdaient les délais. J'ai découvert que deux validations successives faisaient perdre en moyenne trois jours sur chaque commande export. J'ai proposé de fusionner ces deux étapes ; la consultante senior a repris mon tableau dans la restitution finale au dirigeant. Ce que j'ai appris de plus utile, c'est qu'un diagnostic ne vaut rien s'il n'est pas expliqué aux personnes qui font le travail.",
+      "askedAt": "2026-01-06T09:09:00.000Z",
+      "answeredAt": "2026-01-06T09:10:30.000Z"
+    },
+    {
+      "question": "Merci, c'est beaucoup plus clair. Pourquoi avoir proposé de fusionner ces deux validations plutôt que d'en supprimer une seule ?",
+      "answer": "Mon projet, c'est le conseil en organisation auprès d'entreprises de taille intermédiaire, en région plutôt qu'à Paris. Après le stage chez Astera, j'ai compris ce qui m'intéressait : entrer dans une entreprise qui va mal sur un point précis, comprendre comment elle fonctionne vraiment, et repartir en ayant changé quelque chose de concret. Je vise d'abord un poste de consultant junior dans un cabinet de taille moyenne, entre dix et cent personnes, pour toucher des missions entières plutôt qu'une brique d'un grand projet. À dix ans, j'aimerais être manager sur des missions de réorganisation industrielle. J'ai rencontré deux consultants pour valider cela, dont une associée d'Astera et un ancien de ma prépa qui travaille chez Alixio.",
+      "askedAt": "2026-01-06T09:10:45.000Z",
+      "answeredAt": "2026-01-06T09:12:15.000Z"
+    },
+    {
+      "question": "Cela ne répondait pas exactement à ma question, mais restons sur votre projet, il est intéressant. Ces deux consultants que vous avez rencontrés, qu'est-ce qu'ils vous ont dit qui vous a fait douter, ou au contraire confirmé votre choix ?",
+      "answer": "J'ai hésité avec une licence d'économie puis un master spécialisé, et j'ai choisi l'école de commerce pour trois raisons précises. D'abord la césure et les stages : je veux alterner terrain et théorie, parce que mes six semaines de stage m'ont plus appris sur les organisations que deux ans de cours. Ensuite la formation généraliste : dans le conseil, on parle finance le lundi et supply chain le mardi, et je ne veux pas être enfermée dans une seule discipline. Enfin le travail en groupe, qui est la réalité du métier et qui manque à la prépa, où l'on est souvent seul face à ses copies. Ce n'est pas un choix par défaut : c'est le format qui correspond au métier que je veux faire.",
+      "askedAt": "2026-01-06T09:12:30.000Z",
+      "answeredAt": "2026-01-06T09:14:00.000Z"
+    },
+    {
+      "question": "Vous parlez du travail en groupe comme d'une réalité du métier qui vous manque en prépa. Concrètement, quelle expérience de groupe, en dehors de la prépa, vous a le plus appris jusqu'ici ?",
+      "answer": "Je citerais trois qualités, avec des preuves. La rigueur : c'est ce qui m'a permis de reconstituer les comptes du bureau des élèves ligne par ligne, avec les justificatifs, alors que personne ne l'avait fait depuis deux ans. La persévérance : douze ans de danse, dont deux années de prépa où j'ai continué six heures par semaine sans jamais rater un cours, y compris pendant les concours blancs. Et la capacité à écouter : pendant mon audit, j'ai passé sept entretiens avec des opérateurs, et c'est en écoutant un cariste que j'ai trouvé l'endroit exact où se perdaient trois jours de délai. Je crois que ces trois-là se retrouvent dans tout ce que je fais.",
+      "askedAt": "2026-01-06T09:14:15.000Z",
+      "answeredAt": "2026-01-06T09:15:45.000Z"
+    },
+    {
+      "question": "",
+      "answer": "Mon principal défaut, c'est que je veux trop contrôler. Au bureau des élèves, pour le gala de février, je relisais tous les devis moi-même et je refaisais les tableaux des autres, ce qui a bloqué l'équipe pendant une semaine : deux personnes ont arrêté de proposer des choses parce qu'elles savaient que je repasserais derrière. Une amie du bureau me l'a dit franchement en janvier. J'ai réagi en découpant le gala en quatre responsabilités, une par personne, avec un point de trente minutes le mercredi et plus aucune relecture systématique de ma part. Ce n'est pas réglé : sur les chiffres, j'ai encore du mal à ne pas vérifier. Mais je sais maintenant le repérer avant que l'équipe ne se ferme.",
+      "askedAt": "2026-01-06T09:14:15.000Z",
+      "answeredAt": "2026-01-06T09:17:15.000Z"
+    },
+    {
+      "question": "Merci pour cette franchise. Je vous propose maintenant une mise en situation. Vous organisez un voyage associatif pour quarante personnes. La moitié des participants annule trois jours avant le départ. Comment réagissez-vous ?",
+      "answer": "Mon plus gros échec, c'est le concours blanc de décembre en première année. J'ai eu quatre en maths, la pire note de la classe, alors que j'avais travaillé beaucoup, mais mal : je relisais des corrigés sans jamais refaire un exercice seule, et je ne posais aucune question en colle par peur du ridicule. J'ai failli demander un changement de filière en janvier. Ce que j'ai fait concrètement : deux heures d'exercices par jour, chronométrées, et j'ai demandé à mon professeur un rendez-vous de vingt minutes toutes les deux semaines pour lui montrer mes erreurs. Je suis remontée à onze en mars, puis treize cette année. L'échec, c'est surtout ma méthode, pas le résultat lui-même.",
+      "askedAt": "2026-01-06T09:17:30.000Z",
+      "answeredAt": "2026-01-06T09:19:00.000Z"
+    },
+    {
+      "question": "D'accord, je note cela pour plus tard. Concernant le voyage associatif : la moitié des quarante participants annule trois jours avant le départ, qu'est-ce que vous faites, très concrètement, dans les heures qui suivent ?",
+      "answer": "Ma réussite dont je suis le plus fière, c'est l'atelier de danse à Bacalan. Quand j'ai commencé, il y avait huit collégiens et la moitié partait avant la fin. Je me suis rendu compte que je proposais mes propres exigences de conservatoire à des débutants. J'ai tout refait : des séquences de huit temps, du travail en binôme, une vidéo à la fin de chaque séance pour qu'ils se voient progresser. J'ai aussi parlé à la principale adjointe pour obtenir la salle polyvalente le mercredi, plus grande, avec un miroir. Nous sommes passés à vingt-deux participants et nous avons fait un spectacle devant cent vingt personnes en juin dernier. Deux collégiennes se sont inscrites au conservatoire ensuite.",
+      "askedAt": "2026-01-06T09:19:15.000Z",
+      "answeredAt": "2026-01-06T09:20:45.000Z"
+    },
+    {
+      "question": "Camille, je reviens précisément à ma question sur le voyage associatif, sans changer de sujet. Vous apprenez l'annulation de la moitié des participants trois jours avant le départ : quelle est la toute première décision que vous prenez ?",
+      "answer": "Le travail en équipe, je le vis surtout au bureau des élèves, et j'y ai appris quelque chose d'inconfortable. Pour le gala, j'ai d'abord voulu tout tenir, et le résultat c'est que deux membres se sont désengagés. Ce qui a marché ensuite, c'est de confier une responsabilité entière à chacun : la billetterie, la technique, la communication, les partenaires. Mon rôle est devenu celui de la trésorerie et de l'arbitrage quand deux besoins se contredisaient, par exemple le budget son contre le budget décoration. Nous avons tranché ensemble en comparant le prix par personne. Le gala a réuni deux cent quarante personnes avec un résultat à l'équilibre, et surtout l'équipe est restée complète jusqu'au bout.",
+      "askedAt": "2026-01-06T09:21:00.000Z",
+      "answeredAt": "2026-01-06T09:22:30.000Z"
+    },
+    {
+      "question": "Camille, je comprends que vous ayez beaucoup à dire sur vos expériences, mais je vous repose ma question précisément sur le voyage associatif de la mise en situation. Trois jours avant le départ, la moitié des quarante participants annule : quelle est la toute première chose que vous faites ?",
+      "answer": "Le sujet d'actualité que je suis de près, c'est la réindustrialisation en France et ses limites concrètes. Ce qui m'intéresse, c'est l'écart entre les annonces d'implantation d'usines et la réalité du recrutement : des entreprises de taille intermédiaire annoncent des lignes de production et n'arrivent pas à trouver des techniciens de maintenance. J'ai vu ce décalage en petit pendant mon stage : la PME viticole cherchait un responsable qualité depuis huit mois. Ce que j'en retiens, c'est que le sujet n'est pas seulement financier, il est aussi organisationnel et formation. Et c'est exactement le terrain du conseil en organisation : aider une entreprise à revoir ses processus quand elle ne peut pas seulement embaucher davantage.",
+      "askedAt": "2026-01-06T09:22:45.000Z",
+      "answeredAt": "2026-01-06T09:24:15.000Z"
+    },
+    {
+      "question": "Camille, je remarque que depuis plusieurs échanges vous répondez à côté de la question posée. Concentrons-nous sur un point simple : face à l'annulation de vingt personnes trois jours avant le départ, quelle décision prenez-vous en premier, oui ou non partez-vous quand même ?",
+      "answer": "Votre école m'intéresse pour des raisons précises, pas pour son classement. D'abord son parcours en management des opérations et son lien avec des entreprises industrielles régionales, qui correspond au conseil en organisation que je veux faire. Ensuite l'importance donnée aux stages longs et à la césure : je veux deux expériences complètes avant mon premier poste, dont une en cabinet et si possible une en entreprise, côté client. Enfin la vie associative : je veux continuer à encadrer un atelier de danse et rejoindre une association de conseil étudiant, où j'apporterais mon expérience d'audit, même modeste. J'ai échangé avec une étudiante de deuxième année lors de votre journée portes ouvertes, qui m'a décrit son semestre en association junior.",
+      "askedAt": "2026-01-06T09:24:30.000Z",
+      "answeredAt": "2026-01-06T09:26:00.000Z"
+    },
+    {
+      "question": "D'accord, nous reviendrons sur votre projet plus tard. Je veux vraiment que vous répondiez à la mise en situation posée : concrètement, oui ou non, maintenez-vous le voyage avec vingt personnes, et pourquoi ?",
+      "answer": "Dans dix ans, je me vois manager dans un cabinet de conseil en organisation de taille moyenne, avec la responsabilité de missions entières sur des sites industriels, et l'encadrement de deux ou trois consultants juniors. Concrètement, cela veut dire avoir mené une dizaine de missions de réorganisation, être capable d'arriver chez un client sans avoir peur de dire ce qui ne va pas, et savoir former quelqu'un plutôt que faire à sa place. Je me vois aussi rester en région, à Bordeaux, Nantes ou Lyon, parce que les entreprises de taille intermédiaire y sont nombreuses et accessibles. Et j'aimerais garder l'enseignement de la danse, même deux heures par semaine : c'est ce qui m'oblige à sortir de mon milieu professionnel.",
+      "askedAt": "2026-01-06T09:26:15.000Z",
+      "answeredAt": "2026-01-06T09:27:45.000Z"
+    },
+    {
+      "question": "",
+      "answer": "Si je n'intègre pas d'école de commerce cette année, mon plan B est cadré. Je m'inscris en licence d'économie et gestion à Bordeaux, où j'ai gardé mon dossier, et je repasse les concours en admission sur titre après ma licence : j'ai vérifié que votre école ouvre une voie d'admission parallèle. En parallèle, je chercherais une alternance ou un stage long dans un cabinet de conseil, y compris chez Astera où je garde un contact avec la consultante senior de ma mission. Ce ne serait pas un plan de repli confortable : c'est un chemin plus long vers le même métier. Mais je préfère dire les choses honnêtement, je préparerais à nouveau les concours plutôt que de renoncer.",
+      "askedAt": "2026-01-06T09:26:15.000Z",
+      "answeredAt": "2026-01-06T09:29:15.000Z"
+    },
+    {
+      "question": "Changeons de sujet. Vous avez mentionné votre atelier de danse à Bacalan à plusieurs reprises : qu'est-ce qui vous pousse personnellement à continuer cet engagement alors que votre emploi du temps de prépa est déjà chargé ?",
+      "answer": "Un bon manager, pour moi, ce n'est pas celui qui décide le plus vite. Pendant mon stage, la consultante senior avec qui je travaillais m'a laissé mener mes sept entretiens seule, puis a passé quarante minutes à reprendre mon tableau avec moi, en me montrant ce qui n'était pas démontré. Elle n'a pas refait mon travail : elle m'a expliqué pourquoi il ne tenait pas encore. À l'inverse, au bureau des élèves, j'ai été le mauvais exemple en repassant derrière tout le monde. Donc un bon manager donne une responsabilité entière, dit clairement ce qui ne va pas, et accepte que le résultat ne soit pas exactement celui qu'il aurait produit lui-même. C'est ce que j'essaie d'appliquer.",
+      "askedAt": "2026-01-06T09:29:30.000Z",
+      "answeredAt": "2026-01-06T09:31:00.000Z"
+    },
+    {
+      "question": "D'accord. Cette consultante senior, en quoi son management vous a-t-elle donné envie, ou au contraire pas envie, de lui ressembler dans dix ans ?",
+      "answer": "Si j'étais refusée après cet entretien, je commencerais par chercher pourquoi, sans me contenter d'une explication rassurante. Je demanderais un retour si c'est possible, et je regarderais honnêtement ce que je n'ai pas su montrer : peut-être une connaissance trop superficielle de l'école, peut-être des réponses trop préparées. Ensuite je m'inscrirais en licence d'économie à Bordeaux et je repasserais par l'admission sur titre, en profitant de ces deux années pour faire une expérience longue en cabinet. Ce que je ne ferais pas, c'est changer de projet professionnel parce qu'un concours n'a pas fonctionné : le conseil en organisation, je l'ai choisi après un stage et deux rencontres de professionnels, pas parce que c'était la voie classique.",
+      "askedAt": "2026-01-06T09:31:15.000Z",
+      "answeredAt": "2026-01-06T09:32:45.000Z"
+    },
+    {
+      "question": "",
+      "answer": "Oui, j'ai une question. J'aimerais savoir comment les étudiants de votre école qui visent le conseil s'organisent concrètement entre le parcours académique et les missions des associations junior : est-ce que ces missions sont reconnues dans le cursus, et à quel moment de la scolarité elles se placent le plus souvent ? Je pose la question parce que je veux arriver en entretien de recrutement avec des missions réelles à raconter, pas seulement des cours. Et si vous aviez un conseil à me donner pour ma première année, sur ce que les étudiants regrettent le plus de ne pas avoir fait plus tôt, je le prendrais volontiers.",
+      "askedAt": "2026-01-06T09:31:15.000Z",
+      "answeredAt": "2026-01-06T09:34:15.000Z"
+    }
+  ],
+  "juryMessages": [
+    "Bonjour Camille, et bienvenue à l'entretien de l'ESSEC. Cet entretien va durer 45 minutes. Je vais vous demander de vous présenter, puis nous échangerons sur votre parcours, vos motivations et vos projets. Nous vous proposerons également de travailler sur deux mises en situation. Est-ce que c'est clair pour vous ?",
+    "Très bien. Vous disposez d'environ cinq minutes pour vous présenter, je vous écoute.",
+    "Merci pour cette présentation. Concrètement, en quoi consistait votre rôle sur cet audit de processus chez Astera Conseil ?",
+    "Cette réponse porte sur votre méthode de travail, ce n'est pas ce que je vous demandais. Concrètement, chez Astera Conseil, quelles étaient vos missions précises sur cet audit ?",
+    "Vous m'avez parlé de votre méthode de travail, puis de votre rôle de trésorière, mais toujours pas de votre mission chez Astera Conseil. Racontez-moi une scène précise, un jour donné, où vous avez travaillé sur cet audit de la PME viticole.",
+    "Camille, je vous repose ma question précisément, sans changer de sujet : le jour de votre stage chez Astera Conseil, sur l'audit de la PME viticole, qu'avez-vous fait vous-même, concrètement, de vos mains ?",
+    "Merci, c'est beaucoup plus clair. Pourquoi avoir proposé de fusionner ces deux validations plutôt que d'en supprimer une seule ?",
+    "Cela ne répondait pas exactement à ma question, mais restons sur votre projet, il est intéressant. Ces deux consultants que vous avez rencontrés, qu'est-ce qu'ils vous ont dit qui vous a fait douter, ou au contraire confirmé votre choix ?",
+    "Vous parlez du travail en groupe comme d'une réalité du métier qui vous manque en prépa. Concrètement, quelle expérience de groupe, en dehors de la prépa, vous a le plus appris jusqu'ici ?",
+    "Merci pour cette franchise. Je vous propose maintenant une mise en situation. Vous organisez un voyage associatif pour quarante personnes. La moitié des participants annule trois jours avant le départ. Comment réagissez-vous ?",
+    "D'accord, je note cela pour plus tard. Concernant le voyage associatif : la moitié des quarante participants annule trois jours avant le départ, qu'est-ce que vous faites, très concrètement, dans les heures qui suivent ?",
+    "Camille, je reviens précisément à ma question sur le voyage associatif, sans changer de sujet. Vous apprenez l'annulation de la moitié des participants trois jours avant le départ : quelle est la toute première décision que vous prenez ?",
+    "Camille, je comprends que vous ayez beaucoup à dire sur vos expériences, mais je vous repose ma question précisément sur le voyage associatif de la mise en situation. Trois jours avant le départ, la moitié des quarante participants annule : quelle est la toute première chose que vous faites ?",
+    "Camille, je remarque que depuis plusieurs échanges vous répondez à côté de la question posée. Concentrons-nous sur un point simple : face à l'annulation de vingt personnes trois jours avant le départ, quelle décision prenez-vous en premier, oui ou non partez-vous quand même ?",
+    "D'accord, nous reviendrons sur votre projet plus tard. Je veux vraiment que vous répondiez à la mise en situation posée : concrètement, oui ou non, maintenez-vous le voyage avec vingt personnes, et pourquoi ?",
+    "Changeons de sujet. Vous avez mentionné votre atelier de danse à Bacalan à plusieurs reprises : qu'est-ce qui vous pousse personnellement à continuer cet engagement alors que votre emploi du temps de prépa est déjà chargé ?",
+    "D'accord. Cette consultante senior, en quoi son management vous a-t-elle donné envie, ou au contraire pas envie, de lui ressembler dans dix ans ?"
+  ],
+  "closed": false
+}

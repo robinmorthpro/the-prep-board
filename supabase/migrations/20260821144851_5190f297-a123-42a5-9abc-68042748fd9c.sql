@@ -1,0 +1,2 @@
+ALTER TABLE public.interview_sessions ADD COLUMN IF NOT EXISTS difficulty text NOT NULL DEFAULT 'classique';
+UPDATE public.interview_sessions SET difficulty = 'classique' WHERE difficulty IS NULL OR difficulty = '';

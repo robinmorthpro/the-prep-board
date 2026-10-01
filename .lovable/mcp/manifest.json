@@ -1,0 +1,94 @@
+{
+  "version": 1,
+  "sdk_version": "0.28.0",
+  "path": "/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://hgcagshsgezlvqdaezes.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "vivaldi-oral-coach",
+      "version": "0.1.0",
+      "title": "The Prepboard Oral Coach"
+    },
+    "tools": [
+      {
+        "name": "get_profile",
+        "title": "Profil du candidat",
+        "description": "Récupère le profil de préparation du candidat connecté (identité, parcours, écoles visées) ainsi que son projet professionnel.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_experiences",
+        "title": "Lister les expériences",
+        "description": "Liste les expériences travaillées par le candidat connecté (catégorie, récit, anecdotes, statut, feedback IA).",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "category": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Filtre optionnel sur la catégorie."
+            },
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "description": "Nombre maximum de résultats (défaut 20)."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_interview_sessions",
+        "title": "Lister les entretiens simulés",
+        "description": "Liste les entretiens simulés du candidat connecté (école, format, difficulté, statut) avec le débrief et, en option, les échanges.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "includeTurns": {
+              "type": "boolean",
+              "description": "Inclure les échanges mot pour mot (défaut false)."
+            },
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 20,
+              "description": "Nombre maximum de sessions (défaut 5)."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}

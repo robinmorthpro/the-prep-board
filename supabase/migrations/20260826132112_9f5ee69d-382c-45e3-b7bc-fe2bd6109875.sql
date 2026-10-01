@@ -1,0 +1,1 @@
+ALTER TABLE public.experiences ADD COLUMN story_title TEXT NOT NULL DEFAULT '';
