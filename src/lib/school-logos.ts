@@ -1,54 +1,54 @@
 /** Logos des écoles BCE / Ecricome, hébergés sur le CDN Lovable. */
-import hec_parisLogo from "@/assets/schools/hec-paris.png.asset.json";
-import essecLogo from "@/assets/schools/essec.png.asset.json";
-import escpLogo from "@/assets/schools/escp.png.asset.json";
-import edhecLogo from "@/assets/schools/edhec.png.asset.json";
-import emlyonLogo from "@/assets/schools/emlyon.png.asset.json";
-import skemaLogo from "@/assets/schools/skema.png.asset.json";
-import audenciaLogo from "@/assets/schools/audencia.png.asset.json";
-import neomaLogo from "@/assets/schools/neoma.png.asset.json";
-import gemLogo from "@/assets/schools/gem.png.asset.json";
-import kedgeLogo from "@/assets/schools/kedge.png.asset.json";
-import tbsLogo from "@/assets/schools/tbs.png.asset.json";
-import rennes_sbLogo from "@/assets/schools/rennes-sb.png.asset.json";
-import montpellier_bsLogo from "@/assets/schools/montpellier-bs.png.asset.json";
-import icnLogo from "@/assets/schools/icn.png.asset.json";
-import exceliaLogo from "@/assets/schools/excelia.png.asset.json";
-import em_strasbourgLogo from "@/assets/schools/em-strasbourg.png.asset.json";
-import bsbLogo from "@/assets/schools/bsb.png.asset.json";
-import em_normandieLogo from "@/assets/schools/em-normandie.png.asset.json";
-import isc_parisLogo from "@/assets/schools/isc-paris.png.asset.json";
-import esc_clermontLogo from "@/assets/schools/esc-clermont.png.asset.json";
-import imt_bsLogo from "@/assets/schools/imt-bs.png.asset.json";
-import inseecLogo from "@/assets/schools/inseec.png.asset.json";
-import scbsLogo from "@/assets/schools/scbs.png.asset.json";
-import brest_bsLogo from "@/assets/schools/brest-bs.png.asset.json";
+import hec_parisLogo from "@/assets/schools/hec-paris.png";
+import essecLogo from "@/assets/schools/essec.png";
+import escpLogo from "@/assets/schools/escp.png";
+import edhecLogo from "@/assets/schools/edhec.png";
+import emlyonLogo from "@/assets/schools/emlyon.png";
+import skemaLogo from "@/assets/schools/skema.png";
+import audenciaLogo from "@/assets/schools/audencia.png";
+import neomaLogo from "@/assets/schools/neoma.png";
+import gemLogo from "@/assets/schools/gem.png";
+import kedgeLogo from "@/assets/schools/kedge.png";
+import tbsLogo from "@/assets/schools/tbs.png";
+import rennes_sbLogo from "@/assets/schools/rennes-sb.png";
+import montpellier_bsLogo from "@/assets/schools/montpellier-bs.png";
+import icnLogo from "@/assets/schools/icn.png";
+import exceliaLogo from "@/assets/schools/excelia.png";
+import em_strasbourgLogo from "@/assets/schools/em-strasbourg.png";
+import bsbLogo from "@/assets/schools/bsb.png";
+import em_normandieLogo from "@/assets/schools/em-normandie.png";
+import isc_parisLogo from "@/assets/schools/isc-paris.png";
+import esc_clermontLogo from "@/assets/schools/esc-clermont.png";
+import imt_bsLogo from "@/assets/schools/imt-bs.png";
+import inseecLogo from "@/assets/schools/inseec.png";
+import scbsLogo from "@/assets/schools/scbs.png";
+import brest_bsLogo from "@/assets/schools/brest-bs.png";
 
 export const SCHOOL_LOGOS: Record<string, string> = {
-  "HEC Paris": hec_parisLogo.url,
-  "ESSEC": essecLogo.url,
-  "ESCP": escpLogo.url,
-  "EDHEC": edhecLogo.url,
-  "emlyon": emlyonLogo.url,
-  "SKEMA": skemaLogo.url,
-  "Audencia": audenciaLogo.url,
-  "NEOMA": neomaLogo.url,
-  "GEM (Grenoble EM)": gemLogo.url,
-  "KEDGE": kedgeLogo.url,
-  "TBS Education": tbsLogo.url,
-  "Rennes School of Business": rennes_sbLogo.url,
-  "Montpellier BS": montpellier_bsLogo.url,
-  "ICN Business School": icnLogo.url,
-  "Excelia BS (La Rochelle)": exceliaLogo.url,
-  "EM Strasbourg": em_strasbourgLogo.url,
-  "BSB (Burgundy School of Business)": bsbLogo.url,
-  "EM Normandie": em_normandieLogo.url,
-  "ISC Paris": isc_parisLogo.url,
-  "ESC Clermont BS": esc_clermontLogo.url,
-  "IMT-BS": imt_bsLogo.url,
-  "INSEEC Grande \u00c9cole": inseecLogo.url,
-  "SCBS (South Champagne BS)": scbsLogo.url,
-  "Brest Business School": brest_bsLogo.url,
+  "HEC Paris": hec_parisLogo,
+  "ESSEC": essecLogo,
+  "ESCP": escpLogo,
+  "EDHEC": edhecLogo,
+  "emlyon": emlyonLogo,
+  "SKEMA": skemaLogo,
+  "Audencia": audenciaLogo,
+  "NEOMA": neomaLogo,
+  "GEM (Grenoble EM)": gemLogo,
+  "KEDGE": kedgeLogo,
+  "TBS Education": tbsLogo,
+  "Rennes School of Business": rennes_sbLogo,
+  "Montpellier BS": montpellier_bsLogo,
+  "ICN Business School": icnLogo,
+  "Excelia BS (La Rochelle)": exceliaLogo,
+  "EM Strasbourg": em_strasbourgLogo,
+  "BSB (Burgundy School of Business)": bsbLogo,
+  "EM Normandie": em_normandieLogo,
+  "ISC Paris": isc_parisLogo,
+  "ESC Clermont BS": esc_clermontLogo,
+  "IMT-BS": imt_bsLogo,
+  "INSEEC Grande \u00c9cole": inseecLogo,
+  "SCBS (South Champagne BS)": scbsLogo,
+  "Brest Business School": brest_bsLogo,
 };
 
 export function schoolLogo(school: string): string | undefined {

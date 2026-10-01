@@ -22,10 +22,10 @@ import {
   TEMOIGNAGES_HOME,
   getConcours,
 } from "@/lib/site-content";
-import heroAsset from "@/assets/site/hero-oral.jpg.asset.json";
-import amphiAsset from "@/assets/site/amphi-vide.jpg.asset.json";
-import repetitionAsset from "@/assets/site/repetition.jpg.asset.json";
-import campusAsset from "@/assets/site/campus-paris.jpg.asset.json";
+import heroAsset from "@/assets/site/hero-oral.jpg";
+import amphiAsset from "@/assets/site/amphi-vide.jpg";
+import repetitionAsset from "@/assets/site/repetition.jpg";
+import campusAsset from "@/assets/site/campus-paris.jpg";
 
 const TITLE = "The Prepboard : la préparation aux concours réinventée";
 const DESCRIPTION =
@@ -114,7 +114,7 @@ function Home() {
       <section className="relative isolate flex min-h-[92svh] items-end overflow-hidden bg-[var(--ink)] text-[var(--craie)]">
         <img
           ref={heroImg}
-          src={heroAsset.url}
+          src={heroAsset}
           alt="Un candidat répond aux questions du jury dans une salle d'examen historique"
           className="absolute inset-0 size-full scale-[1.15] object-cover opacity-60"
           loading="eager"
@@ -185,7 +185,7 @@ function Home() {
           <Reveal delay={150}>
             <figure className="overflow-hidden">
               <img
-                src={repetitionAsset.url}
+                src={repetitionAsset}
                 alt="Deux étudiantes répètent un oral dans une bibliothèque, l'une parle pendant que l'autre prend des notes"
                 className="aspect-[8/5] w-full object-cover"
                 loading="lazy"
@@ -250,7 +250,7 @@ function Home() {
       <section className="relative isolate flex min-h-[70svh] items-center overflow-hidden bg-[var(--ink)] text-[var(--craie)]">
         <img
           ref={quoteImg}
-          src={amphiAsset.url}
+          src={amphiAsset}
           alt="Un amphithéâtre universitaire historique baigné de lumière"
           className="absolute inset-0 size-full scale-[1.12] object-cover opacity-45"
           loading="lazy"
@@ -313,7 +313,7 @@ function Home() {
       <section className="relative isolate flex min-h-[64svh] items-center overflow-hidden bg-[var(--ink)] text-[var(--craie)]">
         <img
           ref={ctaImg}
-          src={campusAsset.url}
+          src={campusAsset}
           alt="Des étudiants arrivent devant l'entrée d'une grande école parisienne"
           className="absolute inset-0 size-full scale-[1.12] object-cover opacity-40"
           loading="lazy"

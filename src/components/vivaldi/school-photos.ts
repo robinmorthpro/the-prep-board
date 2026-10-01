@@ -1,40 +1,40 @@
 /** Photos de campus utilisées dès qu'une école est mise en avant. */
-import hec from "@/assets/site/hec-jouy.jpg.asset.json";
-import essec from "@/assets/site/essec-cergy.jpg.asset.json";
-import edhec from "@/assets/site/edhec-lille.jpg.asset.json";
-import escp from "@/assets/site/campus-escp.jpg.asset.json";
-import emlyon from "@/assets/site/campus-emlyon.jpg.asset.json";
-import skema from "@/assets/site/campus-skema.jpg.asset.json";
-import neoma from "@/assets/site/campus-neoma.jpg.asset.json";
-import gem from "@/assets/site/campus-gem.jpg.asset.json";
-import kedge from "@/assets/site/campus-kedge.jpg.asset.json";
-import tbs from "@/assets/site/campus-tbs.jpg.asset.json";
-import icn from "@/assets/site/campus-icn.jpg.asset.json";
-import bsb from "@/assets/site/campus-bsb.jpg.asset.json";
-import clermont from "@/assets/site/campus-clermont.jpg.asset.json";
-import inseec from "@/assets/site/campus-inseec.jpg.asset.json";
-import scbs from "@/assets/site/campus-scbs.jpg.asset.json";
+import hec from "@/assets/site/hec-jouy.jpg";
+import essec from "@/assets/site/essec-cergy.jpg";
+import edhec from "@/assets/site/edhec-lille.jpg";
+import escp from "@/assets/site/campus-escp.jpg";
+import emlyon from "@/assets/site/campus-emlyon.jpg";
+import skema from "@/assets/site/campus-skema.jpg";
+import neoma from "@/assets/site/campus-neoma.jpg";
+import gem from "@/assets/site/campus-gem.jpg";
+import kedge from "@/assets/site/campus-kedge.jpg";
+import tbs from "@/assets/site/campus-tbs.jpg";
+import icn from "@/assets/site/campus-icn.jpg";
+import bsb from "@/assets/site/campus-bsb.jpg";
+import clermont from "@/assets/site/campus-clermont.jpg";
+import inseec from "@/assets/site/campus-inseec.jpg";
+import scbs from "@/assets/site/campus-scbs.jpg";
 import campusHaussmann from "@/assets/site/campus-haussmann.jpg";
 import campusModerne from "@/assets/site/campus-moderne.jpg";
 import campusClassique from "@/assets/site/campus-classique.jpg";
 
 /** Photos réelles des campus (source : Wikimedia Commons). */
 const PHOTOS: Record<string, string> = {
-  "HEC Paris": hec.url,
-  ESSEC: essec.url,
-  ESCP: escp.url,
-  EDHEC: edhec.url,
-  emlyon: emlyon.url,
-  SKEMA: skema.url,
-  NEOMA: neoma.url,
-  GEM: gem.url,
-  KEDGE: kedge.url,
-  "TBS Education": tbs.url,
-  ICN: icn.url,
-  BSB: bsb.url,
-  "ESC Clermont": clermont.url,
-  INSEEC: inseec.url,
-  SCBS: scbs.url,
+  "HEC Paris": hec,
+  ESSEC: essec,
+  ESCP: escp,
+  EDHEC: edhec,
+  emlyon: emlyon,
+  SKEMA: skema,
+  NEOMA: neoma,
+  GEM: gem,
+  KEDGE: kedge,
+  "TBS Education": tbs,
+  ICN: icn,
+  BSB: bsb,
+  "ESC Clermont": clermont,
+  INSEEC: inseec,
+  SCBS: scbs,
 };
 
 /** Visuels de campus génériques au format bannière, attribués de façon stable. */

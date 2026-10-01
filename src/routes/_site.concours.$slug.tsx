@@ -10,37 +10,37 @@ import {
   SectionTitle,
 } from "@/components/repetia/site";
 import { BRAND, CONCOURS, VS_CHATBOT, VS_PREPA, getConcours } from "@/lib/site-content";
-import carnetAsset from "@/assets/site/carnet-notes.jpg.asset.json";
-import amphiBoutmy from "@/assets/site/amphi-boutmy.jpg.asset.json";
-import hecJouy from "@/assets/site/hec-jouy.jpg.asset.json";
-import essecCergy from "@/assets/site/essec-cergy.jpg.asset.json";
-import edhecLille from "@/assets/site/edhec-lille.jpg.asset.json";
-import facMedecine from "@/assets/site/fac-medecine.jpg.asset.json";
+import carnetAsset from "@/assets/site/carnet-notes.jpg";
+import amphiBoutmy from "@/assets/site/amphi-boutmy.jpg";
+import hecJouy from "@/assets/site/hec-jouy.jpg";
+import essecCergy from "@/assets/site/essec-cergy.jpg";
+import edhecLille from "@/assets/site/edhec-lille.jpg";
+import facMedecine from "@/assets/site/fac-medecine.jpg";
 
 /** Un visuel documentaire par concours, photographié sur les lieux concernés. */
 const VISUELS: Record<string, { url: string; alt: string; credit: string }> = {
   "oral-sciences-po-paris": {
-    url: amphiBoutmy.url,
+    url: amphiBoutmy,
     alt: "Amphithéâtre Émile Boutmy, Sciences Po, rue Saint-Guillaume à Paris",
     credit: "Amphithéâtre Émile Boutmy, Sciences Po Paris",
   },
   "oraux-ecoles-de-commerce-cpge": {
-    url: hecJouy.url,
+    url: hecJouy,
     alt: "Le château du campus de HEC Paris à Jouy-en-Josas",
     credit: "Campus de HEC Paris, Jouy-en-Josas",
   },
   "oraux-ecoles-de-commerce-ast": {
-    url: essecCergy.url,
+    url: essecCergy,
     alt: "Le campus de l'ESSEC à Cergy",
     credit: "Campus de l'ESSEC, Cergy",
   },
   "oraux-ecoles-de-commerce-post-bac": {
-    url: edhecLille.url,
+    url: edhecLille,
     alt: "Le campus de l'EDHEC à Lille",
     credit: "Campus de l'EDHEC, Lille",
   },
   "oraux-pass-las": {
-    url: facMedecine.url,
+    url: facMedecine,
     alt: "La faculté de médecine de Montpellier",
     credit: "Faculté de médecine de Montpellier",
   },
@@ -232,7 +232,7 @@ function ConcoursPage() {
           </div>
           <figure>
             <img
-              src={carnetAsset.url}
+              src={carnetAsset}
               alt="Notes manuscrites et ordinateur pendant la préparation d'un oral"
               className="aspect-4/5 w-full object-cover"
               loading="lazy"
