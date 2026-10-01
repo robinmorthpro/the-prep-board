@@ -14,6 +14,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Toaster } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { HANDOFF_PARAM } from "@/lib/oauth-popup";
 
 function NotFoundComponent() {
   return (
@@ -135,6 +136,10 @@ function RootComponent() {
 
   useEffect(() => {
     const completePendingAuth = () => {
+      // Pop-up de relais OAuth (aperçu de l'éditeur) : /auth/callback doit d'abord
+      // déposer le jeton pour l'aperçu. Elle hérite du sessionStorage de l'aperçu
+      // (window.open) : sans cette exception, on partirait vers /dashboard trop tôt.
+      if (new URLSearchParams(window.location.search).has(HANDOFF_PARAM)) return;
       const destination = window.sessionStorage.getItem("repetia_auth_destination");
       if (!destination || !destination.startsWith("/") || destination.startsWith("//")) return;
       window.sessionStorage.removeItem("repetia_auth_destination");
