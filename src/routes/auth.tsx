@@ -2,7 +2,6 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable/index";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -104,14 +103,17 @@ function AuthPage() {
 
   async function google() {
     rememberDestination();
-    const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: callbackUrl() });
-    if (result.error) {
+    // OAuth Google géré par Supabase (projet perso), plus par Lovable Cloud.
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo: callbackUrl() },
+    });
+    if (error) {
       window.sessionStorage.removeItem("repetia_auth_destination");
       toast.error("Connexion Google impossible.");
       return;
     }
-    if (result.redirected) return;
-    navigate({ to: destination, replace: true });
+    // Succès : le navigateur est redirigé vers Google, puis vers /auth/callback.
   }
 
   return (
