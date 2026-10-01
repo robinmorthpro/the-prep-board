@@ -260,6 +260,24 @@ export type Database = {
         }
         Relationships: []
       }
+      oauth_handoffs: {
+        Row: {
+          created_at: string
+          nonce: string
+          refresh_token: string
+        }
+        Insert: {
+          created_at?: string
+          nonce: string
+          refresh_token: string
+        }
+        Update: {
+          created_at?: string
+          nonce?: string
+          refresh_token?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           acquisition_channel: string
