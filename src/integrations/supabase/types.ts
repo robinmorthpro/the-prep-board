@@ -475,7 +475,11 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      claim_oauth_handoff: { Args: { p_nonce: string }; Returns: string }
+      put_oauth_handoff: {
+        Args: { p_nonce: string; p_refresh_token: string }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never

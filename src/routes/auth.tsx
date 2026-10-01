@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useSession } from "@/hooks/useSession";
-import { OAUTH_POPUP_MESSAGE } from "@/lib/oauth-popup";
+import { HANDOFF_PARAM, claimHandoff, isFramed, newHandoffNonce } from "@/lib/oauth-popup";
 
 export const Route = createFileRoute("/auth")({
   validateSearch: (search: Record<string, unknown>): { mode?: "signin" | "signup"; next?: string } => {
@@ -54,6 +54,16 @@ function AuthPage() {
     if (!session) return;
     navigate({ to: destination, replace: true });
   }, [session, destination, navigate]);
+
+  // Relais OAuth (aperçu de l'éditeur) : minuterie d'interrogation, arrêtée au démontage.
+  const handoffTimer = useRef<number | null>(null);
+  function stopHandoffPolling() {
+    if (handoffTimer.current !== null) {
+      window.clearInterval(handoffTimer.current);
+      handoffTimer.current = null;
+    }
+  }
+  useEffect(() => stopHandoffPolling, []);
 
   async function signIn() {
     setBusy(true);
@@ -105,12 +115,17 @@ function AuthPage() {
   async function google() {
     rememberDestination();
     // OAuth Google géré par Supabase (projet perso), plus par Lovable Cloud.
-    // Dans l'iframe de l'éditeur Lovable, Google refuse de s'afficher (403) :
-    // on ouvre alors la connexion dans une pop-up, qui renvoie la session ici.
-    if (window.self !== window.top) {
+    // Dans l'iframe de l'éditeur Lovable : pop-up + relais en base (voir lib/oauth-popup).
+    if (isFramed()) {
+      stopHandoffPolling();
+      const nonce = newHandoffNonce();
+      const sep = callbackUrl().includes("?") ? "&" : "?";
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
-        options: { redirectTo: callbackUrl(), skipBrowserRedirect: true },
+        options: {
+          redirectTo: `${callbackUrl()}${sep}${HANDOFF_PARAM}=${nonce}`,
+          skipBrowserRedirect: true,
+        },
       });
       if (error || !data?.url) {
         window.sessionStorage.removeItem("repetia_auth_destination");
@@ -122,22 +137,23 @@ function AuthPage() {
         toast.error("Autorisez les fenêtres pop-up pour vous connecter avec Google.");
         return;
       }
-      const onMessage = async (e: MessageEvent) => {
-        if (e.origin !== window.location.origin || e.source !== popup) return;
-        const msg = e.data as { type?: string; access_token?: string; refresh_token?: string };
-        if (msg?.type !== OAUTH_POPUP_MESSAGE || !msg.access_token || !msg.refresh_token) return;
-        window.removeEventListener("message", onMessage);
-        const { error: setError } = await supabase.auth.setSession({
-          access_token: msg.access_token,
-          refresh_token: msg.refresh_token,
-        });
-        if (setError) {
+      // Interroge le relais toutes les 1,5 s pendant 3 min au maximum.
+      const startedAt = Date.now();
+      handoffTimer.current = window.setInterval(async () => {
+        if (Date.now() - startedAt > 3 * 60 * 1000) {
+          stopHandoffPolling();
+          return;
+        }
+        const refreshToken = await claimHandoff(nonce);
+        if (!refreshToken || handoffTimer.current === null) return;
+        stopHandoffPolling();
+        const { error: refreshError } = await supabase.auth.refreshSession({ refresh_token: refreshToken });
+        if (refreshError) {
           toast.error("Connexion Google impossible.");
           return;
         }
         navigate({ to: destination, replace: true });
-      };
-      window.addEventListener("message", onMessage);
+      }, 1500);
       return;
     }
     const { error } = await supabase.auth.signInWithOAuth({
