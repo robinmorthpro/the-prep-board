@@ -89,6 +89,11 @@ function AuthPage() {
       toast.error(error.message);
       return;
     }
+    if (data.user && (data.user.identities?.length ?? 0) === 0) {
+      window.sessionStorage.removeItem("repetia_auth_destination");
+      toast.error("Un compte existe déjà avec cet email. Utilisez l'onglet Connexion.");
+      return;
+    }
     if (data.session) {
       toast.success("Compte créé. Vous pouvez commencer le module 1.");
       navigate({ to: destination, replace: true });
