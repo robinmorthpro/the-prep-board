@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Session } from "@supabase/supabase-js";
-import { HANDOFF_PARAM, putHandoff } from "@/lib/oauth-popup";
+import { HANDOFF_PARAM, forgetLocalSession, putHandoff } from "@/lib/oauth-popup";
 
 function safePath(value: unknown): string | undefined {
   if (typeof value !== "string") return undefined;
@@ -49,10 +49,11 @@ function AuthCallback() {
         return;
       }
       // Pop-up ouverte depuis l'aperçu de l'éditeur Lovable : on dépose le jeton
-      // pour l'aperçu, puis on se déconnecte ici (localement : la session reste
-      // valide côté serveur, c'est l'aperçu qui la reprend) et on ferme.
+      // pour l'aperçu, puis on oublie la session ICI sans appeler signOut :
+      // signOut (même scope "local") révoque la session côté serveur, ce qui
+      // invaliderait le jeton que l'aperçu va reprendre.
       const ok = await putHandoff(handoff, session.refresh_token);
-      await supabase.auth.signOut({ scope: "local" });
+      forgetLocalSession();
       setHandedOff(ok ? "ok" : "error");
       if (ok) window.setTimeout(() => window.close(), 800);
     };

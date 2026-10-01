@@ -45,3 +45,19 @@ export async function claimHandoff(nonce: string): Promise<string | null> {
   if (error || typeof data !== "string" || !data) return null;
   return data;
 }
+
+/**
+ * Pop-up : oublie la session dans CE navigateur sans la révoquer côté serveur
+ * (contrairement à signOut), pour que l'aperçu puisse la reprendre. On coupe
+ * aussi le rafraîchissement automatique pour ne pas consommer le jeton.
+ */
+export function forgetLocalSession(): void {
+  void supabase.auth.stopAutoRefresh();
+  try {
+    for (const key of Object.keys(window.localStorage)) {
+      if (key.startsWith("sb-") && key.includes("auth-token")) window.localStorage.removeItem(key);
+    }
+  } catch {
+    // stockage indisponible : la pop-up se ferme de toute façon
+  }
+}
