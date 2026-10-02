@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useRouterState } from "@tanstack/react-router";
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { Check, ChevronDown, Menu, X, Minus, Quote } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/accordion";
 import { useSession } from "@/hooks/useSession";
 import { cn } from "@/lib/utils";
-import { Wordmark } from "./Mark";
 import { BRAND, CONCOURS, type Temoignage } from "@/lib/site-content";
 
 /* ------------------------------------------------------------- mouvement */
@@ -503,12 +502,20 @@ export function SiteHeader() {
   const { session } = useSession();
   const [open, setOpen] = useState(false);
   const [concoursOpen, setConcoursOpen] = useState(false);
+  const pathname = useRouterState({ select: (st) => st.location.pathname });
+  const overlay = pathname === "/";
+  const cta = "Je commence ma préparation";
 
   return (
-    <header className="sticky top-0 z-50 border-b border-[var(--ink)]/10 bg-[var(--coquille)]/92 backdrop-blur">
-      <div className="mx-auto flex max-w-[1400px] items-center justify-between gap-4 px-6 py-4">
-        <Link to="/" aria-label="The Prepboard, accueil">
-          <Wordmark />
+    <header
+      className={cn(
+        "z-50 text-white",
+        overlay ? "absolute inset-x-0 top-0 bg-transparent" : "sticky top-0 bg-[var(--ink)]",
+      )}
+    >
+      <div className="mx-auto flex max-w-[1440px] items-center justify-between gap-14 px-5 py-5 text-[18px] font-medium whitespace-nowrap md:px-12 md:py-[26px]">
+        <Link to="/" aria-label="The Prepboard, accueil" className="flex flex-none items-center">
+          <img src="/brand/logo-fond-sombre.svg" alt="The Prepboard" className="block h-6 w-auto md:h-7" />
         </Link>
 
         <nav aria-label="Navigation principale" className="hidden items-center gap-6 lg:flex">
@@ -519,25 +526,22 @@ export function SiteHeader() {
           >
             <button
               type="button"
-              className="flex items-center gap-1 text-[15px] font-medium hover:text-[var(--rouge)]"
+              className="flex cursor-pointer items-center gap-1.5 hover:text-[var(--ciel)]"
               aria-expanded={concoursOpen}
               onClick={() => setConcoursOpen((v) => !v)}
             >
               Concours préparés
-              <ChevronDown
-                aria-hidden
-                className={cn("size-4 transition-transform", concoursOpen && "rotate-180")}
-              />
+              <ChevronDown aria-hidden className={cn("size-3.5 transition-transform", concoursOpen && "rotate-180")} />
             </button>
             {concoursOpen ? (
-              <div className="absolute left-0 top-full pt-2">
-                <div className="w-64 overflow-hidden rounded-lg border border-[var(--ink)]/12 bg-[var(--craie)] shadow-lg">
+              <div className="absolute left-0 top-full pt-3">
+                <div className="w-72 overflow-hidden rounded-[14px] bg-white p-2 text-[var(--ink)] shadow-[0_10px_24px_rgba(11,18,32,0.18)]">
                   {CONCOURS.map((c) => (
                     <Link
                       key={c.slug}
                       to="/concours/$slug"
                       params={{ slug: c.slug }}
-                      className="block px-4 py-3 text-[14.5px] hover:bg-[var(--coquille)] hover:text-[var(--rouge)]"
+                      className="block rounded-[10px] px-4 py-3 text-[16px] whitespace-normal hover:bg-[var(--paper)]"
                     >
                       {c.nav}
                     </Link>
@@ -546,27 +550,27 @@ export function SiteHeader() {
               </div>
             ) : null}
           </div>
-          <a href="/#methode" className="text-[15px] font-medium hover:text-[var(--rouge)]">
+          <a href="/#methode" className="hover:text-[var(--ciel)]">
             La méthode The Prepboard
           </a>
-          <Link to="/blog" className="text-[15px] font-medium hover:text-[var(--rouge)]">
+          <Link to="/blog" className="hover:text-[var(--ciel)]">
             Blog
           </Link>
         </nav>
 
         <div className="hidden items-center gap-2 lg:flex">
           {session ? (
-            <Button size="sm" asChild>
-              <Link to="/dashboard">Mon espace d'entraînement</Link>
-            </Button>
+            <Link to="/dashboard" className="rounded-full bg-[var(--ciel)] px-[22px] py-[13px] font-semibold text-[var(--ink)] hover:opacity-90">
+              Mon espace d'entraînement
+            </Link>
           ) : (
             <>
-              <Button variant="ghost" size="sm" asChild>
-                <Link to="/auth" search={{ mode: "signin" }}>Se connecter</Link>
-              </Button>
-              <Button size="sm" asChild>
-                <Link to="/auth">Je commence l'entraînement</Link>
-              </Button>
+              <Link to="/auth" search={{ mode: "signin" }} className="px-3.5 py-2.5 hover:text-[var(--ciel)]">
+                Se connecter
+              </Link>
+              <Link to="/auth" className="rounded-full bg-[var(--ciel)] px-[22px] py-[13px] font-semibold text-[var(--ink)] hover:opacity-90">
+                {cta}
+              </Link>
             </>
           )}
         </div>
@@ -578,13 +582,13 @@ export function SiteHeader() {
           aria-expanded={open}
           onClick={() => setOpen((v) => !v)}
         >
-          {open ? <X className="size-5" /> : <Menu className="size-5" />}
+          {open ? <X className="size-6" /> : <Menu className="size-6" />}
         </button>
       </div>
 
       {open ? (
-        <div className="border-t border-border bg-[var(--craie)] px-6 py-5 lg:hidden">
-          <p className="label-mono">Concours préparés</p>
+        <div className="border-t border-white/12 bg-[var(--ink)] px-5 pt-5 pb-7 lg:hidden">
+          <p className="text-[13px] font-semibold tracking-[0.1em] text-[var(--gris-sombre)] uppercase">Concours préparés</p>
           <div className="mt-3 grid gap-2">
             {CONCOURS.map((c) => (
               <Link
@@ -592,38 +596,32 @@ export function SiteHeader() {
                 to="/concours/$slug"
                 params={{ slug: c.slug }}
                 onClick={() => setOpen(false)}
-                className="py-1 text-[16px]"
+                className="py-1 text-[17px]"
               >
                 {c.nav}
               </Link>
             ))}
           </div>
-          <div className="trait-deroulement my-5" />
-          <a href="/#methode" onClick={() => setOpen(false)} className="text-[16px]">
+          <div className="my-5 h-px bg-white/12" />
+          <a href="/#methode" onClick={() => setOpen(false)} className="block text-[17px]">
             La méthode The Prepboard
           </a>
-          <Link to="/blog" onClick={() => setOpen(false)} className="mt-3 block text-[16px]">
+          <Link to="/blog" onClick={() => setOpen(false)} className="mt-3 block text-[17px]">
             Blog
           </Link>
-          <div className="mt-5 grid gap-2">
+          <div className="mt-6 grid gap-2">
             {session ? (
-              <Button asChild>
-                <Link to="/dashboard" onClick={() => setOpen(false)}>
-                  Mon espace d'entraînement
-                </Link>
-              </Button>
+              <Link to="/dashboard" onClick={() => setOpen(false)} className="rounded-full bg-[var(--ciel)] px-6 py-3.5 text-center font-semibold text-[var(--ink)]">
+                Mon espace d'entraînement
+              </Link>
             ) : (
               <>
-                <Button variant="outline" asChild>
-                  <Link to="/auth" search={{ mode: "signin" }} onClick={() => setOpen(false)}>
-                    Se connecter
-                  </Link>
-                </Button>
-                <Button asChild>
-                  <Link to="/auth" onClick={() => setOpen(false)}>
-                    Je commence l'entraînement
-                  </Link>
-                </Button>
+                <Link to="/auth" search={{ mode: "signin" }} onClick={() => setOpen(false)} className="rounded-full border border-white/35 px-6 py-3.5 text-center font-medium">
+                  Se connecter
+                </Link>
+                <Link to="/auth" onClick={() => setOpen(false)} className="rounded-full bg-[var(--ciel)] px-6 py-3.5 text-center font-semibold text-[var(--ink)]">
+                  {cta}
+                </Link>
               </>
             )}
           </div>
@@ -634,59 +632,51 @@ export function SiteHeader() {
 }
 
 export function SiteFooter() {
+  const label = "m-0 text-[13px] font-semibold tracking-[0.1em] text-[var(--gris-sombre)] uppercase";
   return (
-    <footer className="bg-[var(--ink)] px-6 py-16 text-[var(--craie)]">
-      <div className="mx-auto max-w-[1400px]">
-        <div className="grid gap-12 md:grid-cols-[1.3fr_1fr_1fr]">
+    <footer className="bg-[var(--ink)] pt-16 pb-10 text-[18px] text-white md:pt-20 md:text-[20px]">
+      <div className="mx-auto max-w-[1440px] px-5 md:px-12">
+        <div className="grid gap-12 md:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)_minmax(0,1fr)]">
           <div>
-            <Wordmark tone="chalk" className="text-[1.75rem]" />
-            <p className="mt-5 max-w-xs text-[15px] leading-snug text-[var(--seyes)]">
-              {BRAND.baseline}
-            </p>
+            <img src="/brand/logo-fond-sombre.svg" alt="The Prepboard" className="block h-7 w-auto" />
+            <p className="mt-[18px] max-w-[300px] text-[var(--gris-sombre)]">{BRAND.baseline}</p>
           </div>
-
-          <nav aria-label="Concours" className="text-[14.5px]">
-            <p className="label-mono text-[var(--seyes)]">Concours préparés</p>
-            <ul className="mt-4 space-y-2.5">
+          <nav aria-label="Concours">
+            <p className={label}>Concours préparés</p>
+            <ul className="mt-5 grid gap-3">
               {CONCOURS.map((c) => (
                 <li key={c.slug}>
-                  <Link to="/concours/$slug" params={{ slug: c.slug }} className="hover:text-[var(--rouge-clair)]">
+                  <Link to="/concours/$slug" params={{ slug: c.slug }} className="hover:text-[var(--ciel)]">
                     {c.nav}
                   </Link>
                 </li>
               ))}
             </ul>
           </nav>
-          <nav aria-label="The Prepboard" className="text-[14.5px]">
-            <p className="label-mono text-[var(--seyes)]">The Prepboard</p>
-            <ul className="mt-4 space-y-2.5">
+          <nav aria-label="The Prepboard">
+            <p className={label}>The Prepboard</p>
+            <ul className="mt-5 grid gap-3">
               <li>
-                <a href="/#methode" className="hover:text-[var(--rouge-clair)]">
-                  La méthode The Prepboard
-                </a>
+                <a href="/#methode" className="hover:text-[var(--ciel)]">La méthode The Prepboard</a>
               </li>
               <li>
-                <Link to="/auth" className="hover:text-[var(--rouge-clair)]">
-                  Je me lance
-                </Link>
+                <Link to="/auth" className="hover:text-[var(--ciel)]">Je commence ma préparation</Link>
               </li>
               <li>
-                <Link to="/auth" search={{ mode: "signin" }} className="hover:text-[var(--rouge-clair)]">
-                  Se connecter
-                </Link>
+                <Link to="/test-gratuit" className="hover:text-[var(--ciel)]">Je teste gratuitement</Link>
               </li>
               <li>
-                <a href={`mailto:${BRAND.email}`} className="hover:text-[var(--rouge-clair)]">
-                  {BRAND.email}
-                </a>
+                <Link to="/auth" search={{ mode: "signin" }} className="hover:text-[var(--ciel)]">Se connecter</Link>
+              </li>
+              <li>
+                <a href={`mailto:${BRAND.email}`} className="break-all hover:text-[var(--ciel)]">{BRAND.email}</a>
               </li>
             </ul>
           </nav>
         </div>
-        <div className="mt-14 flex flex-col gap-2 border-t border-[var(--ink-2)] pt-6 text-[12.5px] text-[var(--seyes)] md:flex-row md:justify-between">
-          <p>© {new Date().getFullYear()} The Prepboard. Préparation aux concours.</p>
-          <p>{"\n"}</p>
-        </div>
+        <p className="mt-16 border-t border-white/12 pt-6 text-[15px] text-[var(--gris-sombre)] md:mt-[72px] md:text-[17px]">
+          © {new Date().getFullYear()} The Prepboard. Préparation aux concours.
+        </p>
       </div>
     </footer>
   );

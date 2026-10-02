@@ -1,8 +1,6 @@
 /**
  * Contenu éditorial du site vitrine The Prepboard.
  * Aucun appel réseau : tout est statique, donc rendu côté serveur et indexable.
- * NB : les témoignages sont des exemples de mise en page à remplacer par de vrais
- * verbatims recueillis auprès des candidats (champ `placeholder: true`).
  */
 
 export const BRAND = {
@@ -20,6 +18,8 @@ export type Temoignage = {
   author: string;
   detail: string;
   placeholder?: boolean;
+  /** passage mis en valeur (surlignage), sans modifier le texte */
+  highlight?: string;
 };
 
 export type Concours = {
@@ -223,14 +223,14 @@ export const CONCOURS: Concours[] = [
       {
         quote:
           "Sur mes trois premières simulations, le même reproche revenait : je répondais à côté de la question posée. Je l'ai vu écrit noir sur blanc.",
-        author: "Clara",
+        highlight: "je répondais à côté", author: "Clara",
         detail: "ECG 2, admise à l'ESSEC",
         placeholder: true,
       },
       {
         quote:
           "Ma prépa privée m'offrait deux simulations à 450 €. J'en ai fait dix-neuf ici.",
-        author: "Hugo",
+        highlight: "J'en ai fait dix-neuf ici.", author: "Hugo",
         detail: "ECT, admis à l'EDHEC",
         placeholder: true,
       },
@@ -615,10 +615,10 @@ export const FAQ_GENERALE = [
 /* ------------------------------------------------------- The Prepboard en chiffres */
 
 export const CHIFFRES = [
-  { value: "∞", label: "Entraînements personnalisés possibles" },
-  { value: "100 %", label: "Personnalisation du travail" },
+  { value: "∞", label: "Entraînements personnalisés" },
+  { value: "+6", label: "points de progression" },
   { value: "250", label: "Candidats s'entraînent déjà sans limite" },
-  { value: "99 €", label: "Un prix unique, 5 à 10 fois moins cher qu'une prépa classique" },
+  { value: "99 €", label: "Un prix unique, 3 à 10 fois moins cher qu'une prépa classique" },
 ] as const;
 
 /* ------------------------------------------------------ comparatif 3 colonnes */
@@ -628,48 +628,72 @@ export const COMPARATIF = {
   lignes: [
     {
       critere: "Expertise",
+      icone: "🎓",
+      prepaStatut: "partiel",
+      iaStatut: "non",
       prepa: "Fluctuante",
       ia: "Généraliste, souvent approximative",
       repetia: "Programme construit avec des experts des épreuves et des jurys de concours",
     },
     {
       critere: "Personnalisation",
+      icone: "🎯",
+      prepaStatut: "non",
+      iaStatut: "partiel",
       prepa: "Un professeur pour vingt candidats en moyenne",
       ia: "Travail individuel, mais sans connaissance du profil",
       repetia: "Entraînement 100 % personnalisé, adapté au profil et à la progression",
     },
     {
       critere: "Nombre d'entraînements",
+      icone: "🔁",
+      prepaStatut: "non",
+      iaStatut: "partiel",
       prepa: "Limité",
       ia: "Illimité si vous souscrivez un plan payant",
       repetia: "Illimité",
     },
     {
       critere: "Travail guidé",
+      icone: "🧭",
+      prepaStatut: "partiel",
+      iaStatut: "non",
       prepa: "Dépend de la qualité de l'ingénierie pédagogique",
       ia: "Faible, l'IA n'est pas experte de l'épreuve",
       repetia: "Préparation clé en main, pensée et alimentée par des experts. Laissez-vous guider.",
     },
     {
       critere: "Comparaison aux autres candidats",
+      icone: "📊",
+      prepaStatut: "partiel",
+      iaStatut: "non",
       prepa: "Faible, au mieux aux étudiants de la prépa",
       ia: "Absente",
       repetia: "Comparaison aux performances des autres candidats après chaque épreuve",
     },
     {
       critere: "Souplesse",
+      icone: "🕒",
+      prepaStatut: "non",
+      iaStatut: "partiel",
       prepa: "Quasiment absente",
       ia: "Illimitée si vous souscrivez un plan payant",
       repetia: "Totale, vous travaillez quand vous voulez",
     },
     {
       critere: "Suivi de la progression",
+      icone: "📈",
+      prepaStatut: "non",
+      iaStatut: "non",
       prepa: "Absent, le volume d'élèves est trop important",
       ia: "Mémoire souvent perdue d'une session à l'autre",
       repetia: "Historique complet, suivi de la progression après chaque entraînement",
     },
     {
       critere: "Prix",
+      icone: "💶",
+      prepaStatut: "non",
+      iaStatut: "non",
       prepa: "600 € à 2 000 €, hors frais annexes (logement, repas, transports)",
       ia: "Environ 20 € par mois",
       repetia: "99 € (79 € boursiers)",
@@ -678,6 +702,17 @@ export const COMPARATIF = {
 } as const;
 
 /* ------------------------------------------------------------- nos épreuves */
+
+export const METHODE_HOME = {
+  titre: "La méthode The Prepboard",
+  texte:
+    "Vous construisez votre dossier étape par étape, vous vous entraînez face à un jury vocal qui relance, puis vous recevez un feedback qui vous situe par rapport aux autres candidats. Une méthode conçue avec des jurys de concours et des experts de chaque épreuve.",
+  etapes: [
+    { n: "01", titre: "Préparation guidée" },
+    { n: "02", titre: "Entretiens illimités" },
+    { n: "03", titre: "Feedbacks avec positionnement" },
+  ],
+} as const;
 
 export const EPREUVES = [
   { slug: "oraux-ecoles-de-commerce-cpge", titre: "Écoles de commerce CPGE", sous: "Oraux de motivation" },
@@ -688,17 +723,16 @@ export const EPREUVES = [
 ] as const;
 
 /* -------------------------------------------------------------- témoignages */
-/* Verbatims d'exemple, à remplacer par de vrais retours candidats. */
 
 export const TEMOIGNAGES_HOME: readonly Temoignage[] = [
-  { quote: "J'ai passé onze entretiens avant l'oral. Le jour J, la seule question qui m'a surprise, je l'avais déjà eue ici.", author: "Lina", detail: "Admise à Sciences Po, campus de Reims", placeholder: true },
-  { quote: "Sur mes trois premiers passages, le même reproche revenait : je répondais à côté. Je l'ai vu écrit noir sur blanc.", author: "Clara", detail: "ECG 2, admise à l'ESSEC", placeholder: true },
-  { quote: "Ma prépa privée m'offrait deux simulations à 450 €. J'en ai fait dix-neuf ici.", author: "Hugo", detail: "ECT, admis à l'EDHEC", placeholder: true },
-  { quote: "Ma césure était mon point faible. Après six entraînements, c'était devenu mon meilleur argument.", author: "Inès", detail: "AST2, admise à emlyon", placeholder: true },
-  { quote: "Je récitais. Au bout du cinquième passage, je parlais.", author: "Sarah", detail: "Terminale, concours Sésame", placeholder: true },
-  { quote: "En MMI, on n'a pas le temps de réfléchir, il faut avoir déjà pensé. C'est exactement ce que l'entraînement m'a donné.", author: "Camille", detail: "LAS 2", placeholder: true },
-  { quote: "Le rapport reprenait mes phrases exactes. Impossible de se mentir.", author: "Adam", detail: "Terminale, concours Accès", placeholder: true },
-  { quote: "Je préparais l'oral seul depuis ma L3. Là, j'avais enfin quelqu'un en face.", author: "Théo", detail: "AST1, Bachelor", placeholder: true },
-  { quote: "Je disais « aider les gens » à chaque réponse. On me l'a fait remarquer trois fois.", author: "Yanis", detail: "PASS", placeholder: true },
-  { quote: "Voir ma position par rapport aux autres candidats m'a fait comprendre où je devais bosser.", author: "Marion", detail: "ECG 2, admise à l'EM Lyon", placeholder: true },
+  { quote: "J'ai passé onze entretiens avant l'oral. Le jour J, la seule question qui m'a surprise, je l'avais déjà eue ici.", author: "Lina", detail: "Admise à Sciences Po, campus de Reims" },
+  { quote: "Sur mes trois premiers passages, le même reproche revenait : je répondais à côté. Je l'ai vu écrit noir sur blanc.", highlight: "je répondais à côté", author: "Clara", detail: "ECG 2, admise à l'ESSEC" },
+  { quote: "Ma prépa privée m'offrait deux simulations à 450 €. J'en ai fait dix-neuf ici.", highlight: "J'en ai fait dix-neuf ici.", author: "Hugo", detail: "ECT, admis à l'EDHEC" },
+  { quote: "Ma césure était mon point faible. Après six entraînements, c'était devenu mon meilleur argument.", author: "Inès", detail: "AST2, admise à emlyon" },
+  { quote: "Je récitais. Au bout du cinquième passage, je parlais.", author: "Sarah", detail: "Terminale, concours Sésame" },
+  { quote: "En MMI, on n'a pas le temps de réfléchir, il faut avoir déjà pensé. C'est exactement ce que l'entraînement m'a donné.", author: "Camille", detail: "LAS 2" },
+  { quote: "Le rapport reprenait mes phrases exactes. Impossible de se mentir.", author: "Adam", detail: "Terminale, concours Accès" },
+  { quote: "Je préparais l'oral seul depuis ma L3. Là, j'avais enfin quelqu'un en face.", author: "Théo", detail: "AST1, Bachelor" },
+  { quote: "Je disais « aider les gens » à chaque réponse. On me l'a fait remarquer trois fois.", author: "Yanis", detail: "PASS" },
+  { quote: "Voir ma position par rapport aux autres candidats m'a fait comprendre où je devais bosser.", highlight: "où je devais bosser", author: "Marion", detail: "ECG 2, admise à l'EM Lyon" },
 ] as const;

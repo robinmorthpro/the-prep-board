@@ -293,3 +293,24 @@
   background-color: var(--ink);
   color: #ffffff;
 }
+
+/* Chiffres animés de l'accueil (maquette : @property --pbn) */
+@property --pbn {
+  syntax: "<integer>";
+  inherits: false;
+  initial-value: 0;
+}
+.pb-hcount {
+  counter-reset: pbn var(--pbn);
+  animation: pbcount 2s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
+}
+.pb-hcount::after {
+  content: counter(pbn);
+}
+@keyframes pbcount {
+  from { --pbn: 0; }
+  to { --pbn: var(--to); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pb-hcount { animation: none; --pbn: var(--to); }
+}
