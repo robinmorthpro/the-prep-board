@@ -131,14 +131,14 @@ export function Section({
     <section
       id={id}
       className={cn(
-        "px-6 py-24 md:py-32",
-        tone === "default" && "bg-[var(--coquille)]",
-        tone === "paper" && "bg-[var(--coquille-2)]",
-        tone === "ink" && "bg-[var(--ink)] text-[var(--craie)]",
+        "px-5 py-20 md:px-12 md:py-[120px]",
+        tone === "default" && "bg-white",
+        tone === "paper" && "bg-[var(--paper)]",
+        tone === "ink" && "bg-[var(--ink)] text-white",
         className,
       )}
     >
-      <div className={cn("mx-auto", wide ? "max-w-[1400px]" : "max-w-6xl")}>{children}</div>
+      <div className={cn("mx-auto", wide ? "max-w-[1344px]" : "max-w-[1200px]")}>{children}</div>
     </section>
   );
 }
@@ -156,15 +156,15 @@ export function SectionTitle({
   className?: string;
 }) {
   return (
-    <header className={cn("max-w-3xl", className)}>
-      <h2 className="text-[2rem] leading-[1.06] font-semibold tracking-[-0.025em] md:text-[3rem]">
+    <header className={cn("max-w-[880px]", className)}>
+      <h2 className="m-0 text-[36px] leading-[1.02] font-medium tracking-[-0.045em] md:text-[56px]">
         {title}
       </h2>
       {intro ? (
         <p
           className={cn(
-            "mt-6 max-w-2xl text-[17px] leading-relaxed",
-            tone === "chalk" ? "text-[var(--seyes)]" : "text-muted-foreground",
+            "mt-6 max-w-[720px] text-[18px] leading-[1.5] tracking-[-0.01em] md:text-[22px]",
+            tone === "chalk" ? "text-[var(--line)]" : "text-[var(--graphite)]",
           )}
         >
           {intro}
@@ -233,43 +233,26 @@ export function CompareTable({
   lignes: readonly { critere: string; autre: string; repetia: string }[];
 }) {
   return (
-    <div className="mt-12 overflow-x-auto">
-      <table className="w-full min-w-[640px] border-collapse text-left text-[15px]">
-        <thead>
-          <tr className="border-b border-border">
-            <th scope="col" className="label-mono py-3 pr-6 font-normal">
-              Critère
-            </th>
-            <th scope="col" className="label-mono py-3 pr-6 font-normal">
-              {colonnes[0]}
-            </th>
-            <th scope="col" className="label-mono py-3 font-normal text-[var(--rouge)]">
-              {colonnes[1]}
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {lignes.map((l) => (
-            <tr key={l.critere} className="border-b border-border align-top">
-              <th scope="row" className="py-5 pr-6 text-left font-semibold">
-                {l.critere}
-              </th>
-              <td className="py-5 pr-6 text-muted-foreground">
-                <span className="flex gap-2">
-                  <Minus aria-hidden className="mt-1.5 size-3.5 shrink-0 text-graphite" />
-                  {l.autre}
-                </span>
-              </td>
-              <td className="py-5">
-                <span className="flex gap-2">
-                  <Check aria-hidden className="mt-1 size-3.5 shrink-0 text-[var(--rouge)]" />
-                  {l.repetia}
-                </span>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className="mt-8 grid gap-2.5 rounded-[28px] bg-[var(--paper)] p-2 md:p-2.5">
+      {lignes.map((l) => (
+        <div key={l.critere} className="grid gap-3 rounded-[22px] bg-white p-5 md:grid-cols-[200px_1fr_1fr] md:gap-6 md:p-6">
+          <p className="m-0 text-[18px] font-semibold tracking-[-0.01em]">{l.critere}</p>
+          <div className="text-[15.5px] leading-relaxed text-[var(--graphite)]">
+            <p className="pill-label mb-1.5 text-[var(--gris-doux)]">{colonnes[0]}</p>
+            <span className="flex gap-2">
+              <Minus aria-hidden className="mt-1.5 size-3.5 shrink-0" />
+              {l.autre}
+            </span>
+          </div>
+          <div className="rounded-[14px] bg-[var(--bleu-pale)] p-4 text-[15.5px] leading-relaxed">
+            <p className="pill-label mb-1.5 text-[var(--bleu-texte)]">{colonnes[1]}</p>
+            <span className="flex gap-2">
+              <Check aria-hidden className="mt-1 size-3.5 shrink-0 text-[var(--bleu-texte)]" />
+              {l.repetia}
+            </span>
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
@@ -409,30 +392,33 @@ const INCLUS = [
 
 export function PriceBlock({ context }: { context?: string }) {
   return (
-    <div className="grid items-start gap-12 md:grid-cols-[1fr_1fr]">
-      <div>
-        <p className="label-mono">Accès complet</p>
-        <p className="mt-4 flex items-baseline gap-3">
-          <span className="text-[4.5rem] leading-none font-semibold tracking-[-0.03em]">
-            {BRAND.price} €
-          </span>
+    <div className="grid items-stretch gap-6 md:grid-cols-[1fr_1fr]">
+      <div className="rounded-[28px] bg-[var(--ink)] p-7 text-white md:p-10">
+        <p className="pill-label inline-flex rounded-full bg-white/10 px-3 py-1 text-[var(--ciel)]">Accès complet</p>
+        <p className="mt-6 text-[64px] leading-none font-medium tracking-[-0.045em] md:text-[88px]">
+          {BRAND.price} €
         </p>
-        <p className="mt-4 text-[17px] leading-relaxed text-muted-foreground">
+        <p className="mt-5 text-[17px] leading-relaxed text-[var(--line)]">
           Paiement unique, accès jusqu'à votre concours{context ? `, ${context}` : ""}. Le nombre de
           passages n'entre pas dans le prix.
         </p>
-        <p className="mt-3 text-[15px] leading-relaxed">
-          <span className="font-semibold">{BRAND.priceBoursier} € pour les boursiers</span>, sur
+        <p className="mt-3 text-[15px] leading-relaxed text-[var(--line)]">
+          <span className="font-semibold text-white">{BRAND.priceBoursier} € pour les boursiers</span>, sur
           présentation de la notification de bourse. Mêmes fonctionnalités, sans restriction.
         </p>
-        <Button size="lg" className="mt-8" asChild>
-          <Link to="/auth">Je me lance</Link>
-        </Button>
+        <Link
+          to="/auth"
+          className="mt-8 inline-flex items-center gap-2 rounded-full bg-[var(--ciel)] px-6 py-4 text-[16px] font-semibold text-[var(--ink)] transition-opacity hover:opacity-90"
+        >
+          Je commence ma préparation <ArrowRight aria-hidden className="size-4" />
+        </Link>
       </div>
-      <ul className="grid gap-3 border-t border-border pt-8 text-[16px] md:border-t-0 md:pt-0">
+      <ul className="grid gap-2.5 rounded-[28px] bg-[var(--paper)] p-3 md:p-4">
         {INCLUS.map((f) => (
-          <li key={f} className="flex gap-3">
-            <Check aria-hidden className="mt-1 size-4 shrink-0 text-[var(--rouge)]" />
+          <li key={f} className="flex gap-3 rounded-[14px] bg-white p-4 text-[16px] leading-snug">
+            <span className="inline-flex size-6 flex-none items-center justify-center rounded-full bg-[var(--bleu-texte)] text-white">
+              <Check aria-hidden className="size-3.5" />
+            </span>
             <span>{f}</span>
           </li>
         ))}
@@ -443,17 +429,13 @@ export function PriceBlock({ context }: { context?: string }) {
 
 export function FaqList({ items }: { items: readonly { q: string; a: string }[] }) {
   return (
-    <Accordion
-      type="single"
-      collapsible
-      className="mt-12 border-t border-[var(--ink)]/15"
-    >
+    <Accordion type="single" collapsible className="mt-10 grid gap-3 md:mt-14">
       {items.map((item, k) => (
-        <AccordionItem key={item.q} value={`q-${k}`} className="border-b border-[var(--ink)]/15">
-          <AccordionTrigger className="py-6 text-left text-[19px] leading-snug font-semibold hover:no-underline">
+        <AccordionItem key={item.q} value={`q-${k}`} className="rounded-[24px] border-0 bg-white px-5 md:px-8">
+          <AccordionTrigger className="py-6 text-left text-[18px] leading-snug font-semibold tracking-[-0.01em] hover:no-underline md:text-[22px]">
             {item.q}
           </AccordionTrigger>
-          <AccordionContent className="max-w-3xl pb-7 text-[16px] leading-relaxed text-muted-foreground">
+          <AccordionContent className="max-w-3xl pb-7 text-[16px] leading-relaxed text-[var(--graphite)] md:text-[17px]">
             {item.a}
           </AccordionContent>
         </AccordionItem>
@@ -473,23 +455,19 @@ export function CtaBand({
     <Section tone="ink">
       <div className="flex flex-col items-start gap-10 md:flex-row md:items-end md:justify-between">
         <div className="max-w-2xl">
-          <h2 className="text-[2.25rem] leading-[1.05] font-semibold tracking-[-0.02em] md:text-[3.25rem]">
-            {titre}
-          </h2>
-          <p className="mt-5 text-[17px] leading-relaxed text-[var(--seyes)]">{texte}</p>
+          <h2 className="m-0 text-[40px] leading-none font-medium tracking-[-0.045em] md:text-[64px]">{titre}</h2>
+          <p className="mt-6 text-[18px] leading-relaxed text-[var(--line)] md:text-[20px]">{texte}</p>
         </div>
-        <div className="flex flex-wrap gap-3">
-          <Button size="lg" variant="secondary" asChild>
-            <Link to="/auth">Je me lance</Link>
-          </Button>
-          <Button
-            size="lg"
-            variant="outline"
-            className="border-[var(--seyes)] bg-transparent text-[var(--craie)] hover:bg-[var(--ink-2)] hover:text-[var(--craie)]"
-            asChild
+        <div className="flex flex-wrap items-center gap-6">
+          <Link
+            to="/auth"
+            className="inline-flex items-center gap-2.5 rounded-full bg-[var(--ciel)] px-6 py-4 text-[17px] font-semibold whitespace-nowrap text-[var(--ink)] transition-opacity hover:opacity-90"
           >
-            <a href="/#concours">Les concours préparés</a>
-          </Button>
+            Je commence ma préparation <ArrowRight aria-hidden className="size-4" />
+          </Link>
+          <a href="/#concours" className="text-[17px] font-medium text-white underline-offset-4 hover:underline">
+            Les concours préparés
+          </a>
         </div>
       </div>
     </Section>
