@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { PartHeader } from "@/components/vivaldi/PartHeader";
+import { StartPanel } from "@/components/vivaldi/StartPanel";
 import { TheoryDialog } from "@/components/vivaldi/TheoryDialog";
 import { CAREER_THEORY_SECTIONS } from "@/lib/theory";
 import { useSession } from "@/hooks/useSession";
@@ -94,44 +95,25 @@ function Part2() {
   return (
     <div>
       <PartNav prev="/informations-personnelles" next="/partie-3" nextEnabled={Boolean(ready)} nextMessage="Complétez tous les champs obligatoires de votre projet professionnel pour continuer." className="mb-6" />
-      <PartHeader step="Module 1" title="Mon projet professionnel">
-        <div className="mt-4">
+      <PartHeader step="Module 1" title="Mon projet professionnel" />
+      <StartPanel
+        objectif={[
+            <>L'objectif de ce module est de formaliser, à l'écrit, votre réflexion personnelle sur le projet professionnel que vous présenterez lors de l'entretien.</>,
+        ]}
+        aSavoir={[
+            <>À ce stade, il n'est pas encore nécessaire de faire le lien avec l'école, cela vous sera demandé par la suite.</>,
+            <>Dans ce module, The Prepboard ne vérifie ni la pertinence ni l'exactitude des informations que vous renseignez. Il vous appartient donc de vous assurer de la pertinence, de la cohérence et de la justesse de votre réflexion. C'est là que la qualité de votre travail personnel fait la différence !</>,
+        ]}
+        theory={
           <TheoryDialog
-            title={CAREER_THEORY.title}
-            intro={CAREER_THEORY.intro}
-            sections={CAREER_THEORY_SECTIONS}
-          />
-        </div>
-      </PartHeader>
-
-      <Card className="mb-6 flex gap-3 border-accent/50 bg-secondary/50 p-5">
-        <AlertTriangle className="mt-0.5 size-5 shrink-0 text-accent" />
-        <div className="space-y-3 text-sm leading-relaxed text-muted-foreground">
-          <p>
-            L'objectif de ce module est de formaliser, à l'écrit, votre réflexion personnelle sur le projet professionnel
-            que vous présenterez lors de l'entretien.
-          </p>
-          <p>
-            Avant de commencer, nous vous recommandons de consulter la rubrique « Consignes théoriques » pour prendre
-            connaissance des consignes et comprendre les attentes.
-          </p>
-
-          <div>
-            <p className="font-medium text-foreground">À savoir :</p>
-            <ul className="mt-1.5 list-disc space-y-1 pl-5">
-              <li>
-                À ce stade, il n'est pas encore nécessaire de faire le lien avec l'école, cela vous sera demandé par la
-                suite.
-              </li>
-              <li>
-                Dans ce module, The Prepboard ne vérifie ni la pertinence ni l'exactitude des informations que vous renseignez.
-                Il vous appartient donc de vous assurer de la pertinence, de la cohérence et de la justesse de votre
-                réflexion. C'est là que la qualité de votre travail personnel fait la différence !
-              </li>
-            </ul>
-          </div>
-        </div>
-      </Card>
+              prominent
+              title={CAREER_THEORY.title}
+              intro={CAREER_THEORY.intro}
+              sections={CAREER_THEORY_SECTIONS}
+            />
+        }
+        recommendation="Avant de commencer, nous vous recommandons de consulter la rubrique « Consignes théoriques » pour prendre connaissance des consignes et comprendre les attentes."
+      />
 
 
       <div className="max-w-3xl space-y-6">

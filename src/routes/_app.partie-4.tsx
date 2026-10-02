@@ -13,6 +13,7 @@ import { Progress } from "@/components/ui/progress";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { PartHeader } from "@/components/vivaldi/PartHeader";
+import { StartPanel } from "@/components/vivaldi/StartPanel";
 import { TheoryDialog } from "@/components/vivaldi/TheoryDialog";
 import { EXPERIENCE_THEORY_SECTIONS } from "@/lib/theory";
 import { MonthPicker, formatMonth } from "@/components/vivaldi/MonthPicker";
@@ -127,54 +128,26 @@ function Part4() {
   return (
     <div>
       <PartNav prev="/partie-3" next="/partie-5" nextEnabled={Boolean(experiences.length > 0 && submitted / experiences.length >= 0.75)} nextMessage="Validez au moins 75 % de vos expériences (3 anecdotes chacune) pour continuer." className="mb-6" />
-      <PartHeader
-        step="Module 3"
-        title="Mes expériences"
-      >
-        <div className="mt-4">
+      <PartHeader step="Module 3" title="Mes expériences" />
+      <StartPanel
+        objectif={[
+            <>L'objectif de ce module est de détailler, à l'écrit ou à l'oral, l'ensemble de vos expériences personnelles, scolaires ou extra-scolaires, puis de faire ensuite le lien avec l'école ou votre projet professionnel. Appuyez-vous et faites donc des liens avec le travail effectué dans les deux sections précédentes.</>,
+        ]}
+        aSavoir={[
+            <>Dans ce module, The Prepboard ne vérifie pas l'exactitude des informations que vous renseignez sur vous. Par définition, il n'était pas là lorsque vous avez vécu ces expériences. Il vous appartient de prendre le temps de faire avec soin le travail d'introspection nécessaire. C'est ainsi que vous progresserez et que vous saurez réellement ce que vous ont apporté vos expériences et comment elles rassureront le jury sur votre futur en école et/ou en entreprise.</>,
+            <>Vous avez la possibilité de faire tout ou partie de ce travail à l'oral. Ce n'est pas obligatoire, l'entraînement à l'oral viendra un petit peu plus tard.</>,
+            <>Une expérience est validée quand elle contient les informations générales + au moins 3 anecdotes travaillées. Pour valider une expérience, il vous faudra la faire valider par notre IA.</>,
+        ]}
+        theory={
           <TheoryDialog
-            title={KNOWLEDGE.experiences.title}
-            intro="À quoi servent les expériences en entretien, comment les travailler, et ce que le jury attend quand il vous demande de raconter une expérience."
-            sections={EXPERIENCE_THEORY_SECTIONS}
-          />
-        </div>
-      </PartHeader>
-
-      <Card className="mb-6 flex gap-3 border-accent/50 bg-secondary/50 p-5">
-        <AlertTriangle className="mt-0.5 size-5 shrink-0 text-accent" />
-        <div className="space-y-3 text-sm leading-relaxed text-muted-foreground">
-          <p>
-            L'objectif de ce module est de détailler, à l'écrit ou à l'oral, l'ensemble de vos expériences
-            personnelles, scolaires ou extra-scolaires, puis de faire ensuite le lien avec l'école ou votre projet
-            professionnel. Appuyez-vous et faites donc des liens avec le travail effectué dans les deux sections
-            précédentes.
-          </p>
-          <p>
-            Avant de commencer, nous vous recommandons de consulter la rubrique « Consignes théoriques » pour comprendre
-            les attentes.
-          </p>
-          <div>
-            <p className="font-medium text-foreground">À savoir :</p>
-            <ul className="mt-1.5 list-disc space-y-1.5 pl-5">
-              <li>
-                Dans ce module, The Prepboard ne vérifie pas l'exactitude des informations que vous renseignez sur vous.
-                Par définition, il n'était pas là lorsque vous avez vécu ces expériences. Il vous appartient de prendre
-                le temps de faire avec soin le travail d'introspection nécessaire. C'est ainsi que vous progresserez et
-                que vous saurez réellement ce que vous ont apporté vos expériences et comment elles rassureront le jury
-                sur votre futur en école et/ou en entreprise.
-              </li>
-              <li>
-                Vous avez la possibilité de faire tout ou partie de ce travail à l'oral. Ce n'est pas obligatoire,
-                l'entraînement à l'oral viendra un petit peu plus tard.
-              </li>
-              <li>
-                Une expérience est validée quand elle contient les informations générales + au moins 3 anecdotes
-                travaillées. Pour valider une expérience, il vous faudra la faire valider par notre IA.
-              </li>
-            </ul>
-          </div>
-        </div>
-      </Card>
+              prominent
+              title={KNOWLEDGE.experiences.title}
+              intro="À quoi servent les expériences en entretien, comment les travailler, et ce que le jury attend quand il vous demande de raconter une expérience."
+              sections={EXPERIENCE_THEORY_SECTIONS}
+            />
+        }
+        recommendation="Avant de commencer, nous vous recommandons de consulter la rubrique « Consignes théoriques » pour comprendre les attentes."
+      />
 
       <Card className="mb-6 p-6">
         <div className="mb-2 flex items-center justify-between text-sm">

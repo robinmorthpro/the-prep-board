@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { PartHeader } from "@/components/vivaldi/PartHeader";
+import { StartPanel } from "@/components/vivaldi/StartPanel";
 import { TheoryDialog } from "@/components/vivaldi/TheoryDialog";
 import { SCHOOLS_THEORY_SECTIONS } from "@/lib/theory";
 import { useSession } from "@/hooks/useSession";
@@ -96,56 +97,39 @@ function Part3() {
   return (
     <div>
       <PartNav prev="/partie-2" next="/partie-4" nextEnabled={Boolean(finished >= 1)} nextMessage="Validez au moins une fiche école complète pour continuer." className="mb-6" />
-      <PartHeader step="Module 2" title="Mes fiches écoles">
-        <div className="mt-4">
+      <PartHeader step="Module 2" title="Mes fiches écoles" />
+      <StartPanel
+        objectif={[
+            <>L'objectif de ce module est de formaliser, à l'écrit, vos recherches sur l'ensemble des éléments spécifiques qui vous intéressent parmi les écoles que vous présenterez lors de l'entretien.</>,
+        ]}
+        aSavoir={[
+            <>Dans ce module, The Prepboard ne vérifie ni la pertinence ni l'exactitude des informations que vous renseignez sur l'école. Il vous appartient de faire le travail de recherche nécessaire à votre découverte de l'école. C'est ainsi que vous progresserez et que vous saurez réellement ce que l'école propose spécifiquement pour votre projet. Encore une fois, avant même le stade de l'entraînement oral, c'est la qualité de votre travail personnel préparatoire qui fait la différence !</>,
+        ]}
+        theory={
           <TheoryDialog
-            title={KNOWLEDGE.schools.title}
-            intro="Les consignes théoriques de ce module, les attendus du jury sur les questions liées à l'école, plus un modèle de fiche école."
-            sections={SCHOOLS_THEORY_SECTIONS}
-          >
-            <Card className="mt-4 p-4">
-              <p className="text-sm font-semibold">Modèle de fiche école</p>
-              <p className="mt-1 text-xs text-muted-foreground">
-                {SCHOOL_SHEET_EXAMPLE.project} - {SCHOOL_SHEET_EXAMPLE.school}
-              </p>
-              <dl className="mt-3 space-y-2 text-sm">
-                {SCHOOL_SHEET_EXAMPLE.rows.map(([k, v]) => (
-                  <div key={k}>
-                    <dt className="font-medium text-primary">{k}</dt>
-                    <dd className="text-muted-foreground">{v}</dd>
-                  </div>
-                ))}
-              </dl>
-            </Card>
-          </TheoryDialog>
-        </div>
-      </PartHeader>
-
-      <Card className="mb-6 flex gap-3 border-accent/50 bg-secondary/50 p-5">
-        <AlertTriangle className="mt-0.5 size-5 shrink-0 text-accent" />
-        <div className="space-y-3 text-sm leading-relaxed text-muted-foreground">
-          <p>
-            L'objectif de ce module est de formaliser, à l'écrit, vos recherches sur l'ensemble des éléments
-            spécifiques qui vous intéressent parmi les écoles que vous présenterez lors de l'entretien.
-          </p>
-          <p>
-            Avant de commencer, nous vous recommandons de consulter la rubrique « Consignes théoriques » pour prendre
-            connaissance des consignes et comprendre les attentes.
-          </p>
-          <div>
-            <p className="font-medium text-foreground">À savoir :</p>
-            <ul className="mt-1.5 list-disc space-y-1 pl-5">
-              <li>
-                Dans ce module, The Prepboard ne vérifie ni la pertinence ni l'exactitude des informations que vous
-                renseignez sur l'école. Il vous appartient de faire le travail de recherche nécessaire à votre
-                découverte de l'école. C'est ainsi que vous progresserez et que vous saurez réellement ce que l'école
-                propose spécifiquement pour votre projet. Encore une fois, avant même le stade de l'entraînement oral,
-                c'est la qualité de votre travail personnel préparatoire qui fait la différence !
-              </li>
-            </ul>
-          </div>
-        </div>
-      </Card>
+              prominent
+              title={KNOWLEDGE.schools.title}
+              intro="Les consignes théoriques de ce module, les attendus du jury sur les questions liées à l'école, plus un modèle de fiche école."
+              sections={SCHOOLS_THEORY_SECTIONS}
+            >
+              <Card className="mt-4 p-4">
+                <p className="text-sm font-semibold">Modèle de fiche école</p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {SCHOOL_SHEET_EXAMPLE.project} - {SCHOOL_SHEET_EXAMPLE.school}
+                </p>
+                <dl className="mt-3 space-y-2 text-sm">
+                  {SCHOOL_SHEET_EXAMPLE.rows.map(([k, v]) => (
+                    <div key={k}>
+                      <dt className="font-medium text-primary">{k}</dt>
+                      <dd className="text-muted-foreground">{v}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </Card>
+            </TheoryDialog>
+        }
+        recommendation="Avant de commencer, nous vous recommandons de consulter la rubrique « Consignes théoriques » pour prendre connaissance des consignes et comprendre les attentes."
+      />
 
       <div className="mb-6">
         <Badge variant="outline">
