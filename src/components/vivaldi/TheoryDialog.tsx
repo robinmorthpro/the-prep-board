@@ -13,6 +13,7 @@ export function TheoryDialog({
   sections,
   children,
   label = "Consulter les consignes théoriques",
+  prominent = false,
 }: {
   title: string;
   intro: string;
@@ -20,14 +21,32 @@ export function TheoryDialog({
   sections?: Section[];
   children?: ReactNode;
   label?: string;
+  /** Bouton plein sombre de l'encart « À lire au démarrage ». */
+  prominent?: boolean;
 }) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="gap-2">
-          <BookOpen className="size-4 text-accent" />
-          {label}
-        </Button>
+        {prominent ? (
+          <button
+            type="button"
+            className="inline-flex items-center gap-3 rounded-full bg-[var(--ink)] px-6 py-4 text-[17px] font-semibold text-white shadow-[0_10px_24px_rgba(11,18,32,0.18)] transition-opacity hover:opacity-90 md:whitespace-nowrap md:px-9 md:py-[22px] md:text-[20px]"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="shrink-0">
+              <path d="M6 3h9l4 4v14H6z" />
+              <path d="M9 12h7M9 16h7M9 8h3" />
+            </svg>
+            {label}
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="shrink-0">
+              <path d="M5 12h14M13 6l6 6-6 6" />
+            </svg>
+          </button>
+        ) : (
+          <Button variant="outline" size="sm" className="gap-2">
+            <BookOpen className="size-4 text-accent" />
+            {label}
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-2xl">
         <DialogHeader>
