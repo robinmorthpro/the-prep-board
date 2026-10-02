@@ -17,36 +17,42 @@ export function PartHeader({
 }) {
   const banner = image === null ? undefined : (image ?? moduleBanner(step));
 
-  if (!banner) {
-    return (
-      <header className="mb-8">
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">{step}</p>
-        <h1 className="mt-2 text-4xl">{title}</h1>
-        {intro ? <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">{intro}</p> : null}
-        {children}
-      </header>
-    );
-  }
-
   return (
-    <header className="mb-8">
-      <div className="relative overflow-hidden bg-ink">
-        <img
-          src={banner}
-          alt=""
-          aria-hidden="true"
-          loading="lazy"
-          className="absolute inset-0 size-full object-cover opacity-60"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/80 to-ink/25" />
-        <div className="relative px-6 py-10 sm:px-10 sm:py-14">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary-foreground/70">{step}</p>
-          <h1 className="mt-2 max-w-2xl text-4xl text-primary-foreground">{title}</h1>
-          {intro ? (
-            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-primary-foreground/80">{intro}</p>
-          ) : null}
+    <header className="mb-6">
+      <section className="relative overflow-hidden rounded-[28px] bg-[var(--ink)] text-white">
+        {banner ? (
+          <>
+            <img
+              src={banner}
+              alt=""
+              aria-hidden="true"
+              loading="lazy"
+              className="absolute inset-0 size-full object-cover"
+              style={{ objectPosition: "50% 60%" }}
+            />
+            <div
+              className="absolute inset-0"
+              style={{
+                background:
+                  "linear-gradient(90deg, rgba(11,18,32,0.95) 0%, rgba(11,18,32,0.82) 45%, rgba(11,18,32,0.35) 100%)",
+              }}
+            />
+          </>
+        ) : null}
+        <div className="relative p-6 md:p-12">
+          <div className="flex flex-col gap-[18px]">
+            <span className="inline-flex self-start rounded-full bg-[rgba(169,200,255,0.16)] px-4 py-2 text-[17px] font-semibold tracking-[-0.01em] text-[var(--ciel)] md:px-5 md:py-[10px] md:text-[22px]">
+              {step}
+            </span>
+            <h1 className="m-0 text-[34px] font-medium leading-[1.02] tracking-[-0.045em] text-white md:text-[56px]">
+              {title}
+            </h1>
+            {intro ? (
+              <p className="m-0 max-w-[760px] text-[17px] leading-[1.55] text-[#E1E6EF] md:text-[20px]">{intro}</p>
+            ) : null}
+          </div>
         </div>
-      </div>
+      </section>
       {children}
     </header>
   );
