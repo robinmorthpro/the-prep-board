@@ -1465,42 +1465,34 @@ function Part7() {
       ) : null}
 
       {debrief ? (
-        <Card className="mt-6 p-6">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">Débrief du jury</p>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() =>
-                downloadInterviewPdf({
-                  school,
-                  formatLabel: formatLabel(config.format),
-                  difficultyLabel: hasDifficulties ? difficultyLabel(variant) : undefined,
-                  createdAt: turns[0]?.askedAt ?? new Date().toISOString(),
-                  turns,
-                  debrief,
-                  complete,
-                })
-              }
-            >
-              <Download className="size-4" /> Exporter le transcript en PDF
-            </Button>
-          </div>
+        <div className="mt-6 flex flex-col gap-6">
           {!complete ? (
-            <p className="mt-2 rounded-md border border-destructive/40 bg-destructive/5 px-3 py-2 text-sm text-destructive">
+            <p className="m-0 rounded-[14px] border border-destructive/40 bg-destructive/5 px-4 py-3 text-[15px] text-destructive md:text-[16px]">
               Évaluation incomplète : vous avez interrompu l'entretien avant la clôture.
             </p>
           ) : null}
-          <div className="mt-4">
-            <InterviewDebrief text={debrief} difficulty={difficultyLabel(variant)} />
-          </div>
-          {turns.length ? (
-            <div className="mt-6">
-              <InterviewTranscript turns={turns} />
-            </div>
-          ) : null}
-        </Card>
+          <DebriefHeader
+            school={school}
+            logo={schoolLogo(school)}
+            date={sessionDate(turns[0]?.askedAt ?? new Date().toISOString())}
+            difficultyLabel={juryLabel(hasDifficulties ? variant : undefined)}
+            percentile={positioningInfo(debrief).value}
+            percentileLabel={positioningInfo(debrief).label}
+            onExport={() =>
+              downloadInterviewPdf({
+                school,
+                formatLabel: formatLabel(config.format),
+                difficultyLabel: hasDifficulties ? difficultyLabel(variant) : undefined,
+                createdAt: turns[0]?.askedAt ?? new Date().toISOString(),
+                turns,
+                debrief,
+                complete,
+              })
+            }
+          />
+          <InterviewDebrief text={debrief} positioningInBanner />
+          {turns.length ? <InterviewTranscript turns={turns} /> : null}
+        </div>
       ) : null}
 
       {finishedSessions.length ? (
