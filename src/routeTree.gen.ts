@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as SiteRouteImport } from './routes/_site'
+import { Route as ApercuDebriefTmpRouteImport } from './routes/apercu-debrief-tmp'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as LlmsDottxtRouteImport } from './routes/llms[.]txt'
 import { Route as McpRouteImport } from './routes/mcp'
@@ -46,6 +47,11 @@ const AppRoute = AppRouteImport.update({
 } as any)
 const SiteRoute = SiteRouteImport.update({
   id: '/_site',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApercuDebriefTmpRoute = ApercuDebriefTmpRouteImport.update({
+  id: '/apercu-debrief-tmp',
+  path: '/apercu-debrief-tmp',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -195,6 +201,7 @@ const SiteConcoursSlugRoute = SiteConcoursSlugRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof SiteIndexRoute
+  '/apercu-debrief-tmp': typeof ApercuDebriefTmpRoute
   '/auth': typeof AuthRouteWithChildren
   '/llms.txt': typeof LlmsDottxtRoute
   '/mcp': typeof McpRoute
@@ -225,6 +232,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof SiteIndexRoute
+  '/apercu-debrief-tmp': typeof ApercuDebriefTmpRoute
   '/auth': typeof AuthRouteWithChildren
   '/llms.txt': typeof LlmsDottxtRoute
   '/mcp': typeof McpRoute
@@ -257,6 +265,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_app': typeof AppRouteWithChildren
   '/_site': typeof SiteRouteWithChildren
+  '/apercu-debrief-tmp': typeof ApercuDebriefTmpRoute
   '/auth': typeof AuthRouteWithChildren
   '/llms.txt': typeof LlmsDottxtRoute
   '/mcp': typeof McpRoute
@@ -290,6 +299,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/apercu-debrief-tmp'
     | '/auth'
     | '/llms.txt'
     | '/mcp'
@@ -320,6 +330,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/apercu-debrief-tmp'
     | '/auth'
     | '/llms.txt'
     | '/mcp'
@@ -351,6 +362,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_app'
     | '/_site'
+    | '/apercu-debrief-tmp'
     | '/auth'
     | '/llms.txt'
     | '/mcp'
@@ -384,6 +396,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   AppRoute: typeof AppRouteWithChildren
   SiteRoute: typeof SiteRouteWithChildren
+  ApercuDebriefTmpRoute: typeof ApercuDebriefTmpRoute
   AuthRoute: typeof AuthRouteWithChildren
   LlmsDottxtRoute: typeof LlmsDottxtRoute
   McpRoute: typeof McpRoute
@@ -409,6 +422,13 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: '/'
       preLoaderRoute: typeof SiteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/apercu-debrief-tmp': {
+      id: '/apercu-debrief-tmp'
+      path: '/apercu-debrief-tmp'
+      fullPath: '/apercu-debrief-tmp'
+      preLoaderRoute: typeof ApercuDebriefTmpRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -675,6 +695,7 @@ const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
   SiteRoute: SiteRouteWithChildren,
+  ApercuDebriefTmpRoute: ApercuDebriefTmpRoute,
   AuthRoute: AuthRouteWithChildren,
   LlmsDottxtRoute: LlmsDottxtRoute,
   McpRoute: McpRoute,
