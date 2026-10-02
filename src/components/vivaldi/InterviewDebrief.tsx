@@ -196,7 +196,7 @@ export function DebriefHeader({
               <button
                 type="button"
                 onClick={onExport}
-                className="mt-2 inline-flex items-center gap-3 whitespace-nowrap rounded-full bg-[#A9C8FF] px-6 py-4 text-[17px] font-semibold text-[var(--ink)] md:px-[26px] md:text-[20px]"
+                className="mt-2 inline-flex items-center gap-3 rounded-full bg-[#A9C8FF] px-6 py-4 text-[17px] font-semibold text-[var(--ink)] md:px-[26px] md:text-[20px]"
               >
                 <Download className="size-[18px]" aria-hidden="true" />
                 Exporter le feedback et le transcript en PDF
