@@ -146,7 +146,7 @@ function ConcoursPage() {
               Voir la préparation <ArrowRight aria-hidden className="size-4" />
             </a>
           </div>
-          <p className="pill-label mt-14 text-white/55">{visuel.credit}</p>
+          <p className="mt-14 text-[12px] tracking-[0.12em] uppercase text-white/55">{visuel.credit}</p>
         </div>
       </section>
 
