@@ -21,16 +21,16 @@ function NotFoundComponent() {
     <div className="flex min-h-screen items-center justify-center bg-[var(--ink)] px-5 text-white">
       <div className="max-w-md text-center">
         <h1 className="text-[96px] leading-none font-medium tracking-[-0.05em] text-[var(--ciel)]">404</h1>
-        <h2 className="mt-4 text-[24px] font-semibold tracking-[-0.02em]">Page not found</h2>
+        <h2 className="mt-4 text-[24px] font-semibold tracking-[-0.02em]">Page introuvable</h2>
         <p className="mt-2 text-[16px] text-[var(--line)]">
-          The page you're looking for doesn't exist or has been moved.
+          La page que vous cherchez n'existe pas ou a été déplacée.
         </p>
         <div className="mt-6">
           <Link
             to="/"
             className="inline-flex items-center justify-center rounded-full bg-[var(--ciel)] px-6 py-3 text-[16px] font-semibold text-[var(--ink)] transition-opacity hover:opacity-90"
           >
-            Go home
+            Retour à l'accueil
           </Link>
         </div>
       </div>
