@@ -1,6 +1,6 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
-import { Check, ChevronDown, Menu, X, Minus, Quote } from "lucide-react";
+import { ArrowRight, Check, ChevronDown, Menu, X, Minus, Quote } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Accordion,

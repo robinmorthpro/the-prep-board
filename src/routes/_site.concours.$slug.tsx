@@ -115,45 +115,46 @@ function ConcoursPage() {
   return (
     <div className="site-scope">
       {/* ------------------------------------------------------------- hero */}
-      <section className="relative isolate overflow-hidden bg-[var(--ink)] text-[var(--craie)]">
+      <section className="relative isolate -mt-[1px] overflow-hidden bg-[var(--ink)] text-white">
         <img
           src={visuel.url}
           alt={visuel.alt}
-          className="absolute inset-0 size-full object-cover opacity-25"
+          className="absolute inset-0 size-full object-cover"
           loading="eager"
         />
         <div
           aria-hidden
-          className="absolute inset-0 bg-gradient-to-tr from-[var(--ink)] via-[var(--ink)]/90 to-[var(--ink)]/40"
+          className="absolute inset-0 bg-[linear-gradient(90deg,rgba(11,18,32,0.94)_0%,rgba(11,18,32,0.78)_45%,rgba(11,18,32,0.35)_100%)]"
         />
-        <div className="relative mx-auto max-w-[1400px] px-6 pt-24 pb-20 md:pt-32">
-          <h1 className="max-w-4xl text-[2.5rem] leading-[1.02] font-semibold tracking-[-0.03em] md:text-[4.25rem]">
+        <div className="relative mx-auto max-w-[1440px] px-5 pt-20 pb-16 md:px-12 md:pt-32 md:pb-24">
+          <h1 className="m-0 max-w-[980px] text-[42px] leading-[0.98] font-medium tracking-[-0.05em] md:text-[76px]">
             {c.h1}
           </h1>
-          <p className="mt-8 max-w-2xl text-[18px] leading-relaxed text-[var(--craie)]/85 md:text-[20px]">
+          <p className="mt-7 max-w-[680px] text-[18px] leading-[1.55] text-[#E1E6EF] md:text-[20px]">
             {c.chapo}
           </p>
-          <div className="mt-10 flex flex-wrap items-center gap-4">
-            <Button size="lg" variant="secondary" asChild>
-              <Link to="/auth">Créer mon compte</Link>
-            </Button>
+          <div className="mt-9 flex flex-wrap items-center gap-6">
+            <Link
+              to="/auth"
+              className="inline-flex items-center gap-2.5 rounded-full bg-[var(--ciel)] px-6 py-4 text-[17px] font-semibold text-[var(--ink)] transition-opacity hover:opacity-90"
+            >
+              Créer mon compte <ArrowRight aria-hidden className="size-4" />
+            </Link>
             <a
               href="#preparation"
-              className="inline-flex items-center gap-2 text-[15px] font-medium underline-offset-4 hover:underline"
+              className="inline-flex items-center gap-2 text-[17px] font-medium underline-offset-4 hover:underline"
             >
               Voir la préparation <ArrowRight aria-hidden className="size-4" />
             </a>
           </div>
-          <p className="mt-16 text-[12px] tracking-[0.12em] uppercase text-[var(--craie)]/45">
-            {visuel.credit}
-          </p>
+          <p className="pill-label mt-14 text-white/55">{visuel.credit}</p>
         </div>
       </section>
 
       {/* ---------------------------------------------------------- épreuve */}
       <Section>
         <SectionTitle kicker="L'épreuve" title="Ce qui vous attend le jour de l'oral." />
-        <dl className="mt-12 grid gap-px border border-border bg-border md:grid-cols-2">
+        <dl className="mt-10 grid gap-2.5 rounded-[28px] bg-[var(--paper)] p-2 md:mt-14 md:grid-cols-2 md:p-2.5">
           {[
             ["Format", c.epreuve.format],
             ["Durée", c.epreuve.duree],
@@ -163,12 +164,12 @@ function ConcoursPage() {
           ].map(([k, v], i, arr) => (
             <div
               key={k}
-              className={`bg-[var(--craie)] p-8 ${
+              className={`rounded-[22px] bg-white p-6 md:p-8 ${
                 arr.length % 2 === 1 && i === arr.length - 1 ? "md:col-span-2" : ""
               }`}
             >
-              <dt className="label-mono">{k}</dt>
-              <dd className="mt-3 text-[16.5px] leading-relaxed">{v}</dd>
+              <dt className="pill-label inline-flex rounded-full bg-[var(--bleu-pale)] px-3 py-1 text-[var(--bleu-texte)]">{k}</dt>
+              <dd className="mt-4 text-[17px] leading-relaxed">{v}</dd>
             </div>
           ))}
         </dl>
@@ -181,11 +182,12 @@ function ConcoursPage() {
           title="Quatre choses évaluées, quoi que vous racontiez."
           intro="Elles ne figurent dans aucune brochure. Elles décident pourtant du classement."
         />
-        <div className="mt-14 grid gap-10 md:grid-cols-2">
-          {c.attendus.map((a) => (
-            <div key={a.titre} className="marge-rouge">
-              <h3 className="text-[1.35rem] leading-snug font-semibold">{a.titre}</h3>
-              <p className="mt-3 text-[16px] leading-relaxed text-muted-foreground">{a.texte}</p>
+        <div className="mt-10 grid gap-3 md:mt-14 md:grid-cols-2">
+          {c.attendus.map((a, i) => (
+            <div key={a.titre} className="rounded-[24px] bg-white p-6 md:p-8">
+              <span className="text-[17px] font-semibold text-[var(--bleu)]">{String(i + 1).padStart(2, "0")}</span>
+              <h3 className="mt-2 text-[22px] leading-snug font-semibold tracking-[-0.02em] md:text-[24px]">{a.titre}</h3>
+              <p className="mt-3 text-[16px] leading-relaxed text-[var(--graphite)]">{a.texte}</p>
             </div>
           ))}
         </div>
@@ -193,17 +195,17 @@ function ConcoursPage() {
 
       {/* -------------------------------------------------------- questions */}
       <Section tone="ink">
-        <div className="grid gap-14 lg:grid-cols-[1fr_1.1fr] lg:items-start">
+        <div className="grid gap-12 lg:grid-cols-[1fr_1.1fr] lg:items-start">
           <SectionTitle
             tone="chalk"
             kicker="Les questions"
             title="Des questions que vous entendrez, dites à voix haute avant le jour J."
             intro="Chaque question de la base est accompagnée de l'intention du jury, des critères d'évaluation et des pièges classiques."
           />
-          <ul className="grid gap-px bg-[var(--ink-2)]">
+          <ul className="grid gap-2.5">
             {c.questions.map((q) => (
-              <li key={q} className="bg-[var(--ink)] py-5 text-[17px] leading-snug">
-                <span className="mr-3 text-[var(--rouge-clair)]">?</span>
+              <li key={q} className="flex gap-3 rounded-[14px] bg-white/[0.06] px-5 py-4 text-[17px] leading-snug">
+                <span className="font-semibold text-[var(--ciel)]">?</span>
                 {q}
               </li>
             ))}
@@ -213,28 +215,31 @@ function ConcoursPage() {
 
       {/* ------------------------------------------------------ préparation */}
       <Section id="preparation">
-        <div className="grid gap-14 lg:grid-cols-[1.1fr_1fr] lg:items-center">
+        <div className="grid gap-12 lg:grid-cols-[1.1fr_1fr] lg:items-center">
           <div>
             <SectionTitle
               kicker="La préparation The Prepboard"
               title="Comment nous préparons cette épreuve."
               intro="Le parcours a été construit avec des jurys de concours : on travaille le fond dans l'ordre, puis on répète l'oral entier."
             />
-            <ol className="mt-10 grid gap-8">
+            <ol className="mt-10 grid gap-3">
               {c.parcours.map((p, i) => (
-                <li key={p.titre} className="grid gap-2 border-t border-border pt-6">
-                  <p className="label-mono">Étape {String(i + 1).padStart(2, "0")}</p>
-                  <p className="text-[1.35rem] leading-snug font-semibold">{p.titre}</p>
-                  <p className="text-[16px] leading-relaxed text-muted-foreground">{p.texte}</p>
+                <li key={p.titre} className="flex gap-4 rounded-[22px] bg-[var(--paper)] p-5 md:p-6">
+                  <span className="w-1 flex-none self-stretch rounded bg-[var(--ciel)]" />
+                  <div>
+                    <p className="m-0 text-[15px] font-semibold text-[var(--graphite)]">Étape {String(i + 1).padStart(2, "0")}</p>
+                    <p className="mt-1 text-[22px] leading-snug font-medium tracking-[-0.03em]">{p.titre}</p>
+                    <p className="mt-2 text-[16px] leading-relaxed text-[var(--graphite)]">{p.texte}</p>
+                  </div>
                 </li>
               ))}
             </ol>
           </div>
-          <figure>
+          <figure className="m-0">
             <img
               src={carnetAsset}
               alt="Notes manuscrites et ordinateur pendant la préparation d'un oral"
-              className="aspect-4/5 w-full object-cover"
+              className="aspect-4/5 w-full rounded-[28px] object-cover"
               loading="lazy"
             />
           </figure>
@@ -244,16 +249,18 @@ function ConcoursPage() {
       {/* --------------------------------------------------- différenciants */}
       <Section tone="paper">
         <SectionTitle kicker="Ce qui change" title="Pourquoi cette préparation tient pour cette épreuve." />
-        <ul className="mt-12 grid gap-8 md:grid-cols-3">
+        <ul className="mt-10 grid gap-3 md:mt-14 md:grid-cols-3">
           {c.differenciants.map((d) => (
-            <li key={d} className="flex gap-3 border-t border-border pt-6 text-[16.5px] leading-relaxed">
-              <Check aria-hidden className="mt-1 size-4 shrink-0 text-[var(--rouge)]" />
+            <li key={d} className="flex gap-3 rounded-[24px] bg-white p-6 text-[16.5px] leading-relaxed">
+              <span className="mt-0.5 inline-flex size-6 flex-none items-center justify-center rounded-full bg-[var(--bleu-texte)] text-white">
+                <Check aria-hidden className="size-3.5" />
+              </span>
               <span>{d}</span>
             </li>
           ))}
         </ul>
         <div className="mt-20">
-          <h3 className="text-[1.5rem] leading-snug font-semibold">{VS_PREPA.titre}</h3>
+          <h3 className="text-[26px] leading-snug font-medium tracking-[-0.03em] md:text-[32px]">{VS_PREPA.titre}</h3>
           <CompareTable
             colonnes={["Prépa aux oraux", "The Prepboard"]}
             lignes={VS_PREPA.lignes.map((l) => ({
