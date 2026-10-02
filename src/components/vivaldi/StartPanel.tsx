@@ -82,11 +82,40 @@ function Row({ label, first, children }: { label: string; first?: boolean; child
   );
 }
 
-/** Encart d'introduction simple (modules dont la structure ne suit pas Objectif / À savoir). */
-export function IntroPanel({ children }: { children: ReactNode }) {
+/** Encart « À lire au démarrage » pour les modules sans lignes Objectif / À savoir. */
+export function IntroPanel({ children, theory }: { children: ReactNode; theory?: ReactNode }) {
+  const [open, setOpen] = useState(true);
   return (
-    <section className="mb-6 flex flex-col gap-[14px] rounded-[24px] bg-[var(--bleu-pale)] px-6 py-6 text-[17px] leading-[1.55] text-[var(--ink)] md:px-10 md:py-8 md:text-[20px]">
-      {children}
+    <section className="mb-6 flex flex-col rounded-[24px] bg-[var(--bleu-pale)] px-6 py-6 md:px-10 md:py-8">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+        className={`flex cursor-pointer items-center justify-between gap-6 text-left ${open ? "pb-6" : ""}`}
+      >
+        <h2 className="m-0 text-[28px] font-medium leading-[1.1] tracking-[-0.035em] md:text-[36px]">
+          À lire au démarrage
+        </h2>
+        <span
+          className={`inline-flex size-12 flex-none items-center justify-center rounded-full bg-white text-[var(--ink)] transition-transform ${
+            open ? "rotate-180" : ""
+          }`}
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M6 9l6 6 6-6" />
+          </svg>
+        </span>
+      </button>
+      {open ? (
+        <div className="pb-2">
+          <div className="flex flex-col gap-[14px] pb-6 text-[17px] leading-[1.55] text-[var(--ink)] md:text-[20px]">
+            {children}
+          </div>
+          {theory ? (
+            <div className="flex flex-col items-start gap-4 border-t border-[rgba(46,70,200,0.18)] pt-6">{theory}</div>
+          ) : null}
+        </div>
+      ) : null}
     </section>
   );
 }

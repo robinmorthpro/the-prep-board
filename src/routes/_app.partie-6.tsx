@@ -132,17 +132,18 @@ function Part6() {
   return (
     <div className="module-form">
       <PartNav prev="/partie-5" next="/partie-7" className="mb-6" />
-      <PartHeader step="Module 5" title="Mes supports d'entretien">
-        <div className="mt-4">
+      <PartHeader step="Module 5" title="Mes supports d'entretien" />
+
+      <IntroPanel
+        theory={
           <TheoryDialog
+            prominent
             title="Les supports de l'entretien"
             intro="Une partie des écoles demande un support écrit remis au jury : le plus souvent un questionnaire, et pour SKEMA un CV projectif. C'est votre premier contact avec le jury."
             sections={SUPPORTS_THEORY_SECTIONS}
           />
-        </div>
-      </PartHeader>
-
-      <IntroPanel>
+        }
+      >
           <p>
             Seules les écoles que vous présentez et qui demandent un support apparaissent ci-dessous. Modifiez vos
             écoles dans le module 1 si la liste vous semble incomplète.
