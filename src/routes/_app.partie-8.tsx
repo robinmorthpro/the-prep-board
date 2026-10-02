@@ -1534,30 +1534,30 @@ function Part7() {
               <button
                 type="button"
                 onClick={() => setHistorySchool(null)}
-                className="mt-4 inline-flex items-center gap-1 text-xs font-medium text-muted-foreground transition hover:text-primary"
+                className="mt-5 inline-flex items-center gap-1 text-[15px] font-medium text-[var(--gris-doux)] transition hover:text-[var(--ink)]"
               >
                 <ChevronRight className="size-3 rotate-180" />
                 Toutes les écoles
               </button>
-              <div className="mt-3 flex items-center gap-3 border-b border-border/60 pb-4">
+              <div className="mt-4 flex items-center gap-3 border-b border-[rgba(11,18,32,0.1)] pb-4">
                 {schoolLogo(historySchool) ? (
                   <img
                     src={schoolLogo(historySchool)}
                     alt={`Logo ${historySchool}`}
-                    className="size-10 shrink-0 rounded-md border border-border/60 bg-white object-contain p-1"
+                    className="size-10 shrink-0 rounded-[10px] bg-white object-contain p-1"
                     loading="lazy"
                   />
                 ) : null}
                 <div className="min-w-0">
-                  <h3 className="truncate font-serif text-lg text-primary">{historySchool}</h3>
-                  <p className="text-xs text-muted-foreground">
+                  <h3 className="m-0 truncate text-[20px] font-medium tracking-[-0.01em] text-[var(--ink)]">{historySchool}</h3>
+                  <p className="m-0 text-[14px] text-[var(--gris-doux)] md:text-[15px]">
                     {visibleSessions.length} entretien{visibleSessions.length > 1 ? "s" : ""} enregistré
                     {visibleSessions.length > 1 ? "s" : ""}
                   </p>
                 </div>
               </div>
 
-              <ul className="mt-4 space-y-3">
+              <ul className="mt-4 flex flex-col gap-3">
                 {visibleSessions.map((s) => {
                   const percentile = percentileOf(s.debrief);
 
