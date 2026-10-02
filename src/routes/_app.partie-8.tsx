@@ -93,9 +93,13 @@ function formatLabel(format?: string | null) {
   return format === "special" ? "Format spécifique de l'école" : "Entretien classique";
 }
 
-function formatCountdown(seconds: number) {
-  const safe = Math.max(0, seconds);
-  return `${Math.floor(safe / 60)}:${String(safe % 60).padStart(2, "0")}`;
+/** « 18 septembre 2026 - 17:04 », tel qu'affiché dans le bandeau du débrief. */
+function sessionDate(iso?: string | null) {
+  const d = iso ? new Date(iso) : new Date();
+  if (Number.isNaN(d.getTime())) return "";
+  return `${d.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })} - ${String(
+    d.getHours(),
+  ).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
 }
 
 
