@@ -49,10 +49,10 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
     <div className="flex min-h-screen items-center justify-center bg-[var(--ink)] px-5 text-white">
       <div className="max-w-md text-center">
         <h1 className="text-[28px] font-medium tracking-[-0.03em]">
-          This page didn't load
+          Cette page n'a pas pu s'afficher
         </h1>
         <p className="mt-2 text-[16px] text-[var(--line)]">
-          Something went wrong on our end. You can try refreshing or head back home.
+          Une erreur est survenue de notre côté. Vous pouvez réessayer ou revenir à l'accueil.
         </p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           <button
@@ -62,7 +62,7 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
             }}
             className="inline-flex items-center justify-center rounded-full bg-[var(--ciel)] px-6 py-3 text-[16px] font-semibold text-[var(--ink)] transition-opacity hover:opacity-90"
           >
-            Try again
+            Réessayer
           </button>
           <a
             href="/"
