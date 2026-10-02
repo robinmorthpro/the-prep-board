@@ -735,4 +735,7 @@ export const TEMOIGNAGES_HOME: readonly Temoignage[] = [
   { quote: "Je préparais l'oral seul depuis ma L3. Là, j'avais enfin quelqu'un en face.", author: "Théo", detail: "AST1, Bachelor" },
   { quote: "Je disais « aider les gens » à chaque réponse. On me l'a fait remarquer trois fois.", author: "Yanis", detail: "PASS" },
   { quote: "Voir ma position par rapport aux autres candidats m'a fait comprendre où je devais bosser.", highlight: "où je devais bosser", author: "Marion", detail: "ECG 2, admise à l'EM Lyon" },
+  { quote: "Le jury de NEOMA m'a posé la question de la motivation sous trois angles différents. Je les avais tous travaillés.", author: "Léa", detail: "ECG 2, admise à NEOMA" },
+  { quote: "Je stressais au point de bafouiller. Après dix simulations, le vrai oral m'a paru presque calme.", author: "Nathan", detail: "Terminale, concours Sésame" },
+  { quote: "Les relances du jury étaient plus dures qu'en vrai. Tant mieux : le jour J, rien ne m'a déstabilisée.", author: "Jade", detail: "AST2, admise à KEDGE" },
 ] as const;
