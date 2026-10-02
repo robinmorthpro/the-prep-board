@@ -1496,31 +1496,33 @@ function Part7() {
       ) : null}
 
       {finishedSessions.length ? (
-        <Card className="mt-6 p-6">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">Historique de mes entretiens</p>
-          <p className="mt-1 text-xs text-muted-foreground">
+        <Card className="mt-6 p-6 md:p-8">
+          <h2 className="m-0 text-[28px] font-medium leading-[1.1] tracking-[-0.035em] md:text-[36px]">
+            Historique de mes entretiens
+          </h2>
+          <p className="mt-2 text-[16px] text-[var(--gris-doux)] md:text-[17px]">
             Retrouve chacun de tes entraînements avec son feedback détaillé, ton classement en percentile et son fil complet.
           </p>
           {!historySchool ? (
-            <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {historySchools.map(({ school, count }) => (
                 <button
                   key={school}
                   type="button"
                   onClick={() => setHistorySchool(school)}
-                  className="flex items-center gap-3 rounded-lg border border-border/60 p-3 text-left transition hover:border-accent hover:bg-accent/5"
+                  className="flex items-center gap-3 rounded-[14px] border border-[rgba(11,18,32,0.1)] bg-white p-4 text-left transition hover:border-[var(--bleu-texte)]"
                 >
                   {schoolLogo(school) ? (
                     <img
                       src={schoolLogo(school)}
                       alt={`Logo ${school}`}
-                      className="size-9 shrink-0 rounded-md border border-border/60 bg-white object-contain p-0.5"
+                      className="size-10 shrink-0 rounded-[10px] bg-white object-contain p-1"
                       loading="lazy"
                     />
                   ) : null}
                   <span className="min-w-0">
-                    <span className="block truncate text-sm font-medium text-primary">{school}</span>
-                    <span className="block text-xs text-muted-foreground">
+                    <span className="block truncate text-[17px] font-medium text-[var(--ink)] md:text-[18px]">{school}</span>
+                    <span className="block text-[14px] text-[var(--gris-doux)] md:text-[15px]">
                       {count} entretien{count > 1 ? "s" : ""}
                     </span>
                   </span>
