@@ -33,6 +33,7 @@ import { Route as AppPartie8RouteImport } from './routes/_app.partie-8'
 import { Route as AppPremiumRouteImport } from './routes/_app.premium'
 import { Route as AppRessourcesRouteImport } from './routes/_app.ressources'
 import { Route as SiteIndexRouteImport } from './routes/_site.index'
+import { Route as SiteTestGratuitRouteImport } from './routes/_site.test-gratuit'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
@@ -160,6 +161,11 @@ const SiteIndexRoute = SiteIndexRouteImport.update({
   path: '/',
   getParentRoute: () => SiteRoute,
 } as any)
+const SiteTestGratuitRoute = SiteTestGratuitRouteImport.update({
+  id: '/test-gratuit',
+  path: '/test-gratuit',
+  getParentRoute: () => SiteRoute,
+} as any)
 const AuthCallbackRoute = AuthCallbackRouteImport.update({
   id: '/callback',
   path: '/callback',
@@ -210,6 +216,7 @@ export interface FileRoutesByFullPath {
   '/partie-8': typeof AppPartie8Route
   '/premium': typeof AppPremiumRoute
   '/ressources': typeof AppRessourcesRoute
+  '/test-gratuit': typeof SiteTestGratuitRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/blog/': typeof BlogIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
@@ -239,6 +246,7 @@ export interface FileRoutesByTo {
   '/partie-8': typeof AppPartie8Route
   '/premium': typeof AppPremiumRoute
   '/ressources': typeof AppRessourcesRoute
+  '/test-gratuit': typeof SiteTestGratuitRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/blog': typeof BlogIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
@@ -270,6 +278,7 @@ export interface FileRoutesById {
   '/_app/partie-8': typeof AppPartie8Route
   '/_app/premium': typeof AppPremiumRoute
   '/_app/ressources': typeof AppRessourcesRoute
+  '/_site/test-gratuit': typeof SiteTestGratuitRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/_site/': typeof SiteIndexRoute
   '/blog/': typeof BlogIndexRoute
@@ -302,6 +311,7 @@ export interface FileRouteTypes {
     | '/partie-8'
     | '/premium'
     | '/ressources'
+    | '/test-gratuit'
     | '/auth/callback'
     | '/blog/'
     | '/.lovable/oauth/consent'
@@ -331,6 +341,7 @@ export interface FileRouteTypes {
     | '/partie-8'
     | '/premium'
     | '/ressources'
+    | '/test-gratuit'
     | '/auth/callback'
     | '/blog'
     | '/.lovable/oauth/consent'
@@ -361,6 +372,7 @@ export interface FileRouteTypes {
     | '/_app/partie-8'
     | '/_app/premium'
     | '/_app/ressources'
+    | '/_site/test-gratuit'
     | '/auth/callback'
     | '/_site/'
     | '/blog/'
@@ -553,6 +565,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SiteIndexRouteImport
       parentRoute: typeof SiteRoute
     }
+    '/_site/test-gratuit': {
+      id: '/_site/test-gratuit'
+      path: '/test-gratuit'
+      fullPath: '/test-gratuit'
+      preLoaderRoute: typeof SiteTestGratuitRouteImport
+      parentRoute: typeof SiteRoute
+    }
     '/auth/callback': {
       id: '/auth/callback'
       path: '/callback'
@@ -630,11 +649,13 @@ const AppRouteChildren: AppRouteChildren = {
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
 interface SiteRouteChildren {
+  SiteTestGratuitRoute: typeof SiteTestGratuitRoute
   SiteIndexRoute: typeof SiteIndexRoute
   SiteConcoursSlugRoute: typeof SiteConcoursSlugRoute
 }
 
 const SiteRouteChildren: SiteRouteChildren = {
+  SiteTestGratuitRoute: SiteTestGratuitRoute,
   SiteIndexRoute: SiteIndexRoute,
   SiteConcoursSlugRoute: SiteConcoursSlugRoute,
 }
