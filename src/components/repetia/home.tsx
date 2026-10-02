@@ -354,8 +354,8 @@ export function HomeEpreuves() {
                 >
                   <h3
                     className={cn(
-                      "m-0 leading-[1.04] font-medium tracking-[-0.04em]",
-                      big ? "text-[30px] md:text-[40px]" : "text-[28px] md:text-[32px]",
+                      "m-0 font-medium tracking-[-0.04em]",
+                      big ? "text-[30px]/[1.04] md:text-[40px]/[1.04]" : "text-[28px]/[1.04] md:text-[32px]/[1.04]",
                     )}
                   >
                     {e.titre}
