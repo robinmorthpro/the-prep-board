@@ -95,7 +95,7 @@ function Part3() {
   const finished = sheets.filter(isSheetFinished).length;
 
   return (
-    <div>
+    <div className="module-form">
       <PartNav prev="/partie-2" next="/partie-4" nextEnabled={Boolean(finished >= 1)} nextMessage="Validez au moins une fiche école complète pour continuer." className="mb-6" />
       <PartHeader step="Module 2" title="Mes fiches écoles" />
       <StartPanel

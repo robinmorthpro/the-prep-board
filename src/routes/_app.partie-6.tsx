@@ -130,7 +130,7 @@ function Part6() {
   }
 
   return (
-    <div>
+    <div className="module-form">
       <PartNav prev="/partie-5" next="/partie-7" className="mb-6" />
       <PartHeader step="Module 5" title="Mes supports d'entretien">
         <div className="mt-4">
@@ -363,7 +363,7 @@ function QuestionnaireWorkspace({ kb, existing }: { kb: SupportSchool; existing:
   });
 
   return (
-    <div className="space-y-6">
+    <div className="module-form space-y-6">
       <Card className="flex items-center gap-4 p-6">
         {logo ? <img src={logo} alt={`Logo ${kb.school}`} className="size-14 shrink-0 object-contain" /> : null}
         <div className="min-w-0 flex-1">

@@ -207,7 +207,7 @@ function Part6() {
   }
 
   return (
-    <div>
+    <div className="module-form">
       <PartNav prev="/partie-6" next="/partie-8" className="mb-6" />
       <PartHeader step="Module 6" title="Mon entraînement sur les questions clés" />
 

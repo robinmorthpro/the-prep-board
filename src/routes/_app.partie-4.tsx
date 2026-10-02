@@ -126,7 +126,7 @@ function Part4() {
   const submitted = experiences.filter((e) => e.status === "submitted").length;
 
   return (
-    <div>
+    <div className="module-form">
       <PartNav prev="/partie-3" next="/partie-5" nextEnabled={Boolean(experiences.length > 0 && submitted / experiences.length >= 0.75)} nextMessage="Validez au moins 75 % de vos expériences (3 anecdotes chacune) pour continuer." className="mb-6" />
       <PartHeader step="Module 3" title="Mes expériences" />
       <StartPanel

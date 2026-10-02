@@ -120,7 +120,7 @@ function Part5() {
   );
 
   return (
-    <div>
+    <div className="module-form">
       <PartNav prev="/partie-4" next="/partie-6" nextEnabled={Boolean(done >= 2)} nextMessage="Validez au moins 2 sujets d'actualité pour continuer." className="mb-6" />
       <PartHeader step="Module 4" title="Mes sujets d'actualités" />
       <StartPanel
