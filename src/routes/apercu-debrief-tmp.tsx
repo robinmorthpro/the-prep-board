@@ -44,24 +44,27 @@ VERBATIMS :
 function ApercuDebrief() {
   return (
     <div className="min-h-screen bg-[var(--paper)]">
-      <DebriefHeader
-        school="ESSEC"
-        logo={schoolLogo("ESSEC")}
-        date="18 septembre 2026 - 17:04"
-        difficultyLabel="Jury neutre"
-        percentile={84}
-        percentileLabel="Sur cet entretien, vous faites mieux que 84 % des candidats (± 5 percentiles)."
-      />
-      <InterviewDebrief text={SAMPLE} positioningInBanner />
-      <InterviewTranscript
-        turns={[
-          {
-            question: "Bonjour Robin. Présentez-vous en quelques minutes, puis nous échangerons sur votre projet.",
-            answer:
-              "Je m'appelle Robin, j'ai 20 ans et je suis en ECG deuxième année au lycée du Parc à Lyon. Trois choses me définissent : le collectif, l'engagement et la curiosité.",
-          },
-        ]}
-      />
+      <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-6 px-4 py-8 md:px-14">
+        <DebriefHeader
+          school="ESSEC"
+          logo={schoolLogo("ESSEC")}
+          date="18 septembre 2026 - 17:04"
+          difficultyLabel="Jury neutre"
+          percentile={84}
+          percentileLabel="Sur cet entretien, vous faites mieux que 84 % des candidats (± 5 percentiles)."
+          onExport={() => {}}
+        />
+        <InterviewDebrief text={SAMPLE} positioningInBanner />
+        <InterviewTranscript
+          turns={[
+            {
+              question: "Bonjour Robin. Présentez-vous en quelques minutes, puis nous échangerons sur votre projet.",
+              answer:
+                "Je m'appelle Robin, j'ai 20 ans et je suis en ECG deuxième année au lycée du Parc à Lyon. Trois choses me définissent : le collectif, l'engagement et la curiosité.",
+            },
+          ]}
+        />
+      </div>
     </div>
   );
 }
