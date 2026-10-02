@@ -152,7 +152,7 @@ function statusBadge(status: QuestionStatus) {
 export const Route = createFileRoute("/_app/partie-7")({
   head: () => ({
     meta: [
-      { title: "Module 7 - Mon entraînement sur les questions clés | The Prepboard" },
+      { title: "Module 6 - Mon entraînement sur les questions clés | The Prepboard" },
       { name: "description", content: "Entraînement question par question, à l'oral, avec correction IA." },
       { property: "og:title", content: "Je m'entraîne à l'oral sur les questions clés | The Prepboard" },
       { property: "og:description", content: "Les questions clés des oraux CPGE, travaillées une par une." },
@@ -209,7 +209,7 @@ function Part6() {
   return (
     <div>
       <PartNav prev="/partie-6" next="/partie-8" className="mb-6" />
-      <PartHeader step="Module 7" title="Mon entraînement sur les questions clés" />
+      <PartHeader step="Module 6" title="Mon entraînement sur les questions clés" />
 
       <Card className="mb-6 flex gap-3 border-accent/50 bg-secondary/50 p-5">
         <AlertTriangle className="mt-0.5 size-5 shrink-0 text-accent" />

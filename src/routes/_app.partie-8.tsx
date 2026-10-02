@@ -75,7 +75,7 @@ import type { ImpactAxis } from "@/lib/esc-clermont-kb";
 export const Route = createFileRoute("/_app/partie-8")({
   head: () => ({
     meta: [
-      { title: "Module 8 - Mon entraînement illimité | The Prepboard" },
+      { title: "Module 7 - Mon entraînement illimité | The Prepboard" },
       { name: "description", content: "Simulation d'entretien en conditions réelles, jury en voix off et débrief IA." },
       { property: "og:title", content: "Je m'entraîne à l'oral sans limite | The Prepboard" },
       { property: "og:description", content: "Entretien complet simulé pour les oraux BCE et Ecricome." },
@@ -1026,7 +1026,7 @@ function Part7() {
     <div>
       <PartNav prev="/partie-7" className="mb-6" />
       <PartHeader
-        step="Module 8"
+        step="Module 7"
         title="Mon entraînement illimité"
       />
 

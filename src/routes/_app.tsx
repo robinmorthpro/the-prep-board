@@ -91,8 +91,8 @@ function AppLayout() {
 
   const isActive = (to: string) => pathname.startsWith(to);
 
-  // Numérotation : Module 1 à 5 pour la préparation, Module 7 et 8 pour l'entraînement.
-  const sideNumber = (part: (typeof PARTS)[number]) => (part.id >= 7 ? part.id : moduleNumber(part.id));
+  // Numérotation : Module 1 à 5 pour la préparation, Module 6 et 7 pour l'entraînement.
+  const sideNumber = (part: (typeof PARTS)[number]) => moduleNumber(part.id);
 
   const partLink = (part: (typeof PARTS)[number]) => {
     const active = pathname.startsWith(part.path);
