@@ -1565,14 +1565,14 @@ function Part7() {
                   return (
                     <li
                       key={s.id}
-                      className={`rounded-[3px] border ${
-                        open ? "border-primary/60 shadow-[var(--shadow-card)]" : "border-border/60"
+                      className={`rounded-[14px] border border-[rgba(11,18,32,0.1)] bg-white ${
+                        open ? "shadow-[var(--shadow-card)]" : ""
                       }`}
                     >
-                      <div className="flex items-center gap-2 p-3">
+                      <div className="flex items-center gap-2 p-4 md:p-5">
                         <button
                           type="button"
-                          className="flex flex-1 flex-wrap items-center gap-2 text-left"
+                          className="flex flex-1 flex-wrap items-center gap-2.5 text-left"
                           onClick={() => setOpenSession(open ? null : s.id)}
                         >
                           {open ? (
@@ -1580,21 +1580,21 @@ function Part7() {
                           ) : (
                             <ChevronRight className="size-4 shrink-0" />
                           )}
-                          <span className="text-sm font-medium text-primary">
+                          <span className="text-[16px] font-medium text-[var(--ink)] md:text-[17px]">
                             {new Date(s.created_at).toLocaleString("fr-FR", {
                               dateStyle: "medium",
                               timeStyle: "short",
                             })}
                           </span>
                           {percentile ? (
-                            <span className="shrink-0 rounded-full border border-destructive/40 bg-destructive/10 px-2 py-0.5 text-[11px] font-bold text-destructive">
-                              Percentile {percentile}
+                            <span className="shrink-0 rounded-full bg-[var(--bleu-pale)] px-3 py-1 text-[13px] font-bold text-[var(--bleu-texte)] tabular-nums md:text-[14px]">
+                              {percentile}
                             </span>
                           ) : null}
-                          <span className="shrink-0 rounded-full border border-accent/40 bg-accent/10 px-2 py-0.5 text-[11px] font-medium text-accent">
+                          <span className="shrink-0 rounded-full border border-[rgba(11,18,32,0.2)] bg-white px-3 py-1 text-[13px] font-medium text-[var(--graphite)] md:text-[14px]">
                             {formatLabel(s.format)}
                           </span>
-                          <span className="text-xs text-muted-foreground">
+                          <span className="text-[14px] text-[var(--gris-doux)] md:text-[15px]">
                             {s.status === "done" ? "entretien achevé" : "entretien interrompu"}
                           </span>
                         </button>
@@ -1602,7 +1602,7 @@ function Part7() {
                           type="button"
                           variant="ghost"
                           size="icon"
-                          title="Exporter le transcript en PDF"
+                          title="Exporter le feedback et le transcript en PDF"
                           onClick={() =>
                             downloadInterviewPdf({
                               school: s.school,
@@ -1622,24 +1622,33 @@ function Part7() {
                         </Button>
                       </div>
                       {open ? (
-                        <div className="space-y-4 border-t border-border/60 p-4">
+                        <div className="flex flex-col gap-5 border-t border-[rgba(11,18,32,0.1)] p-4 md:p-5">
                           <DebriefHeader
                             school={s.school}
                             logo={schoolLogo(s.school)}
-                            date={new Date(s.created_at).toLocaleDateString("fr-FR", { dateStyle: "long" })}
-                            formatLabel={formatLabel(s.format)}
+                            date={sessionDate(s.created_at)}
                             difficultyLabel={juryLabel(s.difficulty)}
                             percentile={positioningInfo(s.debrief).value}
                             percentileLabel={positioningInfo(s.debrief).label}
+                            onExport={() =>
+                              downloadInterviewPdf({
+                                school: s.school,
+                                formatLabel: formatLabel(s.format),
+                                difficultyLabel: s.difficulty ? difficultyLabel(s.difficulty) : undefined,
+                                createdAt: s.created_at,
+                                turns: s.turns ?? [],
+                                debrief: s.debrief,
+                                complete: s.status === "done",
+                              })
+                            }
                           />
                           {s.debrief ? (
                             <InterviewDebrief
                               text={s.debrief}
-                              difficulty={difficultyLabel(s.difficulty)}
                               positioningInBanner
                             />
                           ) : (
-                            <p className="text-xs text-muted-foreground">Pas de débrief : entretien interrompu.</p>
+                            <p className="m-0 text-[15px] text-[var(--gris-doux)]">Pas de débrief : entretien interrompu.</p>
                           )}
                           <InterviewTranscript turns={s.turns ?? []} />
                         </div>
