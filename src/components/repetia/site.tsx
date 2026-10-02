@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/accordion";
 import { useSession } from "@/hooks/useSession";
 import { cn } from "@/lib/utils";
-import { Wordmark } from "./Mark";
 import { BRAND, CONCOURS, type Temoignage } from "@/lib/site-content";
 
 /* ------------------------------------------------------------- mouvement */
@@ -551,7 +550,7 @@ export function SiteHeader() {
               </div>
             ) : null}
           </div>
-          <a href="/#methode-etapes" className="hover:text-[var(--ciel)]">
+          <a href="/#methode" className="hover:text-[var(--ciel)]">
             La méthode The Prepboard
           </a>
           <Link to="/blog" className="hover:text-[var(--ciel)]">
@@ -604,7 +603,7 @@ export function SiteHeader() {
             ))}
           </div>
           <div className="my-5 h-px bg-white/12" />
-          <a href="/#methode-etapes" onClick={() => setOpen(false)} className="block text-[17px]">
+          <a href="/#methode" onClick={() => setOpen(false)} className="block text-[17px]">
             La méthode The Prepboard
           </a>
           <Link to="/blog" onClick={() => setOpen(false)} className="mt-3 block text-[17px]">
@@ -658,7 +657,7 @@ export function SiteFooter() {
             <p className={label}>The Prepboard</p>
             <ul className="mt-5 grid gap-3">
               <li>
-                <a href="/#methode-etapes" className="hover:text-[var(--ciel)]">La méthode The Prepboard</a>
+                <a href="/#methode" className="hover:text-[var(--ciel)]">La méthode The Prepboard</a>
               </li>
               <li>
                 <Link to="/auth" className="hover:text-[var(--ciel)]">Je commence ma préparation</Link>
