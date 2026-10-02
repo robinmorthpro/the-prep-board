@@ -16,6 +16,7 @@ import {
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { PageHero } from "@/components/vivaldi/PageHero";
 
 import { useSession } from "@/hooks/useSession";
 import { PARTS, TEST_MODE_PREMIUM_FREE, KEY_QUESTIONS, moduleNumber } from "@/lib/vivaldi-data";
@@ -84,22 +85,9 @@ export function SectionHub({ title, subtitle, banner, parts }: SectionHubProps) 
 
   return (
     <div>
-      <header className="relative mb-8 overflow-hidden bg-ink">
-        <img
-          src={banner}
-          alt=""
-          aria-hidden="true"
-          className="absolute inset-0 size-full object-cover opacity-55"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/85 to-ink/30" />
-        <div className="relative px-6 py-12 sm:px-10 sm:py-16">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary-foreground/70">
-            Dashboard de préparation
-          </p>
-          <h1 className="mt-2 max-w-3xl text-4xl text-primary-foreground">{title}</h1>
-          <p className="mt-3 max-w-2xl text-sm text-primary-foreground/80">{subtitle}</p>
-        </div>
-      </header>
+      <PageHero image={banner} eyebrow="Dashboard de préparation" title={title}>
+        {subtitle}
+      </PageHero>
 
       <div className="grid gap-5 md:grid-cols-2">{parts.map((part) => renderModuleCard(part))}</div>
     </div>
@@ -112,14 +100,10 @@ export function SectionHub({ title, subtitle, banner, parts }: SectionHubProps) 
     return (
       <Card
         key={part.id}
-        className={`relative flex flex-col gap-4 overflow-hidden p-6 shadow-[var(--shadow-card)] transition-shadow hover:shadow-[var(--shadow-lift)] ${
+        className={`relative flex flex-col gap-4 overflow-hidden p-6 rounded-[24px] border-0 shadow-none ${
           unlocked ? "" : "opacity-80"
         }`}
       >
-        <span
-          aria-hidden
-          className={`absolute inset-y-0 left-0 w-[3px] ${unlocked ? "bg-accent" : "bg-border"}`}
-        />
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-3">
             <span
@@ -129,7 +113,7 @@ export function SectionHub({ title, subtitle, banner, parts }: SectionHubProps) 
             >
               {moduleNumber(part.id)}
             </span>
-            <p className="label-mono text-[11px]">Module {moduleNumber(part.id)}</p>
+            <p className="text-[15px] font-semibold text-[var(--bleu-texte)]">Module {moduleNumber(part.id)}</p>
           </div>
           {unlocked && part.id === 8 ? (
             <Badge variant="secondary">

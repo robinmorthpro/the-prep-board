@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { PageHero } from "@/components/vivaldi/PageHero";
 import {
   PolarAngleAxis,
   PolarGrid,
@@ -124,11 +125,10 @@ function CockpitPage() {
 
       {/* Indice de préparation + repères chiffrés */}
       <div className="grid gap-5 lg:grid-cols-3">
-        <Card className="relative flex flex-col gap-4 overflow-hidden p-6 shadow-[var(--shadow-card)]">
-          <span aria-hidden className="absolute inset-y-0 left-0 w-[3px] bg-accent" />
+        <Card className="relative flex flex-col gap-4 overflow-hidden p-6 rounded-[24px] border-0 shadow-none">
           <div className="flex items-center gap-2">
             <Gauge className="size-5 text-accent" />
-            <p className="label-mono text-[11px]">Indice de préparation</p>
+            <p className="text-[15px] font-semibold text-[var(--bleu-texte)]">Indice de préparation</p>
           </div>
           <div className="flex items-end gap-3">
             <span className="font-display text-5xl font-bold text-primary">{readiness}</span>
@@ -148,11 +148,10 @@ function CockpitPage() {
           </p>
         </Card>
 
-        <Card className="relative overflow-hidden p-6 shadow-[var(--shadow-card)] lg:col-span-2">
-          <span aria-hidden className="absolute inset-y-0 left-0 w-[3px] bg-primary" />
+        <Card className="relative overflow-hidden p-6 rounded-[24px] border-0 shadow-none lg:col-span-2">
           <div className="flex items-center gap-2">
             <Sparkles className="size-5 text-accent" />
-            <p className="label-mono text-[11px]">Mes repères</p>
+            <p className="text-[15px] font-semibold text-[var(--bleu-texte)]">Mes repères</p>
           </div>
           <div className="mt-5 grid grid-cols-2 gap-5 sm:grid-cols-4">
             <Metric value={`${correctedQuestions}`} label="questions clés corrigées" />
@@ -191,7 +190,7 @@ function CockpitPage() {
           <h2 className="text-[1.65rem] leading-snug">À travailler en priorité</h2>
         </div>
         {priorities.length === 0 ? (
-          <Card className="p-6 shadow-[var(--shadow-card)]">
+          <Card className="p-6 rounded-[24px] border-0 shadow-none">
             <p className="text-base text-muted-foreground">
               Tout est à jour : continuez à enchaîner des simulations complètes pour entretenir votre niveau.
             </p>
@@ -203,12 +202,8 @@ function CockpitPage() {
               return (
                 <Card
                   key={p.id}
-                  className="relative flex flex-col gap-3 overflow-hidden p-6 shadow-[var(--shadow-card)] transition-shadow hover:shadow-[var(--shadow-lift)]"
+                  className="relative flex flex-col gap-3 overflow-hidden p-6 rounded-[24px] border-0 shadow-none"
                 >
-                  <span
-                    aria-hidden
-                    className={`absolute inset-y-0 left-0 w-[3px] ${p.level === "bloquant" ? "bg-destructive" : "bg-accent"}`}
-                  />
                   <div className="flex items-start justify-between gap-3">
                     <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary font-display text-sm font-bold text-primary-foreground">
                       {index + 1}
@@ -238,8 +233,7 @@ function CockpitPage() {
 
       {/* Radar par thème */}
       <section className="mt-8 grid gap-5 lg:grid-cols-5">
-        <Card className="relative overflow-hidden p-6 shadow-[var(--shadow-card)] lg:col-span-3">
-          <span aria-hidden className="absolute inset-y-0 left-0 w-[3px] bg-accent" />
+        <Card className="relative overflow-hidden p-6 rounded-[24px] border-0 shadow-none lg:col-span-3">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-2">
               <Compass className="size-5 text-accent" />
@@ -284,11 +278,10 @@ function CockpitPage() {
           </p>
         </Card>
 
-        <Card className="relative overflow-hidden p-6 shadow-[var(--shadow-card)] lg:col-span-2">
-          <span aria-hidden className="absolute inset-y-0 left-0 w-[3px] bg-primary" />
+        <Card className="relative overflow-hidden p-6 rounded-[24px] border-0 shadow-none lg:col-span-2">
           <div className="flex items-center gap-2">
             <Target className="size-5 text-accent" />
-            <p className="label-mono text-[11px]">Détail par thème</p>
+            <p className="text-[15px] font-semibold text-[var(--bleu-texte)]">Détail par thème</p>
           </div>
           <ul className="mt-4 flex flex-col gap-3">
             {themeScores.map((s) => (
@@ -310,8 +303,7 @@ function CockpitPage() {
 
       {/* Objectifs + prochaines actions */}
       <section className="mt-8 grid gap-5 md:grid-cols-2">
-        <Card className="relative overflow-hidden p-6 shadow-[var(--shadow-card)]">
-          <span aria-hidden className="absolute inset-y-0 left-0 w-[3px] bg-accent" />
+        <Card className="relative overflow-hidden p-6 rounded-[24px] border-0 shadow-none">
           <div className="flex items-center gap-2">
             <Flag className="size-5 text-accent" />
             <h2 className="text-[1.65rem] leading-snug">Mes objectifs</h2>
@@ -345,8 +337,7 @@ function CockpitPage() {
           </div>
         </Card>
 
-        <Card className="relative overflow-hidden p-6 shadow-[var(--shadow-card)]">
-          <span aria-hidden className="absolute inset-y-0 left-0 w-[3px] bg-primary" />
+        <Card className="relative overflow-hidden p-6 rounded-[24px] border-0 shadow-none">
           <div className="flex items-center gap-2">
             <Mic className="size-5 text-accent" />
             <h2 className="text-[1.65rem] leading-snug">Mon entraînement</h2>

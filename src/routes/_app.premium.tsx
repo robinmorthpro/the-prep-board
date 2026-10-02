@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useSession } from "@/hooks/useSession";
 import { supabase } from "@/integrations/supabase/client";
+import { PageHero } from "@/components/vivaldi/PageHero";
 import { useProfile } from "@/lib/vivaldi-queries";
 
 export const Route = createFileRoute("/_app/premium")({
@@ -40,24 +41,22 @@ function PremiumPage() {
   });
 
   return (
-    <div className="mx-auto max-w-2xl">
-      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">Formule complète</p>
-      <h1 className="mt-2 text-4xl">Aller jusqu'à l'entretien complet - 99 €</h1>
-      <p className="mt-3 text-sm text-muted-foreground">
+    <div>
+      <PageHero eyebrow="Formule complète" title="Aller jusqu'à l'entretien complet - 99 €">
         Les modules 1 à 5 restent gratuits. La formule complète ouvre l'entraînement aux 45 questions clés et les
         simulations d'entretien en conditions réelles.
-      </p>
+      </PageHero>
 
-      <Card className="mt-8 space-y-4 p-6">
+      <Card className="space-y-5 rounded-[24px] border-0 p-7 shadow-none md:p-9">
         <div className="flex items-center justify-between">
-          <h2 className="text-2xl">Ce qui est inclus</h2>
+          <h2 className="m-0 text-[26px] font-semibold tracking-[-0.02em]">Ce qui est inclus</h2>
           {isPremium ? (
             <Badge className="bg-premium text-premium-foreground"><Gem className="size-3" /> Active</Badge>
           ) : (
             <Badge variant="secondary">Non active</Badge>
           )}
         </div>
-        <ul className="space-y-2 text-sm text-muted-foreground">
+        <ul className="space-y-3 text-[17px] leading-[1.55] text-[var(--graphite)]">
           {[
             "Module 7 : les 45 questions clés, question par question, avec correction IA",
             "Module 8 : entretiens complets simulés, à l'oral, avec débrief du jury",
@@ -65,7 +64,7 @@ function PremiumPage() {
             "Accès illimité jusqu'aux oraux",
           ].map((f) => (
             <li key={f} className="flex gap-2">
-              <Check className="mt-0.5 size-4 shrink-0 text-success" />
+              <Check className="mt-0.5 size-4 shrink-0 text-[var(--bleu)]" />
               <span>{f}</span>
             </li>
           ))}
@@ -81,7 +80,7 @@ function PremiumPage() {
             </Button>
           )}
         </div>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-[14px] text-[var(--gris-doux)]">
           Prototype : aucun paiement réel n'est effectué, le bouton active simplement la formule sur votre compte.
         </p>
       </Card>
