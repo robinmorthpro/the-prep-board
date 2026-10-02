@@ -338,3 +338,7 @@
   .module-form input:not([type="checkbox"]):not([type="radio"]),
   .module-form textarea { padding: 16px 18px; font-size: 20px; }
 }
+
+/* Retours IA : les listes numérotées gardent leurs numéros */
+ol > li.ai-li { display: list-item; }
+ol > li.ai-li > .ai-dot { display: none; }

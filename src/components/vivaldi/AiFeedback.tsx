@@ -112,7 +112,7 @@ const markdownComponents = {
   p: ({ children }: { children?: ReactNode }) => <p className="text-[17px] leading-[1.55]">{children}</p>,
   ul: ({ children }: { children?: ReactNode }) => <ul className="flex flex-col gap-3">{children}</ul>,
   ol: ({ children }: { children?: ReactNode }) => <ol className="ml-5 list-decimal space-y-3 text-[17px] marker:font-semibold marker:text-[var(--bleu-texte)]">{children}</ol>,
-  li: ({ children }: { children?: ReactNode }) => <li className="flex gap-3 text-[17px] leading-[1.55] [ol_&]:list-item [ol_&]:block"><span aria-hidden className="mt-[10px] size-2 flex-none rounded-full bg-[var(--bleu-texte)] [ol_&]:hidden" /><span className="min-w-0">{children}</span></li>,
+  li: ({ children }: { children?: ReactNode }) => <li className="ai-li flex gap-3 text-[17px] leading-[1.55]"><span aria-hidden className="ai-dot mt-[10px] size-2 flex-none rounded-full bg-[var(--bleu-texte)]" /><span className="min-w-0">{children}</span></li>,
   strong: ({ children }: { children?: ReactNode }) => (
     <strong className="font-bold text-[var(--ink)]">{children}</strong>
   ),
