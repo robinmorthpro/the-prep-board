@@ -1,4 +1,4 @@
-import type { ComponentType } from "react";
+import type { ComponentType, ReactNode } from "react";
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
@@ -15,14 +15,17 @@ import {
   FileSignature,
   LayoutList,
   BookOpen,
-  ChevronDown,
-  ChevronRight,
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
-import { MODULE_BANNERS } from "@/components/vivaldi/module-banners";
+import heroImg from "@/assets/site/repetition.jpg";
+import boardImg from "@/assets/site/hec-jouy.jpg";
+import infoImg from "@/assets/site/campus-paris.jpg";
+import prepImg from "@/assets/site/table-entretien.jpg";
+import trainImg from "@/assets/site/hero-oral.jpg";
+import resImg from "@/assets/site/amphi-vide.jpg";
 
 import { useSession } from "@/hooks/useSession";
 import { PARTS, PREP_PARTS, TRAIN_PARTS, TEST_MODE_PREMIUM_FREE, KEY_QUESTIONS, KNOWLEDGE, moduleNumber } from "@/lib/vivaldi-data";
@@ -119,113 +122,129 @@ function Dashboard() {
     setExpanded((current) => (current === section ? null : section));
   };
 
+  const firstName = profile?.first_name?.trim();
+  const prepRatio = prepParts.length ? prepCompleted / prepParts.length : 0;
+  const trainRatio = trainParts.length ? trainCompleted / trainParts.length : 0;
+
   return (
-    <div>
-      <header className="relative mb-8 overflow-hidden bg-ink">
+    <div className="flex flex-col gap-6">
+      <section className="relative overflow-hidden rounded-[28px] bg-[var(--ink)] text-white">
         <img
-          src={MODULE_BANNERS["Tableau"]}
+          src={heroImg}
           alt=""
           aria-hidden="true"
-          className="absolute inset-0 size-full object-cover opacity-55"
+          className="absolute inset-0 size-full object-cover"
+          style={{ objectPosition: "60% 30%" }}
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/85 to-ink/30" />
-        <div className="relative px-6 py-12 sm:px-10 sm:py-16">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary-foreground/70">Dashboard de préparation</p>
-          <h1 className="mt-2 max-w-3xl text-4xl text-primary-foreground">
-            Bienvenue{profile?.first_name ? ` ${profile.first_name}` : ""} dans votre espace de préparation
-          </h1>
-          <p className="mt-3 max-w-2xl text-sm text-primary-foreground/80">
-            Le contenu de la préparation a été pensé par nos experts des oraux de motivation. Tout a été fait pour vous prendre par la main et vous guider jusqu'à ce que vous soyez prêt à réussir tous vos oraux.
-          </p>
-          <p className="mt-2 max-w-2xl text-sm text-primary-foreground/80">
-            Travaillez les sections les une après les autres et ne passez à la suite que quand vous considérez avoir achevé le travail sur celle en cours.
-          </p>
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(90deg, rgba(11,18,32,0.95) 0%, rgba(11,18,32,0.82) 45%, rgba(11,18,32,0.35) 100%)",
+          }}
+        />
+        <div className="relative p-6 md:p-12">
+          <div className="flex max-w-[760px] flex-col gap-5">
+            <h1 className="m-0 text-[36px] font-medium leading-[1.02] tracking-[-0.045em] text-white md:text-[56px]">
+              {firstName
+                ? `${firstName}, bienvenue dans votre espace de préparation`
+                : "Bienvenue dans votre espace de préparation"}
+            </h1>
+            <p className="m-0 text-[17px] leading-[1.55] text-[#E1E6EF] md:text-[20px]">
+              Le contenu de la préparation a été pensé par nos experts des oraux de motivation. Tout a été fait pour vous prendre par la main et vous guider jusqu'à ce que vous soyez prêt à réussir tous vos oraux.
+            </p>
+            <p className="m-0 text-[17px] leading-[1.55] text-[#E1E6EF] md:text-[20px]">
+              Travaillez les sections les unes après les autres et ne passez à la suite que quand vous considérez avoir achevé le travail sur celle en cours.
+            </p>
+          </div>
         </div>
-      </header>
+      </section>
 
-      <Link
-        to="/mon-tableau-de-bord"
-        className="mb-5 flex items-center justify-between gap-4 rounded-lg border border-border bg-card p-5 shadow-[var(--shadow-card)] transition-shadow hover:shadow-[var(--shadow-lift)]"
-      >
-        <span>
-          <span className="block text-[1.35rem] leading-snug">Mon tableau de bord</span>
-          <span className="mt-1 block text-sm text-muted-foreground">
-            Vos priorités du moment et votre niveau par thème d'entretien.
-          </span>
-        </span>
-        <span className="label-mono shrink-0 text-[11px] text-accent">Ouvrir</span>
-      </Link>
+      <div className="grid gap-4 md:grid-cols-2">
+        <PhotoCard
+          to="/mon-tableau-de-bord"
+          image={boardImg}
+          marker={<CardIcon>{BOARD_ICON}</CardIcon>}
+          title="Tableau de bord"
+          text="Vos priorités du moment et votre niveau par thème d'entretien."
+          action="Ouvrir"
+        />
+        <PhotoCard
+          to="/informations-personnelles"
+          image={infoImg}
+          marker={<CardIcon>{USER_ICON}</CardIcon>}
+          title="Informations personnelles"
+          text="Les réponses à cette section permettront de personnaliser la suite de votre préparation."
+          action="Ouvrir"
+        />
+      </div>
 
-      <div className="grid gap-5 md:grid-cols-3">
-
+      <div className="grid gap-4 md:grid-cols-3">
         <SectionCard
-          id="prep"
           step={1}
-          icon={LayoutList}
+          image={prepImg}
           title="Je me prépare"
           to="/je-me-prepare"
           subtitle="Les 5 modules pour structurer votre profil et votre dossier."
           expanded={expanded === "prep"}
           onToggle={() => toggle("prep")}
-          badge={`${prepCompleted}/${prepParts.length} modules achevés`}
+          status={`${prepCompleted}/${prepParts.length} modules achevés`}
+          done={prepCompleted === prepParts.length}
+          ratio={prepRatio}
         />
         <SectionCard
-          id="train"
           step={2}
-          icon={Mic}
+          image={trainImg}
           title="Je m'entraîne"
           to="/je-m-entraine"
           subtitle="Questions clés et simulations complètes pour le jour J."
           expanded={expanded === "train"}
           onToggle={() => toggle("train")}
-          badge={`${trainCompleted}/${trainParts.length} modules achevés`}
+          status={`${trainCompleted}/${trainParts.length} modules achevés`}
+          done={trainCompleted === trainParts.length}
+          ratio={trainRatio}
           locked={!prepReadyForTraining}
           lockedReason="Commencez par 'Je me prépare' (au moins 3 modules) avant de vous entraîner."
         />
         <SectionCard
-          id="resources"
           step={3}
-          icon={BookOpen}
+          image={resImg}
           title="Ressources théoriques"
           to="/ressources"
           subtitle="Les attentes du jury, réunies au même endroit."
           expanded={expanded === "resources"}
           onToggle={() => toggle("resources")}
-          badge={`${RESOURCE_SECTIONS.length} fiches`}
+          status={`${RESOURCE_SECTIONS.length} fiches`}
         />
       </div>
 
       {expanded === "prep" && (
-        <div className="mt-5 grid gap-5 md:grid-cols-2">
+        <div className="grid gap-4 md:grid-cols-2">
           {prepParts.map((part) => renderModuleCard(part))}
         </div>
       )}
 
       {expanded === "train" && (
-        <div className="mt-5 grid gap-5 md:grid-cols-2">
+        <div className="grid gap-4 md:grid-cols-2">
           {trainParts.map((part) => renderModuleCard(part))}
         </div>
       )}
 
       {expanded === "resources" && (
-        <div className="mt-5 grid gap-5 md:grid-cols-2">
+        <div className="grid gap-4 md:grid-cols-2">
           {RESOURCE_SECTIONS.map((section) => (
-            <Card
-              key={section.key}
-              className="relative flex flex-col gap-4 overflow-hidden p-6 shadow-[var(--shadow-card)] transition-shadow hover:shadow-[var(--shadow-lift)]"
-            >
-              <span aria-hidden className="absolute inset-y-0 left-0 w-[3px] bg-accent" />
+            <Card key={section.key} className="flex flex-col gap-4 rounded-[24px] border-0 p-7 shadow-none">
               <div className="flex items-start justify-between gap-3">
                 <BookOpen className="size-5 shrink-0 text-accent" />
                 <Badge variant="secondary">Fiche</Badge>
               </div>
               <div>
-                <h2 className="text-[1.65rem] leading-snug">
+                <h2 className="text-[26px] font-medium leading-[1.1] tracking-[-0.035em]">
                   <Link to="/ressources" className="transition-colors hover:text-accent">
                     {section.title}
                   </Link>
                 </h2>
-                <p className="mt-1.5 text-base leading-relaxed text-muted-foreground">{section.description}</p>
+                <p className="mt-2 text-[18px] leading-relaxed text-muted-foreground">{section.description}</p>
               </div>
               <div className="mt-auto pt-1">
                 <Button asChild>
@@ -246,18 +265,14 @@ function Dashboard() {
     return (
       <Card
         key={part.id}
-        className={`relative flex flex-col gap-4 overflow-hidden p-6 shadow-[var(--shadow-card)] transition-shadow hover:shadow-[var(--shadow-lift)] ${
+        className={`relative flex flex-col gap-4 overflow-hidden rounded-[24px] border-0 p-7 shadow-none ${
           unlocked ? "" : "opacity-80"
         }`}
       >
-        <span
-          aria-hidden
-          className={`absolute inset-y-0 left-0 w-[3px] ${unlocked ? "bg-accent" : "bg-border"}`}
-        />
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-3">
             <span
-              className={`flex size-10 shrink-0 items-center justify-center rounded-full font-display text-base font-bold ${
+              className={`flex size-10 shrink-0 items-center justify-center rounded-[14px] text-[18px] font-semibold ${
                 unlocked ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
               }`}
             >
@@ -298,7 +313,7 @@ function Dashboard() {
           )}
         </div>
         <div>
-          <h2 className="flex items-start gap-2 text-[1.65rem] leading-snug">
+          <h2 className="flex items-start gap-2 text-[26px] font-medium leading-[1.1] tracking-[-0.035em]">
             {PartIcon ? <PartIcon className="mt-1 size-5 shrink-0 text-accent" /> : null}
             {unlocked ? (
               <Link to={part.path} className="transition-colors hover:text-accent">
@@ -308,7 +323,7 @@ function Dashboard() {
               part.title
             )}
           </h2>
-          <p className="mt-1.5 text-base leading-relaxed text-muted-foreground">{part.subtitle}</p>
+          <p className="mt-1.5 text-[18px] leading-relaxed text-muted-foreground">{part.subtitle}</p>
         </div>
         {!unlocked ? <p className="text-base text-muted-foreground">{detail[part.id]}</p> : null}
         <div className="mt-auto pt-1">
@@ -331,26 +346,93 @@ function Dashboard() {
   }
 }
 
+const BOARD_ICON = <path d="M4 20V10M10 20V4M16 20v-7M22 20H2" />;
+const USER_ICON = (
+  <>
+    <circle cx="12" cy="8" r="4" />
+    <path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6" />
+  </>
+);
+
+function CardIcon({ children }: { children: ReactNode }) {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      {children}
+    </svg>
+  );
+}
+
+function Arrow() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M5 12h14M13 6l6 6-6 6" />
+    </svg>
+  );
+}
+
+function CardPhoto({ image, marker }: { image: string; marker: ReactNode }) {
+  return (
+    <div className="relative h-[200px]">
+      <img src={image} alt="" className="block size-full object-cover" />
+      <span className="absolute left-5 top-5 inline-flex size-11 items-center justify-center rounded-[14px] bg-[var(--ink)] text-[20px] font-semibold text-white">
+        {marker}
+      </span>
+    </div>
+  );
+}
+
+function PhotoCard({
+  to,
+  image,
+  marker,
+  title,
+  text,
+  action,
+}: {
+  to: string;
+  image: string;
+  marker: ReactNode;
+  title: string;
+  text: string;
+  action: string;
+}) {
+  return (
+    <Link to={to} className="group flex flex-col overflow-hidden rounded-[24px] bg-white text-[var(--ink)]">
+      <CardPhoto image={image} marker={marker} />
+      <div className="flex flex-1 flex-col gap-[14px] p-7">
+        <h2 className="mt-1.5 text-[28px] font-medium leading-[1.1] tracking-[-0.035em] md:text-[32px]">{title}</h2>
+        <p className="m-0 text-[18px] text-[var(--graphite)]">{text}</p>
+        <span className="mt-auto inline-flex items-center gap-2 pt-2 text-[17px] font-semibold group-hover:text-[var(--bleu)]">
+          {action}
+          <Arrow />
+        </span>
+      </div>
+    </Link>
+  );
+}
+
 function SectionCard({
-  id,
   step,
-  icon: Icon,
+  image,
   title,
   to,
   subtitle,
-  badge,
+  status,
+  done,
+  ratio,
   expanded,
   onToggle,
   locked,
   lockedReason,
 }: {
-  id: ExpandedSection;
   step: number;
-  icon: ComponentType<{ className?: string }>;
+  image: string;
   title: string;
   to: string;
   subtitle: string;
-  badge: string;
+  status: string;
+  done?: boolean;
+  ratio?: number;
   expanded: boolean;
   onToggle: () => void;
   locked?: boolean;
@@ -358,84 +440,64 @@ function SectionCard({
 }) {
   return (
     <div
-      className={`group relative flex flex-col gap-4 overflow-hidden rounded-xl border p-6 text-left shadow-[var(--shadow-card)] transition-all hover:shadow-[var(--shadow-lift)] ${
-        expanded ? "border-accent/50 bg-accent/5" : "border-border bg-card"
+      className={`flex flex-col overflow-hidden rounded-[24px] bg-white text-[var(--ink)] ${
+        expanded ? "ring-2 ring-[var(--ciel)]" : ""
       } ${locked ? "opacity-70" : ""}`}
     >
-      <span
-        aria-hidden
-        className={`absolute inset-y-0 left-0 w-[3px] transition-colors ${expanded ? "bg-accent" : locked ? "bg-border" : "bg-border group-hover:bg-accent/50"}`}
-      />
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <span
-            className={`flex size-10 shrink-0 items-center justify-center rounded-full font-display text-base font-bold ${
-              locked ? "bg-muted text-muted-foreground" : "bg-primary text-primary-foreground"
-            }`}
-          >
-            {step}
-          </span>
-          <span
-            className={`flex size-10 shrink-0 items-center justify-center rounded-full ${
-              locked ? "bg-muted/70 text-muted-foreground" : "bg-accent/10 text-accent"
-            }`}
-          >
-            <Icon className="size-5" />
-          </span>
-        </div>
-        <div className="flex items-center gap-2">
-          <Badge variant="secondary">{badge}</Badge>
-          <button
-            type="button"
-            onClick={onToggle}
-            aria-expanded={expanded}
-            aria-label={expanded ? "Replier les sous-sections" : "Voir les sous-sections"}
-            disabled={locked}
-            className={`rounded-md p-1.5 transition-colors ${
-              locked
-                ? "text-muted-foreground/50 cursor-not-allowed"
-                : "text-muted-foreground hover:bg-accent/10 hover:text-accent"
-            }`}
-          >
-            {expanded ? <ChevronDown className="size-5" /> : <ChevronRight className="size-5" />}
-          </button>
-        </div>
-      </div>
-      <div>
-        <h2 className="text-[1.65rem] leading-snug">
+      <CardPhoto image={image} marker={step} />
+      <div className="flex flex-1 flex-col gap-[14px] p-7">
+        <span className={`text-[16px] font-semibold ${done ? "text-[var(--success)]" : "text-[var(--graphite)]"}`}>
+          {done ? (
+            <span className="mr-1.5 inline-flex align-[-3px]">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M5 12l5 5 9-10" />
+              </svg>
+            </span>
+          ) : null}
+          {status}
+        </span>
+        {ratio !== undefined ? (
+          <div className="h-1.5 rounded-full bg-[var(--paper)]">
+            <div
+              className="h-full rounded-full bg-[var(--ciel)]"
+              style={{ width: `${Math.round(Math.min(1, Math.max(0, ratio)) * 100)}%` }}
+            />
+          </div>
+        ) : (
+          <div className="h-1.5" />
+        )}
+        <h2 className="mt-1.5 text-[28px] font-medium leading-[1.1] tracking-[-0.035em] md:text-[32px]">
           {locked ? (
             <span className="flex items-center gap-2">
               <Lock className="size-5 text-muted-foreground" />
               {title}
             </span>
           ) : (
-            <Link
-              to={to}
-              className="flex items-center gap-2 transition-colors hover:text-accent"
-            >
+            <Link to={to} className="transition-colors hover:text-[var(--bleu)]">
               {title}
             </Link>
           )}
         </h2>
-        <p className="mt-1.5 text-base leading-relaxed text-muted-foreground">{subtitle}</p>
-      </div>
-      {locked && lockedReason ? (
-        <p className="flex items-center gap-2 text-sm text-muted-foreground">
-          <Lock className="size-4" />
-          {lockedReason}
-        </p>
-      ) : null}
-      <div className="mt-auto pt-1">
+        <p className="m-0 text-[18px] text-[var(--graphite)]">{subtitle}</p>
+        {locked && lockedReason ? (
+          <p className="flex items-center gap-2 text-[15px] text-[var(--graphite)]">
+            <Lock className="size-4 shrink-0" />
+            {lockedReason}
+          </p>
+        ) : null}
         <button
           type="button"
           onClick={onToggle}
+          aria-expanded={expanded}
           disabled={locked}
-          className={`inline-flex items-center gap-2 text-sm font-medium ${
-            locked ? "text-muted-foreground cursor-not-allowed" : "text-primary hover:text-accent"
+          className={`mt-auto inline-flex items-center gap-2 self-start pt-2 text-[17px] font-semibold ${
+            locked ? "cursor-not-allowed text-[var(--graphite)]" : "hover:text-[var(--bleu)]"
           }`}
         >
           {locked ? "Bientôt disponible" : expanded ? "Replier" : "Voir les sous-sections"}
-          <ChevronRight className={`size-4 transition-transform ${expanded ? "rotate-90" : ""}`} />
+          <span className={`transition-transform ${expanded ? "rotate-90" : ""}`}>
+            <Arrow />
+          </span>
         </button>
       </div>
     </div>
