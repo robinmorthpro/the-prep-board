@@ -1,9 +1,10 @@
-import { Outlet, createFileRoute, useLocation, useNavigate } from "@tanstack/react-router";
+import { Link, Outlet, createFileRoute, useLocation, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Wordmark } from "@/components/repetia/Mark";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -178,7 +179,7 @@ function AuthPage() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center gap-8 bg-[var(--ink)] px-5 py-12">
       <Link to="/" aria-label="The Prepboard, accueil">
-        <Wordmark tone="sombre" className="h-9 w-auto" />
+        <Wordmark tone="chalk" className="text-[1.75rem]" />
       </Link>
       <Card className="w-full max-w-md rounded-[28px] border-0 p-6 md:p-8">
         <p className="pill-label inline-flex rounded-full bg-[var(--bleu-pale)] px-3 py-1 text-[var(--bleu-texte)]">The Prepboard</p>
