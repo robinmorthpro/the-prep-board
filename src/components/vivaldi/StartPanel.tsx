@@ -83,7 +83,15 @@ function Row({ label, first, children }: { label: string; first?: boolean; child
 }
 
 /** Encart « À lire au démarrage » pour les modules sans lignes Objectif / À savoir. */
-export function IntroPanel({ children, theory }: { children: ReactNode; theory?: ReactNode }) {
+export function IntroPanel({
+  children,
+  theory,
+  title = "À lire au démarrage",
+}: {
+  children: ReactNode;
+  theory?: ReactNode;
+  title?: ReactNode;
+}) {
   const [open, setOpen] = useState(true);
   return (
     <section className="mb-6 flex flex-col rounded-[24px] bg-[var(--bleu-pale)] px-6 py-6 md:px-10 md:py-8">
@@ -94,7 +102,7 @@ export function IntroPanel({ children, theory }: { children: ReactNode; theory?:
         className={`flex cursor-pointer items-center justify-between gap-6 text-left ${open ? "pb-6" : ""}`}
       >
         <h2 className="m-0 text-[28px] font-medium leading-[1.1] tracking-[-0.035em] md:text-[36px]">
-          À lire au démarrage
+          {title}
         </h2>
         <span
           className={`inline-flex size-12 flex-none items-center justify-center rounded-full bg-white text-[var(--ink)] transition-transform ${
