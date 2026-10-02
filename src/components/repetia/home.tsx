@@ -322,7 +322,7 @@ export function HomeEpreuves() {
     <section id="concours" className="scroll-mt-24 bg-[var(--ink)] py-20 text-white md:py-[136px]">
       <Container>
         <div className="flex flex-col gap-6">
-          <h2 className={H2}>Nos épreuves préparées</h2>
+          <h2 className={H2}>Les épreuves préparées</h2>
           <p className={cn(CHAPO, "max-w-[1100px] text-[var(--line)]")}>
             Chaque concours a son format, son jury et ses attendus. Choisissez le vôtre pour voir le détail de
             l'épreuve et de la préparation.
