@@ -41,7 +41,7 @@
 
 **À réaliser**
 - Reproduire `maquette-accueil.html` avec les données et liens réels.
-- Ordre confirmé : ouverture photo et chiffres, méthode en trois étapes, comparatif, épreuves, prix, témoignages selon décision à venir, FAQ, appel final et pied de page.
+- Ordre confirmé : ouverture photo et chiffres, méthode en trois étapes, comparatif, épreuves, prix, témoignages, FAQ, appel final et pied de page.
 - Supprimer la section « Un oral ne s’improvise pas. Il se répète… ».
 - Remplacer entièrement l’ancienne section méthode par le titre, le texte, les trois étapes et les trois captures de la maquette.
 - Méthode : survol ou clic sur ordinateur, sélection au clavier, trois étapes empilées avec leur capture sur mobile.
@@ -55,7 +55,7 @@
 - Nouvelle route `/test-gratuit` après fourniture de sa copie
 - Pointeurs des trois nouvelles captures dans `src/assets/`
 
-**Point encore bloqué** : affichage temporaire de la section témoignages, à arbitrer avant cette étape.
+**Témoignages** : vrais avis publiés avec leurs textes actuels, dans la mise en page de la maquette et avec ses photos (recadrages de `repetition.jpg` et `hero-oral.jpg`). Aucune mention « exemple ». Robin remplacera les photos plus tard.
 
 ## Étape 3 — Autres pages publiques
 
@@ -164,13 +164,10 @@
 - Pendant l’entretien : « Terminer l’entretien en avance »
 - « Exporter le transcript en PDF » → « Exporter le feedback et le transcript en PDF »
 - « Feedback détaillé des différents moments de l’entretien » → « Feedback détaillé »
-- Tous les autres textes des maquettes font foi pour les écrans concernés, sauf données d’exemple, témoignages non validés, percentiles par moment, pastille micro et onde vocale.
+- Tous les autres textes des maquettes font foi pour les écrans concernés, sauf données d’exemple, percentiles par moment, pastille micro et onde vocale.
 
-## Deux décisions encore nécessaires
+## Seule question ouverte
 
-1. Quel titre et quel texte exacts faut-il afficher sur la future page `/test-gratuit` ? Elle ne sera pas créée avant réception de cette copie.
-2. En attendant les vrais témoignages et portraits, faut-il :
-   - **Option A — recommandée :** masquer entièrement la section témoignages ;
-   - **Option B :** afficher des cartes sans photo, clairement marquées « Exemples de mise en page — témoignages à venir » ?
+- Titre et texte exacts de la future page `/test-gratuit`, que Robin fournira. Elle ne sera créée qu’à réception de cette copie ; le reste de l’étape 2 n’en dépend pas.
 
-Le favicon et l’icône d’app ne constituent pas une question : ils seront simplement intégrés à l’étape 1 dès leur réception.
+Le favicon et l’icône d’app seront intégrés à l’étape 1 dès leur réception.
