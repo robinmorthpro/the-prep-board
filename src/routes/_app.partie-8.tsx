@@ -4,7 +4,7 @@ import {
   InterviewTranscript,
   positioningInfo,
 } from "@/components/vivaldi/InterviewDebrief";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { ConversationProvider } from "@elevenlabs/react";
 import { useServerFn } from "@tanstack/react-start";
@@ -126,7 +126,7 @@ function PillToggle({
   on: boolean;
   disabled?: boolean;
   onClick: () => void;
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
   return (
     <button
