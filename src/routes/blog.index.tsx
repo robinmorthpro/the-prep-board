@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Section, SectionTitle } from "@/components/repetia/site";
+import { Section, SectionTitle, SiteFooter, SiteHeader } from "@/components/repetia/site";
 
 export const Route = createFileRoute("/blog/")({
   head: () => ({
@@ -16,33 +16,41 @@ export const Route = createFileRoute("/blog/")({
   component: BlogPage,
 });
 
+const ARTICLES = [
+  {
+    titre: "Comment structurer un projet professionnel convaincant",
+    texte: "La méthode pas à pas pour transformer un projet flou en discours précis et mémorable.",
+  },
+  {
+    titre: "Les 5 erreurs qui font perdre des points à l'oral",
+    texte: "Ce que les jurys remarquent en premier, et comment l'éviter par la répétition.",
+  },
+];
+
 function BlogPage() {
   return (
-    <Section tone="paper">
-      <SectionTitle
-        title="Le blog The Prepboard"
-        intro="Conseils d'experts, méthodes et retours d'expérience pour transformer votre entraînement en admission. Bientôt en ligne."
-      />
-      <div className="mt-12 grid gap-6 md:grid-cols-2">
-        <article className="rounded-lg border border-[var(--ink)]/12 bg-[var(--craie)] p-8">
-          <p className="label-mono text-[var(--rouge)]">Bientôt</p>
-          <h3 className="mt-3 text-[1.4rem] font-semibold tracking-tight">
-            Comment structurer un projet professionnel convaincant
-          </h3>
-          <p className="mt-3 text-[15px] leading-relaxed text-muted-foreground">
-            La méthode pas à pas pour transformer un projet flou en discours précis et mémorable.
-          </p>
-        </article>
-        <article className="rounded-lg border border-[var(--ink)]/12 bg-[var(--craie)] p-8">
-          <p className="label-mono text-[var(--rouge)]">Bientôt</p>
-          <h3 className="mt-3 text-[1.4rem] font-semibold tracking-tight">
-            Les 5 erreurs qui font perdre des points à l'oral
-          </h3>
-          <p className="mt-3 text-[15px] leading-relaxed text-muted-foreground">
-            Ce que les jurys remarquent en premier, et comment l'éviter par la répétition.
-          </p>
-        </article>
-      </div>
-    </Section>
+    <div className="site-scope flex min-h-screen flex-col bg-white">
+      <SiteHeader />
+      <main className="flex-1">
+        <Section tone="paper">
+          <SectionTitle
+            title="Le blog The Prepboard"
+            intro="Conseils d'experts, méthodes et retours d'expérience pour transformer votre entraînement en admission. Bientôt en ligne."
+          />
+          <div className="mt-10 grid gap-3 md:mt-14 md:grid-cols-2">
+            {ARTICLES.map((a) => (
+              <article key={a.titre} className="rounded-[24px] bg-white p-6 md:p-8">
+                <p className="pill-label inline-flex rounded-full bg-[var(--bleu-pale)] px-3 py-1 text-[var(--bleu-texte)]">
+                  Bientôt
+                </p>
+                <h3 className="mt-4 text-[22px] leading-snug font-semibold tracking-[-0.02em] md:text-[24px]">{a.titre}</h3>
+                <p className="mt-3 text-[16px] leading-relaxed text-[var(--graphite)]">{a.texte}</p>
+              </article>
+            ))}
+          </div>
+        </Section>
+      </main>
+      <SiteFooter />
+    </div>
   );
 }
