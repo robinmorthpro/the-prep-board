@@ -117,25 +117,10 @@ function CockpitPage() {
 
   return (
     <div>
-      <header className="relative mb-8 overflow-hidden bg-ink">
-        <img
-          src={MODULE_BANNERS["Tableau"]}
-          alt=""
-          aria-hidden="true"
-          className="absolute inset-0 size-full object-cover opacity-50"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/85 to-ink/30" />
-        <div className="relative px-6 py-12 sm:px-10 sm:py-14">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary-foreground/70">
-            Cockpit de progression
-          </p>
-          <h1 className="mt-2 max-w-3xl text-4xl text-primary-foreground">Mon tableau de bord</h1>
-          <p className="mt-3 max-w-2xl text-sm text-primary-foreground/80">
-            Où vous en êtes, ce qu'il faut travailler maintenant, et votre niveau thème par thème d'après les
-            corrections du jury IA.
-          </p>
-        </div>
-      </header>
+      <PageHero image={MODULE_BANNERS["Tableau"]} eyebrow="Cockpit de progression" title="Mon tableau de bord">
+        Où vous en êtes, ce qu'il faut travailler maintenant, et votre niveau thème par thème d'après les
+        corrections du jury IA.
+      </PageHero>
 
       {/* Indice de préparation + repères chiffrés */}
       <div className="grid gap-5 lg:grid-cols-3">
