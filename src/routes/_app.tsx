@@ -116,9 +116,6 @@ function AppLayout() {
     </div>
   );
 
-  const prepActive = PREP_PARTS.some((p) => pathname.startsWith(p.path)) || isActive("/je-me-prepare");
-  const trainActive = TRAIN_PARTS.some((p) => pathname.startsWith(p.path)) || isActive("/je-m-entraine");
-
   const navLinks = (
     <nav className="flex flex-col gap-1">
       <Link to="/dashboard" className={mainItem(isActive("/dashboard"))}>
@@ -133,12 +130,12 @@ function AppLayout() {
         <NavIcon>{ICONS.user}</NavIcon>
         Informations personnelles
       </Link>
-      <Link to="/je-me-prepare" className={mainItem(isActive("/je-me-prepare") && !prepActive ? true : isActive("/je-me-prepare"))}>
+      <Link to="/je-me-prepare" className={mainItem(isActive("/je-me-prepare"))}>
         <NavIcon>{ICONS.prep}</NavIcon>
         Je me prépare
       </Link>
       {subList(PREP_PARTS)}
-      <Link to="/je-m-entraine" className={mainItem(isActive("/je-m-entraine") && trainActive)}>
+      <Link to="/je-m-entraine" className={mainItem(isActive("/je-m-entraine"))}>
         <NavIcon>{ICONS.mic}</NavIcon>
         Je m'entraîne
       </Link>
