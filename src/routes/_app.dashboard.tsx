@@ -13,7 +13,6 @@ import {
   MessageCircleQuestion,
   Mic,
   FileSignature,
-  LayoutList,
   BookOpen,
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
