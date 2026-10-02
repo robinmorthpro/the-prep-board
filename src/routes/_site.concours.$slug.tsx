@@ -1,6 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowRight, Check } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import {
   CompareTable,
   CtaBand,
@@ -269,7 +268,7 @@ function ConcoursPage() {
               repetia: l.repetia,
             }))}
           />
-          <h3 className="mt-20 text-[1.5rem] leading-snug font-semibold">{VS_CHATBOT.titre}</h3>
+          <h3 className="mt-20 text-[26px] leading-snug font-medium tracking-[-0.03em] md:text-[32px]">{VS_CHATBOT.titre}</h3>
           <CompareTable
             colonnes={["Assistant généraliste", "The Prepboard"]}
             lignes={VS_CHATBOT.lignes.map((l) => ({
@@ -298,13 +297,13 @@ function ConcoursPage() {
       {/* ---------------------------------------------------------- maillage */}
       <Section>
         <SectionTitle kicker="Autres concours" title="Vous préparez aussi une autre épreuve ?" />
-        <ul className="mt-10 grid gap-px border border-border bg-border sm:grid-cols-2">
+        <ul className="mt-10 grid gap-3 sm:grid-cols-2">
           {autres.map((x) => (
             <li key={x.slug}>
               <Link
                 to="/concours/$slug"
                 params={{ slug: x.slug }}
-                className="flex items-center justify-between gap-4 bg-[var(--craie)] p-6 text-[17px] font-medium hover:text-[var(--rouge)]"
+                className="flex items-center justify-between gap-4 rounded-[22px] bg-[var(--paper)] p-6 text-[18px] font-semibold tracking-[-0.01em] transition-colors hover:bg-[var(--bleu-pale)] hover:text-[var(--bleu-texte)]"
               >
                 {x.nav}
                 <ArrowRight aria-hidden className="size-4 shrink-0" />
