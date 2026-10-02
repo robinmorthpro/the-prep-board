@@ -68,7 +68,7 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
             href="/"
             className="inline-flex items-center justify-center rounded-full border border-white/30 px-6 py-3 text-[16px] font-semibold text-white transition-colors hover:bg-white/10"
           >
-            Go home
+            Retour à l'accueil
           </a>
         </div>
       </div>
