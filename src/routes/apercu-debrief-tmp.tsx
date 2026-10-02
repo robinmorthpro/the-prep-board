@@ -43,7 +43,7 @@ VERBATIMS :
 
 function ApercuDebrief() {
   return (
-    <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-6 px-4 py-8 md:px-14">
+    <div className="min-h-screen bg-[var(--paper)]">
       <DebriefHeader
         school="ESSEC"
         logo={schoolLogo("ESSEC")}
