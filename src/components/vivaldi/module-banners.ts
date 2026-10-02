@@ -13,13 +13,13 @@ import experiences from "@/assets/site/experiences-vie.jpg";
 
 export const MODULE_BANNERS: Record<string, string> = {
   "Informations personnelles": identite,
-  "Module 1": projetPro,
+  "Module 1": tableEntretien,
   "Module 2": campusParis,
   "Module 3": experiences,
   "Module 4": presse,
   "Module 5": supports,
-  "Module 7": amphiBoutmy,
-  "Module 8": tableEntretien,
+  "Module 6": amphiBoutmy,
+  "Module 7": tableEntretien,
   Tableau: heroOral,
   Amphi: amphi,
 };

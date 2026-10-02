@@ -432,7 +432,7 @@ export const PREP_PARTS = PARTS.filter((p) => p.id >= 2 && p.id <= 6);
 /** Modules de « Je m'entraîne » (numérotés 1 et 2 à l'affichage). */
 export const TRAIN_PARTS = PARTS.filter((p) => p.id >= 7);
 /** Numéro affiché d'un module : 2→1 … 6→5, puis 7→1, 8→2. */
-export const moduleNumber = (id: number) => (id >= 7 ? id - 6 : id - 1);
+export const moduleNumber = (id: number) => id - 1;
 
 /** Mode test : les modules premium restent accessibles sans paiement. */
 export const TEST_MODE_PREMIUM_FREE = true;

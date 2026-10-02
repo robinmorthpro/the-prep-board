@@ -87,7 +87,7 @@ function statusBadge(status: Status) {
   }
   if (status === "À perfectionner") {
     return (
-      <Badge variant="outline" className="gap-1 border-amber-500/60 bg-amber-500/10 text-amber-600">
+      <Badge variant="outline" className="gap-1 border-warning/60 bg-warning/10 text-warning">
         <AlertCircle className="size-3" /> À perfectionner
       </Badge>
     );
@@ -101,20 +101,20 @@ function statusBadge(status: Status) {
 
 const markdownComponents = {
   h1: ({ children }: { children?: ReactNode }) => (
-    <h4 className="mt-4 text-base font-semibold text-primary">{children}</h4>
+    <h4 className="mt-5 text-[20px] font-semibold tracking-[-0.01em] text-[var(--ink)]">{children}</h4>
   ),
   h2: ({ children }: { children?: ReactNode }) => (
-    <p className="mt-4 mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-accent first:mt-0">{children}</p>
+    <p className="mt-6 mb-3 text-[22px] font-medium leading-[1.1] tracking-[-0.035em] text-[var(--ink)] first:mt-0 md:text-[26px]">{children}</p>
   ),
   h3: ({ children }: { children?: ReactNode }) => (
-    <p className="mt-4 mb-1 border-l-2 border-accent pl-2 text-sm font-semibold text-primary first:mt-0">{children}</p>
+    <p className="mt-5 mb-2 text-[18px] font-semibold tracking-[-0.01em] text-[var(--ink)] first:mt-0">{children}</p>
   ),
-  p: ({ children }: { children?: ReactNode }) => <p className="text-sm leading-relaxed">{children}</p>,
-  ul: ({ children }: { children?: ReactNode }) => <ul className="ml-4 list-disc space-y-1.5">{children}</ul>,
-  ol: ({ children }: { children?: ReactNode }) => <ol className="ml-4 list-decimal space-y-1.5">{children}</ol>,
-  li: ({ children }: { children?: ReactNode }) => <li className="text-sm leading-relaxed">{children}</li>,
+  p: ({ children }: { children?: ReactNode }) => <p className="text-[17px] leading-[1.55]">{children}</p>,
+  ul: ({ children }: { children?: ReactNode }) => <ul className="flex flex-col gap-3">{children}</ul>,
+  ol: ({ children }: { children?: ReactNode }) => <ol className="ml-5 list-decimal space-y-3 text-[17px] marker:font-semibold marker:text-[var(--bleu-texte)]">{children}</ol>,
+  li: ({ children }: { children?: ReactNode }) => <li className="ai-li flex gap-3 text-[17px] leading-[1.55]"><span aria-hidden className="ai-dot mt-[10px] size-2 flex-none rounded-full bg-[var(--bleu-texte)]" /><span className="min-w-0">{children}</span></li>,
   strong: ({ children }: { children?: ReactNode }) => (
-    <strong className="font-semibold text-primary">{children}</strong>
+    <strong className="font-bold text-[var(--ink)]">{children}</strong>
   ),
   em: ({ children }: { children?: ReactNode }) => <em className="italic">{children}</em>,
   hr: () => <hr className="border-border/60" />,
@@ -152,10 +152,10 @@ export function AiFeedback({ text }: { text: string }) {
   const { sections, summary, questions } = parseFeedback(text);
 
   return (
-    <div className="space-y-4 text-sm leading-relaxed text-foreground/90">
+    <div className="space-y-4 text-[17px] leading-[1.55] text-[var(--ink)]">
       {summary ? (
-        <div className="rounded-lg border border-border/60 bg-secondary/40 p-4">
-          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-accent">Synthèse</p>
+        <div className="rounded-[20px] bg-[var(--paper)] p-5 md:p-7">
+          <p className="mb-3 text-[22px] font-medium leading-[1.1] tracking-[-0.035em] md:text-[26px]">Synthèse</p>
           <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
             {summary}
           </ReactMarkdown>
@@ -163,20 +163,20 @@ export function AiFeedback({ text }: { text: string }) {
       ) : null}
 
       {sections.map((section, si) => (
-        <div key={si} className="rounded-lg border border-border/60 bg-secondary/40 p-4">
-          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-accent">{section.title}</p>
-          <ul className="space-y-3">
+        <div key={si} className="rounded-[20px] bg-[var(--paper)] p-5 md:p-7">
+          <p className="mb-4 text-[22px] font-medium leading-[1.1] tracking-[-0.035em] md:text-[26px]">{section.title}</p>
+          <ul className="flex flex-col">
             {section.items.map((item, i) => (
-              <li key={i} className="space-y-1">
+              <li key={i} className="space-y-1.5 border-t border-[rgba(11,18,32,0.1)] py-4 first:border-t-0 first:pt-0 last:pb-0">
                 <div className="flex items-start justify-between gap-3">
-                  <p className="font-medium text-foreground">{item.criterion}</p>
+                  <p className="text-[17px] font-semibold text-[var(--ink)] md:text-[18px]">{item.criterion}</p>
                   <div className="shrink-0 pt-0.5">{statusBadge(item.status)}</div>
                 </div>
                 {item.justification ? (
-                  <p className="text-xs text-muted-foreground">{item.justification}</p>
+                  <p className="text-[16px] leading-[1.55] text-[var(--graphite)]">{item.justification}</p>
                 ) : null}
                 {item.example ? (
-                  <p className="rounded-md border border-border/60 bg-background/60 p-2 text-xs font-normal text-foreground/80">
+                  <p className="rounded-[14px] bg-white p-3 text-[16px] font-normal leading-[1.55] text-[var(--ink)]">
                     <span className="font-normal italic text-muted-foreground">Exemple : </span>
                     {item.example}
                   </p>
@@ -188,7 +188,7 @@ export function AiFeedback({ text }: { text: string }) {
       ))}
 
       {questions ? (
-        <div className="rounded-lg border border-border/60 bg-secondary/40 p-4">
+        <div className="rounded-[20px] bg-[var(--paper)] p-5 md:p-7">
           <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
             {tagify(questions)}
           </ReactMarkdown>

@@ -1,7 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -9,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { PartHeader } from "@/components/vivaldi/PartHeader";
+import { StartPanel } from "@/components/vivaldi/StartPanel";
 import { TheoryDialog } from "@/components/vivaldi/TheoryDialog";
 import { CAREER_THEORY_SECTIONS } from "@/lib/theory";
 import { useSession } from "@/hooks/useSession";
@@ -94,49 +94,31 @@ function Part2() {
   return (
     <div>
       <PartNav prev="/informations-personnelles" next="/partie-3" nextEnabled={Boolean(ready)} nextMessage="Complétez tous les champs obligatoires de votre projet professionnel pour continuer." className="mb-6" />
-      <PartHeader step="Module 1" title="Mon projet professionnel">
-        <div className="mt-4">
+      <PartHeader step="Module 1" title="Mon projet professionnel" />
+      <StartPanel
+        objectif={[
+            <>L'objectif de ce module est de formaliser, à l'écrit, votre réflexion personnelle sur le projet professionnel que vous présenterez lors de l'entretien.</>,
+        ]}
+        aSavoir={[
+            <>À ce stade, il n'est pas encore nécessaire de faire le lien avec l'école, cela vous sera demandé par la suite.</>,
+            <>Dans ce module, The Prepboard ne vérifie ni la pertinence ni l'exactitude des informations que vous renseignez. Il vous appartient donc de vous assurer de la pertinence, de la cohérence et de la justesse de votre réflexion. C'est là que la qualité de votre travail personnel fait la différence !</>,
+        ]}
+        theory={
           <TheoryDialog
-            title={CAREER_THEORY.title}
-            intro={CAREER_THEORY.intro}
-            sections={CAREER_THEORY_SECTIONS}
-          />
-        </div>
-      </PartHeader>
-
-      <Card className="mb-6 flex gap-3 border-accent/50 bg-secondary/50 p-5">
-        <AlertTriangle className="mt-0.5 size-5 shrink-0 text-accent" />
-        <div className="space-y-3 text-sm leading-relaxed text-muted-foreground">
-          <p>
-            L'objectif de ce module est de formaliser, à l'écrit, votre réflexion personnelle sur le projet professionnel
-            que vous présenterez lors de l'entretien.
-          </p>
-          <p>
-            Avant de commencer, nous vous recommandons de consulter la rubrique « Consignes théoriques » pour prendre
-            connaissance des consignes et comprendre les attentes.
-          </p>
-
-          <div>
-            <p className="font-medium text-foreground">À savoir :</p>
-            <ul className="mt-1.5 list-disc space-y-1 pl-5">
-              <li>
-                À ce stade, il n'est pas encore nécessaire de faire le lien avec l'école, cela vous sera demandé par la
-                suite.
-              </li>
-              <li>
-                Dans ce module, The Prepboard ne vérifie ni la pertinence ni l'exactitude des informations que vous renseignez.
-                Il vous appartient donc de vous assurer de la pertinence, de la cohérence et de la justesse de votre
-                réflexion. C'est là que la qualité de votre travail personnel fait la différence !
-              </li>
-            </ul>
-          </div>
-        </div>
-      </Card>
+              prominent
+              title={CAREER_THEORY.title}
+              intro={CAREER_THEORY.intro}
+              sections={CAREER_THEORY_SECTIONS}
+            />
+        }
+        recommendation="Avant de commencer, nous vous recommandons de consulter la rubrique « Consignes théoriques » pour prendre connaissance des consignes et comprendre les attentes."
+      />
 
 
-      <div className="max-w-3xl space-y-6">
-        <Card className="space-y-5 p-6">
-          <div className="grid gap-4 sm:grid-cols-2">
+      <div>
+        <Card className="module-form flex flex-col gap-7 rounded-[24px] border-0 p-6 md:p-10">
+          <h2 className="m-0 text-[28px] font-medium leading-[1.1] tracking-[-0.035em] md:text-[36px]">Mon projet professionnel</h2>
+          <div className="grid gap-6 sm:grid-cols-2">
             <Field
               id="job"
               label="Le métier ou domaine de métier qui m'attire"
@@ -207,20 +189,31 @@ function Part2() {
             onChange={(v) => setForm({ ...form, extra_info: v })}
             placeholder="Des figures connues, des évènements spéciaux, etc"
           />
+          <div className="flex flex-wrap items-center gap-4 border-t border-[rgba(11,18,32,0.1)] pt-7">
+            <Button variant="outline" size="lg" onClick={() => save.mutate(false)} disabled={save.isPending} className="gap-[10px]">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M5 3h11l3 3v15H5z" />
+                <path d="M8 3v5h7M8 21v-7h8v7" />
+              </svg>
+              Enregistrer
+            </Button>
+            <Button
+              size="lg"
+              onClick={() => save.mutate(true)}
+              disabled={!ready || save.isPending}
+              className="gap-[10px] bg-[var(--ciel)] text-[var(--ink)] hover:bg-[var(--ciel)]/85"
+            >
+              Valider et débloquer le module 3
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M5 12h14M13 6l6 6-6 6" />
+              </svg>
+            </Button>
+          </div>
+          <p className="-mt-2 text-[16px] text-[var(--graphite)] md:text-[17px]">
+            Vous pouvez revenir modifier ces informations quand vous voulez. Si vous changez de projet, il faudra refaire le travail
+            des modules suivantes qui en dépendent.
+          </p>
         </Card>
-
-        <div className="flex flex-wrap items-center gap-3">
-          <Button variant="outline" onClick={() => save.mutate(false)} disabled={save.isPending}>
-            Enregistrer
-          </Button>
-          <Button onClick={() => save.mutate(true)} disabled={!ready || save.isPending}>
-            Valider et débloquer le module 3
-          </Button>
-        </div>
-        <p className="text-xs text-muted-foreground">
-          Vous pouvez revenir modifier ces informations quand vous voulez. Si vous changez de projet, il faudra refaire le travail
-          des modules suivantes qui en dépendent.
-        </p>
       </div>
       <PartNav prev="/informations-personnelles" next="/partie-3" nextEnabled={Boolean(ready)} nextMessage="Complétez tous les champs obligatoires de votre projet professionnel pour continuer." className="mt-10" />
     </div>
@@ -252,10 +245,10 @@ function Field({
     id === "extra";
 
   return (
-    <div className="space-y-1.5">
+    <div className="flex flex-col gap-[10px]">
       <Label htmlFor={id}>
         {label}
-        {required ? <span className="ml-1 text-accent">*</span> : null}
+        {required ? <span className="text-[var(--bleu-texte)]"> *</span> : null}
       </Label>
       {isTextarea ? (
         <Textarea id={id} rows={4} value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} />

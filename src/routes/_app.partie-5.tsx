@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { AlertTriangle, Check, ChevronDown, ChevronUp, Link2, Loader2, Plus, Trash2 } from "lucide-react";
+import { Check, ChevronDown, ChevronUp, Link2, Loader2, Plus, Trash2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Textarea } from "@/components/ui/textarea";
 import { PartHeader } from "@/components/vivaldi/PartHeader";
+import { StartPanel } from "@/components/vivaldi/StartPanel";
 import { PartNav } from "@/components/vivaldi/PartNav";
 import { TheoryDialog } from "@/components/vivaldi/TheoryDialog";
 import { NEWS_THEORY_SECTIONS } from "@/lib/theory";
@@ -119,37 +120,23 @@ function Part5() {
   );
 
   return (
-    <div>
+    <div className="module-form">
       <PartNav prev="/partie-4" next="/partie-6" nextEnabled={Boolean(done >= 2)} nextMessage="Validez au moins 2 sujets d'actualité pour continuer." className="mb-6" />
-      <PartHeader step="Module 4" title="Mes sujets d'actualités">
-        <div className="mt-4">
-          <TheoryDialog title={NEWS_THEORY.title} intro={NEWS_THEORY.intro} sections={NEWS_THEORY_SECTIONS} />
-        </div>
-      </PartHeader>
-
-      <Card className="mb-6 flex gap-3 border-accent/50 bg-secondary/50 p-5">
-        <AlertTriangle className="mt-0.5 size-5 shrink-0 text-accent" />
-        <div className="space-y-3 text-sm leading-relaxed text-muted-foreground">
-          <p>
-            L'objectif de ce module est de faire émerger quelques événements d'actualité qui vous ont marqués dans les derniers mois, puis de faire ensuite le lien avec vous et de trouver les perches que vous voulez tendre à partir de ce sujet.
-            Appuyez-vous et faites donc des liens avec le travail effectué dans les sections précédentes. L'objectif de cette question est que le jury en sache finalement un peu plus sur ... vous !
-          </p>
-          <p>
-            Avant de commencer, nous vous recommandons de consulter la rubrique « Consignes théoriques » pour comprendre les attentes.
-          </p>
-          <div>
-            <p className="font-medium text-foreground">À savoir :</p>
-            <ul className="mt-1.5 list-disc space-y-1.5 pl-5">
-              <li>
-                Dans ce module, The Prepboard ne vérifie pas l'exactitude des informations que vous renseignez sur vous. Il vous appartient de prendre le temps de faire avec soin le travail recherche et d'analyse nécessaire. C'est ainsi que vous progresserez et que vous mettrez en avant des événements, des analyses et des liens avec vous pertinents.
-              </li>
-              <li>
-                Vous pourrez passer au module suivant, le premier module d'entraînement, quand vous aurez entré au moins 2 sujets d'actualité.
-              </li>
-            </ul>
-          </div>
-        </div>
-      </Card>
+      <PartHeader step="Module 4" title="Mes sujets d'actualités" />
+      <StartPanel
+        objectif={[
+            <>L'objectif de ce module est de faire émerger quelques événements d'actualité qui vous ont marqués dans les derniers mois, puis de faire ensuite le lien avec vous et de trouver les perches que vous voulez tendre à partir de ce sujet. Appuyez-vous et faites donc des liens avec le travail effectué dans les sections précédentes. L'objectif de cette question est que le jury en sache finalement un peu plus sur ... vous !</>,
+        ]}
+        aSavoir={[
+            <>Dans ce module, The Prepboard ne vérifie pas l'exactitude des informations que vous renseignez sur vous. Il vous appartient de prendre le temps de faire avec soin le travail recherche et d'analyse nécessaire. C'est ainsi que vous progresserez et que vous mettrez en avant des événements, des analyses et des liens avec vous pertinents.</>,
+            <>Vous pourrez passer au module suivant, le premier module d'entraînement, quand vous aurez entré au moins 2 sujets d'actualité.</>,
+        ]}
+        theory={
+          <TheoryDialog
+              prominent title={NEWS_THEORY.title} intro={NEWS_THEORY.intro} sections={NEWS_THEORY_SECTIONS} />
+        }
+        recommendation="Avant de commencer, nous vous recommandons de consulter la rubrique « Consignes théoriques » pour comprendre les attentes."
+      />
 
       <Card className="mb-6 p-6">
         <div className="mb-2 flex items-center justify-between text-sm">

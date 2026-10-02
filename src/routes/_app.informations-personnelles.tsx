@@ -151,7 +151,7 @@ function PersonalInfo() {
   );
 
   return (
-    <div>
+    <div className="module-form">
       <PartHeader step="Informations personnelles" title="Mes informations personnelles" />
 
       <div className="space-y-6">
