@@ -186,7 +186,7 @@ function AppLayout() {
             <Wordmark tone="chalk" />
           </Link>
         </div>
-        <div className="flex-1 px-3">{navLinks}</div>
+        <div className="min-h-0 flex-1 overflow-y-auto px-3 pb-3">{navLinks}</div>
         <div className="border-t border-[var(--craie)]/10 p-4">
           <button
             type="button"
@@ -215,7 +215,7 @@ function AppLayout() {
           </button>
         </header>
         {mobileOpen ? (
-          <div className="border-b border-[var(--craie)]/10 bg-[var(--ink)] px-3 pb-4">
+          <div className="max-h-[calc(100vh-4rem)] overflow-y-auto border-b border-[var(--craie)]/10 bg-[var(--ink)] px-3 pb-4">
             {navLinks}
             <button
               type="button"
