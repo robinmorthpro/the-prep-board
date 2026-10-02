@@ -1063,7 +1063,6 @@ function Part7() {
             Choisissez une école et simulez un entretien comme le jour J ! Le jury écoute votre réponse et rebondit en
             conditions réelles. L'évaluation n'arrive qu'à la fin que quand vous cliquez sur « Terminer l'entretien »
           </p>
-          <p>Le format par défaut est celui d'un entretien classique avec un jury neutre.</p>
           <p>
             Pour un premier entraînement, nous vous conseillons de choisir l'entretien de découverte, avec un jury un peu
             plus aidant. Basculez ensuite vers les entretiens classiques, qui vous mettront face aux exigences du jour J.
