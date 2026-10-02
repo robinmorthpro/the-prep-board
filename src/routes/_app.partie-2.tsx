@@ -115,9 +115,10 @@ function Part2() {
       />
 
 
-      <div className="max-w-3xl space-y-6">
-        <Card className="space-y-5 p-6">
-          <div className="grid gap-4 sm:grid-cols-2">
+      <div>
+        <Card className="module-form flex flex-col gap-7 rounded-[24px] border-0 p-6 md:p-10">
+          <h2 className="m-0 text-[28px] font-medium leading-[1.1] tracking-[-0.035em] md:text-[36px]">Mon projet professionnel</h2>
+          <div className="grid gap-6 sm:grid-cols-2">
             <Field
               id="job"
               label="Le métier ou domaine de métier qui m'attire"
@@ -188,20 +189,31 @@ function Part2() {
             onChange={(v) => setForm({ ...form, extra_info: v })}
             placeholder="Des figures connues, des évènements spéciaux, etc"
           />
+          <div className="flex flex-wrap items-center gap-4 border-t border-[rgba(11,18,32,0.1)] pt-7">
+            <Button variant="outline" size="lg" onClick={() => save.mutate(false)} disabled={save.isPending} className="gap-[10px]">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M5 3h11l3 3v15H5z" />
+                <path d="M8 3v5h7M8 21v-7h8v7" />
+              </svg>
+              Enregistrer
+            </Button>
+            <Button
+              size="lg"
+              onClick={() => save.mutate(true)}
+              disabled={!ready || save.isPending}
+              className="gap-[10px] bg-[var(--ciel)] text-[var(--ink)] hover:bg-[var(--ciel)]/85"
+            >
+              Valider et débloquer le module 3
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M5 12h14M13 6l6 6-6 6" />
+              </svg>
+            </Button>
+          </div>
+          <p className="-mt-2 text-[16px] text-[var(--graphite)] md:text-[17px]">
+            Vous pouvez revenir modifier ces informations quand vous voulez. Si vous changez de projet, il faudra refaire le travail
+            des modules suivantes qui en dépendent.
+          </p>
         </Card>
-
-        <div className="flex flex-wrap items-center gap-3">
-          <Button variant="outline" onClick={() => save.mutate(false)} disabled={save.isPending}>
-            Enregistrer
-          </Button>
-          <Button onClick={() => save.mutate(true)} disabled={!ready || save.isPending}>
-            Valider et débloquer le module 3
-          </Button>
-        </div>
-        <p className="text-xs text-muted-foreground">
-          Vous pouvez revenir modifier ces informations quand vous voulez. Si vous changez de projet, il faudra refaire le travail
-          des modules suivantes qui en dépendent.
-        </p>
       </div>
       <PartNav prev="/informations-personnelles" next="/partie-3" nextEnabled={Boolean(ready)} nextMessage="Complétez tous les champs obligatoires de votre projet professionnel pour continuer." className="mt-10" />
     </div>
@@ -233,10 +245,10 @@ function Field({
     id === "extra";
 
   return (
-    <div className="space-y-1.5">
+    <div className="flex flex-col gap-[10px]">
       <Label htmlFor={id}>
         {label}
-        {required ? <span className="ml-1 text-accent">*</span> : null}
+        {required ? <span className="text-[var(--bleu-texte)]"> *</span> : null}
       </Label>
       {isTextarea ? (
         <Textarea id={id} rows={4} value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} />
