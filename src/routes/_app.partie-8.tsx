@@ -16,6 +16,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { PartHeader } from "@/components/vivaldi/PartHeader";
+import { IntroPanel } from "@/components/vivaldi/StartPanel";
 import { useSession } from "@/hooks/useSession";
 import { useJuryAgent } from "@/hooks/useJuryAgent";
 import { supabase } from "@/integrations/supabase/client";
@@ -116,6 +117,33 @@ function percentileOf(debrief?: string | null) {
 }
 
 /** Le SDK ElevenLabs exige que `useConversation` soit sous son provider. */
+function PillToggle({
+  on,
+  disabled,
+  onClick,
+  children,
+}: {
+  on: boolean;
+  disabled?: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      aria-pressed={on}
+      disabled={disabled}
+      onClick={onClick}
+      className="inline-flex items-center gap-3 rounded-full bg-[#E6EEFF] py-[10px] pl-[10px] pr-[18px] text-[17px] font-medium text-[var(--ink)] disabled:opacity-60 md:text-[20px]"
+    >
+      <span className={`relative inline-block h-[26px] w-[44px] rounded-full transition-colors ${on ? "bg-[#2E46C8]" : "bg-[#AEB8C9]"}`}>
+        <span className={`absolute top-[3px] size-5 rounded-full bg-white transition-all ${on ? "right-[3px]" : "left-[3px]"}`} />
+      </span>
+      {children}
+    </button>
+  );
+}
+
 function Part7Page() {
   return (
     <ConversationProvider>
@@ -1030,10 +1058,7 @@ function Part7() {
         title="Mon entraînement illimité"
       />
 
-      <Card className="mb-6 flex gap-3 border-accent/50 bg-secondary/50 p-5">
-        <AlertTriangle className="mt-0.5 size-5 shrink-0 text-accent" />
-        <div className="space-y-3 text-sm leading-relaxed text-muted-foreground">
-          <p className="font-medium text-foreground">C'est maintenant le moment de s'entraîner sans limite !</p>
+      <IntroPanel title="C'est maintenant le moment de s'entraîner sans limite !">
           <p>
             Choisissez une école et simulez un entretien comme le jour J ! Le jury écoute votre réponse et rebondit en
             conditions réelles. L'évaluation n'arrive qu'à la fin que quand vous cliquez sur « Terminer l'entretien »
@@ -1047,16 +1072,15 @@ function Part7() {
             Le transcript de l'entretien est enregistré automatiquement pendant l'entretien : vous pourrez l'exporter en
             PDF à la fin, et le retrouver dans l'historique.
           </p>
-        </div>
-      </Card>
+      </IntroPanel>
 
 
-      <Card className="p-6">
-        <div className="flex flex-wrap items-end gap-4">
-          <div className="min-w-56">
-            <Label className="text-xs uppercase tracking-wide text-muted-foreground">École passée</Label>
+      <Card className="flex flex-col gap-6 border-0 p-6 md:px-10 md:py-8">
+        <div className="grid gap-6 md:grid-cols-2">
+          <div className="flex flex-col gap-[10px]">
+            <Label className="text-[18px] font-semibold tracking-[-0.01em] text-[var(--ink)] md:text-[20px]">École passée</Label>
             <Select value={school} onValueChange={setSchool} disabled={phase === "running" || phase === "debriefing"}>
-              <SelectTrigger className="mt-1">
+              <SelectTrigger className="h-auto min-h-14 rounded-[14px] border-[rgba(11,18,32,0.2)] bg-white px-4 text-[18px] md:text-[20px]">
                 <SelectValue placeholder="Choisir une école" />
               </SelectTrigger>
               <SelectContent>
@@ -1072,24 +1096,24 @@ function Part7() {
             </Select>
           </div>
 
-          <div className="min-w-56">
-            <Label className="text-xs uppercase tracking-wide text-muted-foreground">Format de l'école</Label>
-            <p className="mt-2 text-sm font-medium text-primary">{formatLabel(config.format)}</p>
-            <p className="text-xs text-muted-foreground">
+          <div className="flex flex-col gap-[10px]">
+            <Label className="text-[18px] font-semibold tracking-[-0.01em] text-[var(--ink)] md:text-[20px]">Format de l'école</Label>
+            <p className="m-0 text-[18px] font-medium text-[var(--bleu-texte,#2E46C8)] md:text-[20px]">{formatLabel(config.format)}</p>
+            <p className="m-0 text-[16px] text-[var(--gris-doux)]">
               {simulatedMinutes(config)} min simulées
               {agentState?.usesFallback ? " · jury classique en attendant le jury dédié" : ""}
             </p>
           </div>
 
-          <div className={hasDifficulties ? "min-w-64" : "hidden"}>
+          <div className={hasDifficulties ? "flex flex-col gap-[10px]" : "hidden"}>
 
-            <Label className="text-xs uppercase tracking-wide text-muted-foreground">Difficulté</Label>
+            <Label className="text-[18px] font-semibold tracking-[-0.01em] text-[var(--ink)] md:text-[20px]">Difficulté</Label>
             <Select
               value={variant}
               onValueChange={(v) => setVariant(v as InterviewVariant)}
               disabled={phase === "running" || phase === "debriefing"}
             >
-              <SelectTrigger className="mt-1">
+              <SelectTrigger className="h-auto min-h-14 rounded-[14px] border-[rgba(11,18,32,0.2)] bg-white px-4 text-[18px] md:text-[20px]">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -1102,48 +1126,35 @@ function Part7() {
             </Select>
           </div>
 
+        </div>
+
+        <div className="flex flex-wrap items-center gap-3">
           {/* MODE TEST ÉCRIT — à retirer après les tests (avec l'état `mode`,
               `draft`, `sendDraft`, la zone de saisie et `textOnly`). */}
-          <Button
-            type="button"
-            variant={mode === "text" ? "default" : "outline"}
-            size="sm"
+          <PillToggle
+            on={mode === "text"}
             disabled={phase === "running" || phase === "debriefing"}
             onClick={() => setMode(mode === "text" ? "voice" : "text")}
           >
-            <Keyboard className="size-4" />
             {mode === "text" ? "Mode test : écrit" : "Mode test : oral"}
-          </Button>
+          </PillToggle>
           {mode === "text" ? (
-            <Button
-              type="button"
-              variant={testSilenceEnabled ? "default" : "outline"}
-              size="sm"
-              onClick={() => setTestSilenceEnabled((v) => !v)}
-            >
+            <PillToggle on={testSilenceEnabled} onClick={() => setTestSilenceEnabled((v) => !v)}>
               {testSilenceEnabled ? "Paliers de silence : actifs" : "Paliers de silence : inactifs"}
-            </Button>
+            </PillToggle>
           ) : null}
           {/* FIN MODE TEST ÉCRIT */}
 
 
           {mode === "voice" ? (
-            <Button type="button" variant="outline" size="sm" onClick={() => void agent.toggleMute()}>
-              {!agent.muted ? (
-                <>
-                  <Volume2 className="size-4" /> Voix du jury active
-                </>
-              ) : (
-                <>
-                  <VolumeX className="size-4" /> Voix du jury coupée
-                </>
-              )}
-            </Button>
+            <PillToggle on={!agent.muted} onClick={() => void agent.toggleMute()}>
+              {!agent.muted ? "Voix du jury active" : "Voix du jury coupée"}
+            </PillToggle>
           ) : null}
 
 
           {phase === "idle" || phase === "done" ? (
-            <Button type="button" onClick={() => setBriefOpen(true)} disabled={busy || !school || Boolean(config.comingSoon)}>
+            <Button type="button" size="lg" className="md:ml-auto" onClick={() => setBriefOpen(true)} disabled={busy || !school || Boolean(config.comingSoon)}>
               {busy ? <Loader2 className="size-4 animate-spin" /> : phase === "done" ? <RotateCcw className="size-4" /> : <Play className="size-4" />}
               {phase === "done" ? "Refaire un entretien" : "Démarrer l'entretien"}
             </Button>
@@ -1151,7 +1162,7 @@ function Part7() {
 
         </div>
         {!schoolOptions.length ? (
-          <p className="mt-4 text-xs text-muted-foreground">
+          <p className="m-0 text-[16px] text-[var(--gris-doux)]">
             Renseignez d'abord vos écoles visées (module 1) ou une fiche école (module 3).
           </p>
         ) : null}
@@ -1172,62 +1183,73 @@ function Part7() {
 
 
       {phase === "running" || phase === "debriefing" ? (
-        <Card className="mt-6 p-6">
-          <div className="relative -mx-6 -mt-6 mb-6 flex items-center gap-3 overflow-hidden bg-primary px-6 py-5 text-primary-foreground">
+        <Card className="mt-6 overflow-hidden rounded-[28px] border-0 p-0">
+          <div className="relative flex items-center gap-4 overflow-hidden bg-[var(--ink)] px-6 py-6 text-white md:px-10 md:py-7">
             <img
               src={schoolPhotoOrFallback(school)}
               alt=""
               aria-hidden="true"
-              className="absolute inset-0 size-full object-cover opacity-40"
+              className="absolute inset-0 size-full object-cover opacity-45"
               loading="lazy"
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-primary via-primary/85 to-primary/30" />
+            <div className="absolute inset-0" style={{ background: "linear-gradient(90deg, rgba(11,18,32,0.98) 0%, rgba(11,18,32,0.8) 55%, rgba(11,18,32,0.4) 100%)" }} />
             {schoolLogo(school) ? (
               <img
                 src={schoolLogo(school)}
                 alt={`Logo ${school}`}
-                className="relative size-11 shrink-0 rounded-[3px] bg-white object-contain p-1"
+                className="relative size-[52px] shrink-0 rounded-[12px] bg-white object-contain p-1"
                 loading="lazy"
               />
             ) : null}
             <div className="relative min-w-0">
-              <p className="font-display text-lg leading-tight">{school}</p>
-              <p className="mt-1 text-[11px] uppercase tracking-[0.14em] opacity-70">
+              <p className="m-0 text-[26px] font-medium leading-[1.1] tracking-[-0.035em] md:text-[36px]">{school}</p>
+              <p className="m-0 mt-1 text-[15px] text-[#D3DAE6] md:text-[17px]">
                 {[formatLabel(config.format), hasDifficulties ? difficultyLabel(variant) : null]
                   .filter(Boolean)
                   .join(" · ")}
               </p>
             </div>
-            <span className="relative ml-auto shrink-0 rounded-full border border-white/30 bg-white/10 px-3 py-1 font-mono text-sm tabular-nums">
-              {String(Math.floor(elapsed / 60)).padStart(2, "0")}:{String(elapsed % 60).padStart(2, "0")} /{" "}
-              {simulatedMinutes(config)}:00
+          </div>
+
+          <div className="px-6 md:px-10">
+          <div className="flex flex-col items-start gap-3 py-7">
+            <span className="inline-flex items-center gap-[14px] text-[32px] font-semibold tracking-[-0.03em] tabular-nums md:text-[44px]">
+              <span className="size-[14px] rounded-full bg-[#F0605D] shadow-[0_0_0_6px_rgba(240,96,93,0.15)]" />
+              {String(Math.floor(elapsed / 60)).padStart(2, "0")}:{String(elapsed % 60).padStart(2, "0")}
+              <span className="font-medium text-[#8A94A6]"> / {simulatedMinutes(config)}:00</span>
+            </span>
+            <span className="relative h-[6px] w-full overflow-hidden rounded-full bg-[var(--paper,#F2F4F7)]">
+              <span
+                className="absolute inset-y-0 left-0 rounded-full bg-[#2E46C8]"
+                style={{ width: `${Math.min(100, (elapsed / Math.max(1, simulatedMinutes(config) * 60)) * 100)}%` }}
+              />
             </span>
           </div>
 
-          <div className="flex items-start gap-3">
-
-            <span className="mt-1 text-accent">
-              {agent.jurySpeaking ? <Volume2 className="size-5 animate-pulse" /> : <Volume2 className="size-5" />}
+          <div className="flex flex-col gap-4 border-t border-[rgba(11,18,32,0.1)] py-8">
+          <div className="flex items-start gap-4 rounded-[20px] bg-[#F2F4F7] p-5 md:gap-6 md:p-8">
+            <span className="inline-flex size-12 flex-none items-center justify-center rounded-full bg-[#E6EEFF] text-[#2E46C8] md:size-14">
+              {agent.jurySpeaking ? <Volume2 className="size-6 animate-pulse" /> : <Volume2 className="size-6" />}
             </span>
-            <div className="flex-1">
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">Le jury</p>
+            <div className="flex flex-1 flex-col gap-3">
+              <p className="m-0 text-[18px] font-semibold tracking-[-0.01em] text-[#2E46C8] md:text-[20px]">Le jury</p>
               {busy && !question ? (
-                <p className="mt-2 flex items-center gap-2 text-sm text-muted-foreground">
+                <p className="m-0 flex items-center gap-2 text-[17px] text-[var(--gris-doux)]">
                   <Loader2 className="size-4 animate-spin" /> Connexion au jury…
                 </p>
               ) : (
-                <p className="mt-2 whitespace-pre-line text-lg leading-relaxed">{question || "…"}</p>
+                <p className="m-0 whitespace-pre-line text-[22px] font-medium leading-[1.3] tracking-[-0.03em] md:text-[32px]">{question || "…"}</p>
               )}
             </div>
           </div>
 
           {edhecWord && edhecStage === "word" && phase === "running" ? (
-            <div className="mt-6 rounded-md border border-border bg-muted/40 p-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">Votre mot tiré au sort</p>
-              <p className="mt-3 text-lg font-semibold leading-relaxed">{edhecWord}</p>
+            <div className="rounded-[20px] border border-[rgba(11,18,32,0.1)] bg-white p-5 md:p-7">
+              <p className="text-[18px] font-semibold tracking-[-0.01em] text-[#2E46C8] md:text-[20px]">Votre mot tiré au sort</p>
+              <p className="mt-3 text-[20px] font-medium leading-[1.35] tracking-[-0.015em] md:text-[24px]">{edhecWord}</p>
               {edhecScreenPhase !== "hidden" ? (
                 <div className="mt-4 flex flex-wrap items-center gap-3 border-t border-border pt-4">
-                  <span className="rounded-full border border-border bg-background px-3 py-1 font-mono text-sm tabular-nums">
+                  <span className="rounded-full bg-[#E6EEFF] px-4 py-2 text-[17px] font-semibold tabular-nums">
                     {edhecScreenPhase === "preparing" ? "Préparation" : "À vous"} : {formatCountdown(
                       edhecScreenPhase === "preparing" ? edhecPrepRemaining : edhecPresentationRemaining,
                     )}
@@ -1245,9 +1267,9 @@ function Part7() {
           ) : null}
 
           {emlyonCards && cardsStage === "cards" && phase === "running" ? (
-            <div className="mt-6 rounded-md border border-border bg-muted/40 p-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">Vos 4 cartes</p>
-              <ul className="mt-3 space-y-2 text-sm leading-relaxed">
+            <div className="rounded-[20px] border border-[rgba(11,18,32,0.1)] bg-white p-5 md:p-7">
+              <p className="text-[18px] font-semibold tracking-[-0.01em] text-[#2E46C8] md:text-[20px]">Vos 4 cartes</p>
+              <ul className="mt-3 space-y-3 text-[17px] leading-[1.5] md:text-[19px]">
                 {[
                   { theme: "Expérience", q: emlyonCards.experience },
                   { theme: "Personnalité", q: emlyonCards.personnalite },
@@ -1264,20 +1286,20 @@ function Part7() {
           ) : null}
 
           {mbsPool && phase === "running" ? (
-            <div className="mt-6 rounded-md border border-border bg-muted/40 p-4">
+            <div className="rounded-[20px] border border-[rgba(11,18,32,0.1)] bg-white p-5 md:p-7">
               {mbsActive ? (
                 <>
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
+                  <p className="text-[18px] font-semibold tracking-[-0.01em] text-[#2E46C8] md:text-[20px]">
                     Votre situation en cours
                   </p>
-                  <p className="mt-3 text-lg font-semibold leading-relaxed">{mbsActive.text}</p>
+                  <p className="mt-3 text-[20px] font-medium leading-[1.35] tracking-[-0.015em] md:text-[24px]">{mbsActive.text}</p>
                 </>
               ) : (
                 <>
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
+                  <p className="text-[18px] font-semibold tracking-[-0.01em] text-[#2E46C8] md:text-[20px]">
                     Choisissez une situation
                   </p>
-                  <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                  <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                     {(() => {
                       const remaining = mbsPool.drawn.filter((s) => !mbsUsed.has(s.id));
                       const shown =
@@ -1293,7 +1315,7 @@ function Part7() {
                               `Le candidat vient de choisir à l'écran la situation suivante à développer : "${s.text}". Attends qu'il commence à raconter, puis creuse normalement (concret, recul) sur cette situation précise.`,
                             );
                           }}
-                          className="rounded-md border border-border bg-background p-3 text-left text-sm leading-snug transition hover:border-accent hover:bg-accent/10"
+                          className="rounded-[18px] border border-[rgba(11,18,32,0.1)] bg-[#F2F4F7] p-5 text-left text-[17px] leading-[1.4] transition hover:border-[#2E46C8]"
                         >
                           {s.text}
                         </button>
@@ -1306,9 +1328,9 @@ function Part7() {
           ) : null}
 
           {config.school === "KEDGE" && phase === "running" && kedgeCards ? (
-            <div className="mt-6 rounded-md border border-border bg-muted/40 p-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">Vos cartes</p>
-              <dl className="mt-3 grid gap-2 sm:grid-cols-2">
+            <div className="rounded-[20px] border border-[rgba(11,18,32,0.1)] bg-white p-5 md:p-7">
+              <p className="text-[18px] font-semibold tracking-[-0.01em] text-[#2E46C8] md:text-[20px]">Vos cartes</p>
+              <dl className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 {[
                   { label: "Trait d'Union", value: kedgeCards.odd },
                   { label: "Autoportrait", value: kedgeCards.autoportrait },
@@ -1316,9 +1338,9 @@ function Part7() {
                   { label: "Trait de Pensée", value: kedgeCards.pensee },
                   { label: "Trait d'Esprit", value: kedgeCards.esprit },
                 ].map((c) => (
-                  <div key={c.label} className="rounded-md border border-border bg-background p-3">
-                    <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{c.label}</dt>
-                    <dd className="mt-1 text-sm leading-snug">{c.value}</dd>
+                  <div key={c.label} className="flex flex-col gap-2 rounded-[18px] border border-[rgba(11,18,32,0.1)] bg-[#F2F4F7] p-5">
+                    <dt className="text-[17px] font-bold text-[var(--ink)]">{c.label}</dt>
+                    <dd className="m-0 text-[19px] font-medium leading-[1.35] tracking-[-0.015em] md:text-[22px]">{c.value}</dd>
                   </div>
                 ))}
               </dl>
@@ -1326,22 +1348,22 @@ function Part7() {
           ) : null}
 
           {config.school === "INSEEC Grande École" && phase === "running" && !inseecDone && inseecChosen ? (
-            <div className="mt-6 rounded-md border border-border bg-muted/40 p-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">Votre image choisie</p>
+            <div className="rounded-[20px] border border-[rgba(11,18,32,0.1)] bg-white p-5 md:p-7">
+              <p className="text-[18px] font-semibold tracking-[-0.01em] text-[#2E46C8] md:text-[20px]">Votre image choisie</p>
               <img
                 src={inseecChosen.path}
                 alt={inseecChosen.description}
-                className="mt-3 w-full max-w-lg rounded-md border border-border object-cover"
+                className="mt-4 w-full max-w-lg rounded-[18px] object-cover"
               />
-              <p className="mt-2 text-sm leading-snug text-muted-foreground">{inseecChosen.description}</p>
+              <p className="mt-3 text-[16px] leading-snug text-[var(--gris-doux)]">{inseecChosen.description}</p>
             </div>
           ) : null}
 
           {phase === "running" ? (
-            <div className="mt-6 border-t border-border pt-6">
+            <div className="flex flex-col gap-4">
               {mode === "text" ? (
                 <div className="mb-4">
-                  <Label className="flex items-center gap-2 text-xs uppercase tracking-wide text-muted-foreground">
+                  <Label className="flex items-center gap-2 text-[18px] font-semibold text-[var(--ink)]">
                     <Keyboard className="size-4" /> Votre réponse écrite
                   </Label>
                   <Textarea
@@ -1368,8 +1390,8 @@ function Part7() {
                   </Button>
                 </div>
               ) : null}
-              <div className="flex flex-wrap items-center gap-3">
-                <span className="flex items-center gap-2 text-sm text-muted-foreground">
+              <div className="flex flex-col gap-4 rounded-[20px] border border-[rgba(11,18,32,0.1)] bg-white px-5 py-6 md:px-8 md:py-7">
+                <span className="flex items-center gap-3 text-[17px] font-semibold tracking-[-0.01em] text-[var(--ink)] md:text-[20px]">
                   {interrupted ? (
                     <>
                       <AlertTriangle className="size-4 text-accent" /> L'entretien a été interrompu. Vos échanges sont
@@ -1402,30 +1424,35 @@ function Part7() {
                     </>
                   )}
                 </span>
-                <Button
-                  type="button"
-                  variant={interrupted ? "default" : "outline"}
-                  onClick={finish}
-                  disabled={busy}
-                >
-                  <Square className="size-4" /> {interrupted ? "Obtenir mon débrief" : "Terminer l'entretien"}
-                </Button>
               </div>
+              <div className="flex flex-col items-start gap-4 md:flex-row md:items-center md:gap-6">
               {closed ? (
-                <p className="mt-3 text-sm text-primary">
+                <p className="m-0 flex-1 text-[16px] text-[#2E46C8] md:text-[17px]">
                   La clôture est passée : cliquez sur « Terminer l'entretien » pour accéder à votre évaluation complète.
                 </p>
               ) : (
-                <p className="mt-3 text-xs text-muted-foreground">
+                <p className="m-0 flex-1 text-[16px] text-[var(--gris-doux)] md:text-[17px]">
                   Si vous terminez maintenant, l'évaluation sera produite mais signalée comme incomplète.
                 </p>
               )}
+                <button
+                  type="button"
+                  onClick={finish}
+                  disabled={busy}
+                  className="inline-flex items-center gap-3 whitespace-nowrap rounded-full bg-[var(--ink)] px-7 py-4 text-[18px] font-semibold text-white shadow-[0_10px_24px_rgba(11,18,32,0.18)] disabled:opacity-60 md:px-8 md:py-5 md:text-[20px]"
+                >
+                  <span className="inline-block size-[14px] rounded-[3px] bg-[#F0605D]" />
+                  {interrupted ? "Obtenir mon débrief" : "Terminer l'entretien"}
+                </button>
+              </div>
             </div>
           ) : (
-            <p className="mt-6 flex items-center gap-2 border-t border-border pt-6 text-sm text-muted-foreground">
+            <p className="m-0 flex items-center gap-2 border-t border-[rgba(11,18,32,0.1)] pt-6 text-[17px] text-[var(--gris-doux)]">
               <Loader2 className="size-4 animate-spin" /> Le jury rédige votre débrief…
             </p>
           )}
+          </div>
+          </div>
         </Card>
       ) : null}
 
