@@ -98,6 +98,15 @@ function formatCountdown(seconds: number) {
   return `${Math.floor(safe / 60)}:${String(safe % 60).padStart(2, "0")}`;
 }
 
+/** « 18 septembre 2026 - 17:04 », tel qu'affiché dans le bandeau du débrief. */
+function sessionDate(iso?: string | null) {
+  const d = iso ? new Date(iso) : new Date();
+  if (Number.isNaN(d.getTime())) return "";
+  return `${d.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })} - ${String(
+    d.getHours(),
+  ).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+}
+
 
 /** Libellé lisible du niveau de difficulté joué. */
 function difficultyLabel(code?: string | null) {
@@ -1456,70 +1465,64 @@ function Part7() {
       ) : null}
 
       {debrief ? (
-        <Card className="mt-6 p-6">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">Débrief du jury</p>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() =>
-                downloadInterviewPdf({
-                  school,
-                  formatLabel: formatLabel(config.format),
-                  difficultyLabel: hasDifficulties ? difficultyLabel(variant) : undefined,
-                  createdAt: turns[0]?.askedAt ?? new Date().toISOString(),
-                  turns,
-                  debrief,
-                  complete,
-                })
-              }
-            >
-              <Download className="size-4" /> Exporter le transcript en PDF
-            </Button>
-          </div>
+        <div className="mt-6 flex flex-col gap-6">
           {!complete ? (
-            <p className="mt-2 rounded-md border border-destructive/40 bg-destructive/5 px-3 py-2 text-sm text-destructive">
+            <p className="m-0 rounded-[14px] border border-destructive/40 bg-destructive/5 px-4 py-3 text-[15px] text-destructive md:text-[16px]">
               Évaluation incomplète : vous avez interrompu l'entretien avant la clôture.
             </p>
           ) : null}
-          <div className="mt-4">
-            <InterviewDebrief text={debrief} difficulty={difficultyLabel(variant)} />
-          </div>
-          {turns.length ? (
-            <div className="mt-6">
-              <InterviewTranscript turns={turns} />
-            </div>
-          ) : null}
-        </Card>
+          <DebriefHeader
+            school={school}
+            logo={schoolLogo(school)}
+            date={sessionDate(turns[0]?.askedAt ?? new Date().toISOString())}
+            difficultyLabel={juryLabel(hasDifficulties ? variant : undefined)}
+            percentile={positioningInfo(debrief).value}
+            percentileLabel={positioningInfo(debrief).label}
+            onExport={() =>
+              downloadInterviewPdf({
+                school,
+                formatLabel: formatLabel(config.format),
+                difficultyLabel: hasDifficulties ? difficultyLabel(variant) : undefined,
+                createdAt: turns[0]?.askedAt ?? new Date().toISOString(),
+                turns,
+                debrief,
+                complete,
+              })
+            }
+          />
+          <InterviewDebrief text={debrief} positioningInBanner />
+          {turns.length ? <InterviewTranscript turns={turns} /> : null}
+        </div>
       ) : null}
 
       {finishedSessions.length ? (
-        <Card className="mt-6 p-6">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">Historique de mes entretiens</p>
-          <p className="mt-1 text-xs text-muted-foreground">
+        <Card className="mt-6 p-6 md:p-8">
+          <h2 className="m-0 text-[28px] font-medium leading-[1.1] tracking-[-0.035em] md:text-[36px]">
+            Historique de mes entretiens
+          </h2>
+          <p className="mt-2 text-[16px] text-[var(--gris-doux)] md:text-[17px]">
             Retrouve chacun de tes entraînements avec son feedback détaillé, ton classement en percentile et son fil complet.
           </p>
           {!historySchool ? (
-            <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {historySchools.map(({ school, count }) => (
                 <button
                   key={school}
                   type="button"
                   onClick={() => setHistorySchool(school)}
-                  className="flex items-center gap-3 rounded-lg border border-border/60 p-3 text-left transition hover:border-accent hover:bg-accent/5"
+                  className="flex items-center gap-3 rounded-[14px] border border-[rgba(11,18,32,0.1)] bg-white p-4 text-left transition hover:border-[var(--bleu-texte)]"
                 >
                   {schoolLogo(school) ? (
                     <img
                       src={schoolLogo(school)}
                       alt={`Logo ${school}`}
-                      className="size-9 shrink-0 rounded-md border border-border/60 bg-white object-contain p-0.5"
+                      className="size-10 shrink-0 rounded-[10px] bg-white object-contain p-1"
                       loading="lazy"
                     />
                   ) : null}
                   <span className="min-w-0">
-                    <span className="block truncate text-sm font-medium text-primary">{school}</span>
-                    <span className="block text-xs text-muted-foreground">
+                    <span className="block truncate text-[17px] font-medium text-[var(--ink)] md:text-[18px]">{school}</span>
+                    <span className="block text-[14px] text-[var(--gris-doux)] md:text-[15px]">
                       {count} entretien{count > 1 ? "s" : ""}
                     </span>
                   </span>
@@ -1531,30 +1534,30 @@ function Part7() {
               <button
                 type="button"
                 onClick={() => setHistorySchool(null)}
-                className="mt-4 inline-flex items-center gap-1 text-xs font-medium text-muted-foreground transition hover:text-primary"
+                className="mt-5 inline-flex items-center gap-1 text-[15px] font-medium text-[var(--gris-doux)] transition hover:text-[var(--ink)]"
               >
                 <ChevronRight className="size-3 rotate-180" />
                 Toutes les écoles
               </button>
-              <div className="mt-3 flex items-center gap-3 border-b border-border/60 pb-4">
+              <div className="mt-4 flex items-center gap-3 border-b border-[rgba(11,18,32,0.1)] pb-4">
                 {schoolLogo(historySchool) ? (
                   <img
                     src={schoolLogo(historySchool)}
                     alt={`Logo ${historySchool}`}
-                    className="size-10 shrink-0 rounded-md border border-border/60 bg-white object-contain p-1"
+                    className="size-10 shrink-0 rounded-[10px] bg-white object-contain p-1"
                     loading="lazy"
                   />
                 ) : null}
                 <div className="min-w-0">
-                  <h3 className="truncate font-serif text-lg text-primary">{historySchool}</h3>
-                  <p className="text-xs text-muted-foreground">
+                  <h3 className="m-0 truncate text-[20px] font-medium tracking-[-0.01em] text-[var(--ink)]">{historySchool}</h3>
+                  <p className="m-0 text-[14px] text-[var(--gris-doux)] md:text-[15px]">
                     {visibleSessions.length} entretien{visibleSessions.length > 1 ? "s" : ""} enregistré
                     {visibleSessions.length > 1 ? "s" : ""}
                   </p>
                 </div>
               </div>
 
-              <ul className="mt-4 space-y-3">
+              <ul className="mt-4 flex flex-col gap-3">
                 {visibleSessions.map((s) => {
                   const percentile = percentileOf(s.debrief);
 
@@ -1562,14 +1565,14 @@ function Part7() {
                   return (
                     <li
                       key={s.id}
-                      className={`rounded-[3px] border ${
-                        open ? "border-primary/60 shadow-[var(--shadow-card)]" : "border-border/60"
+                      className={`rounded-[14px] border border-[rgba(11,18,32,0.1)] bg-white ${
+                        open ? "shadow-[var(--shadow-card)]" : ""
                       }`}
                     >
-                      <div className="flex items-center gap-2 p-3">
+                      <div className="flex items-center gap-2 p-4 md:p-5">
                         <button
                           type="button"
-                          className="flex flex-1 flex-wrap items-center gap-2 text-left"
+                          className="flex flex-1 flex-wrap items-center gap-2.5 text-left"
                           onClick={() => setOpenSession(open ? null : s.id)}
                         >
                           {open ? (
@@ -1577,21 +1580,21 @@ function Part7() {
                           ) : (
                             <ChevronRight className="size-4 shrink-0" />
                           )}
-                          <span className="text-sm font-medium text-primary">
+                          <span className="text-[16px] font-medium text-[var(--ink)] md:text-[17px]">
                             {new Date(s.created_at).toLocaleString("fr-FR", {
                               dateStyle: "medium",
                               timeStyle: "short",
                             })}
                           </span>
                           {percentile ? (
-                            <span className="shrink-0 rounded-full border border-destructive/40 bg-destructive/10 px-2 py-0.5 text-[11px] font-bold text-destructive">
-                              Percentile {percentile}
+                            <span className="shrink-0 rounded-full bg-[var(--bleu-pale)] px-3 py-1 text-[13px] font-bold text-[var(--bleu-texte)] tabular-nums md:text-[14px]">
+                              {percentile}
                             </span>
                           ) : null}
-                          <span className="shrink-0 rounded-full border border-accent/40 bg-accent/10 px-2 py-0.5 text-[11px] font-medium text-accent">
+                          <span className="shrink-0 rounded-full border border-[rgba(11,18,32,0.2)] bg-white px-3 py-1 text-[13px] font-medium text-[var(--graphite)] md:text-[14px]">
                             {formatLabel(s.format)}
                           </span>
-                          <span className="text-xs text-muted-foreground">
+                          <span className="text-[14px] text-[var(--gris-doux)] md:text-[15px]">
                             {s.status === "done" ? "entretien achevé" : "entretien interrompu"}
                           </span>
                         </button>
@@ -1599,7 +1602,7 @@ function Part7() {
                           type="button"
                           variant="ghost"
                           size="icon"
-                          title="Exporter le transcript en PDF"
+                          title="Exporter le feedback et le transcript en PDF"
                           onClick={() =>
                             downloadInterviewPdf({
                               school: s.school,
@@ -1619,24 +1622,33 @@ function Part7() {
                         </Button>
                       </div>
                       {open ? (
-                        <div className="space-y-4 border-t border-border/60 p-4">
+                        <div className="flex flex-col gap-5 border-t border-[rgba(11,18,32,0.1)] p-4 md:p-5">
                           <DebriefHeader
                             school={s.school}
                             logo={schoolLogo(s.school)}
-                            date={new Date(s.created_at).toLocaleDateString("fr-FR", { dateStyle: "long" })}
-                            formatLabel={formatLabel(s.format)}
+                            date={sessionDate(s.created_at)}
                             difficultyLabel={juryLabel(s.difficulty)}
                             percentile={positioningInfo(s.debrief).value}
                             percentileLabel={positioningInfo(s.debrief).label}
+                            onExport={() =>
+                              downloadInterviewPdf({
+                                school: s.school,
+                                formatLabel: formatLabel(s.format),
+                                difficultyLabel: s.difficulty ? difficultyLabel(s.difficulty) : undefined,
+                                createdAt: s.created_at,
+                                turns: s.turns ?? [],
+                                debrief: s.debrief,
+                                complete: s.status === "done",
+                              })
+                            }
                           />
                           {s.debrief ? (
                             <InterviewDebrief
                               text={s.debrief}
-                              difficulty={difficultyLabel(s.difficulty)}
                               positioningInBanner
                             />
                           ) : (
-                            <p className="text-xs text-muted-foreground">Pas de débrief : entretien interrompu.</p>
+                            <p className="m-0 text-[15px] text-[var(--gris-doux)]">Pas de débrief : entretien interrompu.</p>
                           )}
                           <InterviewTranscript turns={s.turns ?? []} />
                         </div>
