@@ -19,7 +19,7 @@ export const MODULE_BANNERS: Record<string, string> = {
   "Module 4": presse,
   "Module 5": supports,
   "Module 6": amphiBoutmy,
-  "Module 7": tableEntretien,
+  "Module 7": heroOral,
   Tableau: heroOral,
   Amphi: amphi,
 };
