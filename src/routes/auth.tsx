@@ -1,9 +1,10 @@
-import { Outlet, createFileRoute, useLocation, useNavigate } from "@tanstack/react-router";
+import { Link, Outlet, createFileRoute, useLocation, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Wordmark } from "@/components/repetia/Mark";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -176,10 +177,13 @@ function AuthPage() {
   if (onCallback) return <Outlet />;
 
   return (
-    <main className="surface-grid flex min-h-screen items-center justify-center px-6 py-16">
-      <Card className="w-full max-w-md p-8">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent">The Prepboard</p>
-        <h1 className="mt-2 text-3xl">Votre préparation aux oraux</h1>
+    <main className="flex min-h-screen flex-col items-center justify-center gap-8 bg-[var(--ink)] px-5 py-12">
+      <Link to="/" aria-label="The Prepboard, accueil">
+        <Wordmark tone="chalk" className="text-[1.75rem]" />
+      </Link>
+      <Card className="w-full max-w-md rounded-[28px] border-0 p-6 md:p-8">
+        <p className="pill-label inline-flex rounded-full bg-[var(--bleu-pale)] px-3 py-1 text-[var(--bleu-texte)]">The Prepboard</p>
+        <h1 className="mt-4 text-[32px] leading-[1.05] font-medium tracking-[-0.04em]">Votre préparation aux oraux</h1>
         <Tabs defaultValue={mode === "signin" ? "signin" : "signup"} className="mt-6">
           <TabsList className="w-full">
             <TabsTrigger value="signup" className="flex-1">
