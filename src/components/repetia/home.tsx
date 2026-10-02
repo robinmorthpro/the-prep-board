@@ -42,7 +42,7 @@ export function CtaPill({ tone = "ciel", className }: { tone?: "ciel" | "encre";
     <Link
       to="/auth"
       className={cn(
-        "inline-flex items-center gap-2.5 rounded-full px-7 py-4 text-[18px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90 md:px-[34px] md:py-5 md:text-[20px]",
+        "inline-flex items-center gap-2.5 rounded-full px-6 py-4 text-[17px] font-semibold whitespace-nowrap transition-opacity hover:opacity-90 md:px-[34px] md:py-5 md:text-[20px]",
         tone === "ciel" ? "bg-[var(--ciel)] text-[var(--ink)]" : "bg-[var(--ink)] text-white",
         className,
       )}
