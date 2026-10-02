@@ -1,6 +1,6 @@
 import { createFileRoute, Outlet, Link, useNavigate, useRouterState } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { BookOpen, ChevronDown, Gauge, Home, LayoutList, LogOut, Menu, Mic, UserCircle, X } from "lucide-react";
+import { useEffect, useState, type ReactNode } from "react";
+import { Menu, X } from "lucide-react";
 import { Wordmark } from "@/components/repetia/Mark";
 import { useSession } from "@/hooks/useSession";
 import { supabase } from "@/integrations/supabase/client";
@@ -10,14 +10,63 @@ export const Route = createFileRoute("/_app")({
   component: AppLayout,
 });
 
+/* Icônes de la maquette (trait 1.8) */
+function NavIcon({ children }: { children: ReactNode }) {
+  return (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      className="shrink-0"
+    >
+      {children}
+    </svg>
+  );
+}
+
+const ICONS = {
+  home: <path d="M3 11l9-7 9 7M5 10v10h14V10" />,
+  board: <path d="M4 20V10M10 20V4M16 20v-7M22 20H2" />,
+  user: (
+    <>
+      <circle cx="12" cy="8" r="4" />
+      <path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6" />
+    </>
+  ),
+  prep: (
+    <>
+      <path d="M4 5a2 2 0 0 1 2-2h14v16H6a2 2 0 0 0-2 2V5z" />
+      <path d="M8 7h8" />
+    </>
+  ),
+  mic: (
+    <>
+      <path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3z" />
+      <path d="M19 11a7 7 0 0 1-14 0M12 18v3" />
+    </>
+  ),
+  books: <path d="M4 4h4v16H4zM10 4h4v16h-4zM16 5l4 1-3 14-4-1z" />,
+  logout: <path d="M15 4h4v16h-4M10 8l-4 4 4 4M6 12h10" />,
+};
+
+const mainItem = (active: boolean) =>
+  `flex items-center gap-3 rounded-[14px] px-[14px] py-3 text-[19px] leading-snug transition-colors ${
+    active
+      ? "bg-[var(--ciel)] font-semibold text-[var(--ink)]"
+      : "font-medium text-[var(--line)] hover:bg-white/5 hover:text-white"
+  }`;
 
 function AppLayout() {
   const { session, loading } = useSession();
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [modulesOpen, setModulesOpen] = useState(true);
-  const [trainingMenuOpen, setTrainingMenuOpen] = useState(true);
 
   useEffect(() => {
     if (!loading && !session) navigate({ to: "/auth" });
@@ -29,7 +78,7 @@ function AppLayout() {
 
   if (loading || !session) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[var(--coquille)] text-sm text-muted-foreground">
+      <div className="flex min-h-screen items-center justify-center bg-[var(--paper)] text-sm text-muted-foreground">
         Chargement…
       </div>
     );
@@ -42,195 +91,105 @@ function AppLayout() {
 
   const isActive = (to: string) => pathname.startsWith(to);
 
-  const prepParts = PREP_PARTS;
-  const trainParts = TRAIN_PARTS;
+  // Numérotation : Module 1 à 5 pour la préparation, Module 7 et 8 pour l'entraînement.
+  const sideNumber = (part: (typeof PARTS)[number]) => (part.id >= 7 ? part.id : moduleNumber(part.id));
 
-  const parcoursOpen = prepParts.some((p) => pathname.startsWith(p.path));
-  const trainingOpen = trainParts.some((p) => pathname.startsWith(p.path));
+  const partLink = (part: (typeof PARTS)[number]) => {
+    const active = pathname.startsWith(part.path);
+    return (
+      <Link
+        key={part.id}
+        to={part.path}
+        className={`flex gap-[10px] rounded-[10px] px-[10px] py-2 text-[18px] font-medium leading-snug transition-colors ${
+          active ? "bg-white/10 text-white" : "text-[var(--gris-sombre)] hover:bg-white/5 hover:text-white"
+        }`}
+      >
+        <span className="tabular-nums text-[var(--gris-doux)]">{sideNumber(part)}</span>
+        {part.title}
+      </Link>
+    );
+  };
 
-  const partLink = (part: (typeof PARTS)[number]) => (
-    <Link
-      key={part.id}
-      to={part.path}
-      className={`rounded-md px-3 py-2 text-[13px] leading-snug transition-colors ${
-        pathname.startsWith(part.path)
-          ? "bg-[var(--craie)]/10 font-medium text-[var(--craie)]"
-          : "text-[var(--craie)]/60 hover:bg-[var(--craie)]/6 hover:text-[var(--craie)]"
-      }`}
-    >
-      <span className="mr-2 font-mono text-[11px] text-[var(--rouge-clair)]">
-        {moduleNumber(part.id)}
-      </span>
-      {part.title}
-    </Link>
+  const subList = (parts: readonly (typeof PARTS)[number][]) => (
+    <div className="mb-2 ml-[26px] mt-1 flex flex-col gap-0.5 border-l border-white/12 pl-4">
+      {parts.map(partLink)}
+    </div>
   );
+
+  const prepActive = PREP_PARTS.some((p) => pathname.startsWith(p.path)) || isActive("/je-me-prepare");
+  const trainActive = TRAIN_PARTS.some((p) => pathname.startsWith(p.path)) || isActive("/je-m-entraine");
 
   const navLinks = (
     <nav className="flex flex-col gap-1">
-      <Link
-        to="/dashboard"
-        className={`flex items-center gap-3 rounded-md px-4 py-2.5 text-sm transition-colors ${
-          isActive("/dashboard")
-            ? "bg-[var(--craie)]/12 font-medium text-[var(--craie)]"
-            : "text-[var(--craie)]/65 hover:bg-[var(--craie)]/6 hover:text-[var(--craie)]"
-        }`}
-      >
-        <Home className="size-4 shrink-0" />
+      <Link to="/dashboard" className={mainItem(isActive("/dashboard"))}>
+        <NavIcon>{ICONS.home}</NavIcon>
         Page d'accueil
       </Link>
-
-      <Link
-        to="/mon-tableau-de-bord"
-        className={`flex items-center gap-3 rounded-md px-4 py-2.5 text-sm transition-colors ${
-          isActive("/mon-tableau-de-bord")
-            ? "bg-[var(--craie)]/12 font-medium text-[var(--craie)]"
-            : "text-[var(--craie)]/65 hover:bg-[var(--craie)]/6 hover:text-[var(--craie)]"
-        }`}
-      >
-        <Gauge className="size-4 shrink-0" />
-        Mon tableau de bord
+      <Link to="/mon-tableau-de-bord" className={mainItem(isActive("/mon-tableau-de-bord"))}>
+        <NavIcon>{ICONS.board}</NavIcon>
+        Tableau de bord
       </Link>
-
-
-      <Link
-        to="/informations-personnelles"
-        className={`flex items-center gap-3 rounded-md px-4 py-2.5 text-sm transition-colors ${
-          isActive("/informations-personnelles")
-            ? "bg-[var(--craie)]/12 font-medium text-[var(--craie)]"
-            : "text-[var(--craie)]/65 hover:bg-[var(--craie)]/6 hover:text-[var(--craie)]"
-        }`}
-      >
-        <UserCircle className="size-4 shrink-0" />
+      <Link to="/informations-personnelles" className={mainItem(isActive("/informations-personnelles"))}>
+        <NavIcon>{ICONS.user}</NavIcon>
         Informations personnelles
       </Link>
-
-      <div>
-        <div
-          className={`flex w-full items-center rounded-md text-sm transition-colors ${
-            parcoursOpen
-              ? "bg-[var(--craie)]/12 font-medium text-[var(--craie)]"
-              : "text-[var(--craie)]/65 hover:bg-[var(--craie)]/6 hover:text-[var(--craie)]"
-          }`}
-        >
-          <Link to="/je-me-prepare" className="flex flex-1 items-center gap-3 px-4 py-2.5">
-            <LayoutList className="size-4 shrink-0" />
-            Je me prépare
-          </Link>
-          <button
-            type="button"
-            onClick={() => setModulesOpen((v) => !v)}
-            aria-expanded={modulesOpen}
-            aria-label="Afficher les modules de préparation"
-            className="px-3 py-2.5"
-          >
-            <ChevronDown className={`size-4 transition-transform ${modulesOpen ? "rotate-180" : ""}`} />
-          </button>
-        </div>
-        {modulesOpen ? (
-          <div className="mt-1 flex flex-col gap-0.5 border-l border-[var(--craie)]/15 pl-3 ml-5">
-            {prepParts.map(partLink)}
-          </div>
-        ) : null}
-      </div>
-
-      <div>
-        <div
-          className={`flex w-full items-center rounded-md text-sm transition-colors ${
-            trainingOpen
-              ? "bg-[var(--craie)]/12 font-medium text-[var(--craie)]"
-              : "text-[var(--craie)]/65 hover:bg-[var(--craie)]/6 hover:text-[var(--craie)]"
-          }`}
-        >
-          <Link to="/je-m-entraine" className="flex flex-1 items-center gap-3 px-4 py-2.5">
-            <Mic className="size-4 shrink-0" />
-            Je m'entraîne
-          </Link>
-          <button
-            type="button"
-            onClick={() => setTrainingMenuOpen((v) => !v)}
-            aria-expanded={trainingMenuOpen}
-            aria-label="Afficher les entraînements"
-            className="px-3 py-2.5"
-          >
-            <ChevronDown className={`size-4 transition-transform ${trainingMenuOpen ? "rotate-180" : ""}`} />
-          </button>
-        </div>
-        {trainingMenuOpen ? (
-          <div className="mt-1 flex flex-col gap-0.5 border-l border-[var(--craie)]/15 pl-3 ml-5">
-            {trainParts.map(partLink)}
-          </div>
-        ) : null}
-      </div>
-
-      <Link
-        to="/ressources"
-        className={`flex items-center gap-3 rounded-md px-4 py-2.5 text-sm transition-colors ${
-          isActive("/ressources")
-            ? "bg-[var(--craie)]/12 font-medium text-[var(--craie)]"
-            : "text-[var(--craie)]/65 hover:bg-[var(--craie)]/6 hover:text-[var(--craie)]"
-        }`}
-      >
-        <BookOpen className="size-4 shrink-0" />
+      <Link to="/je-me-prepare" className={mainItem(isActive("/je-me-prepare") && !prepActive ? true : isActive("/je-me-prepare"))}>
+        <NavIcon>{ICONS.prep}</NavIcon>
+        Je me prépare
+      </Link>
+      {subList(PREP_PARTS)}
+      <Link to="/je-m-entraine" className={mainItem(isActive("/je-m-entraine") && trainActive)}>
+        <NavIcon>{ICONS.mic}</NavIcon>
+        Je m'entraîne
+      </Link>
+      {subList(TRAIN_PARTS)}
+      <Link to="/ressources" className={mainItem(isActive("/ressources"))}>
+        <NavIcon>{ICONS.books}</NavIcon>
         Ressources théoriques
       </Link>
+      <div className="mt-3 border-t border-white/12 pt-3">
+        <button type="button" onClick={signOut} className={`${mainItem(false)} w-full text-left`}>
+          <NavIcon>{ICONS.logout}</NavIcon>
+          Déconnexion
+        </button>
+      </div>
     </nav>
   );
 
-
   return (
-    <div className="min-h-screen bg-[var(--coquille)] md:flex">
-      {/* Rail latéral (desktop) */}
-      <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-[var(--craie)]/10 bg-[var(--ink)] md:flex">
-        <div className="px-6 py-7">
-          <Link to="/dashboard" aria-label="The Prepboard">
-            <Wordmark tone="chalk" />
-          </Link>
-        </div>
-        <div className="min-h-0 flex-1 overflow-y-auto px-3 pb-3">{navLinks}</div>
-        <div className="border-t border-[var(--craie)]/10 p-4">
-          <button
-            type="button"
-            onClick={signOut}
-            className="flex w-full items-center gap-3 rounded-md px-4 py-2.5 text-sm text-[var(--craie)]/60 transition-colors hover:bg-[var(--craie)]/6 hover:text-[var(--craie)]"
-          >
-            <LogOut className="size-4" />
-            Déconnexion
-          </button>
-        </div>
+    <div className="min-h-screen bg-[var(--paper)] text-[var(--ink)] md:flex">
+      {/* Barre latérale (ordinateur) */}
+      <aside className="sticky top-0 hidden h-screen w-[330px] shrink-0 flex-col overflow-y-auto bg-[var(--ink)] px-5 py-7 text-white md:flex">
+        <Link to="/dashboard" aria-label="The Prepboard, accueil" className="block px-[14px] pb-8 pt-1">
+          <Wordmark tone="chalk" />
+        </Link>
+        {navLinks}
       </aside>
 
       {/* Barre supérieure (mobile) */}
       <div className="md:hidden">
-        <header className="sticky top-0 z-40 flex items-center justify-between border-b border-[var(--craie)]/10 bg-[var(--ink)] px-5 py-4">
-          <Link to="/dashboard" aria-label="The Prepboard">
-            <Wordmark tone="chalk" className="text-[1.15rem]" />
+        <header className="sticky top-0 z-40 flex items-center justify-between bg-[var(--ink)] px-5 py-4">
+          <Link to="/dashboard" aria-label="The Prepboard, accueil">
+            <Wordmark tone="chalk" />
           </Link>
           <button
             type="button"
             aria-label={mobileOpen ? "Fermer le menu" : "Ouvrir le menu"}
             onClick={() => setMobileOpen((v) => !v)}
-            className="text-[var(--craie)]/80"
+            className="text-white/85"
           >
-            {mobileOpen ? <X className="size-5" /> : <Menu className="size-5" />}
+            {mobileOpen ? <X className="size-6" /> : <Menu className="size-6" />}
           </button>
         </header>
         {mobileOpen ? (
-          <div className="max-h-[calc(100vh-4rem)] overflow-y-auto border-b border-[var(--craie)]/10 bg-[var(--ink)] px-3 pb-4">
+          <div className="max-h-[calc(100vh-4rem)] overflow-y-auto bg-[var(--ink)] px-5 pb-6 text-white">
             {navLinks}
-            <button
-              type="button"
-              onClick={signOut}
-              className="mt-1 flex w-full items-center gap-3 rounded-md px-4 py-2.5 text-sm text-[var(--craie)]/60"
-            >
-              <LogOut className="size-4" />
-              Déconnexion
-            </button>
           </div>
         ) : null}
       </div>
 
       <main className="min-w-0 flex-1">
-        <div className="mx-auto max-w-5xl px-6 py-10 md:px-10 md:py-14">
+        <div className="mx-auto max-w-[1110px] px-5 py-6 md:px-14 md:pb-[72px] md:pt-10">
           <Outlet />
         </div>
       </main>
