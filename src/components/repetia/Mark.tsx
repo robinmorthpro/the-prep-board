@@ -1,48 +1,34 @@
 import { cn } from "@/lib/utils";
 
 /**
- * Le signe The Prepboard, tracés officiels du pack de marque.
- * `small` : version sous 24 px (1,5 tour, trait épaissi).
+ * Symbole officiel The Prepboard (brand kit v2) : trois points 40/70/100 % + barre.
+ * Ciel sur fond sombre, bleu sur fond clair. Taille minimale : 16 px.
  */
 export function SpiralMark({
   className,
   tone = "ink",
-  small = false,
 }: {
   className?: string;
   tone?: "ink" | "chalk" | "red";
+  /** conservés pour compatibilité, sans effet */
   small?: boolean;
-  /** conservé pour compatibilité, sans effet */
   turns?: number;
 }) {
-  const d = small
-    ? "M40 50A11 11 0 0 0 62 50A17 17 0 0 0 28 50A23 23 0 0 0 74 50A29 29 0 0 0 84 62"
-    : "M44 50A8.5 8.5 0 0 0 61 50A14 14 0 0 0 33 50A19.5 19.5 0 0 0 72 50A25 25 0 0 0 22 50A30.5 30.5 0 0 0 83 50";
-  const dotPos = small ? { cx: 84, cy: 62, r: 9 } : { cx: 83, cy: 50, r: 7 };
-  const stroke =
-    tone === "chalk" ? "var(--craie)" : tone === "red" ? "var(--rouge)" : "var(--ink)";
-  const dot = tone === "chalk" ? "var(--rouge-clair)" : "var(--rouge)";
-
+  const fill = tone === "chalk" ? "#A9C8FF" : "#2F5BFF";
   return (
-    <svg
-      viewBox="0 0 100 100"
-      className={cn("size-8", className)}
-      role="img"
-      aria-label="The Prepboard"
-      fill="none"
-    >
-      <path
-        d={d}
-        stroke={stroke}
-        strokeWidth={small ? 11 : 8.5}
-        strokeLinecap="round"
-      />
-      <circle cx={dotPos.cx} cy={dotPos.cy} r={dotPos.r} fill={dot} />
+    <svg viewBox="0 0 32 32" className={cn("size-8", className)} role="img" aria-label="The Prepboard">
+      <circle cx="8" cy="17.5" r="3.2" fill={fill} fillOpacity="0.4" />
+      <circle cx="16" cy="13.5" r="3.2" fill={fill} fillOpacity="0.7" />
+      <circle cx="24" cy="9.5" r="3.2" fill={fill} />
+      <rect x="3" y="22" width="26" height="5" rx="2.5" fill={fill} />
     </svg>
   );
 }
 
-/** Le verrouillage horizontal : le signe, puis le nom dont « board » est en rouge. */
+/**
+ * Logo complet officiel (fichiers SVG fournis, jamais recomposé).
+ * `chalk` = version fond sombre. La hauteur suit la taille de police (1.3em).
+ */
 export function Wordmark({
   className,
   tone = "ink",
@@ -51,18 +37,13 @@ export function Wordmark({
   tone?: "ink" | "chalk";
 }) {
   return (
-    <span
-      className={cn(
-        "inline-flex items-center gap-2 font-display text-[1.375rem] leading-none font-semibold tracking-tight",
-        tone === "chalk" ? "text-[var(--craie)]" : "text-[var(--ink)]",
-        className,
-      )}
-    >
-      <SpiralMark tone={tone} className="size-[1.3em]" />
-      <span aria-hidden>
-        The Prep<span className="text-[var(--rouge)]">board</span>
-      </span>
-      <span className="sr-only">The Prepboard</span>
+    <span className={cn("inline-flex items-center text-[1.375rem] leading-none", className)}>
+      <img
+        src={tone === "chalk" ? "/brand/logo-fond-sombre.svg" : "/brand/logo-fond-clair.svg"}
+        alt="The Prepboard"
+        className="block h-[1.3em] w-auto min-w-[140px]"
+        draggable={false}
+      />
     </span>
   );
 }
