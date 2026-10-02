@@ -22,6 +22,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { PartHeader } from "@/components/vivaldi/PartHeader";
+import { IntroPanel } from "@/components/vivaldi/StartPanel";
 import { PartNav } from "@/components/vivaldi/PartNav";
 import { TheoryDialog } from "@/components/vivaldi/TheoryDialog";
 import { AiFeedback } from "@/components/vivaldi/AiFeedback";
@@ -142,9 +143,7 @@ function Part6() {
         </div>
       </PartHeader>
 
-      <Card className="mb-6 flex gap-3 border-accent/50 bg-secondary/50 p-5">
-        <AlertTriangle className="mt-0.5 size-5 shrink-0 text-accent" />
-        <div className="space-y-2 text-sm leading-relaxed text-muted-foreground">
+      <IntroPanel>
           <p>
             Seules les écoles que vous présentez et qui demandent un support apparaissent ci-dessous. Modifiez vos
             écoles dans le module 1 si la liste vous semble incomplète.
@@ -153,8 +152,7 @@ function Part6() {
             The Prepboard ne vérifie pas l'exactitude de ce que vous écrivez : le jury IA évalue le respect des attendus de
             l'école, la précision, le calibrage et les perches tendues.
           </p>
-        </div>
-      </Card>
+      </IntroPanel>
 
 
       {concerned.length === 0 ? (

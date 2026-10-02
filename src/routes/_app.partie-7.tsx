@@ -24,6 +24,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { PartHeader } from "@/components/vivaldi/PartHeader";
+import { IntroPanel } from "@/components/vivaldi/StartPanel";
 import { PartNav } from "@/components/vivaldi/PartNav";
 import { TheoryDialog } from "@/components/vivaldi/TheoryDialog";
 import { questionSections } from "@/lib/theory";
@@ -211,9 +212,7 @@ function Part6() {
       <PartNav prev="/partie-6" next="/partie-8" className="mb-6" />
       <PartHeader step="Module 6" title="Mon entraînement sur les questions clés" />
 
-      <Card className="mb-6 flex gap-3 border-accent/50 bg-secondary/50 p-5">
-        <AlertTriangle className="mt-0.5 size-5 shrink-0 text-accent" />
-        <div className="space-y-3 text-sm leading-relaxed text-muted-foreground">
+      <IntroPanel>
           <p>
             L'objectif de ce module est de commencer à vous entraîner, à l'écrit ou à l'oral, sur les questions
             classiques de l'entretien.
@@ -226,8 +225,7 @@ function Part6() {
             Avant de vous lancer, préparez bien votre réponse en vous appuyant sur le travail effectué jusqu'à présent
             et sur les consignes théoriques pour chaque question.
           </p>
-        </div>
-      </Card>
+      </IntroPanel>
 
       <div className="grid gap-6 lg:grid-cols-2">
         {KEY_QUESTION_THEMES.map((theme) => {
