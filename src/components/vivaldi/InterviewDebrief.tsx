@@ -324,7 +324,10 @@ export function InterviewDebrief({
   const posRest = posMatch?.[3]?.trim() ?? (posMatch ? "" : positioning);
 
   const posValue = Number(posScore.match(/\bP(\d{1,3})\b/)?.[1] ?? "");
-  const posLabel = posScore.replace(/^\bP\d{1,3}\b\s*[-–-]?\s*/, "").trim();
+  const posLabel = posScore
+    .replace(/^\bP\d{1,3}\b\s*[-–-]?\s*/, "")
+    .trim()
+    .replace(/^./, (c) => c.toUpperCase());
 
   if (fallback) {
     return (
