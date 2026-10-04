@@ -290,7 +290,7 @@ export function positioningInfo(text?: string | null) {
     .replace(/^./, (c) => c.toUpperCase());
   return {
     value: Number.isFinite(value) && value > 0 ? value : null,
-    label: label || (Number.isFinite(value) && value > 0 ? `Sur cet entretien, vous faites mieux que ${value} % des candidats (± 5 percentiles).` : ""),
+    label,
   };
 }
 
