@@ -128,8 +128,8 @@ function Part5() {
             <>L'objectif de ce module est de faire émerger quelques événements d'actualité qui vous ont marqués dans les derniers mois, puis de faire ensuite le lien avec vous et de trouver les perches que vous voulez tendre à partir de ce sujet. Appuyez-vous et faites donc des liens avec le travail effectué dans les sections précédentes. L'objectif de cette question est que le jury en sache finalement un peu plus sur ... vous !</>,
         ]}
         aSavoir={[
-            <>Dans ce module, The Prepboard ne vérifie pas l'exactitude des informations que vous renseignez sur vous. Il vous appartient de prendre le temps de faire avec soin le travail recherche et d'analyse nécessaire. C'est ainsi que vous progresserez et que vous mettrez en avant des événements, des analyses et des liens avec vous pertinents.</>,
-            <>Vous pourrez passer au module suivant, le premier module d'entraînement, quand vous aurez entré au moins 2 sujets d'actualité.</>,
+            <>Dans ce module, The Prepboard ne vérifie pas l'exactitude des informations que vous renseignez. Il vous appartient de prendre le temps de faire avec soin le travail de recherche et d'analyse nécessaire sur l'actualité. C'est ainsi que vous progresserez et mettrez en avant des événements pertinents en lien avec certains de vos thèmes d'entretiens.</>,
+            <>Vous pourrez passer au module suivant quand vous aurez validé au moins 2 sujets d'actualité.</>,
         ]}
         theory={
           <TheoryDialog
