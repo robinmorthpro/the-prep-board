@@ -31,7 +31,7 @@ function parseItems(block: string): GridItem[] {
       if (last) last.example = last.example ? `${last.example} ${example}` : example;
       continue;
     }
-    const parts = line.split(" - ");
+    const parts = line.replace(/\*\*/g, "").split(" - ");
     const justification = parts.slice(2).join(" - ").trim();
     // L'exemple peut être collé en fin de justification : on l'isole.
     const split = justification.split(/(?:^|\s)(?:Exemple|À écrire plutôt|A écrire plutôt)\s*:\s*/i);

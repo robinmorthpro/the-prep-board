@@ -19,7 +19,7 @@ export function StartPanel({
   /** Texte de recommandation affiché à côté du bouton. */
   recommendation?: ReactNode;
 }) {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
 
   return (
     <section className="mb-6 flex flex-col rounded-[24px] bg-[var(--bleu-pale)] px-6 py-6 md:px-10 md:py-8">
@@ -92,7 +92,7 @@ export function IntroPanel({
   theory?: ReactNode;
   title?: ReactNode;
 }) {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   return (
     <section className="mb-6 flex flex-col rounded-[24px] bg-[var(--bleu-pale)] px-6 py-6 md:px-10 md:py-8">
       <button
