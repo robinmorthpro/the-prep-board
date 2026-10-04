@@ -285,7 +285,9 @@ export function positioningInfo(text?: string | null) {
   const posMatch = positioning.match(/^([\s\S]*?)(\bP\d{1,3}\b[^\n]*)([\s\S]*)$/);
   const posScore = posMatch?.[2]?.trim() ?? "";
   const value = Number(posScore.match(/\bP(\d{1,3})\b/)?.[1] ?? "");
-  const label = posScore.replace(/^\bP\d{1,3}\b\s*[-–-]?\s*/, "").trim();
+  const label = (posScore.replace(/^\bP\d{1,3}\b\s*[-–-]?\s*/, "").trim() || (Number.isFinite(value) && value > 0 ? `Sur cet entretien, vous faites mieux que ${value} % des candidats (± 5 percentiles).` : ""))
+    // Le débrief commence parfois sa phrase en minuscule après « P67 - » : on remet la majuscule.
+    .replace(/^./, (c) => c.toUpperCase());
   return {
     value: Number.isFinite(value) && value > 0 ? value : null,
     label: label || (Number.isFinite(value) && value > 0 ? `Sur cet entretien, vous faites mieux que ${value} % des candidats (± 5 percentiles).` : ""),
