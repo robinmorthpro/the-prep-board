@@ -62,7 +62,7 @@ function parseReview(block: string): ReviewPart[] {
     const lines = chunk.split("\n");
     const first = lines[0] ?? "";
     if (!/^###\s/.test(first)) continue;
-    const title = first.replace(/^###\s*/, "").trim();
+    const title = first.replace(/^###\s*/, "").trim().replace(/^\d+\s*[.)\u2022-]\s*/, "").trim();
     const verbatims: string[] = [];
     let feedback = "";
     let field: "verbatims" | "feedback" | null = null;
