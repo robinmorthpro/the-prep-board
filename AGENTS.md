@@ -9,3 +9,4 @@
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
 - Official logos are served from public/brand/logo-fond-{clair,sombre}.svg via Wordmark; never recompose the logo in code (brand kit forbids it).
+<!-- Reconstruction de l'aperçu pour relire les secrets (08/10/2026). -->
