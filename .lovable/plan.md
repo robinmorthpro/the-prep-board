@@ -1,14 +1,12 @@
-# Saisir les clés ElevenLabs via le formulaire sécurisé
+## Diagnostic ElevenLabs (401) — aucune modification
 
-## Constat
-Les fonctions serveur lisent les secrets du projet Lovable. Les secrets Supabase ne sont pas lus. Seules LOVABLE_API_KEY (automatique) et LOVABLE_CRON_SECRET sont présentes. ELEVENLABS_API_KEY, ELEVENLABS_AGENT_ID_CLASSIQUE et ELEVENLABS_AGENT_ID_RENNES_SB manquent.
+Dernière erreur (08:29:39 UTC) : `ElevenLabs signed-url 401: {"detail":{"type":"authentication_error","code":"unauthorized","message":"Invalid API key","status":"invalid_api_key","request_id":"ca528f1cbd10e61ec2ca482306e2fd3e"}}`
 
-## Étapes
-1. Ouvrir le formulaire sécurisé avec trois champs :
-   - `ELEVENLABS_API_KEY` : clé API ElevenLabs (elevenlabs.io → Developers → API Keys)
-   - `ELEVENLABS_AGENT_ID_CLASSIQUE` : Agent ID de l'agent classique (ElevenLabs → Agents)
-   - `ELEVENLABS_AGENT_ID_RENNES_SB` : facultatif. Laisser vide si l'agent dédié n'existe pas : l'agent classique sert alors de repli.
-2. Le propriétaire remplit les champs lui-même. Les valeurs vont directement dans le coffre chiffré, sans passer par le chat.
-3. Vérification : la liste des noms de secrets doit afficher les nouvelles clés. Ensuite, relancer le test écrit sur l'ESSEC dans l'aperçu.
+Verdict : clé refusée comme invalide, ce n'est pas une permission manquante.
 
-Aucun fichier ni code modifié.
+Piste : l'erreur vient de la version publiée de l'aperçu, pas du serveur redémarré, qui a pourtant la nouvelle clé (sk_…f8c2). Cette version a pu garder l'ancienne valeur. Sinon, la clé f8c2 a été supprimée ou vient d'un autre compte ElevenLabs.
+
+### Prochaine étape proposée (sur feu vert uniquement)
+1. Relancer la version de l'aperçu sans toucher au code, pour qu'elle relise les secrets.
+2. Refaire le test ESSEC et relire les journaux.
+3. Si l'erreur « Invalid API key » revient : vérifier dans ElevenLabs (Settings → API Keys) qu'une clé se terminant par f8c2 existe et est active, sur le même compte que l'agent.
