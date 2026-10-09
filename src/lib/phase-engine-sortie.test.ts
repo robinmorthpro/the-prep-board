@@ -1,0 +1,24 @@
+import { describe, expect, it } from "vitest";
+import { EXIT_PHRASE_INSTRUCTION, PhaseEngine, REGIE_PREFIX } from "./phase-engine";
+import { getSchoolInterviewConfig, monologueMeasuresFor, phaseScheduleFor, simulatedMinutes } from "./school-interviews";
+
+const min = 60_000;
+function moteur(school: string) {
+  const config = getSchoolInterviewConfig(school);
+  return { e: new PhaseEngine({ school, schedule: phaseScheduleFor(config) ?? [], monologues: monologueMeasuresFor(school), totalMinutes: simulatedMinutes(config), startedAt: 0, variables: {} }), total: simulatedMinutes(config) };
+}
+
+describe("clôture : question seule, puis phrase de sortie", () => {
+  it("à Y−2 : question de clôture seule ; réponse suivante : « Dis maintenant la phrase de sortie, seule. »", () => {
+    const { e, total } = moteur("Audencia");
+    e.onJuryMessage("Bonjour, présentez-vous.", 0);
+    e.onCandidateAnswer("Je m'appelle Robin.", 1 * min);
+    e.onJuryMessage("Très bien, parlez-moi de votre projet ?", 1 * min);
+    const a = e.onCandidateAnswer("Mon projet est la logistique.", (total - 2) * min);
+    expect(a.join("\n")).toContain("Il reste 2 minutes : pose maintenant ta question de clôture, seule. Tu diras la phrase de sortie après la réponse du candidat.");
+    e.onJuryMessage("Avez-vous une question pour nous ?", (total - 2) * min);
+    const b = e.onCandidateAnswer("Non, merci beaucoup.", (total - 1) * min);
+    expect(b).toEqual([`${REGIE_PREFIX} Temps écoulé : ${total - 1} min sur ${total} min. ${EXIT_PHRASE_INSTRUCTION}`]);
+    expect(b.join(" ")).not.toContain("question");
+  });
+});

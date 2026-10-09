@@ -32,11 +32,37 @@ export function parseJson(text: string): unknown {
   return JSON.parse(t);
 }
 
-export type MorceauRetire = { case: string; morceau: string };
+export type MorceauRetire = { case: string; morceau: string; champ?: "manque_pour_n4" | "citations" };
+
+/** Séparateurs de coupure acceptés dans une citation. */
+const COUPURE_RE = /\s*(?:\[\s*…\s*\]|\[\s*\.\.\.\s*\]|…|\.\.\.)\s*/;
+const minuscules = (t: string) => t.toLocaleLowerCase("fr");
+
+/**
+ * Cherche une citation dans la transcription (déjà normalisée), sans tenir compte
+ * des majuscules. Une citation coupée par « … », « ... », « […] » ou « [...] » est
+ * vérifiée morceau par morceau, dans l'ordre. Renvoie le texte exact de la
+ * transcription (morceaux joints par « […] »), ou null si introuvable.
+ */
+export function retrouverCitation(transcriptionNormalisee: string, citation: string): string | null {
+  const morceaux = normaliser(citation).split(COUPURE_RE).map((m) => m.trim()).filter(Boolean);
+  if (!morceaux.length) return null;
+  const bas = minuscules(transcriptionNormalisee);
+  const memeLongueur = bas.length === transcriptionNormalisee.length;
+  let depuis = 0;
+  const exacts: string[] = [];
+  for (const m of morceaux) {
+    const i = bas.indexOf(minuscules(m), depuis);
+    if (i < 0) return null;
+    exacts.push(memeLongueur ? transcriptionNormalisee.slice(i, i + m.length) : m);
+    depuis = i + m.length;
+  }
+  return exacts.join(" […] ");
+}
 
 export function validerSortie(
   text: string,
-  attendu: { grilleKey: string; grille: GrilleDef; transcription: string; textesEvaluateur: string },
+  attendu: { grilleKey: string; grille: GrilleDef; transcription: string; textesEvaluateur: string; dernierEssai?: boolean },
 ):
   | { ok: true; sortie: SortieValidee }
   | { ok: false; erreurs: string[]; brut: unknown; bloquant: true }
@@ -52,6 +78,9 @@ export function validerSortie(
   const erreurs: string[] = [];
   const manques: string[] = [];
   const retires: MorceauRetire[] = [];
+  const citationsIntrouvables: MorceauRetire[] = [];
+  /** Citations retrouvées : texte exact de la transcription, par case. */
+  const citationsExactes: Record<string, string[]> = {};
   if (d.grille !== attendu.grilleKey) erreurs.push(`« grille » vaut ${JSON.stringify(d.grille)} au lieu de "${attendu.grilleKey}".`);
   if (typeof d.entretien_interrompu !== "boolean") erreurs.push("« entretien_interrompu » doit être true ou false.");
 
@@ -90,9 +119,13 @@ export function validerSortie(
         if (!isStrArray(v.citations)) {
           erreurs.push(`« ${id} » : « citations » doit être une liste de textes.`);
         } else {
+          const exactes: string[] = [];
           for (const q of v.citations) {
-            if (!transcription.includes(normaliser(q))) erreurs.push(`« ${id} » : citation introuvable mot pour mot dans la transcription : « ${q} ».`);
+            const exact = retrouverCitation(transcription, q);
+            if (exact !== null) exactes.push(exact);
+            else citationsIntrouvables.push({ case: id, morceau: q, champ: "citations" });
           }
+          citationsExactes[id] = exactes;
         }
         if (!isStrArray(v.manque_pour_n4)) {
           erreurs.push(`« ${id} » : « manque_pour_n4 » doit être une liste de textes.`);
@@ -102,7 +135,7 @@ export function validerSortie(
           }
           for (const m of v.manque_pour_n4) {
             if (!textes.includes(normaliserTextes(m))) {
-              retires.push({ case: id, morceau: m });
+              retires.push({ case: id, morceau: m, champ: "manque_pour_n4" });
               manques.push(`« ${id} » : morceau de « manque_pour_n4 » introuvable mot pour mot dans les textes de l'évaluateur : « ${m} ».`);
             }
           }
@@ -110,23 +143,37 @@ export function validerSortie(
       }
     }
   }
-  if (erreurs.length) return { ok: false, erreurs: [...erreurs, ...manques], brut: data, bloquant: true };
-  if (manques.length) {
-    // Non bloquant : on retire seulement les morceaux introuvables (niveaux et citations intacts).
-    const nettoye = JSON.parse(JSON.stringify(data)) as { criteres: Record<string, Record<string, { manque_pour_n4: string[] }>> };
+  const erreursCitations = citationsIntrouvables.map(
+    (c) => `« ${c.case} » : citation introuvable mot pour mot dans la transcription : « ${c.morceau} ».`,
+  );
+  // Citation introuvable : bloquante au premier essai, retirée (avertissement) au dernier.
+  if (erreurs.length || (erreursCitations.length && !attendu.dernierEssai)) {
+    return { ok: false, erreurs: [...erreurs, ...erreursCitations, ...manques], brut: data, bloquant: true };
+  }
+  // Sortie : citations remplacées par le texte exact de la transcription (introuvables retirées).
+  const nettoye = JSON.parse(JSON.stringify(data)) as {
+    criteres: Record<string, Record<string, { manque_pour_n4: string[]; citations: string[] }>>;
+  };
+  for (const [id, exactes] of Object.entries(citationsExactes)) {
+    const [cr, ca] = id.split(".") as [string, string];
+    nettoye.criteres[cr]![ca]!.citations = exactes;
+  }
+  if (manques.length || erreursCitations.length) {
+    // Non bloquant : on retire seulement les morceaux introuvables (niveaux intacts).
     for (const r of retires) {
       const [cr, ca] = r.case.split(".") as [string, string];
       const cell = nettoye.criteres[cr]![ca]!;
       cell.manque_pour_n4 = cell.manque_pour_n4.filter((m) => m !== r.morceau);
     }
+    retires.push(...citationsIntrouvables);
     return {
       ok: false,
-      erreurs: manques,
+      erreurs: [...erreursCitations, ...manques],
       brut: data,
       bloquant: false,
       retires,
       sortieNettoyee: { niveaux, entretien_interrompu: d.entretien_interrompu as boolean, brut: nettoye },
     };
   }
-  return { ok: true, sortie: { niveaux, entretien_interrompu: d.entretien_interrompu as boolean, brut: data } };
+  return { ok: true, sortie: { niveaux, entretien_interrompu: d.entretien_interrompu as boolean, brut: nettoye } };
 }

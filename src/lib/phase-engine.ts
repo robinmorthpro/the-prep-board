@@ -31,6 +31,8 @@ export function isRegieMessage(text: string) {
 export const MONTPELLIER_PASSAGE_RE = /merci\W*passons maintenant aux situations\W*a vous de choisir celle qui vous inspire/;
 
 export const END_WITH_QUESTION = "Termine ta prochaine prise de parole par une question.";
+/** Après la réponse du candidat à la question de clôture. */
+export const EXIT_PHRASE_INSTRUCTION = "Dis maintenant la phrase de sortie, seule.";
 export const THEME_REMINDER =
   "Rappel : d'ici la fin de l'entretien, au moins 3 expériences, la personnalité, le projet, les 4 points de l'école (pourquoi une école de commerce, pourquoi celle-ci, ce qu'il apportera, sa connaissance de l'école) et l'actualité doivent tous avoir été abordés. L'entretien continue jusqu'à la consigne de clôture.";
 export const THEME_REMINDER_WITHOUT_NEWS =
@@ -79,7 +81,8 @@ export type EngineEvent = {
     | "improvised-switch"
     | "recovered-switch"
     | "forced-after-2-markers"
-    | "closing";
+    | "closing"
+    | "exit-phrase";
   phaseId?: string;
 };
 
@@ -411,6 +414,14 @@ export class PhaseEngine {
 
 
   private buildMarker(at: number, elapsed: number): string[] {
+    // La question de clôture a déjà été demandée : cette réponse est celle du
+    // candidat à la question de clôture → le jury dit la phrase de sortie, rien d'autre.
+    if (this.closing) {
+      const timeOnlyAfter = `Temps écoulé : ${elapsed} min sur ${this.totalMinutes} min.`;
+      this.lastMarkerValue = { kind: "none", timeOnly: timeOnlyAfter };
+      this.record("exit-phrase", at);
+      return [`${REGIE_PREFIX} ${timeOnlyAfter} ${EXIT_PHRASE_INSTRUCTION}`];
+    }
     // Dans les deux dernières minutes, la clôture l'emporte : aucune bascule.
     const closing = elapsed >= this.totalMinutes - 2;
     const advanced = closing ? { text: "", kind: "none" as MarkerKind } : this.advance(at, elapsed);
@@ -431,7 +442,7 @@ export class PhaseEngine {
       this.pendingOrderedAt = null;
       this.record("closing", at);
       updates.push(
-        `${REGIE_PREFIX} Il reste 2 minutes : pose maintenant ta question de clôture puis la phrase de sortie.`,
+        `${REGIE_PREFIX} Il reste 2 minutes : pose maintenant ta question de clôture, seule. Tu diras la phrase de sortie après la réponse du candidat.`,
       );
     }
     return updates;
@@ -475,7 +486,7 @@ export class PhaseEngine {
     this.pendingMarkerCount = 0;
     this.pendingOrderedAt = null;
     this.record("closing", at);
-    return [`Pose maintenant ta question de clôture puis la phrase de sortie. ${END_WITH_QUESTION}`];
+    return [`Pose maintenant ta question de clôture, seule. Tu diras la phrase de sortie après la réponse du candidat. ${END_WITH_QUESTION}`];
   }
 
   /** Rappel unique aux deux tiers du temps cumulé des phases éligibles. */

@@ -142,7 +142,7 @@ export async function evaluerSession(
       erreurs = [e instanceof Error ? e.message : String(e)];
       break; // erreur de passerelle : pas de nouvel appel immédiat
     }
-    const v0 = validerSortie(rawText, { grilleKey, grille, transcription, textesEvaluateur: system });
+    const v0 = validerSortie(rawText, { grilleKey, grille, transcription, textesEvaluateur: system, dernierEssai: i === 1 });
     // Après le nouvel appel, des morceaux de manque_pour_n4 introuvables seuls ne bloquent plus.
     const accepte = v0.ok ? { sortie: v0.sortie, retires: [] } : i === 1 && !v0.bloquant ? { sortie: v0.sortieNettoyee, retires: v0.retires } : null;
     if (accepte) {
@@ -156,7 +156,7 @@ export async function evaluerSession(
         status: "ok",
         attempts,
         errors: i > 0 ? erreurs : [],
-        warnings: v.retires.map((r) => ({ type: "manque_pour_n4_retire", ...r })),
+        warnings: v.retires.map(({ champ, ...r }) => ({ type: champ === "citations" ? "citation_retiree" : "manque_pour_n4_retire", ...r })),
         raw_output: v.sortie.brut,
         raw_text: rawText,
         case_points: r.points_par_case,

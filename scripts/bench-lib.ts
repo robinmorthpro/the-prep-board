@@ -188,7 +188,8 @@ export const TARIFS: Record<string, { entree: number; sortie: number }> = {
   "anthropic/claude-sonnet-5": { entree: 3, sortie: 15 },
 };
 
-export type Jetons = { entree: number; sortie: number; appels: number };
+/** `sortie` inclut la réflexion ; `reflexion` en est la part (Claude : thinking_tokens, Gemini : reasoning_tokens). */
+export type Jetons = { entree: number; sortie: number; appels: number; reflexion?: number };
 export const coutJetons = (modele: string, j: Jetons) => {
   const t = TARIFS[modele];
   return t ? (j.entree * t.entree + j.sortie * t.sortie) / 1_000_000 : null;

@@ -1461,10 +1461,10 @@ const PHASE_SCHEDULES: Record<string, PhaseStep[]> = {
       afterMinutes: 8,
       phrase: P_ESSEC_SORTIE,
       switchInstruction:
-        "Remercie le candidat et mets un terme au cas. La mise en situation est terminée. Pose maintenant ta question de clôture puis la phrase de sortie.",
+        "Remercie le candidat et mets un terme au cas. La mise en situation est terminée. Pose maintenant ta question de clôture, seule. Tu diras la phrase de sortie après la réponse du candidat.",
       detect: /question a me poser|quelque chose a ajouter|bonne continuation/,
       closeOnEnter: true,
-      ongoing: "Clôture : pose maintenant ta question de clôture puis la phrase de sortie.",
+      ongoing: "Clôture : pose maintenant ta question de clôture, seule. Tu diras la phrase de sortie après la réponse du candidat.",
     },
   ],
   "INSEEC Grande École": [
