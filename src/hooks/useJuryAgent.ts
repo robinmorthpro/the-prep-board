@@ -369,6 +369,7 @@ export function useJuryAgent({
         monologues: monologueMeasuresFor(opts.school),
         totalMinutes: opts.totalMinutes ?? 0,
         startedAt: Date.now(),
+        variables: opts.dynamicVariables,
       });
 
       try {

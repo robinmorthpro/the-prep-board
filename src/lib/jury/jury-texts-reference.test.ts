@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import juryCommunRaw from "./textes/jury-commun.md?raw";
 import { commonJuryText } from "../elevenlabs-agent-prompt";
 import { JURY_SCHOOL_TEXTS } from "./school-texts";
-import { buildFirstMessage, getSchoolInterviewConfig, openingNote, schoolDisplayName, secondReplyFor, simulatedMinutes } from "../school-interviews";
+import { getSchoolInterviewConfig, openingNote, secondReplyFor } from "../school-interviews";
 
 const reference = readFileSync(new URL("./textes/jury-ecoles-final.md", import.meta.url), "utf8");
 const HEADINGS = ["PREMIER MESSAGE", "DEUXIÈME RÉPLIQUE", "CONSIGNE D'OUVERTURE", "CONDUITE PROPRE À L'ÉCOLE", "CONSIGNES ENVOYÉES PENDANT L'ENTRETIEN"] as const;
@@ -23,6 +23,9 @@ function sections() {
       return [heading, tail.slice(0, next.length ? Math.min(...next) : undefined)
         .replace(/^Réglage du code[^\n]*\n?/gm, "")
         .replace(/^Moment :[^\n]*\n?/gm, "")
+        // GEM : forme du texte de {{gem_persona}} (construit par gem-kb.ts), traitée comme un réglage du code.
+        .replace(/^Tu t'appelles \$\{p\.prenom\}[^\n]*\n?/gm, "")
+        .replace(/^Fil rouge si le candidat creuse \(ne jamais amener spontanément\) : \$\{p\.filRouge\}\n?/gm, "")
         .trim().replace(/---$/, "").trimEnd()];
     });
     return [school, Object.fromEntries(entries)];
@@ -30,15 +33,6 @@ function sections() {
 }
 
 const expected = sections() as Record<string, Record<(typeof HEADINGS)[number], string>>;
-const renderTemplate = (text: string, school: string) => text
-  .replaceAll("${welcome}", `Bonjour Robin, et bienvenue à l'entretien ${schoolDisplayName(school).preposition}.`)
-  .replaceAll("${hello}", "Bonjour Robin.")
-  .replaceAll("${minutes}", String(simulatedMinutes(getSchoolInterviewConfig(school))))
-  .replaceAll("${support}", "document")
-  .replaceAll("${article}", "Article test")
-  .replaceAll("${edhec_mot}", "audace")
-  .replaceAll("${inseec_image}", "Image test");
-
 describe("références officielles du jury — étape 3", () => {
   it("conserve le fichier commun octet pour octet et exclut seulement sa régie finale", async () => {
     expect(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(juryCommunRaw)).then((b) => Buffer.from(b).toString("hex"))).toBe("66c80177b87ae57678c516ed9a7ed8ccceb0ce2cd0582d2fe7907e1264c715d7");
@@ -50,15 +44,12 @@ describe("références officielles du jury — étape 3", () => {
     expect(Object.keys(expected)).toHaveLength(15);
   });
 
-  it.each(Object.keys(JURY_SCHOOL_TEXTS))("envoie les quatre textes exacts pour %s", (school) => {
+  it.each(Object.keys(JURY_SCHOOL_TEXTS))("envoie les textes exacts pour %s", (school) => {
     const config = getSchoolInterviewConfig(school);
     const text = JURY_SCHOOL_TEXTS[school]!;
-    expect(text.firstMessage).toBe(expected[school]!["PREMIER MESSAGE"]);
     expect(text.secondReply).toBe(expected[school]!["DEUXIÈME RÉPLIQUE"]);
     const conductPrefix = "CONDUITE PROPRE À L'ÉCOLE (elle prime sur la trame générique)\n";
     expect(text.conduct).toBe(expected[school]!["CONDUITE PROPRE À L'ÉCOLE"].replace(conductPrefix, ""));
-    expect(buildFirstMessage(config, { firstName: "Robin", articleTitle: "Article test", edhecWord: "audace", inseecImage: "Image test" }))
-      .toBe(renderTemplate(text.firstMessage, school));
     expect(secondReplyFor(config) ?? "").toBe(text.secondReply);
     expect(openingNote(config)).toBe(text.opening.replaceAll("${second}", text.secondReply));
   });

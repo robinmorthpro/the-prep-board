@@ -704,7 +704,7 @@ function Part7() {
     setCardsStage("cards");
     startPhase("emlyon-cartes", "Épreuve des 4 cartes");
     const instruction =
-      `Ta prochaine prise de parole commence par cette phrase et ne contient aucune autre question avant : La présentation est terminée. Dis maintenant, mot pour mot : « ${EMLYON_CARDS_PHRASE} » puis énonce les quatre questions tirées (Expérience, Personnalité, Projet, Créativité) telles qu'elles figurent dans ta conduite, sans les reformuler, et laisse le candidat choisir son ordre.`;
+      `La présentation est terminée. Ta prochaine prise de parole commence par cette phrase et ne contient aucune autre question avant : « ${EMLYON_CARDS_PHRASE} », dite mot pour mot, puis énonce les quatre questions tirées (Expérience, Personnalité, Projet, Créativité) telles qu'elles figurent dans ta conduite, sans les reformuler, et laisse le candidat choisir son ordre en terminant par « Par quelle carte souhaitez-vous commencer ? ».`;
     emlyonCardsInstructionRef.current = instruction;
     agent.queueInstruction(instruction, { before: true });
   }

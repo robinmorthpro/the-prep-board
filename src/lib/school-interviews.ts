@@ -1191,6 +1191,12 @@ export function difficultiesFor(config: SchoolInterviewConfig): InterviewVariant
  * verbatim (`detect`) soit détectée dans une prise de parole du jury.
  */
 export type PhaseStep = {
+  /** Remplace, dans l'enveloppe de phase, la phrase « Ta prochaine prise de parole doit être une relance… ». */
+  ongoingRule?: string;
+  /** Remplace, dans le rattrapage, la fin « pose une nouvelle question sur ce sujet. ». */
+  recoveryAction?: string;
+  /** Consigne envoyée une fois quand le jury entre de lui-même (sans ordre) dans cette phase. */
+  earlyEnterInstruction?: string;
   /** Identifiant stable, également utilisé pour la durée persistée. */
   id: string;
   /** Nom de la phase, utilisé pour le débrief et les mesures. */
@@ -1357,7 +1363,7 @@ const P_ESSEC_SITUATION = "Je vous propose maintenant une petite mise en situati
 const P_ESSEC_SORTIE = "La mise en situation est terminée.";
 const P_INSEEC_CLASSIQUE = "Merci. Nous passons maintenant à l'entretien classique.";
 const P_GEM_INVERSEE = "Merci pour cet exposé. Nous passons maintenant à l'interview inversée : c'est à vous de m'interroger.";
-const P_GEM_MINUTE = "Il vous reste une minute, c'est le moment de faire votre synthèse si vous le souhaitez.";
+const P_GEM_MINUTE = "Il vous reste une minute, c'est le moment de faire votre synthèse.";
 const P_GEM_MINUTE_EARLY = "Très bien. C'est le moment de faire votre synthèse.";
 const P_GEM_CLASSIQUE = "Merci. Nous passons maintenant à un échange plus classique.";
 const P_EMLYON_LIBRE = "Nous avons terminé avec les 4 cartes et pouvons passer maintenant à la dernière partie de l'entretien, avec un échange plus libre.";
@@ -1375,6 +1381,13 @@ const switchTo = (target: string, phrase: string, suite = "") =>
 /** Phrase imposée du tirage des cartes emlyon (déclenché par l'application). */
 export const EMLYON_CARDS_PHRASE = "Passons maintenant au tirage de vos quatre cartes.";
 
+/**
+ * emlyon : ce que les cartes ont couvert et ce qu'il reste à couvrir.
+ * `{cartes_emlyon}` est rempli à l'exécution par le moteur de phases avec les cartes tirées.
+ */
+export const EMLYON_RESTE_A_COUVRIR =
+  "Les cartes ont déjà porté sur : {cartes_emlyon}. Il reste à couvrir, dans cet ordre : l'école (pourquoi une école de commerce, pourquoi celle-ci, ce qu'il apportera, sa connaissance de l'école), le projet, au moins 3 expériences (sinon, fais raconter une expérience de la présentation pas encore creusée), l'actualité si aucune carte ne l'a abordée. Ajuste avec ce que tu as entendu.";
+
 const PHASE_SCHEDULES: Record<string, PhaseStep[]> = {
   "TBS Education": [
     {
@@ -1382,7 +1395,7 @@ const PHASE_SCHEDULES: Record<string, PhaseStep[]> = {
       name: "Partie 1 — l'article",
       topic: "l'article de presse",
       startMinute: 0,
-      ongoing: `Reste sur l'article : ne change pas de phase. ${RELANCES} Axes à couvrir sur cet article : le journal et le choix de l'article, l'analyse, l'avis personnel, pourquoi cet article.`,
+      ongoing: `Reste sur l'article : ne change pas de phase. ${RELANCES} Axes à couvrir sur cet article : le journal et le contexte, sans résumé ; les enjeux et les parties prenantes ; un avis appuyé par un fait à lui ; pourquoi cet article.`,
       dryEarlySwitch: true,
       addQuestionAllowed: true,
       timing: { plannedMinutes: 5, criterion: "l'article de presse", penalizeEarly: true },
@@ -1405,7 +1418,7 @@ const PHASE_SCHEDULES: Record<string, PhaseStep[]> = {
       name: "Partie 1 — pitch",
       topic: "le pitch",
       startMinute: 0,
-      ongoing: "Reste sur le pitch jusqu'au choix de l'axe Impact : ne change pas de phase.",
+      ongoing: "Reste sur le pitch jusqu'au choix de l'axe Impact : ne change pas de phase. Dès la fin du pitch, ta prochaine prise de parole est la phrase de ta conduite : « Merci. Passons à la question Impact : choisissez un axe parmi People, Planet, ou Profit. » Ce n'est pas un changement de partie : la question Impact commence quand le candidat a choisi son axe.",
     },
     {
       id: "clermont-impact",
@@ -1415,7 +1428,7 @@ const PHASE_SCHEDULES: Record<string, PhaseStep[]> = {
       // aucune attente bloquante sur une phrase verbatim du jury.
       detect: /l'axe retenu est/,
       allowEarly: true,
-      ongoing: `Reste sur la question Impact : ne change pas de phase. ${RELANCES}`,
+      ongoing: "Reste sur la question Impact : ne change pas de phase. Approfondis avec des relances variées, sans jamais répéter la même : un argument à détailler, un exemple, une conséquence, un lien avec l'actualité ; prends une fois (et une seule) le contre-pied. Ne mentionne jamais les deux autres axes.",
       dryEarlySwitch: true,
       addQuestionAllowed: true,
       timing: { plannedMinutes: 5, floorMinutes: 4.25, criterion: "la question Impact", penalizeEarly: true },
@@ -1486,7 +1499,7 @@ const PHASE_SCHEDULES: Record<string, PhaseStep[]> = {
       name: "Partie 1 — l'image",
       topic: "la présentation par l'image",
       startMinute: 0,
-      ongoing: `Reste sur l'image et la présentation du candidat : ne change pas de phase. ${RELANCES}`,
+      ongoing: "Reste sur l'image et la présentation du candidat : ne change pas de phase. Approfondis avec des relances variées, sans jamais répéter la même : une expérience liée à l'image, ce qu'elle dit de son parcours, un élément évoqué mais pas développé. Jamais de contre-pied (contestation) ni de lien imposé avec l'école, le projet ou l'actualité.",
       dryEarlySwitch: true,
       addQuestionAllowed: true,
       timing: { plannedMinutes: 5, criterion: "la présentation par l'image", penalizeEarly: true },
@@ -1515,13 +1528,15 @@ const PHASE_SCHEDULES: Record<string, PhaseStep[]> = {
       name: "Partie 1 — l'exposé",
       topic: "l'exposé",
       startMinute: 0,
-      ongoing: `Reste sur l'exposé et son rebond : ne change pas de phase. ${RELANCES}`,
+      ongoing: "Reste sur l'exposé et son rebond : ne change pas de phase. Approfondis avec des relances variées, sans jamais répéter la même : fais détailler une analyse ou un raisonnement, fais traiter un axe non encore couvert, prends une fois (et une seule) le contre-pied, ouvre un thème voisin de son sujet, ou fais un lien avec son projet s'il en a parlé dans l'exposé.",
       dryEarlySwitch: true,
       addQuestionAllowed: true,
       timing: { plannedMinutes: 7, criterion: "l'exposé", penalizeEarly: true },
     },
     {
       id: "gem-inversee",
+      ongoingRule: "Ta prochaine prise de parole doit être en personnage (interview inversée) ou le silence (synthèse), jamais une transition.",
+      recoveryAction: "réponds en personnage à sa dernière question.",
       name: "Partie 2 — interview inversée",
       topic: "l'interview inversée",
       startMinute: 7,
@@ -1529,18 +1544,20 @@ const PHASE_SCHEDULES: Record<string, PhaseStep[]> = {
       switchInstruction: switchTo(
         "la partie 2, l'interview inversée",
         P_GEM_INVERSEE,
-        "Tu t'arrêtes net après cette annonce : c'est au candidat de t'interroger.",
+        "Juste après cette annonce, présente-toi en une phrase (prénom, poste, secteur), puis tu t'arrêtes net : c'est au candidat de t'interroger.",
       ),
       omitEndWithQuestion: true,
       detect: /interview inversee|c'est a vous de m'interroger/,
       allowEarly: true,
       ongoing:
-        "Interview inversée : réponds en personnage, ne change pas de phase. Si le candidat semble à court de questions, tu peux sortir brièvement de ton personnage pour lui demander exactement « Avez-vous d'autres questions à me poser ? » (au plus deux fois dans la partie). Ne change jamais de partie de toi-même : l'application te dira au repère suivant quand passer à la suite.",
+        "Interview inversée : réponds en personnage, sans poser de question, ne change pas de phase. Si le candidat dit qu'il n'a plus de question, ou te rend la parole sans te poser de question, tu peux sortir brièvement de ton personnage pour lui demander exactement « Avez-vous d'autres questions à me poser ? » (au plus deux fois dans la partie). Ne change jamais de partie de toi-même : l'application te dira au repère suivant quand passer à la suite.",
       dryEarlySwitch: true,
       timing: { plannedMinutes: 10, floorMinutes: 8.5, criterion: "l'interview inversée", penalizeEarly: true },
     },
     {
       id: "gem-minute",
+      ongoingRule: "Ta prochaine prise de parole doit être en personnage (interview inversée) ou le silence (synthèse), jamais une transition.",
+      recoveryAction: "réponds en personnage à sa dernière question.",
       name: "Partie 2 — minute de restitution",
       topic: "la synthèse",
       relativeToPhaseId: "gem-inversee",
@@ -1583,7 +1600,7 @@ const PHASE_SCHEDULES: Record<string, PhaseStep[]> = {
       switchInstruction: switchTo(
         "la partie 3, l'échange classique",
         P_GEM_CLASSIQUE,
-        "Enchaîne avec une question d'ouverture.",
+        "Enchaîne avec la phrase de présentation : « Vous avez environ une minute trente pour vous présenter, allez-y quand vous êtes prêt. ».",
       ),
       detect: /echange plus classique|entretien plus classique|partie plus classique/,
       ongoing: "Échange classique : mène l'entretien normalement, plus aucune bascule de phase à prévoir.",
@@ -1595,7 +1612,7 @@ const PHASE_SCHEDULES: Record<string, PhaseStep[]> = {
       name: "Présentation",
       topic: "la présentation",
       startMinute: 0,
-      ongoing: "Reste sur la présentation jusqu'au tirage des cartes déclenché par l'application.",
+      ongoing: "Reste sur la présentation jusqu'au tirage des cartes déclenché par l'application. Ta prochaine prise de parole est la deuxième réplique fournie par l'application, sans rien ajouter.",
     },
     {
       id: "emlyon-cartes",
@@ -1607,7 +1624,7 @@ const PHASE_SCHEDULES: Record<string, PhaseStep[]> = {
       allowEarly: true,
       allowEarlyPhrase: true,
       ongoing:
-        "Reste sur les cartes : ne change pas de phase de toi-même. Si les 4 cartes ont toutes été traitées, annonce dès maintenant, sans attendre le repère de temps, que les 4 cartes sont terminées et que vous passez à la dernière partie, un échange plus libre.",
+        "Reste sur les cartes : ne change pas de phase de toi-même. Seule exception à l'interdiction de changer de partie : Si les 4 cartes ont toutes été traitées, annonce dès maintenant, sans attendre le repère de temps, que les 4 cartes sont terminées et que vous passez à la dernière partie, un échange plus libre.",
       timing: { plannedMinutes: 15, floorMinutes: 12.75, criterion: "l'épreuve des cartes" },
     },
     {
@@ -1621,8 +1638,9 @@ const PHASE_SCHEDULES: Record<string, PhaseStep[]> = {
       switchInstruction: switchTo(
         "la dernière partie, l'échange libre",
         P_EMLYON_LIBRE,
-        "Fais-le à la fin de la carte en cours, en indiquant clairement que les 4 cartes sont terminées. Ne coupe jamais une carte en cours.",
+        `Fais-le à la fin de la dernière carte : s'il reste des cartes non traitées, tu ne poses plus de question après une carte et tu demandes « Quelle carte souhaitez-vous prendre ensuite ? » jusqu'à la dernière, en indiquant clairement que les 4 cartes sont terminées. Ne coupe jamais une carte en cours. ${EMLYON_RESTE_A_COUVRIR}`,
       ),
+      earlyEnterInstruction: EMLYON_RESTE_A_COUVRIR,
       detect: /termine avec les (4|quatre) cartes|fin des cartes/,
       allowEarly: true,
       disableForcedTransition: true,
@@ -1635,7 +1653,7 @@ const PHASE_SCHEDULES: Record<string, PhaseStep[]> = {
       name: "Ouverture et annonce des cartes",
       topic: "l'ouverture",
       startMinute: 0,
-      ongoing: "Ouverture : annonce les cinq cartes puis demande au candidat de se présenter à partir du mot Autoportrait, comme prévu dans ta conduite.",
+      ongoing: "Ouverture : annonce les cinq cartes puis demande au candidat de se présenter en environ trois minutes à partir du mot Autoportrait, comme prévu dans ta conduite.",
     },
     {
       id: "kedge-autoportrait",
@@ -1666,7 +1684,7 @@ const PHASE_SCHEDULES: Record<string, PhaseStep[]> = {
       allowEarly: true,
       allowEarlyPhrase: true,
       ongoing:
-        "Traitement des cartes : le candidat choisit une carte à la fois ; approfondis la carte en cours et rebondis sur les perches personnelles. Si les trois cartes ont été traitées, enchaîne sur des sujets classiques de motivation non encore couverts. Ne passe jamais à la conclusion de toi-même.",
+        "Traitement des cartes : le candidat choisit une carte à la fois ; approfondis la carte en cours et rebondis sur les perches personnelles. Si les trois cartes ont été traitées, enchaîne sur des sujets classiques de motivation non encore couverts. Ne passe jamais à la conclusion de toi-même. Passer d'une carte à la suivante n'est pas un changement de partie : tu le fais avec la relance du point 5.1 de ta conduite.",
     },
   ],
 };
@@ -1889,17 +1907,6 @@ export function buildFirstMessage(
   const schoolName = schoolDisplayName(config.school);
   // « Bonjour Robin, et bienvenue à l'entretien de SKEMA. »
   const welcome = `${hello.replace(/\.$/, "")}, et bienvenue à l'entretien ${schoolName.preposition}.`;
-  const official = JURY_SCHOOL_TEXTS[config.school]?.firstMessage;
-  if (official) {
-    return official
-      .replaceAll("${welcome}", welcome)
-      .replaceAll("${hello}", hello)
-      .replaceAll("${minutes}", String(minutes))
-      .replaceAll("${support}", config.support?.label ?? "")
-      .replaceAll("${article}", opts.articleTitle ?? "")
-      .replaceAll("${edhec_mot}", opts.edhecWord ?? "(mot non tiré)")
-      .replaceAll("${inseec_image}", opts.inseecImage ?? "");
-  }
 
   switch (config.school) {
     case "ESC Clermont BS":
@@ -1913,7 +1920,7 @@ export function buildFirstMessage(
     case "EM Strasbourg":
       return `${welcome} Cet entretien va durer ${minutes} minutes. Je vais vous demander de commencer par nous parler d'une réussite dont vous êtes fier, puis nous échangerons sur votre parcours, vos motivations et vos projets. Est-ce que c'est clair pour vous ?`;
     case "INSEEC Grande École":
-      return `${welcome} Il se décompose en deux parties : la première partie vous demande de vous présenter à partir de l'image que vous avez choisie, suivie d'un court échange. La seconde partie consistera en un entretien plus classique, d'environ vingt minutes.${
+      return `${welcome} Il se décompose en deux parties : la première partie vous demande de vous présenter pendant environ cinq minutes à partir de l'image que vous avez choisie. La seconde partie consistera en un entretien plus classique, d'environ vingt minutes.${
         opts.inseecImage ? ` Vous avez choisi l'image « ${opts.inseecImage} » : nous vous écoutons.` : " Nous vous écoutons."
       }`;
     case "KEDGE":

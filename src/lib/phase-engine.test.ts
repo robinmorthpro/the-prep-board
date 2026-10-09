@@ -50,7 +50,7 @@ const PHRASES = {
   clermontDiscussion: "Merci pour cet échange. Parlons maintenant de votre parcours et de vos projets.",
   inseec: "Merci. Nous passons maintenant à l'entretien classique.",
   gemInversee: "Merci pour cet exposé. Nous passons maintenant à l'interview inversée : c'est à vous de m'interroger.",
-  gemMinute: "Il vous reste une minute, c'est le moment de faire votre synthèse si vous le souhaitez.",
+  gemMinute: "Il vous reste une minute, c'est le moment de faire votre synthèse.",
   gemSynthese: "Très bien. C'est le moment de faire votre synthèse.",
   gemClassique: "Merci. Nous passons maintenant à un échange plus classique.",
   emlyonFin: "Nous avons terminé avec les 4 cartes et pouvons passer maintenant à la dernière partie de l'entretien, avec un échange plus libre.",

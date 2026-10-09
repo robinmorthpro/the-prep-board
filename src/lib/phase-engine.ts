@@ -31,9 +31,9 @@ export const END_WITH_QUESTION = "Termine ta prochaine prise de parole par une q
 export const THEME_REMINDER =
   "Rappel : d'ici la fin de l'entretien, au moins 3 expériences, la personnalité, le projet, les 4 points de l'école (pourquoi une école de commerce, pourquoi celle-ci, ce qu'il apportera, sa connaissance de l'école) et l'actualité doivent tous avoir été abordés. L'entretien continue jusqu'à la consigne de clôture.";
 export const THEME_REMINDER_WITHOUT_NEWS =
-  "Rappel : d'ici la fin de l'entretien, au moins 3 expériences, la personnalité, le projet et les 4 points de l'école (pourquoi une école de commerce, pourquoi celle-ci, ce qu'il apportera, sa connaissance de l'école) doivent tous avoir été abordés. L'entretien continue jusqu'à la consigne de clôture.";
+  "Rappel : d'ici la fin de l'entretien, au moins 3 expériences, la personnalité, le projet, les 4 points de l'école (pourquoi une école de commerce, pourquoi celle-ci, ce qu'il apportera, sa connaissance de l'école) doivent tous avoir été abordés. L'entretien continue jusqu'à la consigne de clôture.";
 export const MONTPELLIER_THEME_REMINDER =
-  "Rappel : d'ici la fin de l'entretien, les expériences, la personnalité et l'ouverture doivent avoir été abordées. L'entretien continue jusqu'à la consigne de clôture.";
+  "Rappel : d'ici la fin de l'entretien, au moins 3 expériences, la personnalité et la question d'actualité doivent avoir été abordées. L'entretien continue jusqu'à la consigne de clôture.";
 
 /**
  * Fonction PURE de la file de consignes (utilisée par `withQueuedInstructions`
@@ -152,6 +152,7 @@ export class PhaseEngine {
   private eventList: EngineEvent[] = [];
   private lastMarkerValue: MarkerInfo | null = null;
   private themeReminderSent = false;
+  private readonly variables: Record<string, string>;
 
   constructor(opts: {
     school: string;
@@ -159,8 +160,11 @@ export class PhaseEngine {
     monologues: MonologueMeasure[];
     totalMinutes: number;
     startedAt: number;
+    /** Variables dynamiques de la session (cartes emlyon tirées…). */
+    variables?: Record<string, string>;
   }) {
     this.school = opts.school;
+    this.variables = opts.variables ?? {};
     this.schedule = opts.schedule;
     this.monologues = opts.monologues;
     this.totalMinutes = opts.totalMinutes;
@@ -244,6 +248,7 @@ export class PhaseEngine {
     // mise en situation épuisée) : confirmation directe, jamais de rattrapage,
     // que la transition soit la phrase attendue ou une reformulation.
     const earlyPhraseAllowed = Boolean(this.schedule[this.phaseIndex]?.allowEarlyPhrase);
+    const orderedBefore = this.pendingIndex !== null || this.earlyOrdered;
     const unordered =
       this.pendingIndex === null && dueAt !== null && at < dueAt && !this.earlyOrdered && !earlyPhraseAllowed;
     if (unordered) {
@@ -251,7 +256,11 @@ export class PhaseEngine {
       if (recovery) return [recovery];
     }
     this.confirmPhase(detectedIndex, at, false, improvised);
-    return next.closeOnEnter ? this.closeImmediately(at) : [];
+    if (next.closeOnEnter) return this.closeImmediately(at);
+    if (!orderedBefore && next.earlyEnterInstruction && dueAt !== null && at < dueAt) {
+      return [`${REGIE_PREFIX} ${this.fill(next.earlyEnterInstruction)}`];
+    }
+    return [];
   }
 
   /** Consigne de rattrapage, tant que la limite de deux par phase n'est pas atteinte. */
@@ -262,7 +271,22 @@ export class PhaseEngine {
     if (used >= 2) return null;
     this.recoveryCount[current.id] = used + 1;
     this.record("recovered-switch", at, current.id);
-    return `Tu viens d'annoncer un changement de partie alors que ce n'est pas le moment. Reprends immédiatement la partie en cours, ${current.topic ?? current.name}, sans mentionner ce changement ni t'excuser : pose une nouvelle question sur ce sujet.`;
+    return `Tu viens d'annoncer un changement de partie alors que ce n'est pas le moment. Reprends immédiatement la partie en cours, ${current.topic ?? current.name}, sans mentionner ce changement ni t'excuser : ${current.recoveryAction ?? "pose une nouvelle question sur ce sujet."}`;
+  }
+
+  /** Remplit les variables connues seulement à l'exécution. */
+  private fill(text: string): string {
+    if (!text.includes("{cartes_emlyon}")) return text;
+    const v = this.variables;
+    const cards = [
+      ["Expérience", v["card_experience"]],
+      ["Personnalité", v["card_personnalite"]],
+      ["Projet", v["card_projet"]],
+      ["Créativité", v["card_creativite"]],
+    ]
+      .filter(([, question]) => question)
+      .map(([label, question]) => `${label} (« ${question} »)`);
+    return text.replaceAll("{cartes_emlyon}", cards.length ? cards.join(", ") : "Expérience, Personnalité, Projet, Créativité");
   }
 
   /** Oral uniquement : la parole du jury s'arrête, le monologue démarre vraiment ici. */
@@ -377,7 +401,7 @@ export class PhaseEngine {
         ? this.schedule[this.pendingIndex]
         : this.schedule[this.phaseIndex];
     const questionSuffix = activeStep?.omitEndWithQuestion ? "" : ` ${END_WITH_QUESTION}`;
-    const updates = [`${REGIE_PREFIX} ${markerText}${questionSuffix}`];
+    const updates = [`${REGIE_PREFIX} ${this.fill(markerText)}${questionSuffix}`];
     if (!this.closing && closing) {
       this.closing = true;
       this.pendingIndex = null;
@@ -612,7 +636,7 @@ export class PhaseEngine {
     const remaining = dueAt === null ? "" : ` encore environ ${Math.max(1, Math.ceil((dueAt - at) / 60_000))} min`;
     const frame = step.freeExchange
       ? `Tu es dans « ${step.topic ?? step.name} »${remaining} : ne change pas de partie.`
-      : `INTERDICTION DE CHANGER DE PARTIE. Tu es en « ${step.topic ?? step.name} »${remaining}. Ta prochaine prise de parole doit être une relance sur ce sujet, jamais une transition.`;
+      : `INTERDICTION DE CHANGER DE PARTIE. Tu es en « ${step.topic ?? step.name} »${remaining}. ${step.ongoingRule ?? "Ta prochaine prise de parole doit être une relance sur ce sujet, jamais une transition."}`;
     return `${frame} Temps écoulé : ${elapsed} min sur ${this.totalMinutes} min. ${step.ongoing}${this.addQuestionSuffix(step, dueAt, at)}`;
   }
 
