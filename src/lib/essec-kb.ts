@@ -43,7 +43,7 @@ export const ESSEC_SITUATIONS: EssecSituation[] = [
       "Vous organisez à l'ESSEC, dans le cadre d'une nouvelle association, un week-end « entreprise en herbe » destiné à des élèves de primaire, pour leur faire découvrir de façon ludique le monde de l'entreprise. L'événement a lieu dans trois mois. Comment procédez-vous pour mener à bien cette mission ?",
   },
   {
-    competence: "Créativité",
+    competence: "Compétences collectives",
     enonce:
       "On vous confie la reprise de la conception d'un spot télévisé qui doit vanter l'intérêt de consommer des insectes lyophilisés, dans une région de France plutôt attachée à une cuisine traditionnelle. La précédente campagne a été un échec et a fait baisser la consommation régionale de ces insectes. Quelle formule proposez-vous pour ce nouveau spot ?",
   },
@@ -105,7 +105,7 @@ export const ESSEC_SITUATIONS: EssecSituation[] = [
       "Vous êtes trésorier ou trésorière d'une association étudiante. Votre principal partenaire financier se désengage deux semaines avant l'événement phare de l'année. Comment réagissez-vous ?",
   },
   {
-    competence: "Compétences collectives",
+    competence: "Créativité",
     enonce:
       "Dans votre groupe de projet de six personnes, deux membres ne se parlent plus après un désaccord, et le rendu est dans trois jours. Comment gérez-vous la situation ?",
   },
@@ -123,7 +123,7 @@ export const ESSEC_SITUATIONS: EssecSituation[] = [
       "Vous devez faire découvrir votre ville à un étudiant étranger qui ne dispose que de six heures avant son train. Comment organisez-vous ce temps ?",
   },
   {
-    competence: "Capacités d'organisation",
+    competence: "Créativité",
     enonce:
       "Vous organisez un voyage associatif pour quarante personnes. La moitié des participants annule trois jours avant le départ. Comment réagissez-vous ?",
   },
