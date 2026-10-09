@@ -56,3 +56,9 @@
 - [x] Bascule anticipée tolérée : cartes toutes traitées (emlyon, KEDGE) ou 3 relances sans élément nouveau ; jamais pour l'ESSEC
 - [x] Durées de phase mesurées par l'application, transcript horodaté et malus unique de 0,5 point si phase écourtée
 - [x] docs/agent-jury-elevenlabs.md régénéré et typecheck OK
+
+## Évaluateur v2 — étape 1 (en coulisses)
+- [x] Textes et barème copiés octet pour octet (sha256 identiques)
+- [x] Appel, vérifications, calcul, table interview_evaluations, déclenchement en arrière-plan, outil admin
+- [ ] Décision Robin : ignorer les ** (gras) des textes dans la vérification de « manque_pour_n4 »
+- [ ] Étape suivante : enregistrer les tirages (cartes, mot EDHEC, article TBS, situation ESSEC)
