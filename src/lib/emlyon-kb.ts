@@ -256,17 +256,100 @@ function pickOne(bank: string[]): string {
   return bank[Math.floor(Math.random() * bank.length)] ?? bank[0]!;
 }
 
+export type EmlyonPile = "Expérience" | "Personnalité" | "Projet" | "Créativité";
+
+const BANKS: Record<EmlyonPile, string[]> = {
+  Expérience: EMLYON_EXPERIENCE,
+  Personnalité: EMLYON_PERSONNALITE,
+  Projet: EMLYON_PROJET,
+  Créativité: EMLYON_CREATIVITE,
+};
+
+/**
+ * Piles séparées (une seule liste partagée) : le module Questions clés publie
+ * les cartes de rang impair (1re, 3e, 5e…) ; le jury ne tire que dans les autres.
+ */
+export const EMLYON_MODULE: Record<EmlyonPile, string[]> = Object.fromEntries(
+  Object.entries(BANKS).map(([pile, bank]) => [pile, bank.filter((_, i) => i % 2 === 0)]),
+) as Record<EmlyonPile, string[]>;
+export const EMLYON_JURY: Record<EmlyonPile, string[]> = Object.fromEntries(
+  Object.entries(BANKS).map(([pile, bank]) => [pile, bank.filter((_, i) => i % 2 === 1)]),
+) as Record<EmlyonPile, string[]>;
+
+/** Critère où se note une carte (texte de l'évaluateur emlyon). */
+export type EmlyonCritere =
+  | "Expériences et personnalité"
+  | "Projet professionnel"
+  | "École"
+  | "Ouverture sur le monde"
+  | "Gestion des situations déstabilisantes (l'imprévu)";
+
+/** Cartes dont le critère n'est pas celui de leur pile (décision du fondateur). */
+export const EMLYON_ETIQUETTES_EXCEPTIONS: Record<string, EmlyonCritere> = {
+  // Pile Créativité
+  "Citez une personne innovante qui vous inspire.": "Expériences et personnalité",
+  "Donnez votre avis sur la citation de Karl Marx : « la religion est l'opium du peuple ».": "Ouverture sur le monde",
+  "Vous passez une heure avec Xi Jinping, que lui dites-vous ?": "Ouverture sur le monde",
+  "Le terme « maker » est très moderne. Que signifie-t-il pour vous ?": "École",
+  "Connaissez-vous des diplômés de l'emlyon ?": "École",
+  "Que dira de vous un étudiant de l'emlyon dans 100 ans ?": "École",
+  "Quelle entreprise aimeriez-vous diriger pendant 1 an si vous aviez toutes les compétences requises ?": "Projet professionnel",
+  "Pouvez-vous nous parler de Google ?": "Ouverture sur le monde",
+  "À vos yeux, que doit rechercher un système éducatif ?": "Ouverture sur le monde",
+  "Est-ce vous ou vos parents qui souhaitent que vous intégriez une école de commerce ?": "École",
+  "L'innovation permet d'augmenter par trois l'espérance de vie, qu'en pensez-vous ?": "Ouverture sur le monde",
+  "Que vous évoque le terme « early makers » ?": "École",
+  "Quel est votre avis sur l'uberisation ?": "Ouverture sur le monde",
+  "Si l'État subit un recours en justice pour cause de non-respect de l'environnement, quelles réformes devrait-il entreprendre ?": "Ouverture sur le monde",
+  // Pile Projet : cartes qui portent sur l'école
+  "Pourquoi voulez-vous intégrer l'emlyon ?": "École",
+  "Pourquoi voulez-vous intégrer une école de commerce ?": "École",
+  "Quelles sont les particularités du Programme Grande École de l'emlyon ?": "École",
+  "Pensez-vous que l'emlyon vous apportera un esprit critique ?": "École",
+  "Que souhaitez-vous apprendre à l'emlyon ?": "École",
+  "Citez 3 cours que vous aimeriez suivre à l'emlyon et expliquez pourquoi.": "École",
+  "Si vous aviez le don d'ubiquité que feriez-vous en plus de vos études dans notre école ?": "École",
+  "Quels seront pour vous les trois apports de l'emlyon BS ?": "École",
+  "Pourquoi une business school ?": "École",
+  "Quels sont les 3 cours que vous attendez avec impatience à l'emlyon ?": "École",
+  "Quel est le principal atout de l'emlyon selon vous ?": "École",
+};
+
+const CRITERE_PAR_PILE: Record<EmlyonPile, EmlyonCritere> = {
+  Expérience: "Expériences et personnalité",
+  Personnalité: "Expériences et personnalité",
+  Projet: "Projet professionnel",
+  Créativité: "Gestion des situations déstabilisantes (l'imprévu)",
+};
+
+/** Étiquette d'une carte : exception éventuelle, sinon le critère de sa pile. */
+export function emlyonCritere(pile: EmlyonPile, question: string): EmlyonCritere {
+  return EMLYON_ETIQUETTES_EXCEPTIONS[question] ?? CRITERE_PAR_PILE[pile];
+}
+
+export type EmlyonCarteTiree = { pile: EmlyonPile; question: string; critere: EmlyonCritere };
+
+/** Les 4 cartes tirées, avec leur étiquette, dans l'ordre des piles. */
+export function emlyonCartesEtiquetees(draw: ReturnType<typeof drawEmlyonCards>): EmlyonCarteTiree[] {
+  const list: [EmlyonPile, string][] = [
+    ["Expérience", draw.experience],
+    ["Personnalité", draw.personnalite],
+    ["Projet", draw.projet],
+    ["Créativité", draw.creativite],
+  ];
+  return list.map(([pile, question]) => ({ pile, question, critere: emlyonCritere(pile, question) }));
+}
+
 /**
  * Tire les 4 cartes de l'épreuve emlyon : une question par thème (Expérience,
- * Personnalité, Projet, Créativité), tirée au hasard dans sa banque. Les questions sont
- * transmises à l'agent vocal via des variables dynamiques ; le jury les énonce
- * lui-même après la présentation initiale du candidat.
+ * Personnalité, Projet, Créativité), tirée au hasard dans la part de sa pile
+ * réservée au jury (jamais une carte publiée dans le module Questions clés).
  */
 export function drawEmlyonCards() {
   return {
-    experience: pickOne(EMLYON_EXPERIENCE),
-    personnalite: pickOne(EMLYON_PERSONNALITE),
-    projet: pickOne(EMLYON_PROJET),
-    creativite: pickOne(EMLYON_CREATIVITE),
+    experience: pickOne(EMLYON_JURY.Expérience),
+    personnalite: pickOne(EMLYON_JURY.Personnalité),
+    projet: pickOne(EMLYON_JURY.Projet),
+    creativite: pickOne(EMLYON_JURY.Créativité),
   };
 }

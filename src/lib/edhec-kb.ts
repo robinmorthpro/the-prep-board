@@ -98,10 +98,15 @@ export const EDHEC_WORDS: string[] = [
   "Xyloglotte",
 ];
 
+/** Piles séparées : le module publie les mots de rang impair, le jury tire dans les autres. */
+export const EDHEC_WORDS_MODULE: string[] = EDHEC_WORDS.filter((_, i) => i % 2 === 0);
+export const EDHEC_WORDS_JURY: string[] = EDHEC_WORDS.filter((_, i) => i % 2 === 1);
+
 /**
- * Tirage aléatoire du mot imposé pour la partie 1 de l'oral EDHEC. Le mot est
- * ensuite injecté dans l'ouverture du jury via {{edhec_mot}}.
+ * Tirage aléatoire du mot imposé pour la partie 1 de l'oral EDHEC, parmi les
+ * mots réservés au jury. Le mot est ensuite injecté dans l'ouverture du jury
+ * via {{edhec_mot}}.
  */
 export function pickEdhecWord(): string {
-  return EDHEC_WORDS[Math.floor(Math.random() * EDHEC_WORDS.length)] ?? EDHEC_WORDS[0]!;
+  return EDHEC_WORDS_JURY[Math.floor(Math.random() * EDHEC_WORDS_JURY.length)] ?? EDHEC_WORDS_JURY[0]!;
 }
