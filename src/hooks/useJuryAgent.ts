@@ -431,6 +431,8 @@ export function useJuryAgent({
     syncEngineRef.current();
   }, []);
 
+  const currentPhaseId = useCallback(() => engineRef.current?.currentPhaseId ?? null, []);
+
   const markPhaseEnd = useCallback((phaseId: string) => {
     engineRef.current?.markPhaseEnd(phaseId, Date.now());
     syncEngineRef.current();
@@ -528,6 +530,7 @@ export function useJuryAgent({
     markPhaseStart,
     markPhaseEnd,
     markMeasureStart,
+    currentPhaseId,
   };
 }
 

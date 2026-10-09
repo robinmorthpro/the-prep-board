@@ -279,6 +279,8 @@ function Part7() {
   // emlyon : le chronomètre des cartes attend la première prise de parole du
   // candidat après l'énoncé des cartes par le jury.
   const emlyonMeasureRef = useRef<"idle" | "triggered" | "announced" | "started">("idle");
+  // ESSEC : fin de la prise de parole du jury qui accorde le temps de réflexion.
+  const essecThinkAtRef = useRef<number | null>(null);
   const [closed, setClosed] = useState(false);
   const closedRef = useRef(false);
   closedRef.current = closed;
@@ -565,6 +567,10 @@ function Part7() {
     if (silenceSinceRef.current === null) silenceSinceRef.current = Date.now();
     const normalized = normalizeInterviewText(text);
     if (emlyonMeasureRef.current === "triggered") emlyonMeasureRef.current = "announced";
+    if (config.school === "ESSEC" && /prenez quelques secondes pour reflechir/.test(normalized)) {
+      essecThinkAtRef.current = Date.now();
+      silenceSinceRef.current = null;
+    }
     // Le jury enchaîne parfois transition puis question en deux messages :
     // tout nouveau message annule le secours en attente.
     if (handRescueTimerRef.current) {
@@ -838,7 +844,13 @@ function Part7() {
         cardsStageRef.current === "cards" ||
         edhecScreenPhaseRef.current === "preparing" ||
         // Réflexion accordée après un démarrage de phase décidé par l'application.
-        (phaseStartAt !== null && now - phaseStartAt < 30_000);
+        (phaseStartAt !== null && now - phaseStartAt < 30_000) ||
+        // ESSEC : 30 s de réflexion après « prenez quelques secondes pour réfléchir ».
+        (essecThinkAtRef.current !== null && now - essecThinkAtRef.current < 30_000) ||
+        // EDHEC : aucune relance avant la fin de la présentation (transition).
+        (config.school === "EDHEC" && edhecStageRef.current !== "after") ||
+        // GEM : aucune relance pendant l'interview inversée (hors minute de synthèse).
+        (config.school === "GEM (Grenoble EM)" && agent.currentPhaseId() === "gem-inversee");
       // Fin de pause : le compteur repart de zéro, pas de rafale de relances.
       if (silencePausedRef.current && !paused) {
         silenceSinceRef.current = null;
@@ -921,6 +933,7 @@ function Part7() {
     setFeedbackFailed(false);
     tiragesRef.current = {};
     emlyonMeasureRef.current = "idle";
+    essecThinkAtRef.current = null;
     setClosed(false);
     setPhaseTimings([]);
     phaseTimingsRef.current = [];

@@ -118,6 +118,8 @@ type MonologueState = {
   answers: number;
   lastAnswerEnd: number | null;
   closed: boolean;
+  /** Fin retenue de la mesure, une fois fermée. */
+  closedAt?: number;
 };
 
 export class PhaseEngine {
@@ -225,7 +227,15 @@ export class PhaseEngine {
     const normalized = normalizeInterviewText(text);
     if (this.school === "Montpellier BS" && MONTPELLIER_PASSAGE_RE.test(normalized)) this.omitNextQuestion = true;
     const currentStep = this.schedule[this.phaseIndex];
-    if (currentStep?.closeOnExit?.test(normalized)) return this.closeImmediately(at);
+    if (currentStep?.closeOnExit?.test(normalized)) {
+      // ESSEC : le jury a déjà dit « La mise en situation est terminée » et posé
+      // sa question de clôture : aucune seconde consigne de clôture.
+      if (this.school === "ESSEC" && /mise en situation est terminee/.test(normalized) && text.includes("?")) {
+        this.markClosingWithoutInstruction(at);
+        return [];
+      }
+      return this.closeImmediately(at);
+    }
     let detectedIndex: number | null = null;
     let improvised = false;
     if (this.pendingIndex !== null) {
@@ -385,7 +395,9 @@ export class PhaseEngine {
     if (this.totalMinutes <= 0) return;
     const current = this.schedule[this.phaseIndex];
     if (current?.dryEarlySwitch) {
-      if (isDryAnswer(text)) this.dryAnswerCount += 1;
+      // GEM : pendant l'interview inversée, les questions courtes du candidat
+      // ne comptent jamais comme réponses « à sec ».
+      if (isDryAnswer(text) && current.id !== "gem-inversee") this.dryAnswerCount += 1;
       else this.dryAnswerCount = 0;
       if (this.dryAnswerCount >= 3) this.orderEarlySwitch(at, "early-ordered-dry");
       if (this.addQuestionAsked) {
@@ -442,6 +454,20 @@ export class PhaseEngine {
     return false;
   }
 
+  private markClosingWithoutInstruction(at: number) {
+    if (this.closing) return;
+    this.closing = true;
+    this.pendingIndex = null;
+    this.pendingMarkerCount = 0;
+    this.pendingOrderedAt = null;
+    this.record("closing", at);
+  }
+
+  /** Identifiant de la phase en cours (vide sans déroulé). */
+  get currentPhaseId(): string | null {
+    return this.schedule[this.phaseIndex]?.id ?? null;
+  }
+
   private closeImmediately(at: number): string[] {
     if (this.closing) return [];
     this.closing = true;
@@ -471,6 +497,13 @@ export class PhaseEngine {
   }
 
   private freeExchangeReminderAt(): number {
+    // EDHEC : deux tiers de l'entretien individuel, qui suit la présentation.
+    if (this.school === "EDHEC") {
+      const pres = this.monologueStates.find((st) => st.measure.id === "edhec-presentation" && st.closed);
+      if (!pres?.closedAt) return Number.POSITIVE_INFINITY;
+      const end = this.startedAt + this.totalMinutes * 60_000;
+      return pres.closedAt + ((end - pres.closedAt) * 2) / 3;
+    }
     const eligible = this.schedule.filter((step) => step.freeExchange);
     if (!eligible.length) return this.startedAt + (this.totalMinutes * 2 * 60_000) / 3;
     const spans = eligible.flatMap((step) => {
@@ -798,6 +831,7 @@ export class PhaseEngine {
 
   private closeMonologue(state: MonologueState, end: number) {
     state.closed = true;
+    state.closedAt = end;
     const timing = this.timingList.find((item) => item.phaseId === state.measure.id);
     if (timing && !timing.transitionDetectedAt) timing.transitionDetectedAt = new Date(end).toISOString();
   }

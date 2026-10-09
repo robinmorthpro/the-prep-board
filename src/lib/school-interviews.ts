@@ -1391,6 +1391,7 @@ const PHASE_SCHEDULES: Record<string, PhaseStep[]> = {
       name: "Partie 1 — pitch",
       topic: "le pitch",
       startMinute: 0,
+      omitEndWithQuestion: true,
       ongoing: "Reste sur le pitch jusqu'au choix de l'axe Impact : ne change pas de phase. Dès la fin du pitch, ta prochaine prise de parole est la phrase de ta conduite : « Merci. Passons à la question Impact : choisissez un axe parmi People, Planet, ou Profit. » Ce n'est pas un changement de partie : la question Impact commence quand le candidat a choisi son axe.",
     },
     {
