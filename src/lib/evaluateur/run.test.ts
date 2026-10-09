@@ -16,7 +16,7 @@ function sortieAvecManqueInvente() {
   const criteres = Object.fromEntries(
     grille.criteres.map((c) => [
       c.cle,
-      Object.fromEntries(c.cases.map((x) => [x.cle, { niveau: "N4", justification: "ok", manque_pour_n4: [], citations: [citation] }])),
+      Object.fromEntries(c.cases.map((x) => [x.cle, { niveau: "N4", justification: "ok", manque_pour_n4: [] as string[], citations: [citation] }])),
     ]),
   );
   const c0 = grille.criteres[0]!;
