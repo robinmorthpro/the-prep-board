@@ -2350,8 +2350,8 @@ export const KEY_QUESTIONS: KeyQuestion[] = [
 /* Chaque banque reprend 50 % des éléments tirés à l'oral (un sur     */
 /* deux, dans l'ordre source, ce qui inclut une partie des éléments   */
 /* inventés), plus quelques mots inédits pour l'EDHEC. La banque      */
-/* Clermont SB ci-dessus reprend, elle, l'intégralité des Questions   */
-/* Impact.                                                            */
+/* Clermont SB ci-dessus reprend les questions Impact 1 à 12 de chaque */
+/* axe ; le jury tire uniquement parmi les questions 13 à 24.         */
 /* ------------------------------------------------------------------ */
 
 /** Mots inédits ajoutés uniquement à la banque d'entraînement EDHEC. */
@@ -2381,10 +2381,6 @@ const EDHEC_TRAINING_PITFALLS = [
   "Ignorer le mot pour dérouler un discours préparé qui n'a rien à voir.",
 ];
 
-/** Prend un élément sur deux d'une banque (ordre source conservé). */
-function everyOther<T>(items: T[]): T[] {
-  return items.filter((_, i) => i % 2 === 0);
-}
 
 const EMLYON_CARD_INTENT: Record<string, string> = {
   Expérience:
