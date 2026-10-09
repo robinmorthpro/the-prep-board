@@ -246,6 +246,7 @@ function Part7() {
   // Montpellier BS : les situations sont tirées côté app ; le candidat choisit
   // lui-même celle qu'il développe, et le jury en est informé par le contexte.
   const [mbsPool, setMbsPool] = useState<ReturnType<typeof drawMontpellierSituations> | null>(null);
+  const [mbsSituationsStarted, setMbsSituationsStarted] = useState(false);
   const [mbsUsed, setMbsUsed] = useState<Set<string>>(new Set());
   const [mbsActive, setMbsActive] = useState<MontpellierSituation | null>(null);
   const mbsActiveRef = useRef<MontpellierSituation | null>(null);
@@ -560,6 +561,12 @@ function Part7() {
     // INSEEC : le jury annonce la partie 2 → le bloc image disparaît pour de bon.
     if (juryMessageCountRef.current > 1 && /passons maintenant a l'entretien classique/.test(normalized)) setInseecDone(true);
     // Montpellier BS : le jury propose de changer de situation → retour à la grille.
+    if (
+      config.school === "Montpellier BS" &&
+      /merci passons maintenant aux situations a vous de choisir celle qui vous inspire/.test(normalized)
+    ) {
+      setMbsSituationsStarted(true);
+    }
     if (juryMessageCountRef.current > 1 && /passer a une autre situation/.test(normalized) && mbsActiveRef.current) {
       const doneId = mbsActiveRef.current.id;
       setMbsUsed((prev) => new Set(prev).add(doneId));
@@ -964,6 +971,7 @@ function Part7() {
       setEdhecPrepRemaining(59);
       setEdhecPresentationRemaining(240);
       setMbsPool(config.school === "Montpellier BS" ? drawMontpellierSituations() : null);
+      setMbsSituationsStarted(false);
       setMbsUsed(new Set());
       mbsActiveRef.current = null;
       setMbsActive(null);
@@ -1347,9 +1355,9 @@ function Part7() {
             </div>
           ) : null}
 
-          {mbsPool && phase === "running" ? (
+          {mbsPool && mbsSituationsStarted && phase === "running" ? (
             <div className="rounded-[20px] border border-[rgba(11,18,32,0.1)] bg-white p-5 md:p-7">
-              {mbsActive ? (
+              {mbsActive && elapsed < 20 * 60 ? (
                 <>
                   <p className="text-[18px] font-semibold tracking-[-0.01em] text-[#2E46C8] md:text-[20px]">
                     Votre situation en cours
