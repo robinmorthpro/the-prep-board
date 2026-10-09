@@ -72,3 +72,10 @@
 - [ ] Appliquer les corrections de régie, niveaux, phases, durées et mesures retenues
 - [ ] Répartir les 30 situations ESSEC : 3 par compétence dans Questions clés, complément dans le jury
 - [ ] Compléter les tests et vérifier la construction
+
+## Écrans — étape 4
+- [ ] Passer à deux jurys, afficher le positionnement complet et préserver l’historique
+- [ ] Recalculer évolution et radar depuis les évaluations structurées, avec 0 à 3+ simulations testées
+- [ ] Retirer HEC des nouveaux choix et passer Rennes/ISC au format classique
+- [ ] Aligner les écrans et phases des dix écoles listées
+- [ ] Vérifier tous les tests, la construction et capturer tableau de bord et feedback si accessibles
