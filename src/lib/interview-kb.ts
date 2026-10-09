@@ -55,6 +55,17 @@ export const INTERVIEW_VARIANTS: Array<{
   },
 ];
 
+/** Libellé complet historique ; le défaut reste compatible avec les anciennes sessions. */
+export function interviewDifficultyLabel(code?: string | null) {
+  if (code === "decouverte") return "Entretien classique - jury neutre";
+  return INTERVIEW_VARIANTS.find((variant) => variant.code === code)?.label ?? "Entretien classique - jury neutre";
+}
+
+/** Niveau seul, affiché dans le bandeau et l'export de chaque session. */
+export function interviewJuryLabel(code?: string | null) {
+  return code === "classique_dur" ? "Jury dur" : "Jury neutre";
+}
+
 /** Fond commun aux deux variantes proposées. Paramétrée par la durée réelle de l'école (durationMinutes). */
 export function buildInterviewTrame(durationMinutes: number) {
   return `FORMAT : entretien de motivation classique, ${durationMinutes} minutes, mené en voix. Vouvoiement systématique.

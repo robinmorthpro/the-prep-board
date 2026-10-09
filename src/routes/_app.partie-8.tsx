@@ -32,7 +32,13 @@ import {
   useProfile,
   useSchoolSheets,
 } from "@/lib/vivaldi-queries";
-import { INTERVIEW_VARIANTS, type InterviewVariant } from "@/lib/interview-kb";
+import {
+  INTERVIEW_DIFFICULTY_ADVICE,
+  INTERVIEW_VARIANTS,
+  interviewDifficultyLabel,
+  interviewJuryLabel,
+  type InterviewVariant,
+} from "@/lib/interview-kb";
 import {
   buildFirstMessage,
   buildClermontImpactVariables,
@@ -114,13 +120,12 @@ function sessionDate(iso?: string | null) {
 
 /** Libellé lisible du niveau de difficulté joué. */
 function difficultyLabel(code?: string | null) {
-  return INTERVIEW_VARIANTS.find((v) => v.code === code)?.label ?? "Entretien classique - jury neutre";
+  return interviewDifficultyLabel(code);
 }
 
 /** Attitude du jury seule (« jury neutre »), sans répéter le format de l'entretien. */
 function juryLabel(code?: string | null) {
-  const parts = difficultyLabel(code).split(/\s+[-–-]\s+/);
-  return parts.length > 1 ? parts[parts.length - 1] : undefined;
+  return interviewJuryLabel(code);
 }
 
 /** Percentile relevé dans le débrief du jury (format « P67 - … »). */
@@ -1134,10 +1139,7 @@ function Part7() {
             Choisissez une école et simulez un entretien comme le jour J ! Le jury écoute votre réponse et rebondit en
             conditions réelles. L'évaluation n'arrive qu'à la fin que quand vous cliquez sur « Terminer l'entretien »
           </p>
-          <p>
-            Pour un premier entraînement, nous vous conseillons de choisir l'entretien de découverte, avec un jury un peu
-            plus aidant. Basculez ensuite vers les entretiens classiques, qui vous mettront face aux exigences du jour J.
-          </p>
+          <p>{INTERVIEW_DIFFICULTY_ADVICE}</p>
           <p>
             Le transcript de l'entretien est enregistré automatiquement pendant l'entretien : vous pourrez l'exporter en
             PDF à la fin, et le retrouver dans l'historique.
@@ -1538,13 +1540,13 @@ function Part7() {
             logo={schoolLogo(school)}
             date={sessionDate(turns[0]?.askedAt ?? new Date().toISOString())}
             difficultyLabel={juryLabel(hasDifficulties ? variant : undefined)}
-            percentile={positioningInfo(debrief).value}
-            percentileLabel={positioningInfo(debrief).label}
+            percentile={complete ? positioningInfo(debrief).value : null}
+            percentileLabel={complete ? positioningInfo(debrief).label : undefined}
             onExport={() =>
               downloadInterviewPdf({
                 school,
                 formatLabel: formatLabel(config.format),
-                difficultyLabel: hasDifficulties ? difficultyLabel(variant) : undefined,
+                difficultyLabel: hasDifficulties ? juryLabel(variant) : undefined,
                 createdAt: turns[0]?.askedAt ?? new Date().toISOString(),
                 turns,
                 debrief,
@@ -1621,7 +1623,12 @@ function Part7() {
 
               <ul className="mt-4 flex flex-col gap-3">
                 {visibleSessions.map((s) => {
-                  const percentile = percentileOf(s.debrief);
+                  const percentile =
+                    s.status === "done"
+                      ? typeof s.percentile === "number"
+                        ? `P${s.percentile}`
+                        : percentileOf(s.debrief)
+                      : null;
 
                   const open = openSession === s.id;
                   return (
@@ -1669,7 +1676,7 @@ function Part7() {
                             downloadInterviewPdf({
                               school: s.school,
                               formatLabel: formatLabel(s.format),
-                              difficultyLabel: s.difficulty ? difficultyLabel(s.difficulty) : undefined,
+                              difficultyLabel: s.difficulty ? juryLabel(s.difficulty) : undefined,
                               createdAt: s.created_at,
                               turns: s.turns ?? [],
                               debrief: s.debrief,
@@ -1690,13 +1697,17 @@ function Part7() {
                             logo={schoolLogo(s.school)}
                             date={sessionDate(s.created_at)}
                             difficultyLabel={juryLabel(s.difficulty)}
-                            percentile={positioningInfo(s.debrief).value}
-                            percentileLabel={positioningInfo(s.debrief).label}
+                            percentile={
+                              s.status === "done"
+                                ? (s.percentile ?? positioningInfo(s.debrief).value)
+                                : null
+                            }
+                            percentileLabel={s.status === "done" ? positioningInfo(s.debrief).label : undefined}
                             onExport={() =>
                               downloadInterviewPdf({
                                 school: s.school,
                                 formatLabel: formatLabel(s.format),
-                                difficultyLabel: s.difficulty ? difficultyLabel(s.difficulty) : undefined,
+                                difficultyLabel: s.difficulty ? juryLabel(s.difficulty) : undefined,
                                 createdAt: s.created_at,
                                 turns: s.turns ?? [],
                                 debrief: s.debrief,

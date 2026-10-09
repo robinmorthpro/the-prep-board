@@ -140,6 +140,11 @@ export type ThemeScore = {
 
 export type RadarPoint = { theme: CockpitTheme; short: string; score: number; objectif: number };
 
+/** Simulation achevée et exploitable dans tous les compteurs du tableau de bord. */
+export function isValidCompletedSimulation(session: InterviewSession) {
+  return session.status === "done" && session.evaluation?.status === "ok" && !session.evaluation.interrupted;
+}
+
 export const THEME_SHORT: Record<CockpitTheme, string> = {
   "Connaissance écoles": "Écoles",
   "Introspection et récit personnel": "Introspection",
@@ -184,7 +189,7 @@ export function computeThemeScores(answers: QuestionAnswer[], sessions: Intervie
   });
 
   const evaluations = sessions
-    .filter((session) => session.status === "done" && session.evaluation?.status === "ok" && !session.evaluation.interrupted)
+    .filter(isValidCompletedSimulation)
     .map((session) => session.evaluation)
     .filter((evaluation): evaluation is NonNullable<InterviewSession["evaluation"]> => evaluation !== null)
     .slice(0, 3);
@@ -351,12 +356,13 @@ export function computePriorities(input: {
     });
   }
 
-  const doneInterviews = sessions.filter((s) => s.status === "done").length;
+  const doneInterviews = sessions.filter(isValidCompletedSimulation).length;
+  const simulationCountLabel = `${doneInterviews} simulation${doneInterviews > 1 ? "s" : ""} complète${doneInterviews > 1 ? "s" : ""} achevée${doneInterviews > 1 ? "s" : ""}`;
   if (doneInterviews < 3) {
     out.push({
       id: "simulations",
       title: "Passer une simulation complète",
-      reason: `${doneInterviews} entretien(s) complet(s) passé(s) : c'est le seul exercice qui mesure votre tenue sur 30 minutes.`,
+      reason: `${simulationCountLabel} : c'est le seul exercice qui mesure votre tenue sur 30 minutes.`,
       to: "/partie-8",
       cta: "Lancer une simulation",
       level: doneInterviews === 0 ? "important" : "consolidation",
