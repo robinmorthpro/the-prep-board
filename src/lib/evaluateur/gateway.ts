@@ -33,14 +33,14 @@ async function fail(res: Response): Promise<never> {
 }
 
 /** Gemini et autres modèles chat : /v1/chat/completions, température 0, JSON imposé. */
-async function callChat(f: Fetcher, key: string, model: string, system: string, messages: Message[]) {
+async function callChat(f: Fetcher, key: string, model: string, system: string, messages: Message[], json = true) {
   const res = await f(`${BASE}/chat/completions`, {
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}`, "X-Lovable-AIG-SDK": "fetch" },
     body: JSON.stringify({
       model,
       temperature: 0,
-      response_format: { type: "json_object" },
+      ...(json ? { response_format: { type: "json_object" } } : {}),
       messages: [{ role: "system", content: system }, ...messages],
     }),
   });
@@ -108,10 +108,11 @@ export async function callEvaluator(
   system: string,
   messages: Message[],
   _schema?: unknown,
+  opts: { json?: boolean } = {},
 ): Promise<string> {
   const key = process.env["LOVABLE_API_KEY"];
   if (!key) throw new GatewayError(401, "LOVABLE_API_KEY manquante");
   return model.startsWith("anthropic/")
     ? callMessages(f, key, model, system, messages)
-    : callChat(f, key, model, system, messages);
+    : callChat(f, key, model, system, messages, opts.json !== false);
 }
