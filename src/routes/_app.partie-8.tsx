@@ -1546,7 +1546,7 @@ function Part7() {
               downloadInterviewPdf({
                 school,
                 formatLabel: formatLabel(config.format),
-                difficultyLabel: hasDifficulties ? juryLabel(variant) : undefined,
+                difficultyLabel: juryLabel(variant),
                 createdAt: turns[0]?.askedAt ?? new Date().toISOString(),
                 turns,
                 debrief,
@@ -1676,7 +1676,7 @@ function Part7() {
                             downloadInterviewPdf({
                               school: s.school,
                               formatLabel: formatLabel(s.format),
-                              difficultyLabel: s.difficulty ? juryLabel(s.difficulty) : undefined,
+                              difficultyLabel: juryLabel(s.difficulty),
                               createdAt: s.created_at,
                               turns: s.turns ?? [],
                               debrief: s.debrief,
@@ -1707,7 +1707,7 @@ function Part7() {
                               downloadInterviewPdf({
                                 school: s.school,
                                 formatLabel: formatLabel(s.format),
-                                difficultyLabel: s.difficulty ? juryLabel(s.difficulty) : undefined,
+                                difficultyLabel: juryLabel(s.difficulty),
                                 createdAt: s.created_at,
                                 turns: s.turns ?? [],
                                 debrief: s.debrief,
