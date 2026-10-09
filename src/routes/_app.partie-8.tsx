@@ -22,6 +22,8 @@ import { useJuryAgent } from "@/hooks/useJuryAgent";
 import { supabase } from "@/integrations/supabase/client";
 import { debriefInterview } from "@/lib/ai.functions";
 import { evaluateInterview } from "@/lib/evaluateur.functions";
+import { redigerFeedback } from "@/lib/redacteur.functions";
+import { produireFeedback } from "@/lib/feedback-enchainement";
 import {
   useCareerProject,
   useExperiences,
@@ -173,6 +175,7 @@ function Part7() {
 
   const askDebrief = useServerFn(debriefInterview);
   const runEvaluation = useServerFn(evaluateInterview);
+  const runRedacteur = useServerFn(redigerFeedback);
 
   const queryClient = useQueryClient();
   const { data: sessions = [] } = useInterviewSessions(user?.id);
@@ -433,7 +436,12 @@ function Part7() {
 
 
 
-  async function persist(nextTurns: Turn[], status: string, debriefText = "") {
+  async function persist(
+    nextTurns: Turn[],
+    status: string,
+    debriefText = "",
+    feedback?: { percentile: number | null; feedback_source: "nouveau" | "ancien"; feedback_evaluation_id: string | null },
+  ) {
     if (!user) return;
     try {
       if (!sessionIdRef.current) {
@@ -462,7 +470,7 @@ function Part7() {
       } else {
         const { error } = await supabase
           .from("interview_sessions")
-          .update({ turns: nextTurns, phase_timings: phaseTimingsRef.current, status, debrief: debriefText, updated_at: new Date().toISOString() })
+          .update({ turns: nextTurns, phase_timings: phaseTimingsRef.current, status, debrief: debriefText, ...(feedback ?? {}), updated_at: new Date().toISOString() })
           .eq("id", sessionIdRef.current);
         if (error) throw error;
       }
@@ -1029,10 +1037,13 @@ function Part7() {
     const complete = closed;
     setQuestion("");
     setPhase("debriefing");
-    void persist(finalTurns, "debriefing");
     setBusy(true);
     try {
-      const res = await askDebrief({
+      const finalStatus = complete ? "done" : "stopped";
+      // Statut final enregistré avant l'évaluation (l'évaluateur relit la session).
+      await persist(finalTurns, finalStatus);
+      const sid = sessionIdRef.current;
+      const ancien = () => askDebrief({
         data: {
           context,
           turns: finalTurns,
@@ -1047,14 +1058,19 @@ function Part7() {
             : {}),
         },
       });
+      const res = await produireFeedback({
+        evaluer: async () => (sid ? runEvaluation({ data: { sessionId: sid } }) : { ok: false }),
+        rediger: (evaluationId) => runRedacteur({ data: { sessionId: sid!, evaluationId, context } }),
+        ancien,
+      });
 
       setDebrief(res.debrief);
       setComplete(complete);
       setPhase("done");
-      void persist(finalTurns, complete ? "done" : "stopped", res.debrief).then(() => {
-        // Nouvel évaluateur, en coulisses : jamais attendu, jamais affiché.
-        const sid = sessionIdRef.current;
-        if (sid) void runEvaluation({ data: { sessionId: sid } }).catch(() => {});
+      void persist(finalTurns, finalStatus, res.debrief, {
+        percentile: res.percentile,
+        feedback_source: res.source,
+        feedback_evaluation_id: res.evaluationId,
       });
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Débrief indisponible.");
