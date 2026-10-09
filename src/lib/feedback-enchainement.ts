@@ -1,15 +1,15 @@
-// Enchaînement de fin d'entretien : évaluation → rédacteur, avec secours vers l'ancien debrief.
+// Enchaînement de fin d'entretien : évaluation → rédacteur, une relance automatique, puis échec affiché.
 
-/** Interrupteur : false = tout le monde reçoit l'ancien debrief (debriefInterview). */
-export const NOUVEAU_FEEDBACK_ACTIF = true;
+export const FEEDBACK_ECHEC_MESSAGE = "Votre feedback n'a pas pu être généré. Réessayez dans quelques minutes.";
 
-export type FeedbackObtenu = {
-  debrief: string;
-  percentile: number | null;
-  source: "nouveau" | "ancien";
-  evaluationId: string | null;
-};
+/** Nombre total de passages de la chaîne : le premier, plus une relance automatique. */
+export const FEEDBACK_TENTATIVES = 2;
 
+export type FeedbackObtenu =
+  | { ok: true; debrief: string; percentile: number | null; source: "nouveau"; evaluationId: string }
+  | { ok: false };
+
+/** Percentile lu dans le texte : seulement pour les anciens feedbacks déjà enregistrés. */
 export function percentileDuTexte(text: string): number | null {
   const m = text.match(/\bP(\d{1,2})\b/);
   const p = m ? Number(m[1]) : NaN;
@@ -17,22 +17,19 @@ export function percentileDuTexte(text: string): number | null {
 }
 
 export async function produireFeedback(deps: {
-  actif?: boolean;
   evaluer: () => Promise<{ ok: boolean; id?: string; status?: string }>;
   rediger: (evaluationId: string) => Promise<{ debrief: string; percentile: number | null }>;
-  ancien: () => Promise<{ debrief: string }>;
 }): Promise<FeedbackObtenu> {
-  if (deps.actif ?? NOUVEAU_FEEDBACK_ACTIF) {
+  for (let i = 0; i < FEEDBACK_TENTATIVES; i++) {
     try {
       const ev = await deps.evaluer();
       if (ev.ok && ev.id && ev.status === "ok") {
         const r = await deps.rediger(ev.id);
-        return { debrief: r.debrief, percentile: r.percentile, source: "nouveau", evaluationId: ev.id };
+        if (r.debrief.trim()) return { ok: true, debrief: r.debrief, percentile: r.percentile, source: "nouveau", evaluationId: ev.id };
       }
     } catch (e) {
-      console.error("Nouveau feedback indisponible, secours vers l'ancien debrief", e);
+      console.error(`Feedback : échec de la chaîne (passage ${i + 1})`, e);
     }
   }
-  const old = await deps.ancien();
-  return { debrief: old.debrief, percentile: percentileDuTexte(old.debrief), source: "ancien", evaluationId: null };
+  return { ok: false };
 }
