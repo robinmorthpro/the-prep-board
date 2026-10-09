@@ -90,5 +90,6 @@
 
 ## Étape 3.5 — banc d'essai
 - [x] Tables bench_runs / bench_results, banc remis à jour, tests
-- [ ] Pilote Clermont (bon, neutre puis dur, Gemini puis Claude)
+- [x] Pilote Clermont (bon, neutre puis dur, Gemini puis Claude)
 - [ ] Lot principal, cas limites, stabilité (attendent la validation du pilote)
+- [ ] Claude Sonnet 5 coupé à 16 000 jetons par l'évaluateur : décision du fondateur attendue
