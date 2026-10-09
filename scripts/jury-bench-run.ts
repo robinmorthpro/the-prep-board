@@ -908,8 +908,27 @@ if (quel === "renoter") {
 } else {
   const docs = new Map<string, { label: string; texte: string }>();
   for (const p of plans) {
-    const run = await executer(p, docs);
-    if (run) for (const m of MODELES_NOTATION) await noterRun(run["id"], run, m, 1, true);
+    // Un entretien en échec n'arrête pas le lot : l'erreur est notée dans bench_runs.
+    try {
+      const run = await executer(p, docs);
+      if (run)
+        for (const m of MODELES_NOTATION) {
+          try {
+            await noterRun(run["id"], run, m, 1, true);
+          } catch (e) {
+            const msg = `Notation ${m} : ${e instanceof Error ? e.message : String(e)}`;
+            console.log(`  ${msg}`);
+            await db.from("bench_runs").update({ erreurs: [...((run["erreurs"] as string[]) ?? []), msg] as never }).eq("id", run["id"]);
+          }
+        }
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
+      console.log(`${p.ecole} / ${p.jury} : ÉCHEC ${msg}`);
+      await db
+        .from("bench_runs")
+        .update({ statut: "erreur", erreurs: [msg] as never })
+        .match({ lot: p.lot, ecole: p.ecole, jury: p.jury, scenario: p.scenario.id, graine: p.graine });
+    }
   }
 }
 console.log("Banc terminé.");
