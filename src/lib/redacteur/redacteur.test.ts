@@ -1,7 +1,10 @@
 import { describe, expect, it, vi } from "vitest";
-import { controlerTexte, filtrerVerbatims, insererPercentile, LIGNE_INTERROMPU } from "./texte";
+import { createHash } from "node:crypto";
+import { readFileSync } from "node:fs";
+import { controlerTexte, filtrerVerbatims, insererPercentile, LIGNE_INTERROMPU, parseReview } from "./texte";
 import { blocFileForSchool } from "./textes";
 import { produireFeedback } from "../feedback-enchainement";
+import { plain } from "../transcript-pdf";
 
 const TEXTE = `## Ce que ce classement signifie
 Vous êtes dans la moyenne.
@@ -38,6 +41,20 @@ describe("rédacteur : traitement du texte", () => {
     expect(text).not.toContain("cinquante personnes");
     expect(retirees).toHaveLength(1);
   });
+  it("supprime entièrement une ligne VERBATIMS dont toutes les citations sont retirées", () => {
+    const input = `### Présentation\n- Une remarque\nVERBATIMS: Vous : « citation inventée »\n- Une autre remarque`;
+    const { text, retirees } = filtrerVerbatims(input, TRANSCRIPTION);
+    expect(text).toBe("### Présentation\n- Une remarque\n- Une autre remarque");
+    expect(retirees).toEqual(["Vous : « citation inventée »"]);
+  });
+  it("traite plusieurs lignes VERBATIMS et ne garde que leurs citations exactes", () => {
+    const input = `### Présentation\n- Première remarque\nVERBATIMS: Vous : « je suis en deuxième année de prépa ECG » // Vous : « faux »\n- Deuxième remarque\nVERBATIMS: Vous : « au lycée du Parc »`;
+    const { text, retirees } = filtrerVerbatims(input, TRANSCRIPTION);
+    expect(text).toContain('VERBATIMS: Vous : « je suis en deuxième année de prépa ECG »');
+    expect(text).toContain('VERBATIMS: Vous : « au lycée du Parc »');
+    expect(text).not.toContain('« faux »');
+    expect(retirees).toHaveLength(1);
+  });
   it("garde une citation tirée du document remis", () => {
     const t = TEXTE.replace("j'ai dirigé une équipe de cinquante personnes", "trésorier du BDE");
     const { retirees } = filtrerVerbatims(t, TRANSCRIPTION, "Expériences : trésorier du BDE en 2025.");
@@ -52,6 +69,43 @@ describe("rédacteur : traitement du texte", () => {
     expect(blocFileForSchool("NEOMA")).toBe("ecoles-a-document.md");
     expect(blocFileForSchool("EM Strasbourg")).toBe("em-strasbourg.md");
     expect(blocFileForSchool("Audencia")).toBeNull();
+  });
+  it("analyse le nouveau format avec plusieurs puces, citations rattachées et puce seule", () => {
+    const parts = parseReview(`### Présentation\n- Première remarque\nVERBATIMS: Vous : « citation 1 » // Jury : « citation 2 »\n- Deuxième remarque\n- Troisième remarque\nVERBATIMS: Vous : « citation 3 »`);
+    expect(parts).toEqual([
+      {
+        title: "Présentation",
+        format: "attached",
+        feedback: "",
+        verbatims: [],
+        items: [
+          { feedback: "Première remarque", verbatims: ['Vous : « citation 1 »', 'Jury : « citation 2 »'] },
+          { feedback: "Deuxième remarque", verbatims: [] },
+          { feedback: "Troisième remarque", verbatims: ['Vous : « citation 3 »'] },
+        ],
+      },
+    ]);
+  });
+  it("préserve la structure de l'ancien format", () => {
+    const parts = parseReview(`### Présentation\nVERBATIMS: Vous : « ancienne citation »\nFEEDBACK:\n- Ancienne remarque`);
+    expect(parts[0]).toEqual({
+      title: "Présentation",
+      format: "legacy",
+      feedback: "- Ancienne remarque",
+      verbatims: ['Vous : « ancienne citation »'],
+      items: [],
+    });
+  });
+  it("préserve le texte libre d'un critère non mesuré", () => {
+    expect(parseReview("### Ouverture sur le monde\nPas mesuré dans cet entretien.")[0]?.feedback).toBe("Pas mesuré dans cet entretien.");
+  });
+  it("adapte les libellés de l'export PDF pour les deux formats", () => {
+    expect(plain("VERBATIMS: Une citation\nFEEDBACK:\n- Une remarque")).toBe("Verbatims : Une citation\n\n- Une remarque");
+  });
+  it("conserve l'empreinte exacte du texte commun du rédacteur", () => {
+    const file = new URL("./textes/redacteur-commun.md", import.meta.url);
+    const hash = createHash("sha256").update(readFileSync(file)).digest("hex");
+    expect(hash).toBe("dc65a76ee5992166c5bbc0b609272ed6dad8a239ec586540f391c6f9edfb6417");
   });
 });
 

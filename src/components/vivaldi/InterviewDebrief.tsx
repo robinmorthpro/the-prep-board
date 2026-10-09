@@ -3,6 +3,7 @@ import ReactMarkdown, { type Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Download, FileText, Plus } from "lucide-react";
 import { schoolPhotoOrFallback } from "@/components/vivaldi/school-photos";
+import { parseReview } from "@/lib/redacteur/texte";
 
 
 /**
@@ -12,8 +13,6 @@ import { schoolPhotoOrFallback } from "@/components/vivaldi/school-photos";
  * (repliable, appuyé sur des verbatims), 5) transcript complet.
  * Le percentile par moment n'est pas affiché : seul le percentile global existe.
  */
-
-type ReviewPart = { title: string; verbatims: string[]; feedback: string };
 
 const md: Components = {
   p: ({ children }) => <p className="text-[17px] leading-[1.55] md:text-[20px]">{children}</p>,
@@ -55,35 +54,6 @@ function sectionAny(text: string, headings: string[]) {
   return "";
 }
 
-
-function parseReview(block: string): ReviewPart[] {
-  const parts: ReviewPart[] = [];
-  for (const chunk of block.split(/\n(?=###\s)/)) {
-    const lines = chunk.split("\n");
-    const first = lines[0] ?? "";
-    if (!/^###\s/.test(first)) continue;
-    const title = first.replace(/^###\s*/, "").trim().replace(/^\d+\s*[.)\u2022-]\s*/, "").trim();
-    const verbatims: string[] = [];
-    let feedback = "";
-    let field: "verbatims" | "feedback" | null = null;
-    for (const raw of lines.slice(1)) {
-      const line = raw.replace(/^[-*]\s*/, "").trim();
-      const m = line.match(/^\**(VERBATIMS?|FEEDBACK)\**\s*:\s*(.*)$/i);
-      if (m) {
-        field = /^VERBATIM/i.test(m[1]!) ? "verbatims" : "feedback";
-        const value = m[2]!.trim();
-        if (field === "verbatims") verbatims.push(...value.split("//").map((v) => v.trim()).filter(Boolean));
-        else feedback = value;
-        continue;
-      }
-      if (!raw.trim()) continue;
-      if (field === "verbatims") verbatims.push(...line.split("//").map((v) => v.trim()).filter(Boolean));
-      else feedback = feedback ? `${feedback}\n${raw.trim()}` : raw.trim();
-    }
-    parts.push({ title, verbatims, feedback });
-  }
-  return parts;
-}
 
 /** Carte blanche à grand titre, socle commun des sections du débrief. */
 function Section({ title, children }: { title: string; children: ReactNode }) {
@@ -391,12 +361,38 @@ export function InterviewDebrief({
             <div className="flex flex-col">
               {parts.map((part, i) => (
                 <CollapsibleRow key={i} number={i + 1} title={part.title} defaultOpen={i === 0}>
+                  {part.format === "attached" && part.items.length ? (
+                    <ul className="flex list-none flex-col gap-4">
+                      {part.items.map((item, itemIndex) => (
+                        <li key={itemIndex} className="flex gap-3.5 text-[17px] leading-[1.55] md:text-[20px]">
+                          <span aria-hidden className="mt-[11px] size-2 flex-none rounded-full bg-[var(--bleu-texte)]" />
+                          <div className="min-w-0 flex-1">
+                            <ReactMarkdown remarkPlugins={[remarkGfm]} components={md}>
+                              {item.feedback}
+                            </ReactMarkdown>
+                            {item.verbatims.length ? (
+                              <div className="mt-3 ml-2 flex flex-col gap-3 md:ml-4">
+                                {item.verbatims.map((verbatim, verbatimIndex) => (
+                                  <blockquote
+                                    key={verbatimIndex}
+                                    className="m-0 border-l-4 border-[#A9C8FF] pl-5 text-[16px] leading-[1.6] text-[var(--graphite)] md:text-[18px]"
+                                  >
+                                    {verbatim}
+                                  </blockquote>
+                                ))}
+                              </div>
+                            ) : null}
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
                   {part.feedback ? (
                     <ReactMarkdown remarkPlugins={[remarkGfm]} components={md}>
                       {part.feedback}
                     </ReactMarkdown>
                   ) : null}
-                  {part.verbatims.length ? (
+                  {part.format === "legacy" && part.verbatims.length ? (
                     <div className="mt-5 flex flex-col gap-3">
                       <p className="m-0 text-[18px] font-semibold tracking-[-0.01em] text-[var(--ink)] md:text-[20px]">
                         Verbatims qui illustrent

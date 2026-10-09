@@ -35,8 +35,10 @@ function clockAt(iso?: string, startIso?: string) {
 }
 
 /** Nettoie les marqueurs markdown du débrief pour un rendu papier lisible. */
-function plain(text: string) {
+export function plain(text: string) {
   return text
+    .replace(/^(\s*)\**VERBATIMS?\**\s*:\s*/gim, "$1Verbatims : ")
+    .replace(/^(\s*)\**FEEDBACK\**\s*:\s*/gim, "$1")
     .replace(/^#{1,6}\s*/gm, "")
     .replace(/\*\*(.+?)\*\*/g, "$1")
     .replace(/[*_`]/g, "")
