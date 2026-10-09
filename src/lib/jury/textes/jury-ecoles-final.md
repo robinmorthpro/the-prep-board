@@ -51,10 +51,10 @@ Contrairement à ce qui précède, tu peux d'abord finir le sujet en cours : fai
 Réglage du code : pendant la mise en situation, à chaque repère (sujet « la mise en situation ») :
 Mise en situation en cours : reste exclusivement sur le cas ; creuse la décision, les options et les risques. Ne pose aucune question étrangère au cas.
 Réglage du code : 8 minutes après le début de la mise en situation (si la clôture commune n'est pas déjà partie) :
-Remercie le candidat et mets un terme au cas. La mise en situation est terminée. Pose maintenant ta question de clôture puis la phrase de sortie.
+Remercie le candidat et mets un terme au cas. La mise en situation est terminée. Pose maintenant ta question de clôture, seule. Tu diras la phrase de sortie après la réponse du candidat.
 Réglage du code : après l'entrée en clôture (en pratique jamais envoyée : la clôture part dès l'entrée dans cette phase) :
-Clôture : pose maintenant ta question de clôture puis la phrase de sortie.
-Réglage du code : consignes communes à toutes les écoles, inchangées : sortie anticipée détectée (« La mise en situation est terminée. ») → « Pose maintenant ta question de clôture puis la phrase de sortie. », qui n'est plus envoyée quand la même prise de parole contient déjà la question de clôture (cas 1 de l'étape 4) ; à la 43e minute → « Il reste 2 minutes : pose maintenant ta question de clôture puis la phrase de sortie. ».
+Clôture : pose maintenant ta question de clôture, seule. Tu diras la phrase de sortie après la réponse du candidat.
+Réglage du code : consignes communes à toutes les écoles, inchangées : sortie anticipée détectée (« La mise en situation est terminée. ») → « Pose maintenant ta question de clôture, seule. Tu diras la phrase de sortie après la réponse du candidat. », qui n'est plus envoyée quand la même prise de parole contient déjà la question de clôture (cas 1 de l'étape 4) ; à la 43e minute → « Il reste 2 minutes : pose maintenant ta question de clôture, seule. Tu diras la phrase de sortie après la réponse du candidat. ».
 
 # ÉCOLE : emlyon
 
@@ -175,7 +175,7 @@ Termine ta prochaine prise de parole par une question.
 Réglage du code : moment = une seule fois, ajouté au premier repère après les deux tiers de la durée totale (16 min 40 s sur 25 min) ; texte commun, remplacé dans la partie commune (J31), non repris ici :
 Rappel : d'ici la fin de l'entretien, les cinq thèmes (expériences, personnalité, projet, école, ouverture) doivent tous avoir été abordés. L'entretien continue jusqu'à la consigne de clôture.
 Réglage du code : moment = premier repère à partir de la 23e minute (25 − 2), une seule fois (inchangé) ; texte :
-Il reste 2 minutes : pose maintenant ta question de clôture puis la phrase de sortie.
+Il reste 2 minutes : pose maintenant ta question de clôture, seule. Tu diras la phrase de sortie après la réponse du candidat.
 Termine ta prochaine prise de parole par une question.
 Réglage du code : relances de silence (communes, interview-text.ts) suspendues seulement pendant l'écran de préparation ; secours « main rendue sans question » bloqué jusqu'à la phrase de transition. Aucun changement de texte.
 
@@ -271,7 +271,7 @@ Réglage du code : de la 17e minute à la clôture (étape « gem-classique »),
 Réglage du code : aux deux tiers de la partie 3, une seule fois, le rappel des thèmes de la partie commune, variante GEM sans « et l'actualité » (J31, déjà dans la partie commune).
 
 Réglage du code : à la 30e minute (durée − 2), une seule fois :
-Il reste 2 minutes : pose maintenant ta question de clôture puis la phrase de sortie.
+Il reste 2 minutes : pose maintenant ta question de clôture, seule. Tu diras la phrase de sortie après la réponse du candidat.
 
 Réglage du code : si le jury annonce un changement de partie non ordonné, hors interview inversée et synthèse (inchangé) :
 Tu viens d'annoncer un changement de partie alors que ce n'est pas le moment. Reprends immédiatement la partie en cours, ${current.topic ?? current.name}, sans mentionner ce changement ni t'excuser : pose une nouvelle question sur ce sujet.
@@ -346,7 +346,7 @@ Termine ta prochaine prise de parole par une question.
 Réglage du code : si le jury annonce la partie 2 avant la minute 5 sans ordre de l'application (au plus deux fois) :
 Tu viens d'annoncer un changement de partie alors que ce n'est pas le moment. Reprends immédiatement la partie en cours, ${current.topic ?? current.name}, sans mentionner ce changement ni t'excuser : pose une nouvelle question sur ce sujet.
 Réglage du code : à la minute 18 (2 minutes avant la fin) :
-Il reste 2 minutes : pose maintenant ta question de clôture puis la phrase de sortie. ${END_WITH_QUESTION}
+Il reste 2 minutes : pose maintenant ta question de clôture, seule. Tu diras la phrase de sortie après la réponse du candidat. ${END_WITH_QUESTION}
 
 # ÉCOLE : ESC Clermont BS
 
@@ -429,7 +429,7 @@ Termine ta prochaine prise de parole par une question.
 Réglage du code : si le jury annonce la Discussion avant l'échéance sans ordre de l'application (au plus deux fois) :
 Tu viens d'annoncer un changement de partie alors que ce n'est pas le moment. Reprends immédiatement la partie en cours, ${current.topic ?? current.name}, sans mentionner ce changement ni t'excuser : pose une nouvelle question sur ce sujet.
 Réglage du code : à la minute 23 (2 minutes avant la fin) :
-Il reste 2 minutes : pose maintenant ta question de clôture puis la phrase de sortie. ${END_WITH_QUESTION}
+Il reste 2 minutes : pose maintenant ta question de clôture, seule. Tu diras la phrase de sortie après la réponse du candidat. ${END_WITH_QUESTION}
 
 # ÉCOLE : KEDGE
 
@@ -635,7 +635,7 @@ Moment : une seule fois, inséré après le temps écoulé, au premier repère a
 Rappel : d'ici la fin de l'entretien, au moins 3 expériences, la personnalité et la question d'actualité doivent avoir été abordées. L'entretien continue jusqu'à la consigne de clôture.
 
 Moment : une seule fois, au premier repère à partir de 23 min (après le préfixe [RÉGIE], suivi de la phrase de fin ci-dessus) :
-Il reste 2 minutes : pose maintenant ta question de clôture puis la phrase de sortie.
+Il reste 2 minutes : pose maintenant ta question de clôture, seule. Tu diras la phrase de sortie après la réponse du candidat.
 
 Moment : quand le candidat clique sur une situation à l'écran (mise à jour de contexte, sans préfixe [RÉGIE]) :
 Le candidat vient de choisir à l'écran la situation suivante à développer : "${s.text}". Attends qu'il commence à raconter, puis creuse normalement (concret, recul) sur cette situation précise.
@@ -681,7 +681,7 @@ Moment : une seule fois, inséré après le temps écoulé, au premier repère a
 Rappel : d'ici la fin de l'entretien, au moins 3 expériences, la personnalité, le projet, les 4 points de l'école (pourquoi une école de commerce, pourquoi celle-ci, ce qu'il apportera, sa connaissance de l'école) et l'actualité doivent tous avoir été abordés. L'entretien continue jusqu'à la consigne de clôture.
 
 Moment : une seule fois, au premier repère à partir de 23 min (après le préfixe [RÉGIE], suivi de la phrase de fin ci-dessus) :
-Il reste 2 minutes : pose maintenant ta question de clôture puis la phrase de sortie.
+Il reste 2 minutes : pose maintenant ta question de clôture, seule. Tu diras la phrase de sortie après la réponse du candidat.
 
 # ÉCOLE : ESCP
 
@@ -727,7 +727,7 @@ Réglage du code : moment = une seule fois, au premier repère après 16 min 40 
 Rappel : d'ici la fin de l'entretien, au moins 3 expériences, la personnalité, le projet, les 4 points de l'école (pourquoi une école de commerce, pourquoi celle-ci, ce qu'il apportera, sa connaissance de l'école) et l'actualité doivent tous avoir été abordés. L'entretien continue jusqu'à la consigne de clôture.
 
 Réglage du code : moment = une seule fois, au premier repère à partir de la 23e minute (25 − 2), en plus du repère de temps.
-Il reste 2 minutes : pose maintenant ta question de clôture puis la phrase de sortie.
+Il reste 2 minutes : pose maintenant ta question de clôture, seule. Tu diras la phrase de sortie après la réponse du candidat.
 Termine ta prochaine prise de parole par une question.
 
 # ÉCOLE : NEOMA
@@ -774,7 +774,7 @@ Réglage du code : moment = une seule fois, au premier repère après 16 min 40 
 Rappel : d'ici la fin de l'entretien, au moins 3 expériences, la personnalité, le projet, les 4 points de l'école (pourquoi une école de commerce, pourquoi celle-ci, ce qu'il apportera, sa connaissance de l'école) et l'actualité doivent tous avoir été abordés. L'entretien continue jusqu'à la consigne de clôture.
 
 Réglage du code : moment = une seule fois, au premier repère à partir de la 23e minute (25 − 2), en plus du repère de temps.
-Il reste 2 minutes : pose maintenant ta question de clôture puis la phrase de sortie.
+Il reste 2 minutes : pose maintenant ta question de clôture, seule. Tu diras la phrase de sortie après la réponse du candidat.
 Termine ta prochaine prise de parole par une question.
 
 # ÉCOLE : SKEMA
@@ -822,7 +822,7 @@ Réglage du code : moment = une seule fois, au premier repère après 16 min 40 
 Rappel : d'ici la fin de l'entretien, au moins 3 expériences, la personnalité, le projet, les 4 points de l'école (pourquoi une école de commerce, pourquoi celle-ci, ce qu'il apportera, sa connaissance de l'école) et l'actualité doivent tous avoir été abordés. L'entretien continue jusqu'à la consigne de clôture.
 
 Réglage du code : moment = une seule fois, au premier repère à partir de la 23e minute (25 − 2), en plus du repère de temps.
-Il reste 2 minutes : pose maintenant ta question de clôture puis la phrase de sortie.
+Il reste 2 minutes : pose maintenant ta question de clôture, seule. Tu diras la phrase de sortie après la réponse du candidat.
 Termine ta prochaine prise de parole par une question.
 
 # ÉCOLE : EM Normandie
@@ -869,7 +869,7 @@ Réglage du code : moment = une seule fois, au premier repère après 13 min 20 
 Rappel : d'ici la fin de l'entretien, au moins 3 expériences, la personnalité, le projet, les 4 points de l'école (pourquoi une école de commerce, pourquoi celle-ci, ce qu'il apportera, sa connaissance de l'école) et l'actualité doivent tous avoir été abordés. L'entretien continue jusqu'à la consigne de clôture.
 
 Réglage du code : moment = une seule fois, au premier repère à partir de la 18e minute (20 − 2), en plus du repère de temps.
-Il reste 2 minutes : pose maintenant ta question de clôture puis la phrase de sortie.
+Il reste 2 minutes : pose maintenant ta question de clôture, seule. Tu diras la phrase de sortie après la réponse du candidat.
 Termine ta prochaine prise de parole par une question.
 
 # ÉCOLE : BSB (Burgundy School of Business)
@@ -916,5 +916,5 @@ Réglage du code : moment = une seule fois, au premier repère après 20 min (de
 Rappel : d'ici la fin de l'entretien, au moins 3 expériences, la personnalité, le projet, les 4 points de l'école (pourquoi une école de commerce, pourquoi celle-ci, ce qu'il apportera, sa connaissance de l'école) et l'actualité doivent tous avoir été abordés. L'entretien continue jusqu'à la consigne de clôture.
 
 Réglage du code : moment = une seule fois, au premier repère à partir de la 28e minute (30 − 2), en plus du repère de temps.
-Il reste 2 minutes : pose maintenant ta question de clôture puis la phrase de sortie.
+Il reste 2 minutes : pose maintenant ta question de clôture, seule. Tu diras la phrase de sortie après la réponse du candidat.
 Termine ta prochaine prise de parole par une question.

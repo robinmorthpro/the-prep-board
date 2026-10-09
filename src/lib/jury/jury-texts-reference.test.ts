@@ -35,12 +35,12 @@ function sections() {
 const expected = sections() as Record<string, Record<(typeof HEADINGS)[number], string>>;
 describe("références officielles du jury — étape 3", () => {
   it("conserve le fichier commun octet pour octet et exclut seulement sa régie finale", async () => {
-    expect(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(juryCommunRaw)).then((b) => Buffer.from(b).toString("hex"))).toBe("536d2d1cc55b6137292dfcb93646f68c4a896a7fb5d790c58719fb494f0bbcbb");
+    expect(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(juryCommunRaw)).then((b) => Buffer.from(b).toString("hex"))).toBe("9b9004dcc39bc5b78f7759c6e57c39795b810a1868151a6189798d386397fe97");
     expect(juryCommunRaw).toBe(`${commonJuryText()}\n---\n\nRAPPEL ENVOYÉ PAR L'APPLICATION AUX DEUX TIERS (consigne de régie)\n${juryCommunRaw.split("RAPPEL ENVOYÉ PAR L'APPLICATION AUX DEUX TIERS (consigne de régie)\n")[1]}`);
   });
 
   it("conserve la référence des 15 écoles octet pour octet", async () => {
-    expect(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(reference)).then((b) => Buffer.from(b).toString("hex"))).toBe("4111cab825f9326463468a7d3b930931c443fcb08a66aa8a9338ee863d4d94c6");
+    expect(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(reference)).then((b) => Buffer.from(b).toString("hex"))).toBe("a9ffd4eda873c1a7fb22e53992a1fa5c30228f9aa5d17fa26ab3d4068427738b");
     expect(Object.keys(expected)).toHaveLength(15);
   });
 

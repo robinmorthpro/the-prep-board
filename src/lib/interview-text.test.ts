@@ -208,3 +208,15 @@ describe("buildAnswerSendPlan", () => {
     ]);
   });
 });
+
+describe("INVITATION_RE : demandes à l'impératif finies par un point (pilote)", () => {
+  it("« citez-moi trois acteurs… » n'appelle pas le secours « main rendue »", () => {
+    const phrase =
+      "Concrètement, à partir de ce qu'il vous a dit et de ce que vous avez observé, citez-moi trois acteurs, entreprises ou métiers précis qui composent ce secteur de la supply chain.";
+    expect(INVITATION_RE.test(normalizeInterviewText(phrase))).toBe(true);
+  });
+  it.each(["Nommez deux concurrents.", "Convainquez-moi.", "Vendez-moi ce stylo.", "Justifiez ce choix.", "Résumez votre parcours.", "Comparez ces deux écoles.", "Imaginez que vous êtes directeur."])(
+    "« %s » est une demande",
+    (t) => expect(INVITATION_RE.test(normalizeInterviewText(t))).toBe(true),
+  );
+});

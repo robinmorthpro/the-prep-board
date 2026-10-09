@@ -5,6 +5,16 @@ const BASE = "https://ai.gateway.lovable.dev/v1";
 /** Limite de jetons de sortie de l'évaluateur, tous modèles (Claude dépassait 16 000). */
 export const EVAL_MAX_OUTPUT_TOKENS = 32000;
 const RUN_ID = "X-Lovable-AIG-Run-ID";
+/**
+ * Claude, évaluateur seulement : niveau d'effort de la réflexion adaptative.
+ * La passerelle refuse un budget en jetons pour Sonnet 5 (« thinking.type.enabled
+ * is not supported ») : on borne la réflexion par `output_config.effort`.
+ */
+export const CLAUDE_EVAL_EFFORT: Effort = "medium";
+export type Effort = "low" | "medium" | "high";
+
+/** Jetons du dernier appel Claude (réflexion / texte), lus dans le flux. */
+export const dernierUsageClaude = { sortie: 0, reflexion: 0, texte: 0, stop: "" as string | undefined };
 
 export type Message = { role: "user" | "assistant"; content: string };
 
@@ -57,7 +67,7 @@ async function callChat(f: Fetcher, key: string, model: string, system: string, 
  * ni schéma imposé (grammaire jugée trop grande par la passerelle) : le JSON
  * est exigé par format-sortie.md et vérifié par le code.
  */
-async function callMessages(f: Fetcher, key: string, model: string, system: string, messages: Message[]) {
+async function callMessages(f: Fetcher, key: string, model: string, system: string, messages: Message[], effort?: Effort) {
   const res = await f(`${BASE}/messages`, {
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}`, "X-Lovable-AIG-SDK": "fetch" },
@@ -66,6 +76,7 @@ async function callMessages(f: Fetcher, key: string, model: string, system: stri
       max_tokens: EVAL_MAX_OUTPUT_TOKENS,
       // Claude Sonnet 5 refuse le paramètre temperature (400) : non envoyé.
       stream: true,
+      ...(effort ? { thinking: { type: "adaptive" }, output_config: { effort } } : {}),
       system,
       messages,
     }),
@@ -90,7 +101,12 @@ async function callMessages(f: Fetcher, key: string, model: string, system: stri
         .map((l) => l.slice(5).trim())
         .join("");
       if (!data) continue;
-      let ev: { type?: string; delta?: { type?: string; text?: string; stop_reason?: string }; error?: { message?: string } };
+      let ev: {
+        type?: string;
+        delta?: { type?: string; text?: string; stop_reason?: string };
+        usage?: { output_tokens?: number; output_tokens_details?: { thinking_tokens?: number } };
+        error?: { message?: string };
+      };
       try {
         ev = JSON.parse(data);
       } catch {
@@ -98,6 +114,11 @@ async function callMessages(f: Fetcher, key: string, model: string, system: stri
       }
       if (ev.type === "content_block_delta" && ev.delta?.type === "text_delta") text += ev.delta.text ?? "";
       if (ev.type === "message_delta" && ev.delta?.stop_reason) stop = ev.delta.stop_reason;
+      if (ev.type === "message_delta" && ev.usage) {
+        const sortie = ev.usage.output_tokens ?? 0;
+        const reflexion = ev.usage.output_tokens_details?.thinking_tokens ?? 0;
+        Object.assign(dernierUsageClaude, { sortie, reflexion, texte: sortie - reflexion, stop: ev.delta?.stop_reason ?? stop });
+      }
       if (ev.type === "error") throw new GatewayError(500, ev.error?.message ?? "Erreur IA (flux).");
     }
   }
@@ -111,11 +132,12 @@ export async function callEvaluator(
   system: string,
   messages: Message[],
   _schema?: unknown,
-  opts: { json?: boolean } = {},
+  opts: { json?: boolean; effort?: Effort | null } = {},
 ): Promise<string> {
   const key = process.env["LOVABLE_API_KEY"];
   if (!key) throw new GatewayError(401, "LOVABLE_API_KEY manquante");
   return model.startsWith("anthropic/")
-    ? callMessages(f, key, model, system, messages)
+    ? // Évaluateur (JSON) : réflexion bornée ; rédacteur et autres appels texte : inchangés.
+      callMessages(f, key, model, system, messages, opts.effort === null ? undefined : (opts.effort ?? (opts.json !== false ? CLAUDE_EVAL_EFFORT : undefined)))
     : callChat(f, key, model, system, messages, opts.json !== false);
 }

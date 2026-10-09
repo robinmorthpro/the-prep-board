@@ -51,3 +51,36 @@ describe("vérification de la sortie", () => {
     expect(validerSortie(avecManque("racontées par au moins 5 anecdotes"), attendu).ok).toBe(false);
   });
 });
+
+describe("citations : majuscules, coupures, retrait au dernier essai", () => {
+  const attendu = { grilleKey: "classique", grille, transcription, textesEvaluateur: textes };
+  const citationsDe = (r: ReturnType<typeof validerSortie>) => {
+    const brut = (r.ok ? r.sortie.brut : r.bloquant ? null : r.sortieNettoyee.brut) as { criteres: Record<string, Record<string, { citations: string[] }>> };
+    const c = grille.criteres[0]!;
+    return brut.criteres[c.cle]![c.cases[0]!.cle]!.citations;
+  };
+  it("a. majuscules ignorées ; le texte exact de la transcription remplace celui de l'évaluateur", () => {
+    const r = validerSortie(sortie("je m'appelle robin, je suis en deuxième année"), attendu);
+    expect(r.ok).toBe(true);
+    expect(citationsDe(r)).toEqual(["Je m'appelle Robin, je suis en deuxième année"]);
+  });
+  it("b. citation coupée vérifiée morceau par morceau, dans l'ordre, séparateur « […] »", () => {
+    for (const sep of ["…", "...", "[…]", "[...]"]) {
+      const r = validerSortie(sortie(`Je m'appelle Robin ${sep} au lycée du Parc à Lyon`), attendu);
+      expect(r.ok).toBe(true);
+      expect(citationsDe(r)).toEqual(["Je m'appelle Robin […] au lycée du Parc à Lyon"]);
+    }
+    expect(validerSortie(sortie("au lycée du Parc […] Je m'appelle Robin"), attendu).ok).toBe(false);
+  });
+  it("c. citation introuvable : bloquante au premier essai, retirée avec avertissement au dernier", () => {
+    const q = "Je m'appelle Robin et j'adore la finance de marché";
+    const premier = validerSortie(sortie(q), attendu);
+    expect(premier.ok).toBe(false);
+    expect(premier.ok === false && premier.bloquant).toBe(true);
+    const dernier = validerSortie(sortie(q), { ...attendu, dernierEssai: true });
+    expect(dernier.ok).toBe(false);
+    if (dernier.ok || dernier.bloquant) throw new Error("devrait être non bloquant");
+    expect(dernier.retires.some((x) => x.champ === "citations" && x.morceau === q)).toBe(true);
+    expect(citationsDe(dernier)).toEqual([]);
+  });
+});

@@ -105,11 +105,12 @@ const db = createClient(process.env["SUPABASE_URL"]!, process.env["SUPABASE_SERV
 // ------------------------------------------- relevé des jetons de la passerelle
 let poste = "autre";
 const jetons: Record<string, Record<string, Jetons>> = {};
-const noter = (modele: string, entree: number, sortie: number) => {
+const noter = (modele: string, entree: number, sortie: number, reflexion = 0) => {
   const p = (jetons[poste] ??= {});
-  const j = (p[modele] ??= { entree: 0, sortie: 0, appels: 0 });
+  const j = (p[modele] ??= { entree: 0, sortie: 0, appels: 0, reflexion: 0 });
   j.entree += entree;
   j.sortie += sortie;
+  j.reflexion = (j.reflexion ?? 0) + reflexion;
   j.appels += 1;
 };
 const fetchOrigine = globalThis.fetch;
@@ -130,11 +131,12 @@ globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
       const e = [...texte.matchAll(/"input_tokens":\s*(\d+)/g)].map((m) => Number(m[1]));
       const c = [...texte.matchAll(/"cache_read_input_tokens":\s*(\d+)/g)].map((m) => Number(m[1]));
       const s = [...texte.matchAll(/"output_tokens":\s*(\d+)/g)].map((m) => Number(m[1]));
-      noter(modele, (e[0] ?? 0) + (c[0] ?? 0), s.length ? Math.max(...s) : 0);
+      const r = [...texte.matchAll(/"thinking_tokens":\s*(\d+)/g)].map((m) => Number(m[1]));
+      noter(modele, (e[0] ?? 0) + (c[0] ?? 0), s.length ? Math.max(...s) : 0, r.length ? Math.max(...r) : 0);
     } else {
       try {
         const u = JSON.parse(texte).usage ?? {};
-        noter(modele, u.prompt_tokens ?? 0, u.completion_tokens ?? 0);
+        noter(modele, u.prompt_tokens ?? 0, u.completion_tokens ?? 0, u.completion_tokens_details?.reasoning_tokens ?? 0);
       } catch {
         noter(modele, 0, 0);
       }
@@ -708,7 +710,7 @@ async function jouerEntretien(plan: Plan, document: { label: string; texte: stri
 // ---------------------------------------------------------- notation
 async function noterRun(runId: string, run: Record<string, any>, modele: string, essai: number, avecRedaction: boolean) {
   const { data: deja } = await db.from("bench_results").select("id,status").eq("run_id", runId).eq("modele", modele).eq("essai_n", essai).maybeSingle();
-  if (deja?.status === "ok") return;
+  if (deja?.status === "ok" && !process.argv.includes("--force")) return;
   const p = PROFILS[run["profil"] as Profil];
   const session = {
     id: runId,
@@ -854,11 +856,11 @@ if (quel === "pilote") {
 
 if (quel === "renoter") {
   // Rejoue la notation (évaluateur + rédacteur) d'un lot existant pour un seul modèle.
-  const modele = arg("modele") ?? "anthropic/claude-sonnet-5";
+  const modeles = arg("modele") ? [arg("modele")!] : [...MODELES_NOTATION];
   const { data: runs } = await db.from("bench_runs").select("*").eq("lot", arg("source") ?? "pilote").order("created_at");
   for (const r of runs ?? []) {
     console.log(`${r.ecole} / ${r.jury}`);
-    await noterRun(r.id, r, modele, 1, true);
+    for (const modele of modeles) await noterRun(r.id, r, modele, 1, true);
   }
 } else if (quel === "journal") {
   // Reconstitue le journal d'entretiens déjà joués à partir de la transcription ElevenLabs.

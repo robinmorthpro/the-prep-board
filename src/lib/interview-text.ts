@@ -21,7 +21,7 @@ export function cleanJuryMessage(text: string) {
  * toujours au texte normalisé (`normalizeInterviewText`).
  */
 export const INVITATION_RE =
-  /je vous ecoute|nous vous ecoutons|a vous de jouer|a vous|presentez-vous|je vous invite a vous presenter|bon courage|je vous laisse|allez-y|l'axe retenu est|quelle carte souhaitez-vous|il vous reste une minute|racontez|parlez-moi|presentez|decrivez|expliquez|developpez|dites-moi|donnez-moi|choisissez un axe|par laquelle voulez-vous commencer|m'interroger|votre synthese|une petite mise en situation|quelques secondes pour reflechir|voici vos cinq cartes|tirage de vos (4|quatre) cartes|termine avec les (4|quatre) cartes/;
+  /je vous ecoute|nous vous ecoutons|a vous de jouer|a vous|presentez-vous|je vous invite a vous presenter|bon courage|je vous laisse|allez-y|l'axe retenu est|quelle carte souhaitez-vous|il vous reste une minute|racontez|parlez-moi|presentez|decrivez|expliquez|developpez|dites-moi|donnez-moi|choisissez un axe|par laquelle voulez-vous commencer|m'interroger|votre synthese|une petite mise en situation|quelques secondes pour reflechir|voici vos cinq cartes|tirage de vos (4|quatre) cartes|termine avec les (4|quatre) cartes|citez|nommez|convainquez-moi|vendez-moi|justifiez|resumez|comparez|imaginez/;
 
 /**
  * ESC Clermont BS : la détection souple de l'axe dans la réponse du candidat
