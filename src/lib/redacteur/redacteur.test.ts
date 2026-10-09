@@ -100,7 +100,7 @@ describe("rédacteur : traitement du texte", () => {
     expect(parseReview("### Ouverture sur le monde\nPas mesuré dans cet entretien.")[0]?.feedback).toBe("Pas mesuré dans cet entretien.");
   });
   it("adapte les libellés de l'export PDF pour les deux formats", () => {
-    expect(plain("VERBATIMS: Une citation\nFEEDBACK:\n- Une remarque")).toBe("Verbatims : Une citation\n\n- Une remarque");
+    expect(plain("VERBATIMS: Une citation\nFEEDBACK:\n- Une remarque")).toBe("Verbatims : Une citation\n- Une remarque");
   });
   it("conserve l'empreinte exacte du texte commun du rédacteur", () => {
     const file = new URL("./textes/redacteur-commun.md", import.meta.url);
