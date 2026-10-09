@@ -177,6 +177,12 @@ export const ESSEC_SITUATIONS: EssecSituation[] = [
 export const ESSEC_SITUATIONS_NUMEROTEES: NumberedEssecSituation[] = ESSEC_SITUATIONS.map((situation, index) => ({
   ...situation,
   numero: index + 1,
+  competence:
+    index + 1 === 8
+      ? "Capacités d'organisation"
+      : index + 1 === 24 || index + 1 === 30
+        ? "Créativité"
+        : situation.competence,
 }));
 
 /** Les trois plus petits numéros de chaque compétence sont visibles dans Questions clés. */
