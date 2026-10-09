@@ -569,7 +569,6 @@ function Part7() {
     if (emlyonMeasureRef.current === "triggered") emlyonMeasureRef.current = "announced";
     if (config.school === "ESSEC" && /prenez quelques secondes pour reflechir/.test(normalized)) {
       essecThinkAtRef.current = Date.now();
-      silenceSinceRef.current = null;
     }
     // Le jury enchaîne parfois transition puis question en deux messages :
     // tout nouveau message annule le secours en attente.
