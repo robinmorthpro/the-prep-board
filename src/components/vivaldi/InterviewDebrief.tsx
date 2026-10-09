@@ -309,8 +309,8 @@ export function InterviewDebrief({
     );
   }
 
-  // Quand le percentile est déjà dans le bandeau, on ne réaffiche aucun bloc ici.
-  const showPositioning = positioning && !positioningInBanner;
+  // Le bandeau garde le percentile ; la section conserve seulement les phrases explicatives.
+  const showPositioning = Boolean(positioning && (positioningInBanner ? posBefore || posRest : true));
 
   return (
     <div className="flex flex-col gap-6">
@@ -321,14 +321,14 @@ export function InterviewDebrief({
               {posBefore}
             </ReactMarkdown>
           ) : null}
-          {posScore ? (
+          {posScore && !positioningInBanner ? (
             Number.isFinite(posValue) && posValue > 0 ? (
               <p className="m-0 text-[20px] font-semibold text-[var(--bleu-texte)] md:text-[22px]">P{posValue}</p>
             ) : (
               <p className="m-0 text-[20px] font-semibold text-[var(--bleu-texte)] md:text-[22px]">{posScore}</p>
             )
           ) : null}
-          {posLabel ? (
+          {posLabel && !positioningInBanner ? (
             <p className="m-0 text-[17px] leading-[1.55] text-[var(--graphite)] md:text-[20px]">{posLabel}</p>
           ) : null}
           {posRest ? (

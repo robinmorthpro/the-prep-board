@@ -385,7 +385,7 @@ const INCLUS = [
   "Un parcours guidé qui part de votre parcours et de vos écoles",
   "Des oraux complets avec un jury vocal qui relance",
   "Un rapport écrit et un transcript après chaque passage",
-  "Trois niveaux d'exigence, de la découverte au jury difficile",
+  "Deux niveaux d'exigence : un jury neutre et un jury difficile",
   "Vos fiches écoles et vos récits exportables en PDF",
   "L'historique de tous vos passages, pour mesurer la progression",
 ];

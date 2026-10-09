@@ -8,7 +8,7 @@
 export type InterviewVariant = "decouverte" | "classique" | "classique_dur";
 
 export const INTERVIEW_DIFFICULTY_ADVICE =
-  "Pour un premier entraînement, choisissez l'entretien de découverte : le jury ouvre lui-même les portes et vous accompagne. Basculez ensuite vers les entretiens classiques, qui exigent de produire la matière vous-même.";
+  "Pour un premier entraînement, choisissez le jury neutre, qui conduit l'échange comme le jour J. Passez ensuite au jury dur pour vous entraîner à répondre sous davantage de pression.";
 
 export const INTERVIEW_VARIANTS: Array<{
   code: InterviewVariant;
@@ -17,25 +17,6 @@ export const INTERVIEW_VARIANTS: Array<{
   instructions: string;
   debriefCalibration: string;
 }> = [
-  {
-    code: "decouverte",
-    label: "Jury neutre",
-    hint: "Recommandé pour un premier entraînement : le jury ouvre lui-même les portes et soutient.",
-    instructions: `- Ton : bienveillant, encourageant.
-- Reprise des mots du candidat : pour l'aider à rebondir.
-- Transitions : toujours annoncées.
-- Rythme : une question toutes les 45 à 75 secondes. Ton temps de parole : jusqu'à 30 %.
-- Questions permises : aucune question déstabilisante, ni sur le management ou la région ; pas de « Pourquoi vous plutôt qu'un autre ? », « Quel est votre plus gros échec ? », « Jusqu'où êtes-vous prêt à aller pour réussir ? » ni « Comment être certains que vous n'allez pas changer d'avis ? ». Le défaut n'est demandé qu'après qu'une qualité a été prouvée.
-- Question directe sur un thème pas encore abordé : seulement dans la seconde moitié de l'échange libre.
-- Profondeur : le concret et le pourquoi, jamais plus loin : ni « prouvez-le-moi », ni ordre de grandeur, ni « et si ça ne marche pas ? ».
-- Incohérences : tu ne confrontes pas le candidat.
-- Sujet raté : tu y reviens plus tard, autrement, pour lui laisser une deuxième chance.
-- Thème amené une fois, sans aller au bout : tu y reviens avec la question directe.
-- « Je ne sais pas » : tu rassures et tu changes d'angle.
-- Fin : bienveillante.
-Ce qu'impose la conduite propre à l'école (mise en situation ESSEC, exposé GEM, cartes emlyon ou KEDGE, article TBS, question Impact Clermont) reste toujours dû. Un contre-pied ou un Trait de Pensée prévu par l'école est posé malgré ce niveau, sur un ton doux et une seule fois.`,
-    debriefCalibration: `NIVEAU JOUÉ (contexte only) : entretien de découverte, jury aidant. Le percentile est calculé avec la grille standard, sans aucun bonus ni malus lié au niveau : un bon entretien reste un bon entretien. Tu peux signaler en synthèse, à titre informatif, l'échafaudage reçu (portes ouvertes par le jury, questions allégées, creusement limité), sans que cela déplace le percentile.`,
-  },
   {
     code: "classique",
     label: "Jury neutre",

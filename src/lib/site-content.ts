@@ -211,7 +211,7 @@ export const CONCOURS: Concours[] = [
       {
         titre: "L'entretien complet, en conditions",
         texte:
-          "Découverte, classique, exigeant : trois niveaux de jury. L'évaluation ne tombe qu'à la fin, comme au concours.",
+          "Deux niveaux d'exigence : un jury neutre et un jury difficile. L'évaluation ne tombe qu'à la fin, comme au concours.",
       },
     ],
     differenciants: [
@@ -578,7 +578,7 @@ export const METHODE_ETAPES = [
   { n: "04", titre: "Vos expériences", texte: "Trois anecdotes par expérience, en récit, à la première personne, avec ce que vous avez fait vous." },
   { n: "05", titre: "Votre actualité", texte: "Trois événements datés, sourcés, avec une position défendable sous contradiction." },
   { n: "06", titre: "Les questions classiques", texte: "Une base de questions du jury, avec les attendus, les critères et les pièges de chacune." },
-  { n: "07", titre: "L'entretien complet", texte: "Un jury vocal, trois niveaux d'exigence, une évaluation détaillée à la fin." },
+  { n: "07", titre: "L'entretien complet", texte: "Un jury vocal, deux niveaux d'exigence, une évaluation détaillée à la fin." },
 ] as const;
 
 export const FAQ_GENERALE = [

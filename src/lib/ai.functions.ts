@@ -431,7 +431,7 @@ export const debriefInterview = createServerFn({ method: "POST" })
   )
 
   .handler(async ({ data }) => {
-    const level = INTERVIEW_VARIANTS.find((x) => x.code === data.variant) ?? INTERVIEW_VARIANTS[1]!;
+    const level = INTERVIEW_VARIANTS.find((x) => x.code === data.variant) ?? INTERVIEW_VARIANTS[0]!;
     const config = getSchoolInterviewConfig(data.context.school);
     const incomplete = !data.complete
       ? `ENTRETIEN INTERROMPU : le candidat a coupé l'entretien avant la question de clôture. L'évaluation est donc INCOMPLÈTE.
