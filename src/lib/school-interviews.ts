@@ -1889,17 +1889,6 @@ export function buildFirstMessage(
   const schoolName = schoolDisplayName(config.school);
   // « Bonjour Robin, et bienvenue à l'entretien de SKEMA. »
   const welcome = `${hello.replace(/\.$/, "")}, et bienvenue à l'entretien ${schoolName.preposition}.`;
-  const official = JURY_SCHOOL_TEXTS[config.school]?.firstMessage;
-  if (official) {
-    return official
-      .replaceAll("${welcome}", welcome)
-      .replaceAll("${hello}", hello)
-      .replaceAll("${minutes}", String(minutes))
-      .replaceAll("${support}", config.support?.label ?? "")
-      .replaceAll("${article}", opts.articleTitle ?? "")
-      .replaceAll("${edhec_mot}", opts.edhecWord ?? "(mot non tiré)")
-      .replaceAll("${inseec_image}", opts.inseecImage ?? "");
-  }
 
   switch (config.school) {
     case "ESC Clermont BS":
@@ -1913,7 +1902,7 @@ export function buildFirstMessage(
     case "EM Strasbourg":
       return `${welcome} Cet entretien va durer ${minutes} minutes. Je vais vous demander de commencer par nous parler d'une réussite dont vous êtes fier, puis nous échangerons sur votre parcours, vos motivations et vos projets. Est-ce que c'est clair pour vous ?`;
     case "INSEEC Grande École":
-      return `${welcome} Il se décompose en deux parties : la première partie vous demande de vous présenter à partir de l'image que vous avez choisie, suivie d'un court échange. La seconde partie consistera en un entretien plus classique, d'environ vingt minutes.${
+      return `${welcome} Il se décompose en deux parties : la première partie vous demande de vous présenter pendant environ cinq minutes à partir de l'image que vous avez choisie. La seconde partie consistera en un entretien plus classique, d'environ vingt minutes.${
         opts.inseecImage ? ` Vous avez choisi l'image « ${opts.inseecImage} » : nous vous écoutons.` : " Nous vous écoutons."
       }`;
     case "KEDGE":
