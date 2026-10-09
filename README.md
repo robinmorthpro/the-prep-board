@@ -1,4 +1,4 @@
-# The Prep Board
+# The Prepboard
 
 Plateforme d'entraînement aux oraux d'admission en école de commerce (concours BCE / Ecricome) pour les étudiants de classe préparatoire. Le candidat passe un entretien de motivation **à la voix**, face à un jury simulé par IA qui reproduit le format réel de chaque école, puis reçoit une **évaluation chiffrée et un feedback rédigé**.
 
@@ -93,7 +93,7 @@ Les variables client sont dans `.env` ; les secrets serveur sont à déclarer da
 
 ## Historique du projet
 
-Le projet a démarré en août 2026 sous le nom **Repetia**. Le 1er octobre 2026, il a été **migré vers ce dépôt et un nouveau projet Supabase** pour repartir sur une base propre (nouvelle configuration Supabase, authentification Google via Supabase Auth, images rapatriées). L'historique Git commence donc à cette date ; les **migrations SQL** (`supabase/migrations/`, datées depuis le 18/08/2026) conservent la trace de l'évolution du schéma depuis l'origine.
+The Prepboard a démarré en août 2026 dans un premier projet Lovable. Le 1er octobre 2026, il a été **migré vers ce dépôt et un nouveau projet Supabase** pour repartir sur une base propre (nouvelle configuration Supabase, authentification Google via Supabase Auth, images rapatriées). L'historique Git commence donc à cette date ; les **migrations SQL** (`supabase/migrations/`, datées depuis le 18/08/2026) conservent la trace de l'évolution du schéma depuis l'origine.
 
 Les commits intitulés « Changes » ou « Work in progress » sont les commits automatiques de Lovable. Les jalons du projet :
 

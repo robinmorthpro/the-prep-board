@@ -1,10 +1,10 @@
-# Journal du projet — The Prep Board
+# Journal du projet — The Prepboard
 
 Carnet de bord des étapes clés, par module de la formation (M0 à M5).
 Les commits « Changes » / « Work in progress » sont les commits automatiques de Lovable ;
 chaque jalon ci-dessous renvoie vers le travail correspondant.
 
-## Août – septembre 2026 : projet Repetia (avant migration)
+## Août – septembre 2026 : premier projet Lovable (avant migration)
 
 Trace conservée par les migrations SQL datées (`supabase/migrations/`).
 
