@@ -113,6 +113,86 @@ export type Database = {
         }
         Relationships: []
       }
+      interview_evaluations: {
+        Row: {
+          attempts: number
+          case_points: Json
+          created_at: string
+          criterion_points: Json
+          duration_ms: number
+          errors: Json
+          final_score: number | null
+          grille: string
+          id: string
+          interrupted: boolean
+          model: string
+          penalties: Json
+          percentile: number | null
+          raw_output: Json | null
+          raw_text: string
+          score_20: number | null
+          session_id: string
+          status: string
+          triggered_by: string
+          unrated_criteria: Json
+          user_id: string
+        }
+        Insert: {
+          attempts?: number
+          case_points?: Json
+          created_at?: string
+          criterion_points?: Json
+          duration_ms?: number
+          errors?: Json
+          final_score?: number | null
+          grille?: string
+          id?: string
+          interrupted?: boolean
+          model: string
+          penalties?: Json
+          percentile?: number | null
+          raw_output?: Json | null
+          raw_text?: string
+          score_20?: number | null
+          session_id: string
+          status: string
+          triggered_by?: string
+          unrated_criteria?: Json
+          user_id: string
+        }
+        Update: {
+          attempts?: number
+          case_points?: Json
+          created_at?: string
+          criterion_points?: Json
+          duration_ms?: number
+          errors?: Json
+          final_score?: number | null
+          grille?: string
+          id?: string
+          interrupted?: boolean
+          model?: string
+          penalties?: Json
+          percentile?: number | null
+          raw_output?: Json | null
+          raw_text?: string
+          score_20?: number | null
+          session_id?: string
+          status?: string
+          triggered_by?: string
+          unrated_criteria?: Json
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "interview_evaluations_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "interview_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       interview_sessions: {
         Row: {
           created_at: string
@@ -488,19 +568,44 @@ export type Database = {
         }
         Relationships: []
       }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
       claim_oauth_handoff: { Args: { p_nonce: string }; Returns: string }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
       put_oauth_handoff: {
         Args: { p_nonce: string; p_refresh_token: string }
         Returns: undefined
       }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -627,6 +732,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+    },
   },
 } as const
