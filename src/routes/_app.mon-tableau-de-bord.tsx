@@ -27,6 +27,8 @@ import { useSession } from "@/hooks/useSession";
 import {
   computePriorities,
   computeThemeScores,
+  completedSimulationLabel,
+  isValidCompletedSimulation,
   radarData,
   readinessScore,
   verdictOf,
@@ -100,9 +102,7 @@ function CockpitPage() {
 
   const correctedQuestions = answers.filter((a) => verdictOf(a.ai_feedback) !== null).length;
   const validatedQuestions = answers.filter((a) => verdictOf(a.ai_feedback) === "Validé").length;
-  const doneSessions = sessions.filter(
-    (session) => session.status === "done" && session.evaluation?.status === "ok" && !session.evaluation.interrupted,
-  );
+  const doneSessions = sessions.filter(isValidCompletedSimulation);
   const percentiles = doneSessions
     .map((session) => session.percentile ?? session.evaluation?.percentile ?? null)
     .filter((value): value is number => typeof value === "number");
@@ -163,7 +163,10 @@ function CockpitPage() {
           <div className="mt-5 grid grid-cols-2 gap-5 sm:grid-cols-4">
             <Metric value={`${correctedQuestions}`} label="questions clés corrigées" />
             <Metric value={`${validatedQuestions}`} label="réponses validées par le jury IA" />
-            <Metric value={`${doneSessions.length}`} label="simulations complètes achevées" />
+            <Metric
+              value={`${doneSessions.length}`}
+              label={completedSimulationLabel(doneSessions.length).replace(/^\d+\s/, "")}
+            />
             <Metric
               value={bestPercentile ? `P${bestPercentile}` : "-"}
               label={

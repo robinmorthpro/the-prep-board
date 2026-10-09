@@ -32,7 +32,14 @@ import {
   useProfile,
   useSchoolSheets,
 } from "@/lib/vivaldi-queries";
-import { INTERVIEW_VARIANTS, type InterviewVariant } from "@/lib/interview-kb";
+import {
+  INTERVIEW_DIFFICULTY_ADVICE,
+  INTERVIEW_VARIANTS,
+  interviewDifficultyLabel,
+  interviewJuryLabel,
+  interviewPercentile,
+  type InterviewVariant,
+} from "@/lib/interview-kb";
 import {
   buildFirstMessage,
   buildClermontImpactVariables,
@@ -114,19 +121,12 @@ function sessionDate(iso?: string | null) {
 
 /** Libellé lisible du niveau de difficulté joué. */
 function difficultyLabel(code?: string | null) {
-  return INTERVIEW_VARIANTS.find((v) => v.code === code)?.label ?? "Entretien classique - jury neutre";
+  return interviewDifficultyLabel(code);
 }
 
 /** Attitude du jury seule (« jury neutre »), sans répéter le format de l'entretien. */
 function juryLabel(code?: string | null) {
-  const parts = difficultyLabel(code).split(/\s+[-–-]\s+/);
-  return parts.length > 1 ? parts[parts.length - 1] : undefined;
-}
-
-/** Percentile relevé dans le débrief du jury (format « P67 - … »). */
-function percentileOf(debrief?: string | null) {
-  const m = debrief?.match(/\bP(\d{1,3})\b/);
-  return m ? `P${m[1]}` : null;
+  return interviewJuryLabel(code);
 }
 
 /** Le SDK ElevenLabs exige que `useConversation` soit sous son provider. */
@@ -1134,10 +1134,7 @@ function Part7() {
             Choisissez une école et simulez un entretien comme le jour J ! Le jury écoute votre réponse et rebondit en
             conditions réelles. L'évaluation n'arrive qu'à la fin que quand vous cliquez sur « Terminer l'entretien »
           </p>
-          <p>
-            Pour un premier entraînement, nous vous conseillons de choisir l'entretien de découverte, avec un jury un peu
-            plus aidant. Basculez ensuite vers les entretiens classiques, qui vous mettront face aux exigences du jour J.
-          </p>
+          <p>{INTERVIEW_DIFFICULTY_ADVICE}</p>
           <p>
             Le transcript de l'entretien est enregistré automatiquement pendant l'entretien : vous pourrez l'exporter en
             PDF à la fin, et le retrouver dans l'historique.
@@ -1538,13 +1535,13 @@ function Part7() {
             logo={schoolLogo(school)}
             date={sessionDate(turns[0]?.askedAt ?? new Date().toISOString())}
             difficultyLabel={juryLabel(hasDifficulties ? variant : undefined)}
-            percentile={positioningInfo(debrief).value}
-            percentileLabel={positioningInfo(debrief).label}
+            percentile={complete ? positioningInfo(debrief).value : null}
+            percentileLabel={complete ? positioningInfo(debrief).label : undefined}
             onExport={() =>
               downloadInterviewPdf({
                 school,
                 formatLabel: formatLabel(config.format),
-                difficultyLabel: hasDifficulties ? difficultyLabel(variant) : undefined,
+                difficultyLabel: juryLabel(variant),
                 createdAt: turns[0]?.askedAt ?? new Date().toISOString(),
                 turns,
                 debrief,
@@ -1621,7 +1618,7 @@ function Part7() {
 
               <ul className="mt-4 flex flex-col gap-3">
                 {visibleSessions.map((s) => {
-                  const percentile = percentileOf(s.debrief);
+                  const percentile = interviewPercentile(s.status, s.percentile, s.debrief);
 
                   const open = openSession === s.id;
                   return (
@@ -1650,7 +1647,7 @@ function Part7() {
                           </span>
                           {percentile ? (
                             <span className="shrink-0 rounded-full bg-[var(--bleu-pale)] px-3 py-1 text-[13px] font-bold text-[var(--bleu-texte)] tabular-nums md:text-[14px]">
-                              {percentile}
+                              P{percentile}
                             </span>
                           ) : null}
                           <span className="shrink-0 rounded-full border border-[rgba(11,18,32,0.2)] bg-white px-3 py-1 text-[13px] font-medium text-[var(--graphite)] md:text-[14px]">
@@ -1669,7 +1666,7 @@ function Part7() {
                             downloadInterviewPdf({
                               school: s.school,
                               formatLabel: formatLabel(s.format),
-                              difficultyLabel: s.difficulty ? difficultyLabel(s.difficulty) : undefined,
+                              difficultyLabel: juryLabel(s.difficulty),
                               createdAt: s.created_at,
                               turns: s.turns ?? [],
                               debrief: s.debrief,
@@ -1690,13 +1687,13 @@ function Part7() {
                             logo={schoolLogo(s.school)}
                             date={sessionDate(s.created_at)}
                             difficultyLabel={juryLabel(s.difficulty)}
-                            percentile={positioningInfo(s.debrief).value}
-                            percentileLabel={positioningInfo(s.debrief).label}
+                            percentile={interviewPercentile(s.status, s.percentile, s.debrief)}
+                            percentileLabel={s.status === "done" ? positioningInfo(s.debrief).label : undefined}
                             onExport={() =>
                               downloadInterviewPdf({
                                 school: s.school,
                                 formatLabel: formatLabel(s.format),
-                                difficultyLabel: s.difficulty ? difficultyLabel(s.difficulty) : undefined,
+                                difficultyLabel: juryLabel(s.difficulty),
                                 createdAt: s.created_at,
                                 turns: s.turns ?? [],
                                 debrief: s.debrief,

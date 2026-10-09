@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { computeThemeScores } from "./cockpit";
+import { completedSimulationLabel, computeThemeScores, isValidCompletedSimulation } from "./cockpit";
 import { BAREME } from "./evaluateur/bareme";
 import type { InterviewSession } from "./vivaldi-queries";
 
@@ -68,5 +68,21 @@ describe("radar des simulations complètes", () => {
     if (schoolCases) schoolCases["case1"] = null;
     const interrupted = session(0, "1", { interrupted: true });
     expect(computeThemeScores([], [valid, interrupted]).map((theme) => theme.score)).toEqual([100, 100, 100, 100, 100]);
+  });
+});
+
+describe("compteur des simulations complètes", () => {
+  it("ne compte que les simulations achevées, non interrompues et avec une évaluation valide", () => {
+    const valid = session(1, "valid");
+    const interrupted = session(1, "interrupted", { interrupted: true });
+    const invalid = session(1, "invalid", { status: "error" });
+    const stopped = { ...session(1, "stopped"), status: "stopped" };
+
+    expect([valid, interrupted, invalid, stopped].filter(isValidCompletedSimulation)).toEqual([valid]);
+  });
+
+  it("accorde au singulier la priorité quand une seule simulation est valide", () => {
+    expect(completedSimulationLabel(1)).toBe("1 simulation complète achevée");
+    expect(completedSimulationLabel(2)).toBe("2 simulations complètes achevées");
   });
 });

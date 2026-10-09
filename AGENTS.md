@@ -11,6 +11,7 @@
 - Official logos are served from public/brand/logo-fond-{clair,sombre}.svg via Wordmark; never recompose the logo in code (brand kit forbids it).
 <!-- Reconstruction de l'aperçu pour relire les secrets (08/10/2026). -->
 - Load linked interview evaluations with session history because dashboard scores must use structured, canonical evaluation data rather than parsed feedback text.
+- Count completed simulations through one shared validity predicate so dashboard metrics and priorities cannot diverge.
 
 - L'évaluateur IA (src/lib/evaluateur/) ne rend que des niveaux par case ; points, note, pénalités de durée et percentile sont calculés par le code à partir de bareme.json : la note reste reproductible et vérifiable.
 - Les textes de l'évaluateur et bareme.json sont copiés octet pour octet depuis les originaux et ne sont jamais reformatés (exclus de Prettier).
