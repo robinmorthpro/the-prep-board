@@ -64,7 +64,7 @@ export function filtrerVerbatims(text: string, transcription: string, document =
   const sources = normaliser(`${transcription}\n${document}`);
   const retirees: string[] = [];
   const out = text.split("\n").flatMap((line) => {
-    const m = line.match(/^(\s*(?:[-*]\s+)?\**VERBATIMS?\**\s*:\s*)(.*)$/i);
+    const m = line.match(/^(\s*(?:[-*]\s+)?\**VERBATIMS?\**\s*:\s*\**\s*)(.*)$/i);
     if (!m) return line;
     const prefix = m[1];
     const content = m[2];
@@ -125,7 +125,7 @@ export function parseReview(block: string): ReviewPart[] {
     const freeText: string[] = [];
     let current: ReviewItem | undefined;
     for (const raw of lines.slice(1)) {
-      const marker = raw.match(/^\s*(?:[-*]\s+)?\**VERBATIMS?\**\s*:\s*(.*)$/i);
+      const marker = raw.match(/^\s*(?:[-*]\s+)?\**VERBATIMS?\**\s*:\s*\**\s*(.*)$/i);
       if (marker) {
         if (current) current.verbatims.push(...citations(marker[1] ?? ""));
         continue;
