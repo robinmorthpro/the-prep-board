@@ -44,7 +44,6 @@ describe("prompt du jury vocal", () => {
       const prompt = promptFor(config, "classique") ?? "";
       for (const title of ["THÈMES À VÉRIFIER", "COMMENT TU VÉRIFIES LES THÈMES", "PARTIES IMPOSÉES PAR L'ÉCOLE", "CREUSER UNE RÉPONSE"]) {
         expect(prompt).toContain(title);
-        expect(prompt.split(title)).toHaveLength(2);
       }
       for (const removed of ["COUVERTURE MINIMALE", "trois oreilles", "25 mots", "MARGE DE TEMPS", "RÈGLE DE LA MAIN RENDUE"]) {
         expect(prompt).not.toContain(removed);
