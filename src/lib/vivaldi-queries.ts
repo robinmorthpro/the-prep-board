@@ -478,7 +478,21 @@ export type InterviewSession = {
   turns: InterviewTurn[];
   debrief: string;
   status: string;
+  percentile: number | null;
+  feedback_evaluation_id: string | null;
+  evaluation: InterviewEvaluationSummary | null;
   created_at: string;
+};
+
+export type InterviewEvaluationSummary = {
+  id: string;
+  status: string;
+  interrupted: boolean;
+  final_score: number | null;
+  percentile: number | null;
+  case_points: Record<string, Record<string, number | null>>;
+  criterion_points: Record<string, number | null>;
+  grille: string;
 };
 
 /** Historique des entraînements du module 7, du plus récent au plus ancien. */
@@ -489,11 +503,28 @@ export function useInterviewSessions(userId?: string) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("interview_sessions")
-        .select("id, school, difficulty, format, turns, debrief, status, created_at")
+        .select("id, school, difficulty, format, turns, debrief, status, percentile, feedback_evaluation_id, created_at")
         .eq("user_id", userId!)
         .order("created_at", { ascending: false });
       if (error) throw error;
-      return (data ?? []) as unknown as InterviewSession[];
+      const sessions = data ?? [];
+      const evaluationIds = sessions
+        .map((session) => session.feedback_evaluation_id)
+        .filter((id): id is string => typeof id === "string");
+      const { data: evaluations, error: evaluationError } = evaluationIds.length
+        ? await supabase
+            .from("interview_evaluations")
+            .select("id,status,interrupted,final_score,percentile,case_points,criterion_points,grille")
+            .in("id", evaluationIds)
+        : { data: [], error: null };
+      if (evaluationError) throw evaluationError;
+      const byId = new Map((evaluations ?? []).map((evaluation) => [evaluation.id, evaluation]));
+      return sessions.map((session) => ({
+        ...session,
+        evaluation: session.feedback_evaluation_id
+          ? ((byId.get(session.feedback_evaluation_id) as unknown as InterviewEvaluationSummary | undefined) ?? null)
+          : null,
+      })) as unknown as InterviewSession[];
     },
   });
 }

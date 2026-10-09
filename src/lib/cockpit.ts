@@ -2,14 +2,15 @@
  * Cockpit de progression (« Mon tableau de bord »).
  *
  * Deux briques :
- *  - un radar de 5 thèmes d'entretien, alimenté par les questions clés (module 7)
- *    et par les entretiens complets (module 8) ;
+ *  - un radar de 5 thèmes d'entretien, alimenté uniquement par les trois
+ *    dernières simulations complètes évaluées ;
  *  - une liste de priorités déduite de l'état réel du parcours.
  *
  * Aucun appel réseau ici : tout se calcule à partir des données déjà chargées.
  */
 
 import { KEY_QUESTIONS } from "@/lib/vivaldi-data";
+import { BAREME } from "@/lib/evaluateur/bareme";
 import {
   isCareerDeepened,
   isNewsTopicComplete,
@@ -147,49 +148,77 @@ export const THEME_SHORT: Record<CockpitTheme, string> = {
   "Aisance orale": "Aisance orale",
 };
 
-/**
- * Score par thème :
- *  - questions clés : moyenne des verdicts des questions travaillées sur le thème ;
- *  - entretiens complets : moyenne des percentiles des 3 derniers entretiens,
- *    comptée pour tous les thèmes (poids double pour l'aisance orale, qui ne
- *    s'évalue vraiment qu'en situation réelle).
- */
+const PRESENTATION_CRITERIA = new Set([
+  "presentation",
+  "presentation_longue_essec",
+  "presentation_mot_edhec",
+  "autoportrait_kedge",
+  "presentation_image_inseec",
+  "pitch_em_strasbourg",
+]);
+
+function themeOfCase(criterion: string, caseKey: string): CockpitTheme | null {
+  if (criterion === "ecole") return "Connaissance écoles";
+  if (PRESENTATION_CRITERIA.has(criterion)) return "Introspection et récit personnel";
+  if (criterion === "experiences" || criterion === "experiences_montpellier") {
+    return caseKey === "projection" ? "Projection vers le futur" : "Introspection et récit personnel";
+  }
+  if (criterion === "projet") return "Projet professionnel";
+  if (["destabilisantes", "conduite", "clarte"].includes(criterion)) return "Aisance orale";
+  return null;
+}
+
+/** Une simulation produit un pourcentage par thème, puis les 1 à 3 dernières sont moyennées. */
 export function computeThemeScores(answers: QuestionAnswer[], sessions: InterviewSession[]): ThemeScore[] {
   const totals = questionCountByTheme();
-  const perTheme = Object.fromEntries(
-    COCKPIT_THEMES.map((t) => [t, { sum: 0, n: 0, worked: 0, toRework: 0 }]),
-  ) as Record<CockpitTheme, { sum: number; n: number; worked: number; toRework: number }>;
+  const questionStats = Object.fromEntries(
+    COCKPIT_THEMES.map((theme) => [theme, { worked: 0, toRework: 0 }]),
+  ) as Record<CockpitTheme, { worked: number; toRework: number }>;
 
   answers.forEach((a) => {
     const theme = themeOfQuestion(a.question_id);
     const verdict = verdictOf(a.ai_feedback);
     if (!verdict) return;
-    const bucket = perTheme[theme];
-    bucket.sum += VERDICT_SCORE[verdict];
-    bucket.n += 1;
-    bucket.worked += 1;
-    if (verdict === "À retravailler") bucket.toRework += 1;
+    questionStats[theme].worked += 1;
+    if (verdict === "À retravailler") questionStats[theme].toRework += 1;
   });
 
-  const percentiles = sessions
-    .filter((s) => s.status === "done")
-    .map((s) => percentileOfDebrief(s.debrief))
-    .filter((v): v is number => v !== null)
+  const evaluations = sessions
+    .filter((session) => session.status === "done" && session.evaluation?.status === "ok" && !session.evaluation.interrupted)
+    .map((session) => session.evaluation)
+    .filter((evaluation): evaluation is NonNullable<InterviewSession["evaluation"]> => evaluation !== null)
     .slice(0, 3);
-  const interviewScore = percentiles.length
-    ? percentiles.reduce((acc, v) => acc + v, 0) / percentiles.length
-    : null;
+
+  const perTheme = Object.fromEntries(COCKPIT_THEMES.map((theme) => [theme, [] as number[]])) as Record<
+    CockpitTheme,
+    number[]
+  >;
+  evaluations.forEach((evaluation) => {
+    const grid = BAREME.grilles[evaluation.grille];
+    if (!grid) return;
+    const buckets = Object.fromEntries(COCKPIT_THEMES.map((theme) => [theme, { points: 0, max: 0 }])) as Record<
+      CockpitTheme,
+      { points: number; max: number }
+    >;
+    grid.criteres.forEach((criterion) => {
+      criterion.cases.forEach((caseDef) => {
+        const theme = themeOfCase(criterion.cle, caseDef.cle);
+        const points = evaluation.case_points?.[criterion.cle]?.[caseDef.cle];
+        if (!theme || typeof points !== "number") return;
+        buckets[theme].points += points;
+        buckets[theme].max += Math.max(...Object.values(caseDef.points));
+      });
+    });
+    COCKPIT_THEMES.forEach((theme) => {
+      const bucket = buckets[theme];
+      if (bucket.max > 0) perTheme[theme].push((bucket.points / bucket.max) * 100);
+    });
+  });
 
   return COCKPIT_THEMES.map((theme) => {
-    const bucket = perTheme[theme];
-    const parts: Array<{ value: number; weight: number }> = [];
-    if (bucket.n > 0) parts.push({ value: bucket.sum / bucket.n, weight: Math.min(bucket.n, 4) });
-    if (interviewScore !== null) {
-      parts.push({ value: interviewScore, weight: theme === "Aisance orale" ? 4 : 2 });
-    }
-    const weight = parts.reduce((acc, p) => acc + p.weight, 0);
-    const score = weight ? Math.round(parts.reduce((acc, p) => acc + p.value * p.weight, 0) / weight) : null;
-    return { theme, score, worked: bucket.worked, total: totals[theme], toRework: bucket.toRework };
+    const values = perTheme[theme];
+    const score = values.length ? Math.round(values.reduce((sum, value) => sum + value, 0) / values.length) : null;
+    return { theme, score, worked: questionStats[theme].worked, total: totals[theme], toRework: questionStats[theme].toRework };
   });
 }
 
@@ -341,9 +370,9 @@ export function computePriorities(input: {
     out.push({
       id: `theme-${weakest.theme}`,
       title: `Renforcer le thème « ${weakest.theme} »`,
-      reason: `C'est votre thème le plus fragile (${weakest.score}/100) d'après vos corrections IA.`,
-      to: "/partie-7",
-      cta: "Travailler ce thème",
+      reason: `C'est votre thème le plus fragile (${weakest.score}/100) sur vos simulations complètes.`,
+      to: "/partie-8",
+      cta: "Repasser une simulation",
       level: "consolidation",
     });
   }
