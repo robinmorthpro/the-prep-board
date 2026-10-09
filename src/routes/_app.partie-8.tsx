@@ -1822,7 +1822,7 @@ function Part7() {
 }
 
 /** Écran d'échec du feedback : l'entretien reste enregistré et consultable. */
-function FeedbackEchec({ busy, onRetry }: { busy: boolean; onRetry?: () => void }) {
+function FeedbackEchec({ busy, onRetry }: { busy: boolean; onRetry?: (() => void) | undefined }) {
   return (
     <div className="flex flex-col items-start gap-3 rounded-[14px] border border-destructive/40 bg-destructive/5 px-4 py-4">
       <p className="m-0 text-[15px] text-destructive md:text-[16px]">{FEEDBACK_ECHEC_MESSAGE}</p>
