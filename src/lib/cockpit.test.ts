@@ -1,8 +1,18 @@
 import { describe, expect, it } from "vitest";
 import { computeThemeScores } from "./cockpit";
+import { BAREME } from "./evaluateur/bareme";
 import type { InterviewSession } from "./vivaldi-queries";
 
-function session(score: number, createdAt: string, overrides: Partial<InterviewSession["evaluation"]> = {}): InterviewSession {
+function session(ratio: number, createdAt: string, overrides: Record<string, unknown> = {}): InterviewSession {
+  const grid = BAREME.grilles.classique;
+  const casePoints = Object.fromEntries(
+    grid.criteres.map((criterion) => [
+      criterion.cle,
+      Object.fromEntries(
+        criterion.cases.map((caseDef) => [caseDef.cle, Math.max(...Object.values(caseDef.points)) * ratio]),
+      ),
+    ]),
+  );
   return {
     id: createdAt,
     school: "ESCP",
@@ -22,15 +32,7 @@ function session(score: number, createdAt: string, overrides: Partial<InterviewS
       percentile: 50,
       grille: "classique",
       criterion_points: {},
-      case_points: {
-        presentation: { presentation: score },
-        experiences: { recit: score, recul: score, projection: score },
-        projet: { connaissance: score, lien_ecole: score, lien_soi: score },
-        ecole: { case1: score, case2: score, case3: score, case4: score },
-        destabilisantes: { contestation: score, imprevu: score },
-        conduite: { repondre: score, piloter: score },
-        clarte: { structure: score, langage: score },
-      },
+      case_points: casePoints,
       ...overrides,
     },
   };
@@ -42,25 +44,25 @@ describe("radar des simulations complètes", () => {
   });
 
   it("utilise la seule simulation disponible", () => {
-    expect(computeThemeScores([], [session(1, "1")]).map((theme) => theme.score)).toEqual([33, 33, 33, 33, 33]);
+    expect(computeThemeScores([], [session(1 / 3, "1")]).map((theme) => theme.score)).toEqual([33, 33, 33, 33, 33]);
   });
 
   it("moyenne les 2 simulations disponibles", () => {
-    expect(computeThemeScores([], [session(3, "2"), session(0, "1")]).map((theme) => theme.score)).toEqual([
+    expect(computeThemeScores([], [session(1, "2"), session(0, "1")]).map((theme) => theme.score)).toEqual([
       50, 50, 50, 50, 50,
     ]);
   });
 
   it("ne retient que les 3 dernières simulations", () => {
     expect(
-      computeThemeScores([], [session(3, "4"), session(3, "3"), session(3, "2"), session(0, "1")]).map(
+      computeThemeScores([], [session(1, "4"), session(1, "3"), session(1, "2"), session(0, "1")]).map(
         (theme) => theme.score,
       ),
     ).toEqual([100, 100, 100, 100, 100]);
   });
 
   it("ignore une simulation interrompue et les cases non observées", () => {
-    const valid = session(3, "2");
+    const valid = session(1, "2");
     if (valid.evaluation) valid.evaluation.case_points.ecole.case1 = null;
     const interrupted = session(0, "1", { interrupted: true });
     expect(computeThemeScores([], [valid, interrupted]).map((theme) => theme.score)).toEqual([100, 100, 100, 100, 100]);
