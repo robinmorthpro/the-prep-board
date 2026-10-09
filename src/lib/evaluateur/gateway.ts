@@ -33,14 +33,14 @@ async function fail(res: Response): Promise<never> {
 }
 
 /** Gemini et autres modèles chat : /v1/chat/completions, température 0, JSON imposé. */
-async function callChat(f: Fetcher, key: string, model: string, system: string, messages: Message[], json = true) {
+async function callChat(f: Fetcher, key: string, model: string, system: string, messages: Message[], jsonOut = true) {
   const res = await f(`${BASE}/chat/completions`, {
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}`, "X-Lovable-AIG-SDK": "fetch" },
     body: JSON.stringify({
       model,
       temperature: 0,
-      ...(json ? { response_format: { type: "json_object" } } : {}),
+      ...(jsonOut ? { response_format: { type: "json_object" } } : {}),
       messages: [{ role: "system", content: system }, ...messages],
     }),
   });
