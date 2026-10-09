@@ -43,7 +43,7 @@ export const ESSEC_SITUATIONS: EssecSituation[] = [
       "Vous organisez à l'ESSEC, dans le cadre d'une nouvelle association, un week-end « entreprise en herbe » destiné à des élèves de primaire, pour leur faire découvrir de façon ludique le monde de l'entreprise. L'événement a lieu dans trois mois. Comment procédez-vous pour mener à bien cette mission ?",
   },
   {
-    competence: "Compétences collectives",
+    competence: "Créativité",
     enonce:
       "On vous confie la reprise de la conception d'un spot télévisé qui doit vanter l'intérêt de consommer des insectes lyophilisés, dans une région de France plutôt attachée à une cuisine traditionnelle. La précédente campagne a été un échec et a fait baisser la consommation régionale de ces insectes. Quelle formule proposez-vous pour ce nouveau spot ?",
   },
@@ -55,7 +55,7 @@ export const ESSEC_SITUATIONS: EssecSituation[] = [
       "Vous êtes secrétaire du BDS (bureau des sports) et devez traiter une centaine de mails pour l'événement que vous organisez, mais le temps vous manque. Comment vous organisez-vous ?",
   },
   {
-    competence: "Créativité",
+    competence: "Compétences collectives",
     enonce:
       "On vous demande de concevoir une campagne publicitaire originale pour promouvoir l'ESSEC auprès de futurs candidats. Quelle formule proposez-vous ?",
   },
@@ -65,11 +65,11 @@ export const ESSEC_SITUATIONS: EssecSituation[] = [
       "Vous avez la garde d'un enfant pour l'après-midi et devez organiser son emploi du temps. Comment procédez-vous ?",
   },
   {
-    competence: "Créativité",
+    competence: "Compétences collectives",
     enonce: "On vous confie la conception d'un escape game original. Quel concept proposez-vous ?",
   },
   {
-    competence: "Créativité",
+    competence: "Capacités d'organisation",
     enonce: "On vous demande de repenser entièrement la salle d'attente d'un aéroport. Quelles sont vos propositions ?",
   },
   {
@@ -78,7 +78,7 @@ export const ESSEC_SITUATIONS: EssecSituation[] = [
       "Vous dirigez un journal dont les ventes s'effondrent depuis plusieurs mois. Comment redressez-vous la situation ?",
   },
   {
-    competence: "Créativité",
+    competence: "Capacités d'organisation",
     enonce:
       "Dans votre groupe projet, trois membres sur six ne participent pas depuis le début du travail. Comment réagissez-vous ?",
   },
