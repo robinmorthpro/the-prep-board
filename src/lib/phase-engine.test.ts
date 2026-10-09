@@ -4,6 +4,7 @@ import {
   MONTPELLIER_THEME_REMINDER,
   PhaseEngine,
   THEME_REMINDER,
+  THEME_REMINDER_WITHOUT_NEWS,
   TRANSITION_RE,
   applyQueuedInstructions,
 } from "./phase-engine";
@@ -159,7 +160,7 @@ const SCHOOLS: Array<{
     name: "GEM (Grenoble EM)",
     school: "GEM (Grenoble EM)",
     totalMinutes: 30,
-    dueMinute: 5,
+    dueMinute: 7,
     phrase: PHRASES.gemInversee,
     orderSnippet: "Nous passons maintenant à l'interview inversée",
     ongoingSnippet: "Reste sur l'exposé",
@@ -263,7 +264,7 @@ const MONOLOGUES: Array<{
     name: "GEM (Grenoble EM)",
     school: "GEM (Grenoble EM)",
     totalMinutes: 30,
-    dueMinute: 5,
+    dueMinute: 7,
     measureId: "gem-expose-monologue",
     stepId: "gem-expose",
     phrase: PHRASES.gemInversee,
@@ -557,8 +558,8 @@ describe("ESSEC", () => {
     return measuredPhaseDurationsBlock("ESSEC", engine.timings);
   };
 
-  it("présentation de 2'30 : malus", () => {
-    expect(presentation(2.5)).toContain("Phase écourtée");
+  it("présentation de 2'30 : aucun malus", () => {
+    expect(presentation(2.5)).not.toContain("Phase écourtée");
   });
 
   it("présentation de 6' : malus (trop longue)", () => {
@@ -599,7 +600,7 @@ describe("rappel des thèmes aux deux tiers", () => {
     marker(engine, 7.1);
     jury(engine, PHRASES.kedgeCartes, 7.2);
     expect(marker(engine, 20)).not.toContain(THEME_REMINDER);
-    expect(marker(engine, 20.5)).toContain(THEME_REMINDER);
+    expect(marker(engine, 23)).toContain(THEME_REMINDER);
   });
 
   it.each([
@@ -613,7 +614,10 @@ describe("rappel des thèmes aux deux tiers", () => {
     engine.markPhaseStart(phaseId, at(total === 28 ? 20 : total === 30 ? 15 : 5));
     jury(engine, phrase, total === 28 ? 20.1 : total === 30 ? 15.1 : 5.1);
     expect(marker(engine, minute - 0.2)).not.toContain(THEME_REMINDER);
-    expect(marker(engine, minute)).toContain(THEME_REMINDER);
+    const expectedReminder = ["TBS Education", "ESC Clermont BS", "GEM (Grenoble EM)"].includes(school)
+      ? THEME_REMINDER_WITHOUT_NEWS
+      : THEME_REMINDER;
+    expect(marker(engine, minute)).toContain(expectedReminder);
   });
 
   it("n'est jamais ajouté au repère de clôture", () => {
@@ -626,48 +630,48 @@ describe("rappel des thèmes aux deux tiers", () => {
 describe("GEM", () => {
   const openInversee = (engine: PhaseEngine) => {
     jury(engine, "Nous sommes prêts à vous écouter pour votre exposé : à vous de jouer.", 0);
-    marker(engine, 5.1);
-    jury(engine, PHRASES.gemInversee, 5.2);
+    marker(engine, 7.1);
+    jury(engine, PHRASES.gemInversee, 7.2);
   };
 
   it("flux normal : minute de restitution à +9, échange classique à +10", () => {
     const engine = engineFor("GEM (Grenoble EM)", 30);
     openInversee(engine);
-    expect(marker(engine, 13)).not.toContain("Il vous reste une minute");
-    expect(marker(engine, 14.3)).toContain("Il vous reste une minute");
-    jury(engine, PHRASES.gemMinute, 14.5);
-    expect(marker(engine, 15.6)).toContain("échange plus classique");
+    expect(marker(engine, 15)).not.toContain("Il vous reste une minute");
+    expect(marker(engine, 16.3)).toContain("Il vous reste une minute");
+    jury(engine, PHRASES.gemMinute, 16.5);
+    expect(marker(engine, 17.6)).toContain("échange plus classique");
   });
 
   it("flux anticipé : « plus de questions » à 6' déclenche la synthèse", () => {
     const engine = engineFor("GEM (Grenoble EM)", 30);
     openInversee(engine);
-    jury(engine, "Avez-vous d'autres questions à me poser ?", 5.8);
-    const order = answer(engine, "Non, je n'ai plus de questions.", 6).join(" ");
+    jury(engine, "Avez-vous d'autres questions à me poser ?", 7.8);
+    const order = answer(engine, "Non, je n'ai plus de questions.", 8).join(" ");
     expect(order).toContain("C'est le moment de faire votre synthèse.");
     expect(order).not.toContain("Il vous reste une minute");
-    jury(engine, PHRASES.gemSynthese, 6.1);
+    jury(engine, PHRASES.gemSynthese, 8.1);
     expect(timingOf(engine, "gem-inversee").anticipee).toBe(true);
     // L'ordre part dès 45 s de synthèse, pour ne jamais redire « reste silencieux »
     // à un candidat qui a fini.
-    expect(marker(engine, 6.7)).not.toContain("échange plus classique");
-    expect(marker(engine, 6.9)).toContain("échange plus classique");
+    expect(marker(engine, 8.7)).not.toContain("échange plus classique");
+    expect(marker(engine, 8.9)).toContain("échange plus classique");
   });
 
   it("minute de restitution jamais détectée : classique après inversée + 10", () => {
     const engine = engineFor("GEM (Grenoble EM)", 30);
     openInversee(engine);
-    marker(engine, 14.3);
+    marker(engine, 16.3);
     // Le repère de la minute n'est sauté qu'après une minute de retard : le
     // candidat ne perd pas sa synthèse quand les tours de parole sont longs.
-    expect(marker(engine, 15.3)).not.toContain("l'échange classique");
+    expect(marker(engine, 17.3)).not.toContain("l'échange classique");
     // Au 2e repère non suivi d'effet, le garde-fou considère la partie commencée.
-    expect(marker(engine, 16.3)).toContain("l'échange classique");
+    expect(marker(engine, 18.3)).toContain("l'échange classique");
   });
 });
 
 describe("KEDGE", () => {
-  it("autoportrait au message « Carte Autoportrait », cartes à +3, conclusion à 27'", () => {
+  it("autoportrait au message « Carte Autoportrait », cartes à +3, clôture commune à Y−2", () => {
     const engine = engineFor("KEDGE", 30);
     jury(engine, "Bienvenue à cet entretien du Révélateur.", 0);
     jury(engine, PHRASES.kedgeAutoportrait, 1);
@@ -677,7 +681,8 @@ describe("KEDGE", () => {
     // Aucune mesure ni malus sur le traitement des cartes.
     expect(engine.timings.some((t) => t.phaseId === "kedge-cartes")).toBe(false);
     expect(marker(engine, 26)).not.toContain("question de clôture");
-    expect(marker(engine, 27.2)).toContain("moment de passer à la conclusion");
+    expect(marker(engine, 27.2)).not.toContain("moment de passer à la conclusion");
+    expect(marker(engine, 28)).toContain("Il reste 2 minutes");
     const block = measuredPhaseDurationsBlock("KEDGE", engine.timings);
     expect(block).not.toContain("Traitement des cartes");
   });
@@ -894,11 +899,11 @@ describe("rappel « une question » dans chaque repère", () => {
     expect(switchMarker.trimEnd().endsWith(END_WITH_QUESTION)).toBe(true);
   });
 
-  it("termine aussi le repère de clôture par le rappel", () => {
+  it("ne termine pas le repère de clôture par le rappel", () => {
     const engine = engineFor("TBS Education", 20);
     jury(engine, "Nous vous écoutons sur cet article.", 0);
     const updates = engine.onCandidateAnswer("Voici ma réponse développée sur cet article de presse.", at(18.2));
-    expect(updates[updates.length - 1]!.trimEnd().endsWith(END_WITH_QUESTION)).toBe(true);
+    expect(updates[updates.length - 1]).not.toContain(END_WITH_QUESTION);
   });
 });
 
@@ -1599,7 +1604,7 @@ function simulateGemPart2(combo: GemCombo, mode: "ecrit" | "oral"): GemRun {
 }
 
 const GEM_COMBOS: GemCombo[] = [];
-for (const inverseeStart of [5, 5.5, 6.5]) {
+for (const inverseeStart of [7, 7.5, 8.5]) {
   for (const question of [10, 20, 40]) {
     for (const juryAnswer of [20, 45, 90]) {
       for (const synthese of [45, 60, 75]) {

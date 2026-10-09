@@ -18,6 +18,8 @@ export interface EssecSituation {
   enonce: string;
 }
 
+export type NumberedEssecSituation = EssecSituation & { numero: number };
+
 export const ESSEC_SITUATIONS: EssecSituation[] = [
   // --- 5 cas officiels ESSEC ---
   {
@@ -136,7 +138,7 @@ export const ESSEC_SITUATIONS: EssecSituation[] = [
       "Vous disposez d'un mois et de deux cents euros pour tester une idée de petit commerce sur votre campus. Que faites-vous ?",
   },
   {
-    competence: "Compétences collectives",
+    competence: "Créativité",
     enonce:
       "On vous demande une intervention de vingt minutes dans votre lycée d'origine pour donner envie à des lycéens de faire une classe préparatoire. Comment construisez-vous cette intervention ?",
   },
@@ -165,11 +167,48 @@ export const ESSEC_SITUATIONS: EssecSituation[] = [
       "Vous devez réserver une salle, un traiteur et un intervenant pour un événement dans dix jours. L'intervenant se désiste la veille de la date limite de réservation de la salle. Comment réagissez-vous ?",
   },
   {
-    competence: "Capacités d'organisation",
+    competence: "Créativité",
     enonce:
       "Une association caritative que vous représentez voit ses dons chuter de moitié cette année. Vous devez inverser la tendance sans passer par les réseaux sociaux. Que proposez-vous ?",
   },
 ];
+
+/** Numérotation éditoriale stable (1 à 30) partagée par le module et le jury. */
+export const ESSEC_SITUATIONS_NUMEROTEES: NumberedEssecSituation[] = ESSEC_SITUATIONS.map((situation, index) => ({
+  ...situation,
+  numero: index + 1,
+  competence:
+    index + 1 === 8
+      ? "Capacités d'organisation"
+      : index + 1 === 24 || index + 1 === 30
+        ? "Créativité"
+        : situation.competence,
+}));
+
+/** Les trois plus petits numéros de chaque compétence sont visibles dans Questions clés. */
+export const ESSEC_SITUATIONS_MODULE: NumberedEssecSituation[] = (() => {
+  const counts = new Map<string, number>();
+  return ESSEC_SITUATIONS_NUMEROTEES.filter((situation) => {
+    const count = counts.get(situation.competence) ?? 0;
+    if (count >= 3) return false;
+    counts.set(situation.competence, count + 1);
+    return true;
+  });
+})();
+
+const ESSEC_MODULE_NUMBERS = new Set(ESSEC_SITUATIONS_MODULE.map((situation) => situation.numero));
+
+/** Complément exact des situations du module, réservé au tirage du jury. */
+export const ESSEC_SITUATIONS_JURY = ESSEC_SITUATIONS_NUMEROTEES.filter(
+  (situation) => !ESSEC_MODULE_NUMBERS.has(situation.numero),
+);
+
+if (
+  ESSEC_SITUATIONS_MODULE.length !== 15 ||
+  new Set(ESSEC_SITUATIONS_MODULE.map((situation) => situation.competence)).size !== 5
+) {
+  throw new Error("La banque ESSEC doit fournir exactement trois situations par compétence au module.");
+}
 
 /**
  * Sélectionne au hasard l'énoncé de la mise en situation proposée au
@@ -179,6 +218,6 @@ export const ESSEC_SITUATIONS: EssecSituation[] = [
  * (cf. `conductNote` d'ESSEC dans school-interviews.ts) — jamais avant.
  */
 export function pickEssecSituation(): string {
-  const index = Math.floor(Math.random() * ESSEC_SITUATIONS.length);
-  return (ESSEC_SITUATIONS[index] ?? ESSEC_SITUATIONS[0]!).enonce;
+  const index = Math.floor(Math.random() * ESSEC_SITUATIONS_JURY.length);
+  return (ESSEC_SITUATIONS_JURY[index] ?? ESSEC_SITUATIONS_JURY[0]!).enonce;
 }

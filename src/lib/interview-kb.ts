@@ -19,7 +19,7 @@ export const INTERVIEW_VARIANTS: Array<{
 }> = [
   {
     code: "decouverte",
-    label: "Entretien de découverte - jury aidant",
+    label: "Jury neutre",
     hint: "Recommandé pour un premier entraînement : le jury ouvre lui-même les portes et soutient.",
     instructions: `- Ton : bienveillant, encourageant.
 - Reprise des mots du candidat : pour l'aider à rebondir.
@@ -38,7 +38,7 @@ Ce qu'impose la conduite propre à l'école (mise en situation ESSEC, exposé GE
   },
   {
     code: "classique",
-    label: "Entretien classique - jury neutre",
+    label: "Jury neutre",
     hint: "Le format de référence des oraux : le jury est chaleureux mais vous devez produire la matière.",
     instructions: `- Ton : chaleureux, posé.
 - Reprise des mots du candidat : pour situer ta question.
@@ -56,7 +56,7 @@ Ce qu'impose la conduite propre à l'école (mise en situation ESSEC, exposé GE
   },
   {
     code: "classique_dur",
-    label: "Entretien classique - jury plus dur",
+    label: "Jury dur",
     hint: "Même format, mais aucune approbation, des questions plus exigeantes et un creusement poussé.",
     instructions: `- Ton : neutre, factuel, sans chaleur ; jamais agressif, jamais méprisant, jamais ironique. Signes de réception minimaux (« hm », « d'accord », ou rien).
 - Reprise des mots du candidat : pour le confronter (une incohérence, une affirmation sans preuve), jamais pour reformuler à sa place.
