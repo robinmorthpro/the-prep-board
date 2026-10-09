@@ -279,10 +279,10 @@ export class PhaseEngine {
     if (!text.includes("{cartes_emlyon}")) return text;
     const v = this.variables;
     const cards = [
-      ["Expérience", v.card_experience],
-      ["Personnalité", v.card_personnalite],
-      ["Projet", v.card_projet],
-      ["Créativité", v.card_creativite],
+      ["Expérience", v["card_experience"]],
+      ["Personnalité", v["card_personnalite"]],
+      ["Projet", v["card_projet"]],
+      ["Créativité", v["card_creativite"]],
     ]
       .filter(([, question]) => question)
       .map(([label, question]) => `${label} (« ${question} »)`);
