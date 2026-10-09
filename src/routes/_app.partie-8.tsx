@@ -1162,6 +1162,9 @@ function Part7() {
         setFeedbackFailed(false);
       }
       void queryClient.invalidateQueries({ queryKey: ["interview_sessions", user?.id] });
+    } catch (e) {
+      console.error(e);
+      toast.error(FEEDBACK_ECHEC_MESSAGE);
     } finally {
       setRetrying((prev) => {
         const next = new Set(prev);
