@@ -255,44 +255,6 @@ const CONFIGS: SchoolInterviewConfig[] = [
     },
   },
   {
-    school: "Rennes School of Business",
-    format: "special",
-    comingSoon: true,
-    agentIdEnv: "ELEVENLABS_AGENT_ID_RENNES_SB",
-    durationSeconds: 780,
-    requiresUpload: true,
-    useHouseJuryPrompt: false,
-    phases: [
-      {
-        label: "Questionnaire PUMA complété en amont",
-        minutes: 15,
-        detail: "Rempli avant l'oral, hors simulation",
-        excluded: true,
-      },
-      {
-        label: "Mise en situation tirée au sort, restituée à l'oral",
-        minutes: 8,
-        detail: "Exercice spécifique au format PUMA",
-        guaranteed: true,
-      },
-      { label: "Débrief individualisé avec le jury", minutes: 5, guaranteed: true },
-    ],
-    support: {
-      label: "Questionnaire PUMA",
-      instructions:
-        "Complète le questionnaire PUMA comme tu le ferais avant l'oral, puis dépose-le (PDF ou photo) avant de démarrer. Le jury s'appuiera dessus pendant la mise en situation et le débrief.",
-      accept: ["pdf", "jpg", "jpeg", "png"],
-      maxMb: 10,
-    },
-    popupCopy: {
-      title: "Rennes SB — format PUMA (mise en situation + débrief)",
-      desc: "Format en trois temps : un questionnaire complété en amont, une mise en situation tirée au sort et restituée à l'oral, puis un débrief individualisé avec le jury. Ce n'est pas un entretien de motivation classique : on juge d'abord votre manière de traiter la situation.",
-      durationNote:
-        "Durée réelle 28 minutes, dont 13 simulées : le questionnaire est rempli en amont, la simulation démarre à la mise en situation.",
-      goodluck: GOODLUCK,
-    },
-  },
-  {
     school: "EM Strasbourg",
     format: "classique",
     agentIdEnv: CLASSIQUE_AGENT_ENV,
@@ -383,7 +345,7 @@ const CONFIGS: SchoolInterviewConfig[] = [
     },
     popupCopy: {
       title: "EM Normandie — entretien appuyé sur le dossier de motivation (20 minutes)",
-      desc: "Format court : après votre présentation, le jury conduit l'échange à partir du dossier de motivation que vous avez rempli en amont, en reprenant vos réponses une à une — y compris la question posée en anglais.",
+      desc: "Format court : après votre présentation, le jury conduit l'échange à partir du dossier de motivation que vous avez rempli en amont, en s'appuyant sur vos réponses pour les creuser — y compris celle rédigée en anglais.",
       durationNote:
         "Durée réelle 23 minutes (20 simulées + 3 minutes de questions finales non reproduites). Le dossier est complété en amont.",
       goodluck: GOODLUCK,
@@ -639,7 +601,7 @@ const CONFIGS: SchoolInterviewConfig[] = [
       {
         label: "Présentation initiale",
         minutes: 3,
-        detail: "Présentation libre du candidat, sans minutage strict",
+        detail: "Présentation du candidat, en une minute environ",
         guaranteed: true,
       },
       {
@@ -652,7 +614,7 @@ const CONFIGS: SchoolInterviewConfig[] = [
     ],
     popupCopy: {
       title: "emlyon — entretien en 3 temps (environ 27 minutes)",
-      desc: "Vous vous présentez librement, sans minutage imposé, comme en entretien classique. Puis le jury vous donne 4 questions, une par thème (Expérience, Personnalité, Projet, Créativité), tirées au hasard. Vous répondez dans l'ordre de votre choix, au rythme que vous voulez. Puis 10 minutes d'échange libre, façon entretien classique.",
+      desc: "Vous vous présentez en une minute environ. Puis le jury vous donne 4 questions, une par thème (Expérience, Personnalité, Projet, Créativité), tirées au hasard. Vous répondez dans l'ordre de votre choix, au rythme que vous voulez. Puis 8 à 10 minutes d'échange libre, façon entretien classique.",
       durationNote:
         "Durée simulée à titre indicatif : environ 27 minutes (présentation libre + 15 minutes de cartes + 8 à 10 minutes d'échange libre). Chaque phase dispose d'une marge d'environ 2 minutes pour ne pas couper un raisonnement en cours ; au-delà, le jury reste dans les temps annoncés. Aucune phase finale de « questions au jury » n'est documentée pour cette école.",
       goodluck: GOODLUCK,
@@ -709,13 +671,13 @@ CALCUL DU SCORE FINAL EDHEC : la grille totale de cette école est sur 21 points
       {
         label: "Entretien individuel",
         minutes: 20,
-        detail: "Personnalité, motivations, connaissance de l'EDHEC — sans retour sur l'exercice collectif ni sur la présentation",
+        detail: "Personnalité, motivations, connaissance de l'EDHEC — sans retour sur l'exercice collectif",
         guaranteed: true,
       },
     ],
     popupCopy: {
       title: "EDHEC — Trilogie (présentation + entretien individuel)",
-      desc: "Le format officiel EDHEC se déroule en 3 temps devant un groupe de 6 candidats : une présentation improvisée à partir d'un mot tiré au sort, une décision collective en groupe, puis un entretien individuel. Ici, vous tirez un mot et préparez votre présentation (1 minute), puis la présentez 4 minutes sans qu'aucune question ne soit posée par le jury. La décision collective ne peut pas être reproduite en solo et n'est pas simulée. L'entretien individuel qui suit enchaîne directement sur vos motivations et votre personnalité, sans retour sur cet exercice de groupe ni sur votre présentation.",
+      desc: "Le format officiel EDHEC se déroule en 3 temps devant un groupe de 6 candidats : une présentation improvisée à partir d'un mot tiré au sort, une décision collective en groupe, puis un entretien individuel. Ici, vous tirez un mot et préparez votre présentation (1 minute), puis la présentez 4 minutes sans qu'aucune question ne soit posée par le jury. La décision collective ne peut pas être reproduite en solo et n'est pas simulée. L'entretien individuel qui suit enchaîne directement sur vos motivations et votre personnalité, sans retour sur cet exercice de groupe.",
       durationNote:
         "Durée réelle environ 70 minutes (5 + 45 + 20), dont 25 minutes simulées : le mot tiré au sort et la présentation, puis l'entretien individuel. La phase de décision collective (45 minutes, groupe de 6) n'est pas simulée.",
       goodluck: GOODLUCK,
@@ -759,6 +721,12 @@ La clôture et la phrase de sortie restent celles de la trame générique (une q
         guaranteed: true,
       },
       {
+        label: "Rebond sur l'exposé",
+        minutes: 2,
+        detail: "Le jury approfondit brièvement un point de l'exposé",
+        guaranteed: true,
+      },
+      {
         label: "Interview inversée",
         minutes: 10,
         detail: "Le candidat interroge un membre du jury pendant 9 minutes puis fait une synthèse d'1 minute",
@@ -772,9 +740,9 @@ La clôture et la phrase de sortie restent celles de la trame générique (une q
       },
     ],
     popupCopy: {
-      title: "Grenoble EM — entretien en 3 temps (30 minutes)",
+      title: "Grenoble EM — entretien en 3 temps (32 minutes)",
       desc: "Format spécifique en trois parties : un exposé de 5 minutes sur un sujet d'actualité que vous avez choisi et préparé en amont, suivi de quelques minutes de rebond du jury ; une interview inversée de 10 minutes où c'est vous qui interrogez un membre du jury, avant une courte synthèse ; puis un échange classique de 15 minutes sur votre parcours, vos motivations et votre projet.",
-      durationNote: "Durée réelle et simulée : 30 minutes (5 + 10 + 15).",
+      durationNote: "Durée réelle et simulée : 32 minutes (5 + 2 + 10 + 15).",
       goodluck: GOODLUCK,
     },
     debriefSupplement: `CONTEXTE SPÉCIFIQUE GRENOBLE EM (GEM) : cet entretien comporte trois parties fondamentalement différentes d'un entretien classique — 1) un exposé de 5 minutes sur un sujet d'actualité librement choisi et préparé en amont par le candidat, suivi d'un rebond du jury ; 2) une interview inversée de 10 minutes où le candidat interroge le jury, qui incarne un personnage fictif ; 3) un échange « classique » de 15 minutes, où le candidat se présente pour la première fois de cet oral.
@@ -849,13 +817,13 @@ Tu ne poses que la question de l'axe choisi, tu ne mentionnes jamais les deux au
       {
         label: "La Discussion",
         minutes: 18,
-        detail: "Entretien de motivation classique sur le parcours, la personnalité et le projet",
+        detail: "Entretien de motivation classique sur le parcours, la personnalité, le projet et l'école",
         guaranteed: true,
       },
     ],
     popupCopy: {
       title: "Clermont School of Business (ESC Clermont) — entretien en 3 temps (25 minutes)",
-      desc: "Format spécifique en trois parties : un Pitch de 2 minutes qui oriente le jury sur ce que vous voulez aborder, une Question Impact de 5 minutes où vous choisissez à l'oral un axe (People, Planet ou Profit) puis répondez immédiatement, sans aucune préparation, à une question sélectionnée par l'application, puis une Discussion classique de 18 minutes sur votre parcours, votre personnalité et votre projet.",
+      desc: "Format spécifique en trois parties : un Pitch de 2 minutes qui oriente le jury sur ce que vous voulez aborder, une Question Impact de 5 minutes où vous choisissez à l'oral un axe (People, Planet ou Profit) puis répondez immédiatement, sans aucune préparation, à une question sélectionnée par l'application, puis une Discussion classique de 18 minutes sur votre parcours, votre personnalité, votre projet et l'école.",
       durationNote: "Durée réelle et simulée : 25 minutes (2 + 5 + 18).",
       goodluck: GOODLUCK,
     },
@@ -907,7 +875,7 @@ ATTENTION FORMAT DE SORTIE : dans la section « Feedback détaillé », les sect
       {
         label: "La discussion",
         minutes: 15,
-        detail: "Présentation puis entretien de motivation classique sur le parcours, la personnalité et le projet",
+        detail: "Présentation puis entretien de motivation classique sur le parcours, la personnalité, le projet et l'école",
         guaranteed: true,
       },
     ],
@@ -925,7 +893,7 @@ ATTENTION FORMAT DE SORTIE : dans la section « Feedback détaillé », les sect
     },
     popupCopy: {
       title: "TBS Education — entretien de personnalité en 2 temps (20 minutes)",
-      desc: "Format en deux parties : un avis argumenté de 5 minutes sur un article de presse que vous aurez choisi et préparé à l'avance (liste fournie ci-dessous, à titre d'entraînement — TBS vous donnera sa propre liste officielle une fois admissible), puis une discussion classique de 15 minutes sur votre présentation, votre parcours et votre motivation.",
+      desc: "Format en deux parties : un avis argumenté de 5 minutes sur un article de presse que vous aurez choisi et préparé à l'avance (liste fournie ci-dessous, à titre d'entraînement — TBS vous donnera sa propre liste officielle une fois admissible), puis une discussion classique de 15 minutes sur votre parcours, votre personnalité, votre projet et l'école.",
       durationNote: "Durée réelle et simulée : 20 minutes (5 + 15).",
       goodluck: GOODLUCK,
     },
@@ -960,8 +928,14 @@ ATTENTION FORMAT DE SORTIE : dans le feedback détaillé, place la section de C1
     useHouseJuryPrompt: true,
     phases: [
       {
+        label: "Présentation",
+        minutes: 2,
+        detail: "Présentation courte du candidat, en 1 à 2 minutes",
+        guaranteed: true,
+      },
+      {
         label: "Les situations",
-        minutes: 25,
+        minutes: 23,
         detail:
           "Le jury vous propose des situations sous forme de débuts de phrase à compléter (« J'ai dû faire face à une difficulté inattendue quand… »). Vous en choisissez une, vous la développez, le jury creuse jusqu'à épuisement du sujet, puis vous en propose une autre. Comptez 2 à 4 situations traitées sur les 25 minutes. Cet oral ne teste ni votre projet professionnel, ni votre connaissance de l'école, ni votre motivation à l'intégrer : c'est un format purement comportemental (softskills).",
         guaranteed: true,
@@ -970,7 +944,7 @@ ATTENTION FORMAT DE SORTIE : dans le feedback détaillé, place la section de C1
     popupCopy: {
       title: "Montpellier BS — l'entretien « situations »",
       desc:
-        "25 minutes, sans préparation. Le jury vous propose une dizaine de situations sous forme de débuts de phrase ; vous en choisissez une et la développez, il creuse jusqu'à épuisement du sujet, puis passe à une autre. Aucune question sur votre projet professionnel ou votre connaissance de l'école : ce format évalue uniquement vos compétences comportementales (empathie, curiosité, créativité, résolution de problèmes, esprit collaboratif, remise en question, proactivité) à travers des expériences vécues.",
+        "25 minutes, sans préparation. Après une présentation de 1 à 2 minutes, le jury vous propose une dizaine de situations sous forme de débuts de phrase ; vous en choisissez une et la développez, il creuse jusqu'à épuisement du sujet, puis passe à une autre. L'entretien se termine par une question d'actualité. Aucune question sur votre projet professionnel ou votre connaissance de l'école : ce format évalue uniquement vos compétences comportementales à travers des expériences vécues.",
       durationNote: "Durée réelle et simulée : 25 minutes.",
       goodluck: GOODLUCK,
     },
@@ -1030,7 +1004,7 @@ ATTENTION FORMAT DE SORTIE : C4 et C5 sont structurellement absents — ne produ
         label: "Partie 1 — l'image",
         minutes: 5,
         detail:
-          "Vous choisissez une image parmi une quinzaine proposées par le jury (sport, actualité, voyages, environnement, œuvres d'art, cinéma, pop culture…) et vous en servez pour vous présenter : vous racontez une expérience vécue liée à l'image, structurée en Passé (le récit concret), Présent (la qualité qu'il révèle), Futur (le lien avec l'école ou votre projet, si naturel).",
+          "Vous choisissez une image parmi une quinzaine proposées par le jury (sport, actualité, voyages, environnement, œuvres d'art, cinéma, pop culture…) et vous en servez pour vous présenter : vous racontez une expérience vécue liée à l'image, structurée en Passé (le récit concret), Présent (la qualité qu'il révèle), Futur (où cette qualité vous servira, à l'école ou en entreprise).",
         guaranteed: true,
       },
       {
@@ -1122,7 +1096,7 @@ Si les trois cartes sont épuisées avant la fin du temps imparti et que le proj
     {
       label: "Présentation avec la carte Autoportrait",
       minutes: 3,
-      detail: "Présentation du parcours et de la personnalité à partir du mot tiré",
+      detail: "Présentation du parcours à partir du mot tiré",
       guaranteed: true,
     },
     {
