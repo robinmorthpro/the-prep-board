@@ -1,104 +1,97 @@
-# Étape 1 : nouvel évaluateur et calcul de la note, en coulisses
+# Étape 2 : le nouveau rédacteur du feedback
 
-Rien ne change pour l'étudiant : l'ancien debrief (`debriefInterview`), son affichage, le jury vocal, ElevenLabs et le tableau de bord restent intacts. Aucune donnée supprimée.
+## Ce qui change pour l'utilisateur
+Rien à l'écran : même écran de chargement, même affichage du feedback (les 4 sections, VERBATIMS: / FEEDBACK:). Seul le texte vient désormais du rédacteur, qui s'appuie sur l'évaluation de l'étape 1. Si quoi que ce soit échoue, l'ancien debrief est produit comme aujourd'hui.
 
-## 1. Textes (copie octet pour octet)
-- `src/lib/evaluateur/textes/commun.md`, `format-sortie.md`
-- `src/lib/evaluateur/textes/ecoles/` : `classique.md`, `clermont.md`, `edhec.md`, `em-strasbourg.md`, `emlyon.md`, `essec.md`, `gem.md`, puis `inseec.md`, `kedge.md`, `montpellier.md`, `tbs.md` (joints au message de validation)
-- `src/lib/evaluateur/bareme.json`
-- Copie par `cp` depuis les fichiers joints (aucune réécriture), contrôle par empreinte `sha256` avant/après, résultat donné dans le compte rendu. Chargement par import `?raw` (textes) et import JSON (barème).
-- Ajout d'un `.prettierignore` pour `src/lib/evaluateur/textes/**` et `bareme.json`, afin qu'aucun formatage automatique ne les touche.
+## Déroulé à la fin de l'entretien
 
-## 2. Fonction serveur `evaluateInterview` (authentifiée, comme `debriefInterview`)
-- Entrée : `sessionId`, `model` optionnel. Lit la session via le client de l'utilisateur (sécurité de base : il ne lit que les siennes).
-- Grille : `bareme.ecoles[session.school]` ; fichier `ecoles/<clé>.md` (`em_strasbourg` → `em-strasbourg.md`). École inconnue → évaluation enregistrée « invalide » avec la raison.
-- Système = `commun.md` + fichier école + `format-sortie.md`, concaténés tels quels (séparés par un simple saut de ligne — voir question 1).
-- Utilisateur = école, transcription `mm:ss Jury : …` / `mm:ss Candidat : …` (calculée depuis `askedAt`/`answeredAt` et le premier horodatage), puis `support_text`, l'image INSEEC (`inseec_image`), et les tirages s'ils sont enregistrés.
-- Passerelle Lovable AI, température 0, JSON imposé.
-  - Gemini (`google/gemini-3.7-flash`, défaut) : `/v1/chat/completions` comme le code actuel.
-  - Claude Sonnet 5 : identifiant exact **`anthropic/claude-sonnet-5`**, servi uniquement par `/v1/messages` (format Anthropic, réponse lue en flux puis assemblée côté serveur). Un petit aiguillage par préfixe de modèle choisit le bon chemin.
+```text
+Fin d'entretien
+  -> session enregistrée (tours, durées, statut final « done » / « stopped »)   [attendu]
+  -> évaluation (étape 1)                                                       [attendue]
+       statut « ok » ?  non -> ancien debrief (debriefInterview), source « ancien »
+  -> rédacteur                                                                  [attendu]
+       échec ?          oui -> ancien debrief, source « ancien »
+  -> feedback enregistré (texte + percentile + source) -> affichage
+```
 
-## 3. Vérifications (code pur, `src/lib/evaluateur/validation.ts`)
-- JSON valide ; `grille` = clé attendue ; critères et cases exactement ceux de `bareme.json` (ni manquant, ni en trop).
-- `niveau` ∈ N4, N3, N2, N1, « non observé ».
-- Citations présentes mot pour mot dans la transcription (texte des répliques, sans horodatages) après normalisation : espaces, apostrophes ’/', guillemets « » “ ” " → une forme unique. Rien d'autre.
-- `manque_pour_n4` : chaque morceau présent dans les textes de l'évaluateur (même normalisation) ; vide pour N4 et « non observé ».
-- Échec → un seul nouvel appel avec la liste précise des erreurs ; second échec → statut « invalide », sans note.
+- Interrupteur : une constante `NOUVEAU_FEEDBACK_ACTIF` (true). Sur false, tout le monde reçoit l'ancien debrief, en une ligne.
+- L'appel en arrière-plan de l'étape 1 est retiré, puisque l'évaluation est maintenant attendue dans l'enchaînement. Cela évite une double évaluation. L'outil administrateur `rerunEvaluation` ne change pas.
+- `debriefInterview` et ses suppléments d'école ne sont ni modifiés ni supprimés.
 
-## 4. Calcul (fonction pure `src/lib/evaluateur/calcul.ts`)
-Suit `ordre_de_calcul` et `regles` à la lettre : interrompu → ni note ni percentile ; « non observé » hors total et hors diviseur ; critère sans case évaluée non noté ; plancher 0 par critère ; note sur 20 sans arrondi intermédiaire ; −0,5 par pénalité de durée, plancher 0 ; percentile par ligne inférieure, borné P1–P99.
-- Interrompu = `entretien_interrompu` vrai, ou session non terminée (`status` ≠ terminé), ou panne technique enregistrée.
-- Pénalités mesurées par le code à partir de `phase_timings` et des horodatages, seuils lus dans `regles.penalites_duree.seuils_par_grille` (ESSEC 2 min 30 et au-delà de 5 min 30, EDHEC 3 min 15, etc.) ; exceptions du barème appliquées quand le code peut les détecter. Le champ `penalites` de l'IA est conservé pour contrôle, jamais utilisé.
-- Tests (`calcul.test.ts`) : classique tout N4 = 20/20 ; case non observée hors diviseur ; critère entièrement non observé non noté ; Montpellier (10,5 ramené sur 20) ; pitch EM Strasbourg N1 = 0,5 ; pénalité et plancher à 0 ; lecture du percentile ; interrompu sans note. Plus un test de validation (citation inventée rejetée, clé en trop rejetée).
+## 1. Les 13 textes
+- Les 10 fichiers joints sont copiés par `cp` dans `src/lib/redacteur/textes/` (`redacteur-commun.md`, `criteres.md`) et `src/lib/redacteur/textes/ecoles/`, puis contrôlés par sha256. Les 3 fichiers restants seront copiés de la même façon au message de validation.
+- Règle de nommage : les fichiers joints s'appellent `essec-2.md`, `emlyon-2.md`, etc. Ils sont copiés sous les noms que vous avez donnés (`essec.md`, `emlyon.md`…). Seul le nom change, le contenu reste identique octet pour octet.
+- Ils sont ajoutés à `.prettierignore` pour ne jamais être reformatés, et chargés par import `?raw`.
+- Correspondance école → bloc : une table dans le code, d'après votre liste. Elle s'appuie sur les noms d'école réellement enregistrés, avec la même table d'alias qu'à l'étape 1. Les autres écoles n'ont pas de bloc.
 
-## 5. Enregistrement
-Table `interview_evaluations` (voir migration). Plusieurs évaluations par session.
+## 2. Appel du rédacteur (fonction serveur authentifiée `redigerFeedback`)
+- Entrée : identifiant de la session et identifiant de l'évaluation retenue. Les deux sont relus en base sous l'identité de l'utilisateur, qui ne voit que les siens. Le contexte des modules est transmis comme aujourd'hui.
+- Message système : `redacteur-commun.md` + `criteres.md` + le bloc de l'école, séparés par une ligne vide. Puis, seulement si c'est le cas, vos deux paragraphes tels quels (document remis, image INSEEC).
+- Message utilisateur, dans votre ordre :
+  1. l'école ;
+  2. le jury joué ;
+  3. « Entretien interrompu : oui/non » ;
+  4. le JSON de l'évaluation ;
+  5. le bloc « calculé par le code » : percentile, pénalités retenues (durée mesurée et seuil), critères non notés, cases évaluées classées par points perdus avec les noms du critère et de la case ;
+  6. `contextBlock` (réutilisé tel quel) ;
+  7. la transcription horodatée de l'étape 1 ;
+  8. « CONTENU DU SUPPORT (libellé) », s'il y a un support.
+- Passerelle Lovable AI, `google/gemini-3.7-flash`, température 0. Le modèle peut être changé par appel, comme à l'étape 1.
 
-## 6. Déclenchement en arrière-plan
-Dans `_app.partie-8.tsx`, à l'endroit où le debrief est demandé, un seul ajout : appel de `evaluateInterview` sans attente, erreurs avalées (`.catch(() => {})`), rien d'affiché. C'est la seule modification d'un fichier existant de l'app. Côté serveur, l'appel est indépendant du debrief.
+## 3. Traitement du texte par le code (fonctions pures)
+- Ligne du percentile insérée juste sous « ## Ce que ce classement signifie », au format exact : `P67 - vous faites mieux que 67 % des candidats (± 5 percentiles).` Si l'entretien est interrompu, c'est la ligne exacte « Entretien interrompu : pas de note ni de percentile. Voici un retour sur ce que vous avez fait. » qui est insérée.
+- Citations : chaque « … » d'une ligne VERBATIMS est recherchée dans la transcription ou le document remis, avec la normalisation de l'étape 1. Une citation introuvable est retirée ; si une ligne VERBATIMS se retrouve vide, elle est gardée vide.
+- Contrôle : s'il manque une des 4 sections, ou si « P » suivi d'un nombre apparaît dans le texte rendu, un seul nouvel appel est fait. Si ça échoue encore, le rédacteur est considéré en échec et l'ancien debrief prend le relais.
+- Les citations retirées sont journalisées côté serveur, pour contrôle.
 
-## 7. Outil administrateur
-Fonction `rerunEvaluation({ sessionId, model, n })` (n ≤ 10, appels successifs pour ménager la limite de débit) qui renvoie les évaluations créées. Accès vérifié par `has_role(auth.uid(), 'admin')` ; aucun e-mail dans le code. Lecture/écriture de sessions d'autres utilisateurs par le client administrateur, chargé seulement après la vérification du rôle. Le propriétaire s'attribue le rôle en insérant une ligne dans `user_roles` depuis Supabase (instruction donnée, sans e-mail dans le dépôt).
+## 4. Base de données (migration)
+```sql
+ALTER TABLE public.interview_sessions
+  ADD COLUMN percentile integer NULL CHECK (percentile BETWEEN 1 AND 99),
+  ADD COLUMN feedback_source text NULL CHECK (feedback_source IN ('nouveau','ancien')),
+  ADD COLUMN feedback_evaluation_id uuid NULL REFERENCES public.interview_evaluations(id);
+```
+- Aucune règle d'accès ne change : les règles actuelles de la session s'appliquent.
+- `feedback_evaluation_id` indique quelle évaluation a servi au feedback.
+- Avec l'ancien debrief, le percentile est lu dans son texte comme aujourd'hui, et vide s'il n'y en a pas.
+
+## 5. Tests
+- Automatiques :
+  - insertion de la ligne du percentile ;
+  - ligne « Entretien interrompu » ;
+  - citation inventée retirée ;
+  - citation vraie gardée (y compris une citation du document remis) ;
+  - contrôle « P + nombre » et section manquante ;
+  - secours vers l'ancien debrief quand l'évaluation est « invalide », quand elle échoue et quand le rédacteur échoue (enchaînement testé avec des appels simulés) ;
+  - choix du bloc d'école.
+- Test réel : l'entretien fictif NEOMA avec Gemini (évaluation puis rédaction). Je vous montre le feedback complet et la durée totale.
+
+## Durée attendue pour l'utilisateur
+- Évaluation : environ 25 s (1 appel) à 50 s (2 appels), d'après l'étape 1.
+- Rédaction : environ 20 à 40 s (estimation, à mesurer au test réel).
+- Total : environ 45 s à 1 min 30, contre un seul appel aujourd'hui.
+- En cas de secours : on ajoute la durée de l'ancien debrief, donc jusqu'à environ 2 min.
 
 ## Fichiers
-Créés : `src/lib/evaluateur/` (textes, `bareme.json`, `transcription.ts`, `validation.ts`, `calcul.ts`, `calcul.test.ts`, `validation.test.ts`, `gateway.ts`), `src/lib/evaluateur.functions.ts`, migration.
-Modifiés : `src/routes/_app.partie-8.tsx` (une ligne d'appel en arrière-plan), `src/integrations/supabase/types.ts` (régénéré), `.prettierignore`, `AGENTS.md` (règle : la note est calculée par le code, l'IA ne rend que des niveaux).
+- Créés :
+  - les 13 textes ;
+  - dans `src/lib/redacteur/` : `textes.ts`, `message.ts` (message système et utilisateur), `texte.ts` (percentile, citations, contrôles), `run.ts`, et leurs tests ;
+  - `src/lib/redacteur.functions.ts` ;
+  - `src/lib/feedback-enchainement.ts` (enchaînement et secours, testable).
+- Modifiés :
+  - `src/routes/_app.partie-8.tsx` : uniquement la fonction de fin d'entretien et l'enregistrement (`persist`) des nouvelles colonnes ;
+  - `src/lib/evaluateur.functions.ts` : `evaluateInterview` renvoie aussi l'identifiant de l'évaluation enregistrée ;
+  - `.prettierignore`, `AGENTS.md`, `roadmap.md`.
+- Inchangés : `debriefInterview`, `InterviewDebrief.tsx`, le tableau de bord, le jury vocal.
 
-## Migration proposée
-```sql
-create type public.app_role as enum ('admin', 'user');
-create table public.user_roles (
-  id uuid primary key default gen_random_uuid(),
-  user_id uuid not null references auth.users(id) on delete cascade,
-  role public.app_role not null,
-  unique (user_id, role)
-);
-grant select on public.user_roles to authenticated;
-grant all on public.user_roles to service_role;
-alter table public.user_roles enable row level security;
-create policy "read own roles" on public.user_roles for select to authenticated using (auth.uid() = user_id);
+## Questions
+1. **Jury joué** : l'app a trois niveaux (`decouverte`, `classique`, `classique_dur`). Je propose `classique_dur` → « Jury dur », les deux autres → « Jury neutre ». D'accord ?
+2. **Statut à l'évaluation** : aujourd'hui la session est en « debriefing » pendant le debrief. Je propose d'enregistrer le statut final (« done » ou « stopped ») avant d'évaluer, pour que l'évaluateur voie bien un entretien terminé ou interrompu. D'accord ?
+3. **Citations du document** : le texte commun permet de citer le document remis. Je cherche donc chaque citation dans la transcription OU dans le document. D'accord ?
 
-create or replace function public.has_role(_user_id uuid, _role public.app_role)
-returns boolean language sql stable security definer set search_path = public
-as $$ select exists (select 1 from public.user_roles where user_id = _user_id and role = _role) $$;
-
-create table public.interview_evaluations (
-  id uuid primary key default gen_random_uuid(),
-  session_id uuid not null references public.interview_sessions(id) on delete cascade,
-  user_id uuid not null references auth.users(id) on delete cascade,
-  created_at timestamptz not null default now(),
-  model text not null,
-  grille text not null default '',
-  status text not null check (status in ('ok','invalide')),
-  attempts int not null default 1,
-  errors jsonb not null default '[]',
-  raw_output jsonb,               -- sortie brute (texte conservé si JSON illisible)
-  raw_text text not null default '',
-  case_points jsonb not null default '{}',
-  criterion_points jsonb not null default '{}',
-  unrated_criteria jsonb not null default '[]',
-  penalties jsonb not null default '[]',   -- partie, durée mesurée, seuil
-  interrupted boolean not null default false,
-  score_20 numeric,
-  final_score numeric,
-  percentile int,
-  duration_ms int not null default 0,
-  triggered_by text not null default 'auto'  -- 'auto' ou 'admin'
-);
-create index on public.interview_evaluations (session_id);
-grant select, insert on public.interview_evaluations to authenticated;
-grant all on public.interview_evaluations to service_role;
-alter table public.interview_evaluations enable row level security;
-create policy "read own evaluations" on public.interview_evaluations for select to authenticated using (auth.uid() = user_id);
-create policy "insert own evaluations" on public.interview_evaluations for insert to authenticated with check (auth.uid() = user_id);
-```
-Aucune modification ni suppression sur les tables existantes.
-
-## Questions et risques
-1. Séparateur entre les trois textes du message système : un saut de ligne vide suffit-il (« sans rien ajouter » pris au sens strict) ?
-2. Tirages au sort : aujourd'hui seuls `support_text` et `inseec_image` sont enregistrés. Les cartes emlyon, le mot EDHEC, l'article TBS et la situation ESSEC ne le sont pas. À cette étape, je les omets (« si disponible »). Les enregistrer demanderait une nouvelle colonne et un ajout dans l'écran d'entretien : à prévoir dans une étape suivante ?
-3. Noms d'école : la clé est cherchée avec le nom exact de `session.school` ; si l'app enregistre un nom différent de ceux du barème (ex. « GEM » vs « GEM (Grenoble EM) »), je vérifierai sur les vraies données et ajouterai une table de correspondance plutôt que de toucher au barème.
-4. Durées : certaines exceptions (« jury qui a dysfonctionné », « candidat interrompu » à l'ESSEC) ne sont pas toujours détectables par le code ; je les applique seulement quand l'information existe, sinon la durée est notée sans pénalité dans un champ de contrôle. À confirmer.
-5. Coût : chaque entretien déclenche désormais un second appel IA (et jusqu'à deux en cas de reprise) ; l'outil admin multiplie par N. Débité sur les crédits de l'espace.
-6. Claude Sonnet 5 : température 0 acceptée ; JSON imposé via le format de sortie Anthropic (`output_config.format`). Le modèle conserve des données chez le fournisseur ; il est actuellement autorisé dans l'espace.
-7. Vérification en direct : sans compte de test, je testerai l'appel IA et le calcul sur une transcription fictive depuis mon environnement, pas l'écran connecté.
+## Risques
+- Attente plus longue : environ 1 min au lieu d'un seul appel. Ça ne change rien à l'écran de chargement.
+- Une évaluation « invalide » coûte l'attente de l'évaluation, plus celle de l'ancien debrief.
+- Le percentile du tableau de bord se lit toujours dans le texte (`P67`). Le format de la ligne insérée est identique, donc rien ne change de ce côté.
+- Les 3 textes manquants sont nécessaires avant la mise en service. Montpellier, EM Strasbourg et les 5 écoles « à document » tomberaient sinon sans bloc.
