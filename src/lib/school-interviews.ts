@@ -10,7 +10,7 @@
  * restent utilisables, les configurations arrivent par lots.
  */
 import { buildJuryAgentPrompt } from "./elevenlabs-agent-prompt";
-import { CLERMONT_IMPACT_QUESTIONS, type ImpactAxis } from "./esc-clermont-kb";
+import { CLERMONT_IMPACT_JURY, type ImpactAxis } from "./esc-clermont-kb";
 import { INSEEC_IMAGES } from "./inseec-kb";
 
 import { INTERVIEW_VARIANTS, type InterviewVariant } from "./interview-kb";
@@ -38,7 +38,7 @@ export function buildClermontImpactVariables(
   };
   if (school !== "ESC Clermont BS") return empty;
   const pick = (axis: ImpactAxis) => {
-    const questions = CLERMONT_IMPACT_QUESTIONS[axis];
+    const questions = CLERMONT_IMPACT_JURY[axis];
     return questions[Math.floor(random() * questions.length)] ?? questions[0]!;
   };
   return {
@@ -936,14 +936,14 @@ ATTENTION FORMAT DE SORTIE : dans le feedback détaillé, place la section de C1
         label: "Les situations",
         minutes: 23,
         detail:
-          "Le jury vous propose des situations sous forme de débuts de phrase à compléter (« J'ai dû faire face à une difficulté inattendue quand… »). Vous en choisissez une, vous la développez, le jury creuse jusqu'à épuisement du sujet, puis vous en propose une autre. Comptez 2 à 4 situations traitées sur les 25 minutes. Cet oral ne teste ni votre projet professionnel, ni votre connaissance de l'école, ni votre motivation à l'intégrer : c'est un format purement comportemental (softskills).",
+          "Le jury vous propose des situations (« Vous vous êtes trouvé(e) face à une situation inattendue »). Vous en choisissez une, vous la développez, le jury creuse jusqu'à épuisement du sujet, puis vous en propose une autre. Comptez 2 à 4 situations traitées sur les 25 minutes. Cet oral ne teste ni votre projet professionnel, ni votre connaissance de l'école, ni votre motivation à l'intégrer : c'est un format purement comportemental (softskills).",
         guaranteed: true,
       },
     ],
     popupCopy: {
       title: "Montpellier BS — l'entretien « situations »",
       desc:
-        "25 minutes, sans préparation. Après une présentation de 1 à 2 minutes, le jury vous propose une dizaine de situations sous forme de débuts de phrase ; vous en choisissez une et la développez, il creuse jusqu'à épuisement du sujet, puis passe à une autre. L'entretien se termine par une question d'actualité. Aucune question sur votre projet professionnel ou votre connaissance de l'école : ce format évalue uniquement vos compétences comportementales à travers des expériences vécues.",
+        "25 minutes, sans préparation. Après une présentation de 1 à 2 minutes, le jury vous propose 15 situations ; vous en choisissez une et la développez, il creuse jusqu'à épuisement du sujet, puis passe à une autre. L'entretien se termine par une question d'actualité. Aucune question sur votre projet professionnel ou votre connaissance de l'école : ce format évalue uniquement vos compétences comportementales à travers des expériences vécues.",
       durationNote: "Durée réelle et simulée : 25 minutes.",
       goodluck: GOODLUCK,
     },
@@ -1391,6 +1391,7 @@ const PHASE_SCHEDULES: Record<string, PhaseStep[]> = {
       name: "Partie 1 — pitch",
       topic: "le pitch",
       startMinute: 0,
+      omitEndWithQuestion: true,
       ongoing: "Reste sur le pitch jusqu'au choix de l'axe Impact : ne change pas de phase. Dès la fin du pitch, ta prochaine prise de parole est la phrase de ta conduite : « Merci. Passons à la question Impact : choisissez un axe parmi People, Planet, ou Profit. » Ce n'est pas un changement de partie : la question Impact commence quand le candidat a choisi son axe.",
     },
     {
@@ -1638,7 +1639,7 @@ const PHASE_SCHEDULES: Record<string, PhaseStep[]> = {
       ongoing: `Reste sur la présentation Autoportrait : ne change pas de phase. ${RELANCES_AUTOPORTRAIT}`,
       dryEarlySwitch: true,
       addQuestionAllowed: true,
-      timing: { plannedMinutes: 3, criterion: "la présentation Autoportrait (C1)", penalizeEarly: true },
+      timing: { plannedMinutes: 3, criterion: "la présentation Autoportrait", penalizeEarly: true },
     },
     {
       id: "kedge-cartes",

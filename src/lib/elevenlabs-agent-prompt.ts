@@ -6,8 +6,8 @@
  * - et à la documentation copiable-collable (`docs/agent-jury-elevenlabs.md`,
  *   régénérée par `bun scripts/generate-agent-doc.ts`).
  *
- * L'agent conduit l'entretien. Il n'évalue jamais : le débrief, la grille et le
- * percentile restent produits par `debriefInterview` après la clôture.
+ * L'agent conduit l'entretien. Il n'évalue jamais : l'évaluateur et le rédacteur
+ * produisent la note, le percentile et le feedback après la clôture.
  */
 import juryCommunRaw from "./jury/textes/jury-commun.md?raw";
 import type { InterviewVariant } from "./interview-kb";
@@ -38,20 +38,18 @@ export function buildAgentIdentity(durationMinutes: number) {
   return commonJuryText().replaceAll("${durationMinutes}", String(durationMinutes));
 }
 
-/** Variables dynamiques attendues par l'agent (identité + document remis). */
-export const AGENT_DYNAMIC_VARIABLES = `CADRE DE L'ENTRETIEN
-École passée : {{school}}
-Candidat : {{student_name}}
-
-DOCUMENT REMIS PAR LE CANDIDAT (vide si cette école n'en demande pas)
-{{support_text}}
-USAGE DU DOCUMENT : quand ce bloc n'est pas vide, tu as le document sous les yeux depuis le début de l'entretien — tu n'as rien à parcourir, rien à attendre, tu ne demandes jamais au candidat de te l'envoyer ou de le résumer pour toi. Tu t'en sers pour poser tes questions et creuser ses réponses, en citant au besoin ses propres formulations. Tu ne le lis jamais à voix haute in extenso et tu ne commentes jamais sa forme.
-
-IMAGE INSEEC CHOISIE AVANT L'ENTRETIEN (vide hors INSEEC)
-{{inseec_image}}
-USAGE DE L'IMAGE INSEEC : quand ce bloc n'est pas vide, elle sert uniquement de déclencheur officiel de présentation. Ce n'est pas un document préparé en amont et tu ne demandes jamais au candidat d'en choisir une autre.
-
-CONNAISSANCE DU CANDIDAT : tu ne disposes d'aucune information préalable sur le candidat, en dehors du document qu'il a remis s'il y en a un. Tu ne fais donc jamais allusion à une expérience, un projet, une école ou un sujet dont il n'a pas parlé lui-même pendant cet entretien. Tu construis toutes tes questions à partir de ce qu'il vient de dire, ou du document qu'il a remis.`;
+/**
+ * Variables dynamiques attendues par l'agent (identité + document remis) :
+ * section « CADRE DE L'ENTRETIEN » de jury-commun.md, telle quelle (elle porte
+ * le bloc « CONNAISSANCE DU CANDIDAT », envoyé une seule fois).
+ */
+export const AGENT_DYNAMIC_VARIABLES = (() => {
+  const source = commonJuryText();
+  const start = source.indexOf("CADRE DE L'ENTRETIEN\n");
+  if (start < 0) throw new Error("Section « CADRE DE L'ENTRETIEN » introuvable dans le texte commun.");
+  const end = source.indexOf("\n\n---", start);
+  return source.slice(start, end >= 0 ? end : undefined).trimEnd();
+})();
 
 /** Bloc de difficulté (attitude, périmètre, profondeur, rythme) pour un niveau. */
 export function difficultyBlock(variant: InterviewVariant) {

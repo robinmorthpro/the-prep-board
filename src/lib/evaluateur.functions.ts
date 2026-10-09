@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
-const SESSION_COLUMNS = "id, user_id, school, status, turns, phase_timings, support_text, inseec_image";
+const SESSION_COLUMNS = "id, user_id, school, status, turns, phase_timings, support_text, inseec_image, tirages";
 
 /**
  * Évaluation en coulisses d'un entretien de l'utilisateur connecté : rien n'est

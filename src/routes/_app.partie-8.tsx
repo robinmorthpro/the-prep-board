@@ -20,10 +20,11 @@ import { IntroPanel } from "@/components/vivaldi/StartPanel";
 import { useSession } from "@/hooks/useSession";
 import { useJuryAgent } from "@/hooks/useJuryAgent";
 import { supabase } from "@/integrations/supabase/client";
-import { debriefInterview } from "@/lib/ai.functions";
 import { evaluateInterview } from "@/lib/evaluateur.functions";
 import { redigerFeedback } from "@/lib/redacteur.functions";
-import { produireFeedback } from "@/lib/feedback-enchainement";
+import { FEEDBACK_ECHEC_MESSAGE, produireFeedback } from "@/lib/feedback-enchainement";
+import { MONTPELLIER_PASSAGE_RE } from "@/lib/phase-engine";
+import type { Tirages } from "@/lib/tirages";
 import {
   useCareerProject,
   useExperiences,
@@ -73,14 +74,14 @@ import { PartNav } from "@/components/vivaldi/PartNav";
 import { schoolLogo } from "@/lib/school-logos";
 import { schoolPhotoOrFallback } from "@/components/vivaldi/school-photos";
 import { pickGemPersona } from "@/lib/gem-kb";
-import { pickEssecSituation } from "@/lib/essec-kb";
-import { drawEmlyonCards } from "@/lib/emlyon-kb";
+import { pickEssecSituationTiree } from "@/lib/essec-kb";
+import { drawEmlyonCards, emlyonCartesEtiquetees } from "@/lib/emlyon-kb";
 import { EMLYON_CARDS_SILENCE_MS, EmlyonCardsSilence } from "@/lib/emlyon-trigger";
 import { pickEdhecWord } from "@/lib/edhec-kb";
 import { drawMontpellierSituations, type MontpellierSituation } from "@/lib/montpellier-kb";
 import { drawKedgeCards } from "@/lib/kedge-kb";
 import { INSEEC_IMAGES, type InseecImage } from "@/lib/inseec-kb";
-import type { ImpactAxis } from "@/lib/esc-clermont-kb";
+import { IMPACT_AXIS_LABEL, type ImpactAxis } from "@/lib/esc-clermont-kb";
 
 
 
@@ -174,14 +175,18 @@ function Part7() {
   const { data: newsTopics = [] } = useNewsTopics(user?.id);
   const readSupport = useServerFn(extractSupportText);
 
-  const askDebrief = useServerFn(debriefInterview);
   const runEvaluation = useServerFn(evaluateInterview);
   const runRedacteur = useServerFn(redigerFeedback);
 
   const queryClient = useQueryClient();
   const { data: sessions = [] } = useInterviewSessions(user?.id);
-  // Un entretien n'apparaît dans l'historique qu'une fois terminé (débrief produit).
-  const finishedSessions = useMemo(() => sessions.filter((s) => Boolean(s.debrief)), [sessions]);
+  // Un entretien terminé apparaît dans l'historique, même si son feedback a échoué.
+  const finishedSessions = useMemo(
+    () => sessions.filter((s) => Boolean(s.debrief) || s.status === "done" || s.status === "stopped"),
+    [sessions],
+  );
+  // Sessions de l'historique dont le feedback est en cours de régénération.
+  const [retrying, setRetrying] = useState<Set<string>>(new Set());
   const [openSession, setOpenSession] = useState<string | null>(null);
   const [historySchool, setHistorySchool] = useState<string | null>(null);
   const historySchools = useMemo(() => {
@@ -269,6 +274,14 @@ function Part7() {
   const emlyonCardsInstructionRef = useRef<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [debrief, setDebrief] = useState("");
+  const [feedbackFailed, setFeedbackFailed] = useState(false);
+  // Ce que l'application a tiré (enregistré avec la session, transmis au rédacteur).
+  const tiragesRef = useRef<Tirages>({});
+  // emlyon : le chronomètre des cartes attend la première prise de parole du
+  // candidat après l'énoncé des cartes par le jury.
+  const emlyonMeasureRef = useRef<"idle" | "triggered" | "announced" | "started">("idle");
+  // ESSEC : fin de la prise de parole du jury qui accorde le temps de réflexion.
+  const essecThinkAtRef = useRef<number | null>(null);
   const [closed, setClosed] = useState(false);
   const closedRef = useRef(false);
   closedRef.current = closed;
@@ -446,7 +459,7 @@ function Part7() {
     nextTurns: Turn[],
     status: string,
     debriefText = "",
-    feedback?: { percentile: number | null; feedback_source: "nouveau" | "ancien"; feedback_evaluation_id: string | null },
+    feedback?: { percentile: number | null; feedback_source: "nouveau"; feedback_evaluation_id: string | null },
   ) {
     if (!user) return;
     try {
@@ -464,6 +477,7 @@ function Part7() {
           support_text: supportRef.current?.text ?? "",
           inseec_image: inseecImageRef.current?.description ?? "",
           phase_timings: phaseTimingsRef.current,
+          tirages: tiragesRef.current,
         };
         const { data, error } = await supabase
           .from("interview_sessions")
@@ -476,7 +490,7 @@ function Part7() {
       } else {
         const { error } = await supabase
           .from("interview_sessions")
-          .update({ turns: nextTurns, phase_timings: phaseTimingsRef.current, status, debrief: debriefText, ...(feedback ?? {}), updated_at: new Date().toISOString() })
+          .update({ turns: nextTurns, phase_timings: phaseTimingsRef.current, tirages: tiragesRef.current, status, debrief: debriefText, ...(feedback ?? {}), updated_at: new Date().toISOString() })
           .eq("id", sessionIdRef.current);
         if (error) throw error;
       }
@@ -520,6 +534,20 @@ function Part7() {
   }
 
 
+  function recordClermontImpact(axis: ImpactAxis) {
+    tiragesRef.current = {
+      ...tiragesRef.current,
+      clermont_impact: { axe: IMPACT_AXIS_LABEL[axis], question: clermontQuestionsRef.current[axis] },
+    };
+  }
+
+  /** emlyon : première prise de parole du candidat sur la première carte. */
+  function startEmlyonCardsMeasure() {
+    if (emlyonMeasureRef.current !== "announced") return;
+    emlyonMeasureRef.current = "started";
+    agent.markMeasureStart("emlyon-cartes");
+  }
+
   function showEdhecPresentationTimer() {
     if (edhecScreenPhaseRef.current !== "preparing") return;
     setEdhecScreenPhase("presenting");
@@ -539,6 +567,10 @@ function Part7() {
     // depuis sa dernière réponse compte, sinon les relances repoussent les paliers.
     if (silenceSinceRef.current === null) silenceSinceRef.current = Date.now();
     const normalized = normalizeInterviewText(text);
+    if (emlyonMeasureRef.current === "triggered") emlyonMeasureRef.current = "announced";
+    if (config.school === "ESSEC" && /prenez quelques secondes pour reflechir/.test(normalized)) {
+      essecThinkAtRef.current = Date.now();
+    }
     // Le jury enchaîne parfois transition puis question en deux messages :
     // tout nouveau message annule le secours en attente.
     if (handRescueTimerRef.current) {
@@ -563,7 +595,7 @@ function Part7() {
     // Montpellier BS : le jury propose de changer de situation → retour à la grille.
     if (
       config.school === "Montpellier BS" &&
-      /merci passons maintenant aux situations a vous de choisir celle qui vous inspire/.test(normalized)
+      MONTPELLIER_PASSAGE_RE.test(normalized)
     ) {
       setMbsSituationsStarted(true);
     }
@@ -589,6 +621,7 @@ function Part7() {
         if (detectedAxis && !clermontAxisSentRef.current) {
           clermontAxisSentRef.current = true;
           clermontAxisRef.current = detectedAxis;
+          recordClermontImpact(detectedAxis);
           startPhase("clermont-impact", "Question Impact");
         }
         const question = clermontQuestionsRef.current[axis];
@@ -664,6 +697,7 @@ function Part7() {
     // EDHEC : si le candidat commence avant la fin de la préparation, l'écran
     // passe immédiatement au compteur de présentation. Le jury reste silencieux.
     if (config.school === "EDHEC") showEdhecPresentationTimer();
+    if (config.school === "emlyon") startEmlyonCardsMeasure();
     const nextTurns: Turn[] = [
       ...turnsRef.current,
       {
@@ -690,6 +724,7 @@ function Part7() {
       if (axis) {
         clermontAxisSentRef.current = true;
         clermontAxisRef.current = axis;
+        recordClermontImpact(axis);
         startPhase("clermont-impact", "Question Impact");
       }
     }
@@ -724,6 +759,7 @@ function Part7() {
 
   /** Le candidat reprend la parole : le compte des 5 s est annulé. */
   function handleCandidateVoice() {
+    if (config.school === "emlyon") startEmlyonCardsMeasure();
     if (config.school !== "emlyon" || emlyonTriggeredRef.current) return;
     emlyonSilenceRef.current.voice();
     if (emlyonSilenceTimerRef.current) {
@@ -737,6 +773,7 @@ function Part7() {
     emlyonTriggeredRef.current = true;
     setCardsStage("cards");
     startPhase("emlyon-cartes", "Épreuve des 4 cartes");
+    emlyonMeasureRef.current = "triggered";
     const instruction =
       `La présentation est terminée. Ta prochaine prise de parole commence par cette phrase et ne contient aucune autre question avant : « ${EMLYON_CARDS_PHRASE} », dite mot pour mot, puis énonce les quatre questions tirées (Expérience, Personnalité, Projet, Créativité) telles qu'elles figurent dans ta conduite, sans les reformuler, et laisse le candidat choisir son ordre en terminant par « Par quelle carte souhaitez-vous commencer ? ».`;
     emlyonCardsInstructionRef.current = instruction;
@@ -807,7 +844,13 @@ function Part7() {
         cardsStageRef.current === "cards" ||
         edhecScreenPhaseRef.current === "preparing" ||
         // Réflexion accordée après un démarrage de phase décidé par l'application.
-        (phaseStartAt !== null && now - phaseStartAt < 30_000);
+        (phaseStartAt !== null && now - phaseStartAt < 30_000) ||
+        // ESSEC : 30 s de réflexion après « prenez quelques secondes pour réfléchir ».
+        (essecThinkAtRef.current !== null && now - essecThinkAtRef.current < 30_000) ||
+        // EDHEC : aucune relance avant la fin de la présentation (transition).
+        (config.school === "EDHEC" && edhecStageRef.current !== "after") ||
+        // GEM : aucune relance pendant l'interview inversée (hors minute de synthèse).
+        (config.school === "GEM (Grenoble EM)" && agent.currentPhaseId() === "gem-inversee");
       // Fin de pause : le compteur repart de zéro, pas de rafale de relances.
       if (silencePausedRef.current && !paused) {
         silenceSinceRef.current = null;
@@ -887,6 +930,10 @@ function Part7() {
     setDraft("");
     askedAtRef.current = null;
     setDebrief("");
+    setFeedbackFailed(false);
+    tiragesRef.current = {};
+    emlyonMeasureRef.current = "idle";
+    essecThinkAtRef.current = null;
     setClosed(false);
     setPhaseTimings([]);
     phaseTimingsRef.current = [];
@@ -952,7 +999,8 @@ function Part7() {
       // résolus avant le démarrage de l'agent pour ne jamais lui transmettre
       // une variable dynamique vide.
       const gemPersona = config.school === "GEM (Grenoble EM)" ? pickGemPersona() : "";
-      const essecSituation = config.school === "ESSEC" ? pickEssecSituation() : null;
+      const essecTiree = config.school === "ESSEC" ? pickEssecSituationTiree() : null;
+      const essecSituation = essecTiree?.enonce ?? null;
       const emlyonDraw = config.school === "emlyon" ? drawEmlyonCards() : null;
       setEmlyonCards(emlyonDraw);
       setCardsStage("before");
@@ -980,6 +1028,24 @@ function Part7() {
       setInseecDone(false);
       clermontAxisOfferedRef.current = false;
       clermontAxisSentRef.current = false;
+      tiragesRef.current = {
+        ...(emlyonDraw ? { emlyon_cartes: emlyonCartesEtiquetees(emlyonDraw) } : {}),
+        ...(kedgeDraw
+          ? {
+              kedge_cartes: [
+                { nom: "Trait d'Union", texte: kedgeDraw.odd },
+                { nom: "Autoportrait", texte: kedgeDraw.autoportrait },
+                { nom: "Trait d'Action", texte: kedgeDraw.action },
+                { nom: "Trait de Pensée", texte: kedgeDraw.pensee },
+                { nom: "Trait d'Esprit", texte: kedgeDraw.esprit },
+              ],
+            }
+          : {}),
+        ...(edhecDraw ? { edhec_mot: edhecDraw } : {}),
+        ...(essecTiree ? { essec_situation: essecTiree } : {}),
+        ...(config.school === "TBS Education" && chosenArticle?.title ? { tbs_article: chosenArticle.title } : {}),
+        ...(gemPersona ? { gem_personnage: gemPersona } : {}),
+      };
 
       await agent.start({
         school,
@@ -1063,6 +1129,51 @@ function Part7() {
     setDraft("");
   }
 
+  /** Chaîne évaluation → rédacteur sur une session enregistrée (une relance automatique). */
+  function feedbackPourSession(sid: string | null) {
+    return produireFeedback({
+      evaluer: async () => (sid ? runEvaluation({ data: { sessionId: sid } }) : { ok: false }),
+      rediger: (evaluationId) => runRedacteur({ data: { sessionId: sid!, evaluationId, context } }),
+    });
+  }
+
+  /** « Réessayer » : relance la chaîne et enregistre le feedback sur la même session. */
+  async function retryFeedback(sid: string, current: boolean) {
+    setRetrying((prev) => new Set(prev).add(sid));
+    try {
+      const res = await feedbackPourSession(sid);
+      if (!res.ok) {
+        toast.error(FEEDBACK_ECHEC_MESSAGE);
+        return;
+      }
+      const { error } = await supabase
+        .from("interview_sessions")
+        .update({
+          debrief: res.debrief,
+          percentile: res.percentile,
+          feedback_source: res.source,
+          feedback_evaluation_id: res.evaluationId,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", sid);
+      if (error) console.error(error);
+      if (current) {
+        setDebrief(res.debrief);
+        setFeedbackFailed(false);
+      }
+      void queryClient.invalidateQueries({ queryKey: ["interview_sessions", user?.id] });
+    } catch (e) {
+      console.error(e);
+      toast.error(FEEDBACK_ECHEC_MESSAGE);
+    } finally {
+      setRetrying((prev) => {
+        const next = new Set(prev);
+        next.delete(sid);
+        return next;
+      });
+    }
+  }
+
   /** Fin de l'entretien : débrief complet si la clôture a eu lieu, sinon incomplet. */
   async function finish() {
     // Arrêt volontaire : la déconnexion qui suit ne doit déclencher ni toast
@@ -1083,38 +1194,24 @@ function Part7() {
       // Statut final enregistré avant l'évaluation (l'évaluateur relit la session).
       await persist(finalTurns, finalStatus);
       const sid = sessionIdRef.current;
-      const ancien = () => askDebrief({
-        data: {
-          context,
-          turns: finalTurns,
-          variant,
-          complete,
-          phaseTimings: phaseTimingsRef.current,
-          ...(support ? { support } : {}),
-          ...(inseecImageRef.current
-            ? {
-                inseecImage: `image choisie par le candidat pour se présenter : ${inseecImageRef.current.shortLabel}. Description : ${inseecImageRef.current.description}`,
-              }
-            : {}),
-        },
-      });
-      const res = await produireFeedback({
-        evaluer: async () => (sid ? runEvaluation({ data: { sessionId: sid } }) : { ok: false }),
-        rediger: (evaluationId) => runRedacteur({ data: { sessionId: sid!, evaluationId, context } }),
-        ancien,
-      });
-
-      setDebrief(res.debrief);
+      const res = await feedbackPourSession(sid);
       setComplete(complete);
       setPhase("done");
-      void persist(finalTurns, finalStatus, res.debrief, {
-        percentile: res.percentile,
-        feedback_source: res.source,
-        feedback_evaluation_id: res.evaluationId,
-      });
+      if (res.ok) {
+        setDebrief(res.debrief);
+        void persist(finalTurns, finalStatus, res.debrief, {
+          percentile: res.percentile,
+          feedback_source: res.source,
+          feedback_evaluation_id: res.evaluationId,
+        });
+      } else {
+        setFeedbackFailed(true);
+      }
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Débrief indisponible.");
-      setPhase("running");
+      console.error(error);
+      setComplete(complete);
+      setFeedbackFailed(true);
+      setPhase("done");
     } finally {
       setBusy(false);
     }
@@ -1378,6 +1475,10 @@ function Part7() {
                           onClick={() => {
                             mbsActiveRef.current = s;
                             setMbsActive(s);
+                            tiragesRef.current = {
+                              ...tiragesRef.current,
+                              montpellier_situations: [...(tiragesRef.current.montpellier_situations ?? []), s.text],
+                            };
                             agent.notifyContext(
                               `Le candidat vient de choisir à l'écran la situation suivante à développer : "${s.text}". Attends qu'il commence à raconter, puis creuse normalement (concret, recul) sur cette situation précise.`,
                             );
@@ -1521,6 +1622,16 @@ function Part7() {
           </div>
           </div>
         </Card>
+      ) : null}
+
+      {feedbackFailed && !debrief ? (
+        <div className="mt-6 flex flex-col gap-6">
+          <FeedbackEchec
+            busy={sessionIdRef.current ? retrying.has(sessionIdRef.current) : false}
+            onRetry={sessionIdRef.current ? () => void retryFeedback(sessionIdRef.current!, true) : undefined}
+          />
+          {turns.length ? <InterviewTranscript turns={turns} /> : null}
+        </div>
       ) : null}
 
       {debrief ? (
@@ -1707,7 +1818,7 @@ function Part7() {
                               positioningInBanner
                             />
                           ) : (
-                            <p className="m-0 text-[15px] text-[var(--gris-doux)]">Pas de débrief : entretien interrompu.</p>
+                            <FeedbackEchec busy={retrying.has(s.id)} onRetry={() => void retryFeedback(s.id, false)} />
                           )}
                           <InterviewTranscript turns={s.turns ?? []} />
                         </div>
@@ -1722,6 +1833,21 @@ function Part7() {
         </Card>
       ) : null}
       <PartNav prev="/partie-7" className="mt-10" />
+    </div>
+  );
+}
+
+/** Écran d'échec du feedback : l'entretien reste enregistré et consultable. */
+function FeedbackEchec({ busy, onRetry }: { busy: boolean; onRetry?: (() => void) | undefined }) {
+  return (
+    <div className="flex flex-col items-start gap-3 rounded-[14px] border border-destructive/40 bg-destructive/5 px-4 py-4">
+      <p className="m-0 text-[15px] text-destructive md:text-[16px]">{FEEDBACK_ECHEC_MESSAGE}</p>
+      {onRetry ? (
+        <Button type="button" variant="outline" onClick={onRetry} disabled={busy}>
+          {busy ? <Loader2 className="size-4 animate-spin" /> : <RotateCcw className="size-4" />}
+          Réessayer
+        </Button>
+      ) : null}
     </div>
   );
 }

@@ -30,7 +30,7 @@ const MESURES: Record<string, Record<string, string[]>> = {
   essec: { presentation_longue: ["essec-presentation"] },
   clermont: { question_impact: ["clermont-impact"] },
   inseec: { image: ["inseec-image-monologue", "inseec-image"] },
-  em_strasbourg: { pitch: [] },
+  em_strasbourg: { pitch: ["em-strasbourg-pitch"] },
 };
 
 /** Durées mesurées par le code et pénalités qui en découlent. Dans le doute : aucune pénalité. */

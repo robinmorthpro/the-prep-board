@@ -221,3 +221,9 @@ export function pickEssecSituation(): string {
   const index = Math.floor(Math.random() * ESSEC_SITUATIONS_JURY.length);
   return (ESSEC_SITUATIONS_JURY[index] ?? ESSEC_SITUATIONS_JURY[0]!).enonce;
 }
+
+/** Mise en situation tirée pour le jury, avec sa compétence visée (transmise au rédacteur). */
+export function pickEssecSituationTiree(random: () => number = Math.random): { enonce: string; competence: string } {
+  const s = ESSEC_SITUATIONS_JURY[Math.floor(random() * ESSEC_SITUATIONS_JURY.length)] ?? ESSEC_SITUATIONS_JURY[0]!;
+  return { enonce: s.enonce, competence: s.competence };
+}

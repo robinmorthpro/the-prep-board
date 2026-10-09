@@ -12,7 +12,7 @@ Pas de critère à part : chaque carte est notée dans son critère. Le total re
 
 ### Le format
 
-1. **Présentation** : le jury demande une présentation d'environ une minute. Sa brièveté n'est jamais pénalisée. La phrase de fin comme perche n'est pas obligatoire, et son absence n'est jamais pénalisée : la première question suit les cartes.
+1. **Présentation** : le jury demande une présentation d'environ une minute. Sa brièveté n'est jamais pénalisée. La phrase de fin comme perche n'est pas obligatoire, et son absence n'est jamais pénalisée : la première question suit les cartes. À l'emlyon, la durée et la phrase de fin ne comptent pas dans les niveaux de la Présentation : le N4 reste accessible sans elles.
 2. **Les 4 cartes** (environ 15 minutes) : Expérience, Personnalité, Projet, Créativité, tirées au hasard et énoncées mot pour mot. Le candidat choisit l'ordre et le temps passé sur chacune.
 3. **Échange libre** (8 à 10 minutes).
 

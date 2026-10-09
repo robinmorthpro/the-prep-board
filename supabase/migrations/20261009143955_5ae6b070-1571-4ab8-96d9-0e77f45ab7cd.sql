@@ -1,0 +1,1 @@
+ALTER TABLE public.interview_sessions ADD COLUMN IF NOT EXISTS tirages jsonb NOT NULL DEFAULT '{}'::jsonb;

@@ -93,6 +93,20 @@ export const CLERMONT_IMPACT_QUESTIONS: Record<ImpactAxis, string[]> = {
 /** Nombre de questions par axe : le round robin reboucle à 0 après la dernière. */
 export const CLERMONT_IMPACT_COUNT = 24;
 
+/** Questions 1 à 12 de chaque axe : publiées dans le module Questions clés. */
+export const CLERMONT_IMPACT_MODULE: Record<ImpactAxis, string[]> = {
+  people: CLERMONT_IMPACT_QUESTIONS.people.slice(0, 12),
+  planet: CLERMONT_IMPACT_QUESTIONS.planet.slice(0, 12),
+  profit: CLERMONT_IMPACT_QUESTIONS.profit.slice(0, 12),
+};
+
+/** Questions 13 à 24 de chaque axe : réservées au jury, jamais publiées. */
+export const CLERMONT_IMPACT_JURY: Record<ImpactAxis, string[]> = {
+  people: CLERMONT_IMPACT_QUESTIONS.people.slice(12),
+  planet: CLERMONT_IMPACT_QUESTIONS.planet.slice(12),
+  profit: CLERMONT_IMPACT_QUESTIONS.profit.slice(12),
+};
+
 /** Libellé affiché / prononcé pour chaque axe. */
 export const IMPACT_AXIS_LABEL: Record<ImpactAxis, string> = {
   people: "People",
