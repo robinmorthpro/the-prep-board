@@ -21,6 +21,7 @@ import { useSession } from "@/hooks/useSession";
 import { useJuryAgent } from "@/hooks/useJuryAgent";
 import { supabase } from "@/integrations/supabase/client";
 import { debriefInterview } from "@/lib/ai.functions";
+import { evaluateInterview } from "@/lib/evaluateur.functions";
 import {
   useCareerProject,
   useExperiences,
@@ -171,6 +172,7 @@ function Part7() {
   const readSupport = useServerFn(extractSupportText);
 
   const askDebrief = useServerFn(debriefInterview);
+  const runEvaluation = useServerFn(evaluateInterview);
 
   const queryClient = useQueryClient();
   const { data: sessions = [] } = useInterviewSessions(user?.id);
@@ -1049,7 +1051,11 @@ function Part7() {
       setDebrief(res.debrief);
       setComplete(complete);
       setPhase("done");
-      void persist(finalTurns, complete ? "done" : "stopped", res.debrief);
+      void persist(finalTurns, complete ? "done" : "stopped", res.debrief).then(() => {
+        // Nouvel évaluateur, en coulisses : jamais attendu, jamais affiché.
+        const sid = sessionIdRef.current;
+        if (sid) void runEvaluation({ data: { sessionId: sid } }).catch(() => {});
+      });
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Débrief indisponible.");
       setPhase("running");

@@ -1,0 +1,3112 @@
+{
+  "version": "2026-10-09",
+  "description": "Barème The Prepboard : source unique pour le code. L'évaluateur rend un niveau par case (format-sortie.md) ; le code calcule points, note par critère, note sur 20, pénalités et percentile. Sources : sources.md.",
+  "niveaux": [
+    "N4",
+    "N3",
+    "N2",
+    "N1",
+    "non observé"
+  ],
+  "ordre_de_calcul": [
+    "1. Si entretien_interrompu = true : arrêt. Ni note, ni percentile ; mention « interrompu » ; feedback de fond seulement.",
+    "2. Cases « non observé » : non évaluées, exclues (regles.non_observe). Aucun report.",
+    "3. Points de chaque case évaluée selon son niveau (grilles.<grille>.criteres[].cases[].points).",
+    "4. Note du critère = somme de ses cases évaluées (plancher 0) ; critère sans case évaluée = non noté.",
+    "5. diviseur = total_brut − somme des points max des cases non évaluées.",
+    "6. note_sur_20 = somme des points des cases évaluées × 20 / diviseur (aucun arrondi intermédiaire).",
+    "7. note_finale = note_sur_20 − 0,5 × nombre de pénalités de durée (durées mesurées par le code) ; plancher 0.",
+    "8. Percentile = table regles.percentile appliquée à note_finale (ligne inférieure ; jamais sous P1 ni au-dessus de P99)."
+  ],
+  "grilles": {
+    "classique": {
+      "criteres": [
+        {
+          "cle": "presentation",
+          "nom": "Présentation",
+          "total": 2,
+          "cases": [
+            {
+              "cle": "presentation",
+              "nom": "Présentation",
+              "points": {
+                "N4": 2,
+                "N3": 1.5,
+                "N2": 1,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "experiences",
+          "nom": "Expériences et personnalité",
+          "total": 5,
+          "cases": [
+            {
+              "cle": "recit",
+              "nom": "Récit",
+              "points": {
+                "N4": 2,
+                "N3": 1.5,
+                "N2": 1,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "recul",
+              "nom": "Recul",
+              "points": {
+                "N4": 1.5,
+                "N3": 1,
+                "N2": 0.75,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "projection",
+              "nom": "Projection",
+              "points": {
+                "N4": 1.5,
+                "N3": 1,
+                "N2": 0.75,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "projet",
+          "nom": "Projet professionnel",
+          "total": 4,
+          "cases": [
+            {
+              "cle": "connaissance",
+              "nom": "Connaissance du sujet",
+              "points": {
+                "N4": 1.5,
+                "N3": 1,
+                "N2": 0.75,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "lien_ecole",
+              "nom": "Lien avec l'école",
+              "points": {
+                "N4": 1.5,
+                "N3": 1,
+                "N2": 0.75,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "lien_soi",
+              "nom": "Lien avec soi",
+              "points": {
+                "N4": 1,
+                "N3": 0.75,
+                "N2": 0.5,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "ecole",
+          "nom": "École",
+          "total": 4,
+          "cases": [
+            {
+              "cle": "case1",
+              "nom": "Pourquoi une école de commerce",
+              "points": {
+                "N4": 1,
+                "N3": 0.75,
+                "N2": 0.5,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "case2",
+              "nom": "Pourquoi cette école",
+              "points": {
+                "N4": 1.5,
+                "N3": 1,
+                "N2": 0.75,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "case3",
+              "nom": "Ce qu'il apportera",
+              "points": {
+                "N4": 1,
+                "N3": 0.75,
+                "N2": 0.5,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "case4",
+              "nom": "Connaissance générale",
+              "points": {
+                "N4": 0.5,
+                "N3": 0.4,
+                "N2": 0.25,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "ouverture",
+          "nom": "Ouverture sur le monde",
+          "total": 1,
+          "cases": [
+            {
+              "cle": "actualite",
+              "nom": "Question d'actualité",
+              "points": {
+                "N4": 0.75,
+                "N3": 0.5,
+                "N2": 0.25,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "culture_generale",
+              "nom": "Culture générale et société",
+              "points": {
+                "N4": 0.25,
+                "N3": 0.2,
+                "N2": 0.1,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "destabilisantes",
+          "nom": "Gestion des situations déstabilisantes",
+          "total": 2,
+          "cases": [
+            {
+              "cle": "contestation",
+              "nom": "Contestation",
+              "points": {
+                "N4": 1,
+                "N3": 0.75,
+                "N2": 0.5,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "imprevu",
+              "nom": "Imprévu",
+              "points": {
+                "N4": 1,
+                "N3": 0.75,
+                "N2": 0.5,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "conduite",
+          "nom": "Conduite de l'échange",
+          "total": 1,
+          "cases": [
+            {
+              "cle": "repondre",
+              "nom": "Répondre au bon format",
+              "points": {
+                "N4": 0.5,
+                "N3": 0.4,
+                "N2": 0.25,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "piloter",
+              "nom": "Piloter l'échange",
+              "points": {
+                "N4": 0.5,
+                "N3": 0.4,
+                "N2": 0.25,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "clarte",
+          "nom": "Clarté",
+          "total": 1,
+          "cases": [
+            {
+              "cle": "structure",
+              "nom": "Structure",
+              "points": {
+                "N4": 0.5,
+                "N3": 0.4,
+                "N2": 0.25,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "langage",
+              "nom": "Langage",
+              "points": {
+                "N4": 0.5,
+                "N3": 0.4,
+                "N2": 0.25,
+                "N1": 0
+              }
+            }
+          ]
+        }
+      ],
+      "total_brut": 20,
+      "ramene_sur_20": {
+        "diviseur": 20,
+        "formule": "note_sur_20 = somme des points des critères notés × 20 / diviseur"
+      }
+    },
+    "emlyon": {
+      "criteres": [
+        {
+          "cle": "presentation",
+          "nom": "Présentation",
+          "total": 2,
+          "cases": [
+            {
+              "cle": "presentation",
+              "nom": "Présentation",
+              "points": {
+                "N4": 2,
+                "N3": 1.5,
+                "N2": 1,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "experiences",
+          "nom": "Expériences et personnalité",
+          "total": 5,
+          "cases": [
+            {
+              "cle": "recit",
+              "nom": "Récit",
+              "points": {
+                "N4": 2,
+                "N3": 1.5,
+                "N2": 1,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "recul",
+              "nom": "Recul",
+              "points": {
+                "N4": 1.5,
+                "N3": 1,
+                "N2": 0.75,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "projection",
+              "nom": "Projection",
+              "points": {
+                "N4": 1.5,
+                "N3": 1,
+                "N2": 0.75,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "projet",
+          "nom": "Projet professionnel",
+          "total": 4,
+          "cases": [
+            {
+              "cle": "connaissance",
+              "nom": "Connaissance du sujet",
+              "points": {
+                "N4": 1.5,
+                "N3": 1,
+                "N2": 0.75,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "lien_ecole",
+              "nom": "Lien avec l'école",
+              "points": {
+                "N4": 1.5,
+                "N3": 1,
+                "N2": 0.75,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "lien_soi",
+              "nom": "Lien avec soi",
+              "points": {
+                "N4": 1,
+                "N3": 0.75,
+                "N2": 0.5,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "ecole",
+          "nom": "École",
+          "total": 4,
+          "cases": [
+            {
+              "cle": "case1",
+              "nom": "Pourquoi une école de commerce",
+              "points": {
+                "N4": 1,
+                "N3": 0.75,
+                "N2": 0.5,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "case2",
+              "nom": "Pourquoi cette école",
+              "points": {
+                "N4": 1.5,
+                "N3": 1,
+                "N2": 0.75,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "case3",
+              "nom": "Ce qu'il apportera",
+              "points": {
+                "N4": 1,
+                "N3": 0.75,
+                "N2": 0.5,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "case4",
+              "nom": "Connaissance générale",
+              "points": {
+                "N4": 0.5,
+                "N3": 0.4,
+                "N2": 0.25,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "ouverture",
+          "nom": "Ouverture sur le monde",
+          "total": 1,
+          "cases": [
+            {
+              "cle": "actualite",
+              "nom": "Question d'actualité",
+              "points": {
+                "N4": 0.75,
+                "N3": 0.5,
+                "N2": 0.25,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "culture_generale",
+              "nom": "Culture générale et société",
+              "points": {
+                "N4": 0.25,
+                "N3": 0.2,
+                "N2": 0.1,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "destabilisantes",
+          "nom": "Gestion des situations déstabilisantes",
+          "total": 2,
+          "cases": [
+            {
+              "cle": "contestation",
+              "nom": "Contestation",
+              "points": {
+                "N4": 1,
+                "N3": 0.75,
+                "N2": 0.5,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "imprevu",
+              "nom": "Imprévu",
+              "points": {
+                "N4": 1,
+                "N3": 0.75,
+                "N2": 0.5,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "conduite",
+          "nom": "Conduite de l'échange",
+          "total": 1,
+          "cases": [
+            {
+              "cle": "repondre",
+              "nom": "Répondre au bon format",
+              "points": {
+                "N4": 0.5,
+                "N3": 0.4,
+                "N2": 0.25,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "piloter",
+              "nom": "Piloter l'échange",
+              "points": {
+                "N4": 0.5,
+                "N3": 0.4,
+                "N2": 0.25,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "clarte",
+          "nom": "Clarté",
+          "total": 1,
+          "cases": [
+            {
+              "cle": "structure",
+              "nom": "Structure",
+              "points": {
+                "N4": 0.5,
+                "N3": 0.4,
+                "N2": 0.25,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "langage",
+              "nom": "Langage",
+              "points": {
+                "N4": 0.5,
+                "N3": 0.4,
+                "N2": 0.25,
+                "N1": 0
+              }
+            }
+          ]
+        }
+      ],
+      "total_brut": 20,
+      "ramene_sur_20": {
+        "diviseur": 20,
+        "formule": "note_sur_20 = somme des points des critères notés × 20 / diviseur"
+      }
+    },
+    "essec": {
+      "criteres": [
+        {
+          "cle": "presentation_longue_essec",
+          "nom": "Présentation longue (ESSEC)",
+          "total": 2,
+          "cases": [
+            {
+              "cle": "presentation",
+              "nom": "Présentation longue",
+              "points": {
+                "N4": 2,
+                "N3": 1.5,
+                "N2": 1,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "experiences",
+          "nom": "Expériences et personnalité",
+          "total": 5,
+          "cases": [
+            {
+              "cle": "recit",
+              "nom": "Récit",
+              "points": {
+                "N4": 2,
+                "N3": 1.5,
+                "N2": 1,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "recul",
+              "nom": "Recul",
+              "points": {
+                "N4": 1.5,
+                "N3": 1,
+                "N2": 0.75,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "projection",
+              "nom": "Projection",
+              "points": {
+                "N4": 1.5,
+                "N3": 1,
+                "N2": 0.75,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "projet",
+          "nom": "Projet professionnel",
+          "total": 4,
+          "cases": [
+            {
+              "cle": "connaissance",
+              "nom": "Connaissance du sujet",
+              "points": {
+                "N4": 1.5,
+                "N3": 1,
+                "N2": 0.75,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "lien_ecole",
+              "nom": "Lien avec l'école",
+              "points": {
+                "N4": 1.5,
+                "N3": 1,
+                "N2": 0.75,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "lien_soi",
+              "nom": "Lien avec soi",
+              "points": {
+                "N4": 1,
+                "N3": 0.75,
+                "N2": 0.5,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "ecole",
+          "nom": "École",
+          "total": 4,
+          "cases": [
+            {
+              "cle": "case1",
+              "nom": "Pourquoi une école de commerce",
+              "points": {
+                "N4": 1,
+                "N3": 0.75,
+                "N2": 0.5,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "case2",
+              "nom": "Pourquoi cette école",
+              "points": {
+                "N4": 1.5,
+                "N3": 1,
+                "N2": 0.75,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "case3",
+              "nom": "Ce qu'il apportera",
+              "points": {
+                "N4": 1,
+                "N3": 0.75,
+                "N2": 0.5,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "case4",
+              "nom": "Connaissance générale",
+              "points": {
+                "N4": 0.5,
+                "N3": 0.4,
+                "N2": 0.25,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "ouverture",
+          "nom": "Ouverture sur le monde",
+          "total": 1,
+          "cases": [
+            {
+              "cle": "actualite",
+              "nom": "Question d'actualité",
+              "points": {
+                "N4": 0.75,
+                "N3": 0.5,
+                "N2": 0.25,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "culture_generale",
+              "nom": "Culture générale et société",
+              "points": {
+                "N4": 0.25,
+                "N3": 0.2,
+                "N2": 0.1,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "mise_en_situation_essec",
+          "nom": "Mise en situation (ESSEC)",
+          "total": 3,
+          "cases": [
+            {
+              "cle": "solution",
+              "nom": "Solution",
+              "points": {
+                "N4": 3,
+                "N3": 2,
+                "N2": 1,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "destabilisantes",
+          "nom": "Gestion des situations déstabilisantes",
+          "total": 2,
+          "cases": [
+            {
+              "cle": "contestation",
+              "nom": "Contestation",
+              "points": {
+                "N4": 1,
+                "N3": 0.75,
+                "N2": 0.5,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "imprevu",
+              "nom": "Imprévu",
+              "points": {
+                "N4": 1,
+                "N3": 0.75,
+                "N2": 0.5,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "conduite",
+          "nom": "Conduite de l'échange",
+          "total": 1,
+          "cases": [
+            {
+              "cle": "repondre",
+              "nom": "Répondre au bon format",
+              "points": {
+                "N4": 0.5,
+                "N3": 0.4,
+                "N2": 0.25,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "piloter",
+              "nom": "Piloter l'échange",
+              "points": {
+                "N4": 0.5,
+                "N3": 0.4,
+                "N2": 0.25,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "clarte",
+          "nom": "Clarté",
+          "total": 1,
+          "cases": [
+            {
+              "cle": "structure",
+              "nom": "Structure",
+              "points": {
+                "N4": 0.5,
+                "N3": 0.4,
+                "N2": 0.25,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "langage",
+              "nom": "Langage",
+              "points": {
+                "N4": 0.5,
+                "N3": 0.4,
+                "N2": 0.25,
+                "N1": 0
+              }
+            }
+          ]
+        }
+      ],
+      "total_brut": 23,
+      "ramene_sur_20": {
+        "diviseur": 23,
+        "formule": "note_sur_20 = somme des points des critères notés × 20 / diviseur"
+      }
+    },
+    "edhec": {
+      "criteres": [
+        {
+          "cle": "presentation_mot_edhec",
+          "nom": "Présentation sur un mot (EDHEC)",
+          "total": 3,
+          "cases": [
+            {
+              "cle": "presentation",
+              "nom": "Présentation sur un mot",
+              "points": {
+                "N4": 3,
+                "N3": 2.25,
+                "N2": 1.5,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "experiences",
+          "nom": "Expériences et personnalité",
+          "total": 5,
+          "cases": [
+            {
+              "cle": "recit",
+              "nom": "Récit",
+              "points": {
+                "N4": 2,
+                "N3": 1.5,
+                "N2": 1,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "recul",
+              "nom": "Recul",
+              "points": {
+                "N4": 1.5,
+                "N3": 1,
+                "N2": 0.75,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "projection",
+              "nom": "Projection",
+              "points": {
+                "N4": 1.5,
+                "N3": 1,
+                "N2": 0.75,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "projet",
+          "nom": "Projet professionnel",
+          "total": 4,
+          "cases": [
+            {
+              "cle": "connaissance",
+              "nom": "Connaissance du sujet",
+              "points": {
+                "N4": 1.5,
+                "N3": 1,
+                "N2": 0.75,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "lien_ecole",
+              "nom": "Lien avec l'école",
+              "points": {
+                "N4": 1.5,
+                "N3": 1,
+                "N2": 0.75,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "lien_soi",
+              "nom": "Lien avec soi",
+              "points": {
+                "N4": 1,
+                "N3": 0.75,
+                "N2": 0.5,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "ecole",
+          "nom": "École",
+          "total": 4,
+          "cases": [
+            {
+              "cle": "case1",
+              "nom": "Pourquoi une école de commerce",
+              "points": {
+                "N4": 1,
+                "N3": 0.75,
+                "N2": 0.5,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "case2",
+              "nom": "Pourquoi cette école",
+              "points": {
+                "N4": 1.5,
+                "N3": 1,
+                "N2": 0.75,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "case3",
+              "nom": "Ce qu'il apportera",
+              "points": {
+                "N4": 1,
+                "N3": 0.75,
+                "N2": 0.5,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "case4",
+              "nom": "Connaissance générale",
+              "points": {
+                "N4": 0.5,
+                "N3": 0.4,
+                "N2": 0.25,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "ouverture",
+          "nom": "Ouverture sur le monde",
+          "total": 1,
+          "cases": [
+            {
+              "cle": "actualite",
+              "nom": "Question d'actualité",
+              "points": {
+                "N4": 0.75,
+                "N3": 0.5,
+                "N2": 0.25,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "culture_generale",
+              "nom": "Culture générale et société",
+              "points": {
+                "N4": 0.25,
+                "N3": 0.2,
+                "N2": 0.1,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "destabilisantes",
+          "nom": "Gestion des situations déstabilisantes",
+          "total": 2,
+          "cases": [
+            {
+              "cle": "contestation",
+              "nom": "Contestation",
+              "points": {
+                "N4": 1,
+                "N3": 0.75,
+                "N2": 0.5,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "imprevu",
+              "nom": "Imprévu",
+              "points": {
+                "N4": 1,
+                "N3": 0.75,
+                "N2": 0.5,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "conduite",
+          "nom": "Conduite de l'échange",
+          "total": 1,
+          "cases": [
+            {
+              "cle": "repondre",
+              "nom": "Répondre au bon format",
+              "points": {
+                "N4": 0.5,
+                "N3": 0.4,
+                "N2": 0.25,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "piloter",
+              "nom": "Piloter l'échange",
+              "points": {
+                "N4": 0.5,
+                "N3": 0.4,
+                "N2": 0.25,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "clarte",
+          "nom": "Clarté",
+          "total": 1,
+          "cases": [
+            {
+              "cle": "structure",
+              "nom": "Structure",
+              "points": {
+                "N4": 0.5,
+                "N3": 0.4,
+                "N2": 0.25,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "langage",
+              "nom": "Langage",
+              "points": {
+                "N4": 0.5,
+                "N3": 0.4,
+                "N2": 0.25,
+                "N1": 0
+              }
+            }
+          ]
+        }
+      ],
+      "total_brut": 21,
+      "ramene_sur_20": {
+        "diviseur": 21,
+        "formule": "note_sur_20 = somme des points des critères notés × 20 / diviseur"
+      }
+    },
+    "gem": {
+      "criteres": [
+        {
+          "cle": "expose_gem",
+          "nom": "Exposé (GEM)",
+          "total": 3,
+          "cases": [
+            {
+              "cle": "expose",
+              "nom": "Exposé",
+              "points": {
+                "N4": 3,
+                "N3": 2,
+                "N2": 1,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "interview_inversee_gem",
+          "nom": "Interview inversée (GEM)",
+          "total": 3,
+          "cases": [
+            {
+              "cle": "questions",
+              "nom": "Questions",
+              "points": {
+                "N4": 2,
+                "N3": 1.5,
+                "N2": 1,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "synthese",
+              "nom": "Synthèse",
+              "points": {
+                "N4": 1,
+                "N3": 0.75,
+                "N2": 0.5,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "presentation",
+          "nom": "Présentation",
+          "total": 2,
+          "cases": [
+            {
+              "cle": "presentation",
+              "nom": "Présentation",
+              "points": {
+                "N4": 2,
+                "N3": 1.5,
+                "N2": 1,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "experiences",
+          "nom": "Expériences et personnalité",
+          "total": 5,
+          "cases": [
+            {
+              "cle": "recit",
+              "nom": "Récit",
+              "points": {
+                "N4": 2,
+                "N3": 1.5,
+                "N2": 1,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "recul",
+              "nom": "Recul",
+              "points": {
+                "N4": 1.5,
+                "N3": 1,
+                "N2": 0.75,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "projection",
+              "nom": "Projection",
+              "points": {
+                "N4": 1.5,
+                "N3": 1,
+                "N2": 0.75,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "projet",
+          "nom": "Projet professionnel",
+          "total": 4,
+          "cases": [
+            {
+              "cle": "connaissance",
+              "nom": "Connaissance du sujet",
+              "points": {
+                "N4": 1.5,
+                "N3": 1,
+                "N2": 0.75,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "lien_ecole",
+              "nom": "Lien avec l'école",
+              "points": {
+                "N4": 1.5,
+                "N3": 1,
+                "N2": 0.75,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "lien_soi",
+              "nom": "Lien avec soi",
+              "points": {
+                "N4": 1,
+                "N3": 0.75,
+                "N2": 0.5,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "ecole",
+          "nom": "École",
+          "total": 4,
+          "cases": [
+            {
+              "cle": "case1",
+              "nom": "Pourquoi une école de commerce",
+              "points": {
+                "N4": 1,
+                "N3": 0.75,
+                "N2": 0.5,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "case2",
+              "nom": "Pourquoi cette école",
+              "points": {
+                "N4": 1.5,
+                "N3": 1,
+                "N2": 0.75,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "case3",
+              "nom": "Ce qu'il apportera",
+              "points": {
+                "N4": 1,
+                "N3": 0.75,
+                "N2": 0.5,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "case4",
+              "nom": "Connaissance générale",
+              "points": {
+                "N4": 0.5,
+                "N3": 0.4,
+                "N2": 0.25,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "ouverture",
+          "nom": "Ouverture sur le monde",
+          "total": 1,
+          "cases": [
+            {
+              "cle": "actualite",
+              "nom": "Question d'actualité",
+              "points": {
+                "N4": 0.75,
+                "N3": 0.5,
+                "N2": 0.25,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "culture_generale",
+              "nom": "Culture générale et société",
+              "points": {
+                "N4": 0.25,
+                "N3": 0.2,
+                "N2": 0.1,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "destabilisantes",
+          "nom": "Gestion des situations déstabilisantes",
+          "total": 2,
+          "cases": [
+            {
+              "cle": "contestation",
+              "nom": "Contestation",
+              "points": {
+                "N4": 1,
+                "N3": 0.75,
+                "N2": 0.5,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "imprevu",
+              "nom": "Imprévu",
+              "points": {
+                "N4": 1,
+                "N3": 0.75,
+                "N2": 0.5,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "conduite",
+          "nom": "Conduite de l'échange",
+          "total": 1,
+          "cases": [
+            {
+              "cle": "repondre",
+              "nom": "Répondre au bon format",
+              "points": {
+                "N4": 0.5,
+                "N3": 0.4,
+                "N2": 0.25,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "piloter",
+              "nom": "Piloter l'échange",
+              "points": {
+                "N4": 0.5,
+                "N3": 0.4,
+                "N2": 0.25,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "clarte",
+          "nom": "Clarté",
+          "total": 1,
+          "cases": [
+            {
+              "cle": "structure",
+              "nom": "Structure",
+              "points": {
+                "N4": 0.5,
+                "N3": 0.4,
+                "N2": 0.25,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "langage",
+              "nom": "Langage",
+              "points": {
+                "N4": 0.5,
+                "N3": 0.4,
+                "N2": 0.25,
+                "N1": 0
+              }
+            }
+          ]
+        }
+      ],
+      "total_brut": 26,
+      "ramene_sur_20": {
+        "diviseur": 26,
+        "formule": "note_sur_20 = somme des points des critères notés × 20 / diviseur"
+      }
+    },
+    "tbs": {
+      "criteres": [
+        {
+          "cle": "article_tbs",
+          "nom": "Article de presse (TBS)",
+          "total": 3,
+          "cases": [
+            {
+              "cle": "article",
+              "nom": "Article de presse",
+              "points": {
+                "N4": 3,
+                "N3": 2,
+                "N2": 1,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "presentation",
+          "nom": "Présentation",
+          "total": 2,
+          "cases": [
+            {
+              "cle": "presentation",
+              "nom": "Présentation",
+              "points": {
+                "N4": 2,
+                "N3": 1.5,
+                "N2": 1,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "experiences",
+          "nom": "Expériences et personnalité",
+          "total": 5,
+          "cases": [
+            {
+              "cle": "recit",
+              "nom": "Récit",
+              "points": {
+                "N4": 2,
+                "N3": 1.5,
+                "N2": 1,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "recul",
+              "nom": "Recul",
+              "points": {
+                "N4": 1.5,
+                "N3": 1,
+                "N2": 0.75,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "projection",
+              "nom": "Projection",
+              "points": {
+                "N4": 1.5,
+                "N3": 1,
+                "N2": 0.75,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "projet",
+          "nom": "Projet professionnel",
+          "total": 4,
+          "cases": [
+            {
+              "cle": "connaissance",
+              "nom": "Connaissance du sujet",
+              "points": {
+                "N4": 1.5,
+                "N3": 1,
+                "N2": 0.75,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "lien_ecole",
+              "nom": "Lien avec l'école",
+              "points": {
+                "N4": 1.5,
+                "N3": 1,
+                "N2": 0.75,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "lien_soi",
+              "nom": "Lien avec soi",
+              "points": {
+                "N4": 1,
+                "N3": 0.75,
+                "N2": 0.5,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "ecole",
+          "nom": "École",
+          "total": 4,
+          "cases": [
+            {
+              "cle": "case1",
+              "nom": "Pourquoi une école de commerce",
+              "points": {
+                "N4": 1,
+                "N3": 0.75,
+                "N2": 0.5,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "case2",
+              "nom": "Pourquoi cette école",
+              "points": {
+                "N4": 1.5,
+                "N3": 1,
+                "N2": 0.75,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "case3",
+              "nom": "Ce qu'il apportera",
+              "points": {
+                "N4": 1,
+                "N3": 0.75,
+                "N2": 0.5,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "case4",
+              "nom": "Connaissance générale",
+              "points": {
+                "N4": 0.5,
+                "N3": 0.4,
+                "N2": 0.25,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "destabilisantes",
+          "nom": "Gestion des situations déstabilisantes",
+          "total": 2,
+          "cases": [
+            {
+              "cle": "contestation",
+              "nom": "Contestation",
+              "points": {
+                "N4": 1,
+                "N3": 0.75,
+                "N2": 0.5,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "imprevu",
+              "nom": "Imprévu",
+              "points": {
+                "N4": 1,
+                "N3": 0.75,
+                "N2": 0.5,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "conduite",
+          "nom": "Conduite de l'échange",
+          "total": 1,
+          "cases": [
+            {
+              "cle": "repondre",
+              "nom": "Répondre au bon format",
+              "points": {
+                "N4": 0.5,
+                "N3": 0.4,
+                "N2": 0.25,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "piloter",
+              "nom": "Piloter l'échange",
+              "points": {
+                "N4": 0.5,
+                "N3": 0.4,
+                "N2": 0.25,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "clarte",
+          "nom": "Clarté",
+          "total": 1,
+          "cases": [
+            {
+              "cle": "structure",
+              "nom": "Structure",
+              "points": {
+                "N4": 0.5,
+                "N3": 0.4,
+                "N2": 0.25,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "langage",
+              "nom": "Langage",
+              "points": {
+                "N4": 0.5,
+                "N3": 0.4,
+                "N2": 0.25,
+                "N1": 0
+              }
+            }
+          ]
+        }
+      ],
+      "total_brut": 22,
+      "ramene_sur_20": {
+        "diviseur": 22,
+        "formule": "note_sur_20 = somme des points des critères notés × 20 / diviseur"
+      }
+    },
+    "kedge": {
+      "criteres": [
+        {
+          "cle": "autoportrait_kedge",
+          "nom": "Autoportrait (KEDGE)",
+          "total": 3,
+          "cases": [
+            {
+              "cle": "presentation",
+              "nom": "Autoportrait",
+              "points": {
+                "N4": 3,
+                "N3": 2.25,
+                "N2": 1.5,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "experiences",
+          "nom": "Expériences et personnalité",
+          "total": 5,
+          "cases": [
+            {
+              "cle": "recit",
+              "nom": "Récit",
+              "points": {
+                "N4": 2,
+                "N3": 1.5,
+                "N2": 1,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "recul",
+              "nom": "Recul",
+              "points": {
+                "N4": 1.5,
+                "N3": 1,
+                "N2": 0.75,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "projection",
+              "nom": "Projection",
+              "points": {
+                "N4": 1.5,
+                "N3": 1,
+                "N2": 0.75,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "projet",
+          "nom": "Projet professionnel",
+          "total": 4,
+          "cases": [
+            {
+              "cle": "connaissance",
+              "nom": "Connaissance du sujet",
+              "points": {
+                "N4": 1.5,
+                "N3": 1,
+                "N2": 0.75,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "lien_ecole",
+              "nom": "Lien avec l'école",
+              "points": {
+                "N4": 1.5,
+                "N3": 1,
+                "N2": 0.75,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "lien_soi",
+              "nom": "Lien avec soi",
+              "points": {
+                "N4": 1,
+                "N3": 0.75,
+                "N2": 0.5,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "ecole",
+          "nom": "École",
+          "total": 4,
+          "cases": [
+            {
+              "cle": "case1",
+              "nom": "Pourquoi une école de commerce",
+              "points": {
+                "N4": 1,
+                "N3": 0.75,
+                "N2": 0.5,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "case2",
+              "nom": "Pourquoi cette école",
+              "points": {
+                "N4": 1.5,
+                "N3": 1,
+                "N2": 0.75,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "case3",
+              "nom": "Ce qu'il apportera",
+              "points": {
+                "N4": 1,
+                "N3": 0.75,
+                "N2": 0.5,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "case4",
+              "nom": "Connaissance générale",
+              "points": {
+                "N4": 0.5,
+                "N3": 0.4,
+                "N2": 0.25,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "ouverture",
+          "nom": "Ouverture sur le monde",
+          "total": 1,
+          "cases": [
+            {
+              "cle": "actualite",
+              "nom": "Question d'actualité",
+              "points": {
+                "N4": 0.75,
+                "N3": 0.5,
+                "N2": 0.25,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "culture_generale",
+              "nom": "Culture générale et société",
+              "points": {
+                "N4": 0.25,
+                "N3": 0.2,
+                "N2": 0.1,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "odd_kedge",
+          "nom": "ODD (KEDGE)",
+          "total": 1,
+          "cases": [
+            {
+              "cle": "odd",
+              "nom": "ODD (carte Trait d'Union)",
+              "points": {
+                "N4": 1,
+                "N3": 0.75,
+                "N2": 0.25,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "destabilisantes",
+          "nom": "Gestion des situations déstabilisantes",
+          "total": 2,
+          "cases": [
+            {
+              "cle": "contestation",
+              "nom": "Contestation",
+              "points": {
+                "N4": 1,
+                "N3": 0.75,
+                "N2": 0.5,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "imprevu",
+              "nom": "Imprévu",
+              "points": {
+                "N4": 1,
+                "N3": 0.75,
+                "N2": 0.5,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "conduite",
+          "nom": "Conduite de l'échange",
+          "total": 1,
+          "cases": [
+            {
+              "cle": "repondre",
+              "nom": "Répondre au bon format",
+              "points": {
+                "N4": 0.5,
+                "N3": 0.4,
+                "N2": 0.25,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "piloter",
+              "nom": "Piloter l'échange",
+              "points": {
+                "N4": 0.5,
+                "N3": 0.4,
+                "N2": 0.25,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "clarte",
+          "nom": "Clarté",
+          "total": 1,
+          "cases": [
+            {
+              "cle": "structure",
+              "nom": "Structure",
+              "points": {
+                "N4": 0.5,
+                "N3": 0.4,
+                "N2": 0.25,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "langage",
+              "nom": "Langage",
+              "points": {
+                "N4": 0.5,
+                "N3": 0.4,
+                "N2": 0.25,
+                "N1": 0
+              }
+            }
+          ]
+        }
+      ],
+      "total_brut": 22,
+      "ramene_sur_20": {
+        "diviseur": 22,
+        "formule": "note_sur_20 = somme des points des critères notés × 20 / diviseur"
+      }
+    },
+    "clermont": {
+      "criteres": [
+        {
+          "cle": "presentation",
+          "nom": "Présentation",
+          "total": 2,
+          "cases": [
+            {
+              "cle": "presentation",
+              "nom": "Présentation",
+              "points": {
+                "N4": 2,
+                "N3": 1.5,
+                "N2": 1,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "experiences",
+          "nom": "Expériences et personnalité",
+          "total": 5,
+          "cases": [
+            {
+              "cle": "recit",
+              "nom": "Récit",
+              "points": {
+                "N4": 2,
+                "N3": 1.5,
+                "N2": 1,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "recul",
+              "nom": "Recul",
+              "points": {
+                "N4": 1.5,
+                "N3": 1,
+                "N2": 0.75,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "projection",
+              "nom": "Projection",
+              "points": {
+                "N4": 1.5,
+                "N3": 1,
+                "N2": 0.75,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "projet",
+          "nom": "Projet professionnel",
+          "total": 4,
+          "cases": [
+            {
+              "cle": "connaissance",
+              "nom": "Connaissance du sujet",
+              "points": {
+                "N4": 1.5,
+                "N3": 1,
+                "N2": 0.75,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "lien_ecole",
+              "nom": "Lien avec l'école",
+              "points": {
+                "N4": 1.5,
+                "N3": 1,
+                "N2": 0.75,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "lien_soi",
+              "nom": "Lien avec soi",
+              "points": {
+                "N4": 1,
+                "N3": 0.75,
+                "N2": 0.5,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "ecole",
+          "nom": "École",
+          "total": 4,
+          "cases": [
+            {
+              "cle": "case1",
+              "nom": "Pourquoi une école de commerce",
+              "points": {
+                "N4": 1,
+                "N3": 0.75,
+                "N2": 0.5,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "case2",
+              "nom": "Pourquoi cette école",
+              "points": {
+                "N4": 1.5,
+                "N3": 1,
+                "N2": 0.75,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "case3",
+              "nom": "Ce qu'il apportera",
+              "points": {
+                "N4": 1,
+                "N3": 0.75,
+                "N2": 0.5,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "case4",
+              "nom": "Connaissance générale",
+              "points": {
+                "N4": 0.5,
+                "N3": 0.4,
+                "N2": 0.25,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "question_impact_clermont",
+          "nom": "Question Impact (Clermont)",
+          "total": 2,
+          "cases": [
+            {
+              "cle": "impact",
+              "nom": "Question Impact",
+              "points": {
+                "N4": 2,
+                "N3": 1.5,
+                "N2": 1,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "destabilisantes",
+          "nom": "Gestion des situations déstabilisantes",
+          "total": 2,
+          "cases": [
+            {
+              "cle": "contestation",
+              "nom": "Contestation",
+              "points": {
+                "N4": 1,
+                "N3": 0.75,
+                "N2": 0.5,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "imprevu",
+              "nom": "Imprévu",
+              "points": {
+                "N4": 1,
+                "N3": 0.75,
+                "N2": 0.5,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "conduite",
+          "nom": "Conduite de l'échange",
+          "total": 1,
+          "cases": [
+            {
+              "cle": "repondre",
+              "nom": "Répondre au bon format",
+              "points": {
+                "N4": 0.5,
+                "N3": 0.4,
+                "N2": 0.25,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "piloter",
+              "nom": "Piloter l'échange",
+              "points": {
+                "N4": 0.5,
+                "N3": 0.4,
+                "N2": 0.25,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "clarte",
+          "nom": "Clarté",
+          "total": 1,
+          "cases": [
+            {
+              "cle": "structure",
+              "nom": "Structure",
+              "points": {
+                "N4": 0.5,
+                "N3": 0.4,
+                "N2": 0.25,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "langage",
+              "nom": "Langage",
+              "points": {
+                "N4": 0.5,
+                "N3": 0.4,
+                "N2": 0.25,
+                "N1": 0
+              }
+            }
+          ]
+        }
+      ],
+      "total_brut": 21,
+      "ramene_sur_20": {
+        "diviseur": 21,
+        "formule": "note_sur_20 = somme des points des critères notés × 20 / diviseur"
+      }
+    },
+    "inseec": {
+      "criteres": [
+        {
+          "cle": "presentation_image_inseec",
+          "nom": "Présentation par l'image (INSEEC)",
+          "total": 2,
+          "cases": [
+            {
+              "cle": "presentation",
+              "nom": "Présentation par l'image",
+              "points": {
+                "N4": 2,
+                "N3": 1.5,
+                "N2": 1,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "experiences",
+          "nom": "Expériences et personnalité",
+          "total": 5,
+          "cases": [
+            {
+              "cle": "recit",
+              "nom": "Récit",
+              "points": {
+                "N4": 2,
+                "N3": 1.5,
+                "N2": 1,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "recul",
+              "nom": "Recul",
+              "points": {
+                "N4": 1.5,
+                "N3": 1,
+                "N2": 0.75,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "projection",
+              "nom": "Projection",
+              "points": {
+                "N4": 1.5,
+                "N3": 1,
+                "N2": 0.75,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "projet",
+          "nom": "Projet professionnel",
+          "total": 4,
+          "cases": [
+            {
+              "cle": "connaissance",
+              "nom": "Connaissance du sujet",
+              "points": {
+                "N4": 1.5,
+                "N3": 1,
+                "N2": 0.75,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "lien_ecole",
+              "nom": "Lien avec l'école",
+              "points": {
+                "N4": 1.5,
+                "N3": 1,
+                "N2": 0.75,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "lien_soi",
+              "nom": "Lien avec soi",
+              "points": {
+                "N4": 1,
+                "N3": 0.75,
+                "N2": 0.5,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "ecole",
+          "nom": "École",
+          "total": 4,
+          "cases": [
+            {
+              "cle": "case1",
+              "nom": "Pourquoi une école de commerce",
+              "points": {
+                "N4": 1,
+                "N3": 0.75,
+                "N2": 0.5,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "case2",
+              "nom": "Pourquoi cette école",
+              "points": {
+                "N4": 1.5,
+                "N3": 1,
+                "N2": 0.75,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "case3",
+              "nom": "Ce qu'il apportera",
+              "points": {
+                "N4": 1,
+                "N3": 0.75,
+                "N2": 0.5,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "case4",
+              "nom": "Connaissance générale",
+              "points": {
+                "N4": 0.5,
+                "N3": 0.4,
+                "N2": 0.25,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "ouverture",
+          "nom": "Ouverture sur le monde",
+          "total": 1,
+          "cases": [
+            {
+              "cle": "actualite",
+              "nom": "Question d'actualité",
+              "points": {
+                "N4": 0.75,
+                "N3": 0.5,
+                "N2": 0.25,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "culture_generale",
+              "nom": "Culture générale et société",
+              "points": {
+                "N4": 0.25,
+                "N3": 0.2,
+                "N2": 0.1,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "destabilisantes",
+          "nom": "Gestion des situations déstabilisantes",
+          "total": 2,
+          "cases": [
+            {
+              "cle": "contestation",
+              "nom": "Contestation",
+              "points": {
+                "N4": 1,
+                "N3": 0.75,
+                "N2": 0.5,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "imprevu",
+              "nom": "Imprévu",
+              "points": {
+                "N4": 1,
+                "N3": 0.75,
+                "N2": 0.5,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "conduite",
+          "nom": "Conduite de l'échange",
+          "total": 1,
+          "cases": [
+            {
+              "cle": "repondre",
+              "nom": "Répondre au bon format",
+              "points": {
+                "N4": 0.5,
+                "N3": 0.4,
+                "N2": 0.25,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "piloter",
+              "nom": "Piloter l'échange",
+              "points": {
+                "N4": 0.5,
+                "N3": 0.4,
+                "N2": 0.25,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "clarte",
+          "nom": "Clarté",
+          "total": 1,
+          "cases": [
+            {
+              "cle": "structure",
+              "nom": "Structure",
+              "points": {
+                "N4": 0.5,
+                "N3": 0.4,
+                "N2": 0.25,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "langage",
+              "nom": "Langage",
+              "points": {
+                "N4": 0.5,
+                "N3": 0.4,
+                "N2": 0.25,
+                "N1": 0
+              }
+            }
+          ]
+        }
+      ],
+      "total_brut": 20,
+      "ramene_sur_20": {
+        "diviseur": 20,
+        "formule": "note_sur_20 = somme des points des critères notés × 20 / diviseur"
+      }
+    },
+    "em_strasbourg": {
+      "criteres": [
+        {
+          "cle": "pitch_em_strasbourg",
+          "nom": "Pitch sur une réussite personnelle (EM Strasbourg)",
+          "total": 2,
+          "cases": [
+            {
+              "cle": "pitch",
+              "nom": "Pitch",
+              "points": {
+                "N4": 2,
+                "N3": 1.5,
+                "N2": 1,
+                "N1": 0.5
+              }
+            }
+          ]
+        },
+        {
+          "cle": "experiences",
+          "nom": "Expériences et personnalité",
+          "total": 5,
+          "cases": [
+            {
+              "cle": "recit",
+              "nom": "Récit",
+              "points": {
+                "N4": 2,
+                "N3": 1.5,
+                "N2": 1,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "recul",
+              "nom": "Recul",
+              "points": {
+                "N4": 1.5,
+                "N3": 1,
+                "N2": 0.75,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "projection",
+              "nom": "Projection",
+              "points": {
+                "N4": 1.5,
+                "N3": 1,
+                "N2": 0.75,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "projet",
+          "nom": "Projet professionnel",
+          "total": 4,
+          "cases": [
+            {
+              "cle": "connaissance",
+              "nom": "Connaissance du sujet",
+              "points": {
+                "N4": 1.5,
+                "N3": 1,
+                "N2": 0.75,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "lien_ecole",
+              "nom": "Lien avec l'école",
+              "points": {
+                "N4": 1.5,
+                "N3": 1,
+                "N2": 0.75,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "lien_soi",
+              "nom": "Lien avec soi",
+              "points": {
+                "N4": 1,
+                "N3": 0.75,
+                "N2": 0.5,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "ecole",
+          "nom": "École",
+          "total": 4,
+          "cases": [
+            {
+              "cle": "case1",
+              "nom": "Pourquoi une école de commerce",
+              "points": {
+                "N4": 1,
+                "N3": 0.75,
+                "N2": 0.5,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "case2",
+              "nom": "Pourquoi cette école",
+              "points": {
+                "N4": 1.5,
+                "N3": 1,
+                "N2": 0.75,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "case3",
+              "nom": "Ce qu'il apportera",
+              "points": {
+                "N4": 1,
+                "N3": 0.75,
+                "N2": 0.5,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "case4",
+              "nom": "Connaissance générale",
+              "points": {
+                "N4": 0.5,
+                "N3": 0.4,
+                "N2": 0.25,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "ouverture",
+          "nom": "Ouverture sur le monde",
+          "total": 1,
+          "cases": [
+            {
+              "cle": "actualite",
+              "nom": "Question d'actualité",
+              "points": {
+                "N4": 0.75,
+                "N3": 0.5,
+                "N2": 0.25,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "culture_generale",
+              "nom": "Culture générale et société",
+              "points": {
+                "N4": 0.25,
+                "N3": 0.2,
+                "N2": 0.1,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "destabilisantes",
+          "nom": "Gestion des situations déstabilisantes",
+          "total": 2,
+          "cases": [
+            {
+              "cle": "contestation",
+              "nom": "Contestation",
+              "points": {
+                "N4": 1,
+                "N3": 0.75,
+                "N2": 0.5,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "imprevu",
+              "nom": "Imprévu",
+              "points": {
+                "N4": 1,
+                "N3": 0.75,
+                "N2": 0.5,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "conduite",
+          "nom": "Conduite de l'échange",
+          "total": 1,
+          "cases": [
+            {
+              "cle": "repondre",
+              "nom": "Répondre au bon format",
+              "points": {
+                "N4": 0.5,
+                "N3": 0.4,
+                "N2": 0.25,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "piloter",
+              "nom": "Piloter l'échange",
+              "points": {
+                "N4": 0.5,
+                "N3": 0.4,
+                "N2": 0.25,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "clarte",
+          "nom": "Clarté",
+          "total": 1,
+          "cases": [
+            {
+              "cle": "structure",
+              "nom": "Structure",
+              "points": {
+                "N4": 0.5,
+                "N3": 0.4,
+                "N2": 0.25,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "langage",
+              "nom": "Langage",
+              "points": {
+                "N4": 0.5,
+                "N3": 0.4,
+                "N2": 0.25,
+                "N1": 0
+              }
+            }
+          ]
+        }
+      ],
+      "total_brut": 20,
+      "ramene_sur_20": {
+        "diviseur": 20,
+        "formule": "note_sur_20 = somme des points des critères notés × 20 / diviseur"
+      }
+    },
+    "montpellier": {
+      "criteres": [
+        {
+          "cle": "presentation",
+          "nom": "Présentation",
+          "total": 2,
+          "cases": [
+            {
+              "cle": "presentation",
+              "nom": "Présentation",
+              "points": {
+                "N4": 2,
+                "N3": 1.5,
+                "N2": 1,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "experiences_montpellier",
+          "nom": "Expériences et personnalité (Montpellier, sans projection)",
+          "total": 3.5,
+          "cases": [
+            {
+              "cle": "recit",
+              "nom": "Récit",
+              "points": {
+                "N4": 2,
+                "N3": 1.5,
+                "N2": 1,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "recul",
+              "nom": "Recul",
+              "points": {
+                "N4": 1.5,
+                "N3": 1,
+                "N2": 0.75,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "ouverture",
+          "nom": "Ouverture sur le monde",
+          "total": 1,
+          "cases": [
+            {
+              "cle": "actualite",
+              "nom": "Question d'actualité",
+              "points": {
+                "N4": 0.75,
+                "N3": 0.5,
+                "N2": 0.25,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "culture_generale",
+              "nom": "Culture générale et société",
+              "points": {
+                "N4": 0.25,
+                "N3": 0.2,
+                "N2": 0.1,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "destabilisantes",
+          "nom": "Gestion des situations déstabilisantes",
+          "total": 2,
+          "cases": [
+            {
+              "cle": "contestation",
+              "nom": "Contestation",
+              "points": {
+                "N4": 1,
+                "N3": 0.75,
+                "N2": 0.5,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "imprevu",
+              "nom": "Imprévu",
+              "points": {
+                "N4": 1,
+                "N3": 0.75,
+                "N2": 0.5,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "conduite",
+          "nom": "Conduite de l'échange",
+          "total": 1,
+          "cases": [
+            {
+              "cle": "repondre",
+              "nom": "Répondre au bon format",
+              "points": {
+                "N4": 0.5,
+                "N3": 0.4,
+                "N2": 0.25,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "piloter",
+              "nom": "Piloter l'échange",
+              "points": {
+                "N4": 0.5,
+                "N3": 0.4,
+                "N2": 0.25,
+                "N1": 0
+              }
+            }
+          ]
+        },
+        {
+          "cle": "clarte",
+          "nom": "Clarté",
+          "total": 1,
+          "cases": [
+            {
+              "cle": "structure",
+              "nom": "Structure",
+              "points": {
+                "N4": 0.5,
+                "N3": 0.4,
+                "N2": 0.25,
+                "N1": 0
+              }
+            },
+            {
+              "cle": "langage",
+              "nom": "Langage",
+              "points": {
+                "N4": 0.5,
+                "N3": 0.4,
+                "N2": 0.25,
+                "N1": 0
+              }
+            }
+          ]
+        }
+      ],
+      "total_brut": 10.5,
+      "ramene_sur_20": {
+        "diviseur": 10.5,
+        "formule": "note_sur_20 = somme des points des critères notés × 20 / diviseur"
+      }
+    }
+  },
+  "ecoles": {
+    "ESSEC": "essec",
+    "ESCP": "classique",
+    "Excelia BS (La Rochelle)": "classique",
+    "Rennes School of Business": "classique",
+    "EM Strasbourg": "em_strasbourg",
+    "EM Normandie": "classique",
+    "BSB (Burgundy School of Business)": "classique",
+    "NEOMA": "classique",
+    "SKEMA": "classique",
+    "Audencia": "classique",
+    "ICN Business School": "classique",
+    "Brest Business School": "classique",
+    "IMT-BS": "classique",
+    "SCBS (South Champagne BS)": "classique",
+    "emlyon": "emlyon",
+    "EDHEC": "edhec",
+    "GEM (Grenoble EM)": "gem",
+    "ESC Clermont BS": "clermont",
+    "TBS Education": "tbs",
+    "Montpellier BS": "montpellier",
+    "INSEEC Grande École": "inseec",
+    "KEDGE": "kedge",
+    "ISC Paris": "classique"
+  },
+  "ecoles_hors_configuration": {
+    "note": "Présentes dans la liste des 24 écoles de l'app (vivaldi-data.ts) mais absentes de school-interviews.ts : l'app leur applique DEFAULT_CLASSIQUE_CONFIG. Aucune décision ne leur attribue une grille (voir trous).",
+    "HEC Paris": "classique",
+    "ISC Paris": "classique"
+  },
+  "regles": {
+    "critere_non_note": {
+      "regle": "Un critère dont aucune case n’est évaluée sort du total ; diviseur = total_brut − points max des cases non évaluées.",
+      "exemples": [
+        "ouverture sans question d’actualité ni moment de culture générale",
+        "mise_en_situation_essec qui n’a pas eu lieu (une mise en situation commencée puis écourtée par la clôture reste notée)"
+      ]
+    },
+    "non_observe": {
+      "regle": "Règle générale (Robin, 09/10) : une case « non observé » (l’entretien n’a offert aucune occasion de la juger) n’est pas évaluée : ses points sortent du total ET du diviseur, et la note est ramenée sur 20. Si aucune case d’un critère n’est évaluée, le critère n’est pas noté (il sort entièrement). Aucun report d’une case sur une autre.",
+      "exception": "École et Projet professionnel jamais abordés (ni par le jury ni par le candidat) : l’évaluateur met N1, ce n’est pas « non observé ».",
+      "entretien_interrompu": "pas de note ni de percentile (voir entretien_interrompu)"
+    },
+    "entretien_interrompu": {
+      "condition": "entretien_interrompu = true dans la sortie de l'évaluateur",
+      "note": null,
+      "percentile": null,
+      "mention": "interrompu",
+      "feedback": "de fond seulement, sur ce qui a été fait"
+    },
+    "refus_de_se_livrer": "Refus de se livrer du début à la fin : l'évaluateur met toutes les cases à N1 (aucun plafond de percentile : malus supprimés le 25/09).",
+    "plancher_critere": 0,
+    "penalites_duree": {
+      "valeur": -0.5,
+      "application": "sur la note finale sur 20, après le ramené sur 20, dans toutes les écoles ; aucun critère touché",
+      "cumul": "une pénalité par partie concernée (ex. GEM : exposé et interview inversée)",
+      "sens": "seulement une partie trop courte ; seule exception : présentation ESSEC au-delà de 5 min 30",
+      "regle_des_seuils": "15 % sous la durée prévue, arrondi au quart de minute inférieur",
+      "exceptions": [
+        "aucune pénalité quand c'est le jury qui a dysfonctionné",
+        "ESSEC : pas de pénalité si le candidat a été interrompu",
+        "mise en situation ESSEC : jamais de pénalité de durée"
+      ],
+      "seuils_par_grille": {
+        "classique": [],
+        "montpellier": [],
+        "emlyon": [
+          {
+            "partie": "cartes",
+            "type": "trop_court",
+            "seuil_s": 765,
+            "seuil": "12 min 45",
+            "duree_prevue": "15 min",
+            "mesure": "temps total, de la première prise de parole du candidat sur la première carte jusqu'à la fin de la dernière, questions du jury comprises"
+          }
+        ],
+        "essec": [
+          {
+            "partie": "presentation_longue",
+            "type": "trop_court",
+            "seuil_s": 150,
+            "seuil": "2 min 30",
+            "duree_prevue": "3 min à 5 min 30",
+            "sauf": "le candidat a été interrompu"
+          },
+          {
+            "partie": "presentation_longue",
+            "type": "trop_long",
+            "seuil_s": 330,
+            "seuil": "5 min 30",
+            "duree_prevue": "3 min à 5 min 30",
+            "sauf": "le candidat a été interrompu"
+          }
+        ],
+        "edhec": [
+          {
+            "partie": "presentation_mot",
+            "type": "trop_court",
+            "seuil_s": 195,
+            "seuil": "3 min 15",
+            "duree_prevue": "4 min"
+          }
+        ],
+        "gem": [
+          {
+            "partie": "expose",
+            "type": "trop_court",
+            "seuil_s": 255,
+            "seuil": "4 min 15",
+            "duree_prevue": "5 min"
+          },
+          {
+            "partie": "interview_inversee",
+            "type": "trop_court",
+            "seuil_s": 510,
+            "seuil": "8 min 30",
+            "duree_prevue": "10 min (9 + 1 de synthèse)",
+            "mesure": "synthèse comprise"
+          }
+        ],
+        "tbs": [
+          {
+            "partie": "article",
+            "type": "trop_court",
+            "seuil_s": 255,
+            "seuil": "4 min 15",
+            "duree_prevue": "5 min"
+          }
+        ],
+        "kedge": [
+          {
+            "partie": "autoportrait",
+            "type": "trop_court",
+            "seuil_s": 150,
+            "seuil": "2 min 30",
+            "duree_prevue": "environ 3 min",
+            "note": "les cartes ne sont pas chronométrées"
+          }
+        ],
+        "clermont": [
+          {
+            "partie": "question_impact",
+            "type": "trop_court",
+            "seuil_s": 255,
+            "seuil": "4 min 15",
+            "duree_prevue": "5 min"
+          }
+        ],
+        "inseec": [
+          {
+            "partie": "image",
+            "type": "trop_court",
+            "seuil_s": 255,
+            "seuil": "4 min 15",
+            "duree_prevue": "5 min"
+          }
+        ],
+        "em_strasbourg": [
+          {
+            "partie": "pitch",
+            "type": "trop_court",
+            "seuil_s": 150,
+            "seuil": "2 min 30",
+            "duree_prevue": "3 min"
+          }
+        ]
+      },
+      "plancher_note_finale": "non décidé (voir trous)"
+    },
+    "arrondi": "non décidé (voir trous) : aucun arrondi n'est prévu par les sources ; la table du percentile prend la ligne inférieure."
+  },
+  "percentile": {
+    "source": "src/lib/interview-kb.ts, « CONVERSION SCORE → PERCENTILE »",
+    "regle": "Score entre deux lignes : ligne inférieure ; ≤ 4,5 → P1 ; jamais sous P1 ni au-dessus de P99.",
+    "algorithme": "p = 1 ; pour chaque ligne (ordre croissant) : si note_finale >= ligne.note alors p = ligne.percentile ; p = min(99, max(1, p)).",
+    "table": [
+      {
+        "note": 4.5,
+        "percentile": 1
+      },
+      {
+        "note": 5,
+        "percentile": 2
+      },
+      {
+        "note": 5.5,
+        "percentile": 2
+      },
+      {
+        "note": 6,
+        "percentile": 3
+      },
+      {
+        "note": 6.5,
+        "percentile": 4
+      },
+      {
+        "note": 7,
+        "percentile": 6
+      },
+      {
+        "note": 7.5,
+        "percentile": 8
+      },
+      {
+        "note": 8,
+        "percentile": 10
+      },
+      {
+        "note": 8.5,
+        "percentile": 13
+      },
+      {
+        "note": 9,
+        "percentile": 16
+      },
+      {
+        "note": 9.5,
+        "percentile": 20
+      },
+      {
+        "note": 10,
+        "percentile": 24
+      },
+      {
+        "note": 10.5,
+        "percentile": 28
+      },
+      {
+        "note": 11,
+        "percentile": 33
+      },
+      {
+        "note": 11.5,
+        "percentile": 39
+      },
+      {
+        "note": 12,
+        "percentile": 44
+      },
+      {
+        "note": 12.5,
+        "percentile": 50
+      },
+      {
+        "note": 13,
+        "percentile": 56
+      },
+      {
+        "note": 13.5,
+        "percentile": 61
+      },
+      {
+        "note": 14,
+        "percentile": 67
+      },
+      {
+        "note": 14.5,
+        "percentile": 72
+      },
+      {
+        "note": 15,
+        "percentile": 76
+      },
+      {
+        "note": 15.5,
+        "percentile": 80
+      },
+      {
+        "note": 16,
+        "percentile": 84
+      },
+      {
+        "note": 16.5,
+        "percentile": 87
+      },
+      {
+        "note": 17,
+        "percentile": 90
+      },
+      {
+        "note": 17.5,
+        "percentile": 92
+      },
+      {
+        "note": 18,
+        "percentile": 94
+      },
+      {
+        "note": 18.5,
+        "percentile": 96
+      },
+      {
+        "note": 19,
+        "percentile": 97
+      },
+      {
+        "note": 19.5,
+        "percentile": 98
+      },
+      {
+        "note": 20,
+        "percentile": 99
+      }
+    ],
+    "affichage": "« ± 5 percentiles » affiché avec le percentile (app) ; le percentile n'est pas recalé sur le jour J (registre 08/10).",
+    "par_critere": "Radar du tableau de bord : pourcentage des points de chaque critère (note du critère / total du critère), calculé par le code (registre 09/10)."
+  },
+  "decisions_0910": {
+    "HEC Paris": "pas proposé (retirer de la liste des écoles de l app)",
+    "ISC Paris": "format classique, grille classique",
+    "Rennes School of Business": "format classique, grille classique (Robin, 09/10)",
+    "durees": "mesurées par le code, comme décidé ; le champ penalites de l évaluateur sert de contrôle",
+    "plancher": "note finale jamais sous 0",
+    "arrondi": "aucun arrondi intermédiaire",
+    "non_observe_hors_cas_prevus": "sortie de l évaluateur refusée, nouvelle notation",
+    "panne_jury": "traitée comme un entretien interrompu (ni note ni percentile)",
+    "radar": "critère non noté ou entretien interrompu exclus",
+    "case_sans_occasion": "Règle générale (Robin, 09/10 : « ce sera vrai pour chaque critère / sous-critère ») : une case que l'entretien n'a pas permis d'évaluer (« non observé ») sort du total et la note est ramenée sur 20 ; si aucune case d'un critère n'est évaluée, le critère n'est pas noté. Remplace les reports d'une case sur l'autre (Ouverture, imprévu). Exception : École et Projet professionnel jamais abordés = N1."
+  }
+}
