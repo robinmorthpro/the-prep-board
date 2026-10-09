@@ -66,6 +66,15 @@ export function interviewJuryLabel(code?: string | null) {
   return code === "classique_dur" ? "Jury dur" : "Jury neutre";
 }
 
+/** Aucun percentile pour un entretien interrompu ; sinon la colonne prime sur l'ancien texte. */
+export function interviewPercentile(status: string, stored: number | null, debrief?: string | null) {
+  if (status !== "done") return null;
+  if (typeof stored === "number") return stored;
+  const match = debrief?.match(/\bP(\d{1,3})\b/);
+  const parsed = match ? Number(match[1]) : NaN;
+  return Number.isFinite(parsed) && parsed > 0 && parsed <= 100 ? parsed : null;
+}
+
 /** Fond commun aux deux variantes proposées. Paramétrée par la durée réelle de l'école (durationMinutes). */
 export function buildInterviewTrame(durationMinutes: number) {
   return `FORMAT : entretien de motivation classique, ${durationMinutes} minutes, mené en voix. Vouvoiement systématique.

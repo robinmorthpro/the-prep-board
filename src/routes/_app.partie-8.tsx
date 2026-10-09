@@ -37,6 +37,7 @@ import {
   INTERVIEW_VARIANTS,
   interviewDifficultyLabel,
   interviewJuryLabel,
+  interviewPercentile,
   type InterviewVariant,
 } from "@/lib/interview-kb";
 import {
@@ -126,12 +127,6 @@ function difficultyLabel(code?: string | null) {
 /** Attitude du jury seule (« jury neutre »), sans répéter le format de l'entretien. */
 function juryLabel(code?: string | null) {
   return interviewJuryLabel(code);
-}
-
-/** Percentile relevé dans le débrief du jury (format « P67 - … »). */
-function percentileOf(debrief?: string | null) {
-  const m = debrief?.match(/\bP(\d{1,3})\b/);
-  return m ? `P${m[1]}` : null;
 }
 
 /** Le SDK ElevenLabs exige que `useConversation` soit sous son provider. */
@@ -1623,12 +1618,7 @@ function Part7() {
 
               <ul className="mt-4 flex flex-col gap-3">
                 {visibleSessions.map((s) => {
-                  const percentile =
-                    s.status === "done"
-                      ? typeof s.percentile === "number"
-                        ? `P${s.percentile}`
-                        : percentileOf(s.debrief)
-                      : null;
+                  const percentile = interviewPercentile(s.status, s.percentile, s.debrief);
 
                   const open = openSession === s.id;
                   return (
@@ -1657,7 +1647,7 @@ function Part7() {
                           </span>
                           {percentile ? (
                             <span className="shrink-0 rounded-full bg-[var(--bleu-pale)] px-3 py-1 text-[13px] font-bold text-[var(--bleu-texte)] tabular-nums md:text-[14px]">
-                              {percentile}
+                              P{percentile}
                             </span>
                           ) : null}
                           <span className="shrink-0 rounded-full border border-[rgba(11,18,32,0.2)] bg-white px-3 py-1 text-[13px] font-medium text-[var(--graphite)] md:text-[14px]">
@@ -1697,11 +1687,7 @@ function Part7() {
                             logo={schoolLogo(s.school)}
                             date={sessionDate(s.created_at)}
                             difficultyLabel={juryLabel(s.difficulty)}
-                            percentile={
-                              s.status === "done"
-                                ? (s.percentile ?? positioningInfo(s.debrief).value)
-                                : null
-                            }
+                            percentile={interviewPercentile(s.status, s.percentile, s.debrief)}
                             percentileLabel={s.status === "done" ? positioningInfo(s.debrief).label : undefined}
                             onExport={() =>
                               downloadInterviewPdf({
