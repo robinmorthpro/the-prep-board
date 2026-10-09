@@ -527,6 +527,7 @@ export function useJuryAgent({
     closingSent,
     markPhaseStart,
     markPhaseEnd,
+    markMeasureStart,
   };
 }
 
