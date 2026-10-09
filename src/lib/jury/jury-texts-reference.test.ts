@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import juryCommunRaw from "./textes/jury-commun.md?raw";
 import { commonJuryText } from "../elevenlabs-agent-prompt";
 import { JURY_SCHOOL_TEXTS } from "./school-texts";
-import { buildFirstMessage, getSchoolInterviewConfig, greeting, openingNote, schoolDisplayName, secondReplyFor, simulatedMinutes } from "../school-interviews";
+import { buildFirstMessage, getSchoolInterviewConfig, openingNote, schoolDisplayName, secondReplyFor, simulatedMinutes } from "../school-interviews";
 
 const reference = readFileSync(new URL("./textes/jury-ecoles-final.md", import.meta.url), "utf8");
 const HEADINGS = ["PREMIER MESSAGE", "DEUXIÈME RÉPLIQUE", "CONSIGNE D'OUVERTURE", "CONDUITE PROPRE À L'ÉCOLE", "CONSIGNES ENVOYÉES PENDANT L'ENTRETIEN"] as const;
