@@ -380,7 +380,7 @@ const INCLUS: { texte: string; icon: ReactNode }[] = [
   { texte: "Un parcours guidé qui part de votre parcours et de vos écoles", icon: <path d="M4 19V5M4 5h11l-2 4 2 4H4" /> },
   { texte: "Des oraux complets avec un jury vocal qui relance", icon: <><path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3z" /><path d="M19 11a7 7 0 0 1-14 0M12 18v3" /></> },
   { texte: "Un rapport écrit et un transcript après chaque passage", icon: <><path d="M6 3h9l4 4v14H6z" /><path d="M9 12h7M9 16h7M9 8h3" /></> },
-  { texte: "Trois niveaux d'exigence, de la découverte au jury difficile", icon: <path d="M4 20v-5M10 20v-9M16 20V8M22 20H2" /> },
+  { texte: "Deux niveaux d'exigence : un jury neutre et un jury difficile", icon: <path d="M4 20v-5M10 20v-9M16 20V8M22 20H2" /> },
   { texte: "Vos fiches écoles et vos récits exportables en PDF", icon: <path d="M12 3v12M7 10l5 5 5-5M5 21h14" /> },
   { texte: "L'historique de tous vos passages, pour mesurer la progression", icon: <path d="M3 17l6-6 4 4 8-8M15 7h6v6" /> },
 ];

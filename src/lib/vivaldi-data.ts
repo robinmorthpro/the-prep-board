@@ -4,7 +4,6 @@ import { ESSEC_SITUATIONS_MODULE } from "@/lib/essec-kb";
 
 /** Écoles BCE + Ecricome, classées dans l'ordre du classement SIGEM (aucun doublon). */
 export const SCHOOLS: { name: string; concours: "BCE" | "Ecricome" }[] = [
-  { name: "HEC Paris", concours: "BCE" },
   { name: "ESSEC", concours: "BCE" },
   { name: "ESCP", concours: "BCE" },
   { name: "EDHEC", concours: "BCE" },
