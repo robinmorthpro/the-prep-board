@@ -38,6 +38,7 @@ Concerne l'**ESSEC** (présentation de 3 à 5 min 30). L'EDHEC (mot imposé, 4 m
 **Le format** :
 - une seule mise en situation, lancée par l'application à la 35^e minute, puis la clôture ;
 - jamais de pénalité sur cette durée. L'entretien peut finir avant 45 minutes.
+- une mise en situation commencée puis écourtée par la clôture reste notée.
 
 ### La grille de notation
 

@@ -78,3 +78,12 @@
 - [x] Aligner les écrans et phases des dix écoles listées
 - [x] Vérifier tous les tests et la construction
 - [ ] Capturer le tableau de bord et un feedback récent — bloqué par l’authentification Supabase externe non injectable
+
+## Étape 5 — le reste de la liste
+- [ ] A. 3 textes de l'évaluateur (sha256) + test d'empreinte
+- [ ] B. Pénalité du pitch EM Strasbourg
+- [ ] C. Suppression du secours, relance automatique, écran d'échec « Réessayer »
+- [ ] D. Tirages enregistrés (colonne tirages) et transmis au rédacteur (KEDGE compris)
+- [ ] E. CONNAISSANCE DU CANDIDAT, I68, I29, I52, I33 (jury : questions 13 à 24), I62, I66
+- [ ] F. Piles séparées emlyon/EDHEC et textes du module
+- [ ] G. Étiquettes des cartes emlyon transmises à l'évaluateur et au rédacteur
