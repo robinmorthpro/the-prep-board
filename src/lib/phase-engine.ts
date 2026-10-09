@@ -28,7 +28,7 @@ export function isRegieMessage(text: string) {
 
 /** Rappel ajouté à la fin de CHAQUE repère : le jury ne rend jamais la main sans question. */
 /** Phrase de passage aux situations de Montpellier (texte normalisé). */
-export const MONTPELLIER_PASSAGE_RE = /merci passons maintenant aux situations a vous de choisir celle qui vous inspire/;
+export const MONTPELLIER_PASSAGE_RE = /merci\W*passons maintenant aux situations\W*a vous de choisir celle qui vous inspire/;
 
 export const END_WITH_QUESTION = "Termine ta prochaine prise de parole par une question.";
 export const THEME_REMINDER =

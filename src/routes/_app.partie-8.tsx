@@ -23,6 +23,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { evaluateInterview } from "@/lib/evaluateur.functions";
 import { redigerFeedback } from "@/lib/redacteur.functions";
 import { FEEDBACK_ECHEC_MESSAGE, produireFeedback } from "@/lib/feedback-enchainement";
+import { MONTPELLIER_PASSAGE_RE } from "@/lib/phase-engine";
 import type { Tirages } from "@/lib/tirages";
 import {
   useCareerProject,
@@ -594,7 +595,7 @@ function Part7() {
     // Montpellier BS : le jury propose de changer de situation → retour à la grille.
     if (
       config.school === "Montpellier BS" &&
-      /merci passons maintenant aux situations a vous de choisir celle qui vous inspire/.test(normalized)
+      MONTPELLIER_PASSAGE_RE.test(normalized)
     ) {
       setMbsSituationsStarted(true);
     }
