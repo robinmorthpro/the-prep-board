@@ -16,6 +16,8 @@
 - L'évaluateur IA (src/lib/evaluateur/) ne rend que des niveaux par case ; points, note, pénalités de durée et percentile sont calculés par le code à partir de bareme.json : la note reste reproductible et vérifiable.
 - Les textes de l'évaluateur et bareme.json sont copiés octet pour octet depuis les originaux et ne sont jamais reformatés (exclus de Prettier).
 
-- Le feedback de fin d'entretien suit `src/lib/feedback-enchainement.ts` : évaluation (src/lib/evaluateur/) puis rédacteur (src/lib/redacteur/), avec secours vers debriefInterview ; l'interrupteur NOUVEAU_FEEDBACK_ACTIF y revient en une ligne. Pourquoi : l'utilisateur doit toujours recevoir un feedback.
+- Le feedback de fin d'entretien suit `src/lib/feedback-enchainement.ts` : évaluation (src/lib/evaluateur/) puis rédacteur (src/lib/redacteur/), sans ancien feedback de secours : une relance automatique, puis un écran d'échec avec « Réessayer » (la transcription reste enregistrée). Pourquoi : un seul feedback, toujours issu de la note calculée.
+- Les tirages d'un entretien sont enregistrés dans interview_sessions.tirages et transmis à l'évaluateur/rédacteur via src/lib/tirages.ts. Pourquoi : le feedback doit citer ce qui a réellement été tiré.
+- Module Questions clés et jury tirent dans des listes disjointes issues d'une seule source par école (emlyon, EDHEC, Clermont, ESSEC). Pourquoi : le jury ne pose jamais une question déjà travaillée.
 - Le rédacteur ne note jamais : la ligne du percentile est insérée par le code et les citations VERBATIMS non retrouvées sont retirées par le code. Pourquoi : le percentile affiché doit être exactement celui calculé.
 - Les textes du rédacteur (src/lib/redacteur/textes/) sont copiés octet pour octet et exclus de Prettier. Pourquoi : vérification par empreinte avec les originaux.

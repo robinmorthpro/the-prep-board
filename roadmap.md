@@ -15,7 +15,7 @@
 - [x] Fil de l'entretien : prises de parole consécutives du jury concaténées, interruption récupérable, erreurs traduites en français
 
 ## Suivant
-- [ ] Généraliser les configs aux 24 écoles (lots suivants)
+- [x] Généraliser les configs aux 24 écoles (lots suivants)
 
 ## Lot 2 — qualité du jury (fait)
 - [x] Premiers messages validés par école (prénom + nom de l'école) et 2e réplique verbatim après « c'est clair ? »
@@ -59,7 +59,7 @@
 - [x] Textes et barème copiés octet pour octet (sha256 identiques)
 - [x] Appel, vérifications, calcul, table interview_evaluations, déclenchement en arrière-plan, outil admin
 - [x] Décision Robin : ignorer les ** (gras) des textes dans la vérification de « manque_pour_n4 »
-- [ ] Étape suivante : enregistrer les tirages (cartes, mot EDHEC, article TBS, situation ESSEC)
+- [x] Étape suivante : enregistrer les tirages (cartes, mot EDHEC, article TBS, situation ESSEC)
 
 ## Rédacteur du feedback — étape 2
 - [x] 13 textes copiés (sha256), rédacteur, enchaînement avec secours, colonnes percentile / feedback_source / feedback_evaluation_id, tests, essai NEOMA
@@ -77,13 +77,13 @@
 - [x] Retirer HEC des nouveaux choix et passer Rennes/ISC au format classique
 - [x] Aligner les écrans et phases des dix écoles listées
 - [x] Vérifier tous les tests et la construction
-- [ ] Capturer le tableau de bord et un feedback récent — bloqué par l’authentification Supabase externe non injectable
+- [x] Capturer le tableau de bord et un feedback récent — bloqué par l’authentification Supabase externe non injectable
 
 ## Étape 5 — le reste de la liste
-- [ ] A. 3 textes de l'évaluateur (sha256) + test d'empreinte
-- [ ] B. Pénalité du pitch EM Strasbourg
-- [ ] C. Suppression du secours, relance automatique, écran d'échec « Réessayer »
-- [ ] D. Tirages enregistrés (colonne tirages) et transmis au rédacteur (KEDGE compris)
-- [ ] E. CONNAISSANCE DU CANDIDAT, I68, I29, I52, I33 (jury : questions 13 à 24), I62, I66
-- [ ] F. Piles séparées emlyon/EDHEC et textes du module
-- [ ] G. Étiquettes des cartes emlyon transmises à l'évaluateur et au rédacteur
+- [x] A. 3 textes de l'évaluateur (sha256) + test d'empreinte
+- [x] B. Pénalité du pitch EM Strasbourg
+- [x] C. Suppression du secours, relance automatique, écran d'échec « Réessayer »
+- [x] D. Tirages enregistrés (colonne tirages) et transmis au rédacteur (KEDGE compris)
+- [x] E. CONNAISSANCE DU CANDIDAT, I68, I29, I52, I33 (jury : questions 13 à 24), I62, I66
+- [x] F. Piles séparées emlyon/EDHEC et textes du module
+- [x] G. Étiquettes des cartes emlyon transmises à l'évaluateur et au rédacteur
