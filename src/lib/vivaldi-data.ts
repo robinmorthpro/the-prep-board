@@ -1,5 +1,5 @@
-import { EDHEC_WORDS } from "@/lib/edhec-kb";
-import { EMLYON_CREATIVITE, EMLYON_EXPERIENCE, EMLYON_PERSONNALITE, EMLYON_PROJET } from "@/lib/emlyon-kb";
+import { EDHEC_WORDS_MODULE } from "@/lib/edhec-kb";
+import { EMLYON_MODULE } from "@/lib/emlyon-kb";
 import { ESSEC_SITUATIONS_MODULE } from "@/lib/essec-kb";
 
 /** Écoles BCE + Ecricome, classées dans l'ordre du classement SIGEM (aucun doublon). */
@@ -1592,9 +1592,9 @@ export const KEY_QUESTIONS: KeyQuestion[] = [
     subTheme: "People",
     question: "Votre génération est-elle plus difficile à manager ?",
     intent:
-      "Question Impact de Clermont School of Business, axe People : teste votre capacité à prendre position immédiatement sur un sujet de société lié à l'humain et au management, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
+      "Question Impact de Clermont School of Business, axe People : teste votre capacité à prendre position clairement sur un sujet de société lié à l'humain et au management, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
     criteria: [
-      "Prenez position dès les premières secondes : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
+      "Prenez position clairement, dès le début ou après quelques phrases de réflexion : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
       "Illustrez immédiatement avec un exemple concret et récent plutôt qu'une explication abstraite.",
       "Acceptez qu'il n'y ait pas de bonne réponse : une hésitation honnête et argumentée vaut mieux qu'une posture d'expert plaquée — c'est la consigne officielle de l'école.",
       "Si le jury prend le contre-pied de votre position, tenez-la avec un argument supplémentaire ou nuancez-la avec courtoisie plutôt que de vous rétracter au premier mot.",
@@ -1613,9 +1613,9 @@ export const KEY_QUESTIONS: KeyQuestion[] = [
     subTheme: "People",
     question: "Le télétravail à 100 % est-il une chance ou un piège pour le lien social en entreprise ?",
     intent:
-      "Question Impact de Clermont School of Business, axe People : teste votre capacité à prendre position immédiatement sur un sujet de société lié à l'humain et au management, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
+      "Question Impact de Clermont School of Business, axe People : teste votre capacité à prendre position clairement sur un sujet de société lié à l'humain et au management, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
     criteria: [
-      "Prenez position dès les premières secondes : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
+      "Prenez position clairement, dès le début ou après quelques phrases de réflexion : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
       "Illustrez immédiatement avec un exemple concret et récent plutôt qu'une explication abstraite.",
       "Acceptez qu'il n'y ait pas de bonne réponse : une hésitation honnête et argumentée vaut mieux qu'une posture d'expert plaquée — c'est la consigne officielle de l'école.",
       "Si le jury prend le contre-pied de votre position, tenez-la avec un argument supplémentaire ou nuancez-la avec courtoisie plutôt que de vous rétracter au premier mot.",
@@ -1634,9 +1634,9 @@ export const KEY_QUESTIONS: KeyQuestion[] = [
     subTheme: "People",
     question: "Comment une entreprise peut-elle concrètement agir en faveur de l'égalité hommes-femmes au-delà des discours ?",
     intent:
-      "Question Impact de Clermont School of Business, axe People : teste votre capacité à prendre position immédiatement sur un sujet de société lié à l'humain et au management, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
+      "Question Impact de Clermont School of Business, axe People : teste votre capacité à prendre position clairement sur un sujet de société lié à l'humain et au management, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
     criteria: [
-      "Prenez position dès les premières secondes : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
+      "Prenez position clairement, dès le début ou après quelques phrases de réflexion : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
       "Illustrez immédiatement avec un exemple concret et récent plutôt qu'une explication abstraite.",
       "Acceptez qu'il n'y ait pas de bonne réponse : une hésitation honnête et argumentée vaut mieux qu'une posture d'expert plaquée — c'est la consigne officielle de l'école.",
       "Si le jury prend le contre-pied de votre position, tenez-la avec un argument supplémentaire ou nuancez-la avec courtoisie plutôt que de vous rétracter au premier mot.",
@@ -1655,9 +1655,9 @@ export const KEY_QUESTIONS: KeyQuestion[] = [
     subTheme: "People",
     question: "L'intelligence artificielle va-t-elle détruire le management humain ?",
     intent:
-      "Question Impact de Clermont School of Business, axe People : teste votre capacité à prendre position immédiatement sur un sujet de société lié à l'humain et au management, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
+      "Question Impact de Clermont School of Business, axe People : teste votre capacité à prendre position clairement sur un sujet de société lié à l'humain et au management, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
     criteria: [
-      "Prenez position dès les premières secondes : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
+      "Prenez position clairement, dès le début ou après quelques phrases de réflexion : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
       "Illustrez immédiatement avec un exemple concret et récent plutôt qu'une explication abstraite.",
       "Acceptez qu'il n'y ait pas de bonne réponse : une hésitation honnête et argumentée vaut mieux qu'une posture d'expert plaquée — c'est la consigne officielle de l'école.",
       "Si le jury prend le contre-pied de votre position, tenez-la avec un argument supplémentaire ou nuancez-la avec courtoisie plutôt que de vous rétracter au premier mot.",
@@ -1676,9 +1676,9 @@ export const KEY_QUESTIONS: KeyQuestion[] = [
     subTheme: "People",
     question: "Le quiet quitting est-il un signal d'alarme pour les entreprises ou une réponse saine à la charge de travail ?",
     intent:
-      "Question Impact de Clermont School of Business, axe People : teste votre capacité à prendre position immédiatement sur un sujet de société lié à l'humain et au management, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
+      "Question Impact de Clermont School of Business, axe People : teste votre capacité à prendre position clairement sur un sujet de société lié à l'humain et au management, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
     criteria: [
-      "Prenez position dès les premières secondes : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
+      "Prenez position clairement, dès le début ou après quelques phrases de réflexion : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
       "Illustrez immédiatement avec un exemple concret et récent plutôt qu'une explication abstraite.",
       "Acceptez qu'il n'y ait pas de bonne réponse : une hésitation honnête et argumentée vaut mieux qu'une posture d'expert plaquée — c'est la consigne officielle de l'école.",
       "Si le jury prend le contre-pied de votre position, tenez-la avec un argument supplémentaire ou nuancez-la avec courtoisie plutôt que de vous rétracter au premier mot.",
@@ -1697,9 +1697,9 @@ export const KEY_QUESTIONS: KeyQuestion[] = [
     subTheme: "People",
     question: "Faut-il imposer des quotas pour accélérer la diversité dans les comités de direction ?",
     intent:
-      "Question Impact de Clermont School of Business, axe People : teste votre capacité à prendre position immédiatement sur un sujet de société lié à l'humain et au management, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
+      "Question Impact de Clermont School of Business, axe People : teste votre capacité à prendre position clairement sur un sujet de société lié à l'humain et au management, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
     criteria: [
-      "Prenez position dès les premières secondes : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
+      "Prenez position clairement, dès le début ou après quelques phrases de réflexion : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
       "Illustrez immédiatement avec un exemple concret et récent plutôt qu'une explication abstraite.",
       "Acceptez qu'il n'y ait pas de bonne réponse : une hésitation honnête et argumentée vaut mieux qu'une posture d'expert plaquée — c'est la consigne officielle de l'école.",
       "Si le jury prend le contre-pied de votre position, tenez-la avec un argument supplémentaire ou nuancez-la avec courtoisie plutôt que de vous rétracter au premier mot.",
@@ -1718,9 +1718,9 @@ export const KEY_QUESTIONS: KeyQuestion[] = [
     subTheme: "People",
     question: "La semaine de 4 jours est-elle une vraie solution ou un effet de mode managérial ?",
     intent:
-      "Question Impact de Clermont School of Business, axe People : teste votre capacité à prendre position immédiatement sur un sujet de société lié à l'humain et au management, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
+      "Question Impact de Clermont School of Business, axe People : teste votre capacité à prendre position clairement sur un sujet de société lié à l'humain et au management, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
     criteria: [
-      "Prenez position dès les premières secondes : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
+      "Prenez position clairement, dès le début ou après quelques phrases de réflexion : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
       "Illustrez immédiatement avec un exemple concret et récent plutôt qu'une explication abstraite.",
       "Acceptez qu'il n'y ait pas de bonne réponse : une hésitation honnête et argumentée vaut mieux qu'une posture d'expert plaquée — c'est la consigne officielle de l'école.",
       "Si le jury prend le contre-pied de votre position, tenez-la avec un argument supplémentaire ou nuancez-la avec courtoisie plutôt que de vous rétracter au premier mot.",
@@ -1739,9 +1739,9 @@ export const KEY_QUESTIONS: KeyQuestion[] = [
     subTheme: "People",
     question: "Peut-on encore parler de loyauté envers une entreprise chez les jeunes diplômés ?",
     intent:
-      "Question Impact de Clermont School of Business, axe People : teste votre capacité à prendre position immédiatement sur un sujet de société lié à l'humain et au management, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
+      "Question Impact de Clermont School of Business, axe People : teste votre capacité à prendre position clairement sur un sujet de société lié à l'humain et au management, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
     criteria: [
-      "Prenez position dès les premières secondes : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
+      "Prenez position clairement, dès le début ou après quelques phrases de réflexion : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
       "Illustrez immédiatement avec un exemple concret et récent plutôt qu'une explication abstraite.",
       "Acceptez qu'il n'y ait pas de bonne réponse : une hésitation honnête et argumentée vaut mieux qu'une posture d'expert plaquée — c'est la consigne officielle de l'école.",
       "Si le jury prend le contre-pied de votre position, tenez-la avec un argument supplémentaire ou nuancez-la avec courtoisie plutôt que de vous rétracter au premier mot.",
@@ -1760,9 +1760,9 @@ export const KEY_QUESTIONS: KeyQuestion[] = [
     subTheme: "People",
     question: "Le bien-être au travail doit-il être la responsabilité de l'entreprise ou celle de l'individu ?",
     intent:
-      "Question Impact de Clermont School of Business, axe People : teste votre capacité à prendre position immédiatement sur un sujet de société lié à l'humain et au management, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
+      "Question Impact de Clermont School of Business, axe People : teste votre capacité à prendre position clairement sur un sujet de société lié à l'humain et au management, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
     criteria: [
-      "Prenez position dès les premières secondes : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
+      "Prenez position clairement, dès le début ou après quelques phrases de réflexion : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
       "Illustrez immédiatement avec un exemple concret et récent plutôt qu'une explication abstraite.",
       "Acceptez qu'il n'y ait pas de bonne réponse : une hésitation honnête et argumentée vaut mieux qu'une posture d'expert plaquée — c'est la consigne officielle de l'école.",
       "Si le jury prend le contre-pied de votre position, tenez-la avec un argument supplémentaire ou nuancez-la avec courtoisie plutôt que de vous rétracter au premier mot.",
@@ -1781,9 +1781,9 @@ export const KEY_QUESTIONS: KeyQuestion[] = [
     subTheme: "People",
     question: "Le management à distance rend-il les équipes plus autonomes ou plus isolées ?",
     intent:
-      "Question Impact de Clermont School of Business, axe People : teste votre capacité à prendre position immédiatement sur un sujet de société lié à l'humain et au management, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
+      "Question Impact de Clermont School of Business, axe People : teste votre capacité à prendre position clairement sur un sujet de société lié à l'humain et au management, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
     criteria: [
-      "Prenez position dès les premières secondes : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
+      "Prenez position clairement, dès le début ou après quelques phrases de réflexion : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
       "Illustrez immédiatement avec un exemple concret et récent plutôt qu'une explication abstraite.",
       "Acceptez qu'il n'y ait pas de bonne réponse : une hésitation honnête et argumentée vaut mieux qu'une posture d'expert plaquée — c'est la consigne officielle de l'école.",
       "Si le jury prend le contre-pied de votre position, tenez-la avec un argument supplémentaire ou nuancez-la avec courtoisie plutôt que de vous rétracter au premier mot.",
@@ -1802,9 +1802,9 @@ export const KEY_QUESTIONS: KeyQuestion[] = [
     subTheme: "People",
     question: "Faut-il un vrai droit à la déconnexion, même si cela pèse sur la compétitivité des entreprises ?",
     intent:
-      "Question Impact de Clermont School of Business, axe People : teste votre capacité à prendre position immédiatement sur un sujet de société lié à l'humain et au management, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
+      "Question Impact de Clermont School of Business, axe People : teste votre capacité à prendre position clairement sur un sujet de société lié à l'humain et au management, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
     criteria: [
-      "Prenez position dès les premières secondes : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
+      "Prenez position clairement, dès le début ou après quelques phrases de réflexion : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
       "Illustrez immédiatement avec un exemple concret et récent plutôt qu'une explication abstraite.",
       "Acceptez qu'il n'y ait pas de bonne réponse : une hésitation honnête et argumentée vaut mieux qu'une posture d'expert plaquée — c'est la consigne officielle de l'école.",
       "Si le jury prend le contre-pied de votre position, tenez-la avec un argument supplémentaire ou nuancez-la avec courtoisie plutôt que de vous rétracter au premier mot.",
@@ -1823,9 +1823,9 @@ export const KEY_QUESTIONS: KeyQuestion[] = [
     subTheme: "People",
     question: "Les soft skills comptent-elles plus que les diplômes pour manager une équipe aujourd'hui ?",
     intent:
-      "Question Impact de Clermont School of Business, axe People : teste votre capacité à prendre position immédiatement sur un sujet de société lié à l'humain et au management, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
+      "Question Impact de Clermont School of Business, axe People : teste votre capacité à prendre position clairement sur un sujet de société lié à l'humain et au management, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
     criteria: [
-      "Prenez position dès les premières secondes : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
+      "Prenez position clairement, dès le début ou après quelques phrases de réflexion : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
       "Illustrez immédiatement avec un exemple concret et récent plutôt qu'une explication abstraite.",
       "Acceptez qu'il n'y ait pas de bonne réponse : une hésitation honnête et argumentée vaut mieux qu'une posture d'expert plaquée — c'est la consigne officielle de l'école.",
       "Si le jury prend le contre-pied de votre position, tenez-la avec un argument supplémentaire ou nuancez-la avec courtoisie plutôt que de vous rétracter au premier mot.",
@@ -1844,9 +1844,9 @@ export const KEY_QUESTIONS: KeyQuestion[] = [
     subTheme: "Planet",
     question: "Train, avion ou vélo électrique : quelle est votre mobilité ?",
     intent:
-      "Question Impact de Clermont School of Business, axe Planet : teste votre capacité à prendre position immédiatement sur un sujet de société lié à l'environnement et à la transition écologique, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
+      "Question Impact de Clermont School of Business, axe Planet : teste votre capacité à prendre position clairement sur un sujet de société lié à l'environnement et à la transition écologique, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
     criteria: [
-      "Prenez position dès les premières secondes : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
+      "Prenez position clairement, dès le début ou après quelques phrases de réflexion : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
       "Illustrez immédiatement avec un exemple concret et récent plutôt qu'une explication abstraite.",
       "Acceptez qu'il n'y ait pas de bonne réponse : une hésitation honnête et argumentée vaut mieux qu'une posture d'expert plaquée — c'est la consigne officielle de l'école.",
       "Si le jury prend le contre-pied de votre position, tenez-la avec un argument supplémentaire ou nuancez-la avec courtoisie plutôt que de vous rétracter au premier mot.",
@@ -1865,9 +1865,9 @@ export const KEY_QUESTIONS: KeyQuestion[] = [
     subTheme: "Planet",
     question: "Peut-on concilier sobriété énergétique et croissance économique ?",
     intent:
-      "Question Impact de Clermont School of Business, axe Planet : teste votre capacité à prendre position immédiatement sur un sujet de société lié à l'environnement et à la transition écologique, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
+      "Question Impact de Clermont School of Business, axe Planet : teste votre capacité à prendre position clairement sur un sujet de société lié à l'environnement et à la transition écologique, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
     criteria: [
-      "Prenez position dès les premières secondes : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
+      "Prenez position clairement, dès le début ou après quelques phrases de réflexion : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
       "Illustrez immédiatement avec un exemple concret et récent plutôt qu'une explication abstraite.",
       "Acceptez qu'il n'y ait pas de bonne réponse : une hésitation honnête et argumentée vaut mieux qu'une posture d'expert plaquée — c'est la consigne officielle de l'école.",
       "Si le jury prend le contre-pied de votre position, tenez-la avec un argument supplémentaire ou nuancez-la avec courtoisie plutôt que de vous rétracter au premier mot.",
@@ -1886,9 +1886,9 @@ export const KEY_QUESTIONS: KeyQuestion[] = [
     subTheme: "Planet",
     question: "Que pensez-vous du « greenwashing » (éco-blanchiment) pratiqué par certaines grandes marques ?",
     intent:
-      "Question Impact de Clermont School of Business, axe Planet : teste votre capacité à prendre position immédiatement sur un sujet de société lié à l'environnement et à la transition écologique, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
+      "Question Impact de Clermont School of Business, axe Planet : teste votre capacité à prendre position clairement sur un sujet de société lié à l'environnement et à la transition écologique, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
     criteria: [
-      "Prenez position dès les premières secondes : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
+      "Prenez position clairement, dès le début ou après quelques phrases de réflexion : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
       "Illustrez immédiatement avec un exemple concret et récent plutôt qu'une explication abstraite.",
       "Acceptez qu'il n'y ait pas de bonne réponse : une hésitation honnête et argumentée vaut mieux qu'une posture d'expert plaquée — c'est la consigne officielle de l'école.",
       "Si le jury prend le contre-pied de votre position, tenez-la avec un argument supplémentaire ou nuancez-la avec courtoisie plutôt que de vous rétracter au premier mot.",
@@ -1907,9 +1907,9 @@ export const KEY_QUESTIONS: KeyQuestion[] = [
     subTheme: "Planet",
     question: "Faut-il interdire ou taxer massivement la fast-fashion ?",
     intent:
-      "Question Impact de Clermont School of Business, axe Planet : teste votre capacité à prendre position immédiatement sur un sujet de société lié à l'environnement et à la transition écologique, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
+      "Question Impact de Clermont School of Business, axe Planet : teste votre capacité à prendre position clairement sur un sujet de société lié à l'environnement et à la transition écologique, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
     criteria: [
-      "Prenez position dès les premières secondes : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
+      "Prenez position clairement, dès le début ou après quelques phrases de réflexion : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
       "Illustrez immédiatement avec un exemple concret et récent plutôt qu'une explication abstraite.",
       "Acceptez qu'il n'y ait pas de bonne réponse : une hésitation honnête et argumentée vaut mieux qu'une posture d'expert plaquée — c'est la consigne officielle de l'école.",
       "Si le jury prend le contre-pied de votre position, tenez-la avec un argument supplémentaire ou nuancez-la avec courtoisie plutôt que de vous rétracter au premier mot.",
@@ -1928,9 +1928,9 @@ export const KEY_QUESTIONS: KeyQuestion[] = [
     subTheme: "Planet",
     question: "La voiture électrique est-elle vraiment écologique si l'on compte toute sa chaîne de production ?",
     intent:
-      "Question Impact de Clermont School of Business, axe Planet : teste votre capacité à prendre position immédiatement sur un sujet de société lié à l'environnement et à la transition écologique, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
+      "Question Impact de Clermont School of Business, axe Planet : teste votre capacité à prendre position clairement sur un sujet de société lié à l'environnement et à la transition écologique, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
     criteria: [
-      "Prenez position dès les premières secondes : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
+      "Prenez position clairement, dès le début ou après quelques phrases de réflexion : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
       "Illustrez immédiatement avec un exemple concret et récent plutôt qu'une explication abstraite.",
       "Acceptez qu'il n'y ait pas de bonne réponse : une hésitation honnête et argumentée vaut mieux qu'une posture d'expert plaquée — c'est la consigne officielle de l'école.",
       "Si le jury prend le contre-pied de votre position, tenez-la avec un argument supplémentaire ou nuancez-la avec courtoisie plutôt que de vous rétracter au premier mot.",
@@ -1949,9 +1949,9 @@ export const KEY_QUESTIONS: KeyQuestion[] = [
     subTheme: "Planet",
     question: "Faut-il rationner certains produits pour respecter les limites planétaires ?",
     intent:
-      "Question Impact de Clermont School of Business, axe Planet : teste votre capacité à prendre position immédiatement sur un sujet de société lié à l'environnement et à la transition écologique, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
+      "Question Impact de Clermont School of Business, axe Planet : teste votre capacité à prendre position clairement sur un sujet de société lié à l'environnement et à la transition écologique, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
     criteria: [
-      "Prenez position dès les premières secondes : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
+      "Prenez position clairement, dès le début ou après quelques phrases de réflexion : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
       "Illustrez immédiatement avec un exemple concret et récent plutôt qu'une explication abstraite.",
       "Acceptez qu'il n'y ait pas de bonne réponse : une hésitation honnête et argumentée vaut mieux qu'une posture d'expert plaquée — c'est la consigne officielle de l'école.",
       "Si le jury prend le contre-pied de votre position, tenez-la avec un argument supplémentaire ou nuancez-la avec courtoisie plutôt que de vous rétracter au premier mot.",
@@ -1970,9 +1970,9 @@ export const KEY_QUESTIONS: KeyQuestion[] = [
     subTheme: "Planet",
     question: "La sobriété est-elle compatible avec le modèle de croissance des entreprises ?",
     intent:
-      "Question Impact de Clermont School of Business, axe Planet : teste votre capacité à prendre position immédiatement sur un sujet de société lié à l'environnement et à la transition écologique, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
+      "Question Impact de Clermont School of Business, axe Planet : teste votre capacité à prendre position clairement sur un sujet de société lié à l'environnement et à la transition écologique, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
     criteria: [
-      "Prenez position dès les premières secondes : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
+      "Prenez position clairement, dès le début ou après quelques phrases de réflexion : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
       "Illustrez immédiatement avec un exemple concret et récent plutôt qu'une explication abstraite.",
       "Acceptez qu'il n'y ait pas de bonne réponse : une hésitation honnête et argumentée vaut mieux qu'une posture d'expert plaquée — c'est la consigne officielle de l'école.",
       "Si le jury prend le contre-pied de votre position, tenez-la avec un argument supplémentaire ou nuancez-la avec courtoisie plutôt que de vous rétracter au premier mot.",
@@ -1991,9 +1991,9 @@ export const KEY_QUESTIONS: KeyQuestion[] = [
     subTheme: "Planet",
     question: "Le nucléaire est-il un mal nécessaire pour réussir la transition énergétique ?",
     intent:
-      "Question Impact de Clermont School of Business, axe Planet : teste votre capacité à prendre position immédiatement sur un sujet de société lié à l'environnement et à la transition écologique, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
+      "Question Impact de Clermont School of Business, axe Planet : teste votre capacité à prendre position clairement sur un sujet de société lié à l'environnement et à la transition écologique, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
     criteria: [
-      "Prenez position dès les premières secondes : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
+      "Prenez position clairement, dès le début ou après quelques phrases de réflexion : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
       "Illustrez immédiatement avec un exemple concret et récent plutôt qu'une explication abstraite.",
       "Acceptez qu'il n'y ait pas de bonne réponse : une hésitation honnête et argumentée vaut mieux qu'une posture d'expert plaquée — c'est la consigne officielle de l'école.",
       "Si le jury prend le contre-pied de votre position, tenez-la avec un argument supplémentaire ou nuancez-la avec courtoisie plutôt que de vous rétracter au premier mot.",
@@ -2012,9 +2012,9 @@ export const KEY_QUESTIONS: KeyQuestion[] = [
     subTheme: "Planet",
     question: "Les entreprises doivent-elles être notées et sanctionnées sur leur impact carbone comme sur leurs résultats financiers ?",
     intent:
-      "Question Impact de Clermont School of Business, axe Planet : teste votre capacité à prendre position immédiatement sur un sujet de société lié à l'environnement et à la transition écologique, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
+      "Question Impact de Clermont School of Business, axe Planet : teste votre capacité à prendre position clairement sur un sujet de société lié à l'environnement et à la transition écologique, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
     criteria: [
-      "Prenez position dès les premières secondes : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
+      "Prenez position clairement, dès le début ou après quelques phrases de réflexion : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
       "Illustrez immédiatement avec un exemple concret et récent plutôt qu'une explication abstraite.",
       "Acceptez qu'il n'y ait pas de bonne réponse : une hésitation honnête et argumentée vaut mieux qu'une posture d'expert plaquée — c'est la consigne officielle de l'école.",
       "Si le jury prend le contre-pied de votre position, tenez-la avec un argument supplémentaire ou nuancez-la avec courtoisie plutôt que de vous rétracter au premier mot.",
@@ -2033,9 +2033,9 @@ export const KEY_QUESTIONS: KeyQuestion[] = [
     subTheme: "Planet",
     question: "Le tourisme de masse est-il compatible avec la lutte contre le réchauffement climatique ?",
     intent:
-      "Question Impact de Clermont School of Business, axe Planet : teste votre capacité à prendre position immédiatement sur un sujet de société lié à l'environnement et à la transition écologique, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
+      "Question Impact de Clermont School of Business, axe Planet : teste votre capacité à prendre position clairement sur un sujet de société lié à l'environnement et à la transition écologique, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
     criteria: [
-      "Prenez position dès les premières secondes : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
+      "Prenez position clairement, dès le début ou après quelques phrases de réflexion : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
       "Illustrez immédiatement avec un exemple concret et récent plutôt qu'une explication abstraite.",
       "Acceptez qu'il n'y ait pas de bonne réponse : une hésitation honnête et argumentée vaut mieux qu'une posture d'expert plaquée — c'est la consigne officielle de l'école.",
       "Si le jury prend le contre-pied de votre position, tenez-la avec un argument supplémentaire ou nuancez-la avec courtoisie plutôt que de vous rétracter au premier mot.",
@@ -2054,9 +2054,9 @@ export const KEY_QUESTIONS: KeyQuestion[] = [
     subTheme: "Planet",
     question: "Faut-il interdire la publicité pour les produits les plus polluants ?",
     intent:
-      "Question Impact de Clermont School of Business, axe Planet : teste votre capacité à prendre position immédiatement sur un sujet de société lié à l'environnement et à la transition écologique, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
+      "Question Impact de Clermont School of Business, axe Planet : teste votre capacité à prendre position clairement sur un sujet de société lié à l'environnement et à la transition écologique, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
     criteria: [
-      "Prenez position dès les premières secondes : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
+      "Prenez position clairement, dès le début ou après quelques phrases de réflexion : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
       "Illustrez immédiatement avec un exemple concret et récent plutôt qu'une explication abstraite.",
       "Acceptez qu'il n'y ait pas de bonne réponse : une hésitation honnête et argumentée vaut mieux qu'une posture d'expert plaquée — c'est la consigne officielle de l'école.",
       "Si le jury prend le contre-pied de votre position, tenez-la avec un argument supplémentaire ou nuancez-la avec courtoisie plutôt que de vous rétracter au premier mot.",
@@ -2075,9 +2075,9 @@ export const KEY_QUESTIONS: KeyQuestion[] = [
     subTheme: "Planet",
     question: "La transition écologique doit-elle être imposée par la loi ou portée par les choix des consommateurs ?",
     intent:
-      "Question Impact de Clermont School of Business, axe Planet : teste votre capacité à prendre position immédiatement sur un sujet de société lié à l'environnement et à la transition écologique, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
+      "Question Impact de Clermont School of Business, axe Planet : teste votre capacité à prendre position clairement sur un sujet de société lié à l'environnement et à la transition écologique, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
     criteria: [
-      "Prenez position dès les premières secondes : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
+      "Prenez position clairement, dès le début ou après quelques phrases de réflexion : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
       "Illustrez immédiatement avec un exemple concret et récent plutôt qu'une explication abstraite.",
       "Acceptez qu'il n'y ait pas de bonne réponse : une hésitation honnête et argumentée vaut mieux qu'une posture d'expert plaquée — c'est la consigne officielle de l'école.",
       "Si le jury prend le contre-pied de votre position, tenez-la avec un argument supplémentaire ou nuancez-la avec courtoisie plutôt que de vous rétracter au premier mot.",
@@ -2096,9 +2096,9 @@ export const KEY_QUESTIONS: KeyQuestion[] = [
     subTheme: "Profit",
     question: "Bill Gates : plutôt génie, mécène ou businessman ?",
     intent:
-      "Question Impact de Clermont School of Business, axe Profit : teste votre capacité à prendre position immédiatement sur un sujet de société lié à l'économie et à la finance responsable, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
+      "Question Impact de Clermont School of Business, axe Profit : teste votre capacité à prendre position clairement sur un sujet de société lié à l'économie et à la finance responsable, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
     criteria: [
-      "Prenez position dès les premières secondes : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
+      "Prenez position clairement, dès le début ou après quelques phrases de réflexion : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
       "Illustrez immédiatement avec un exemple concret et récent plutôt qu'une explication abstraite.",
       "Acceptez qu'il n'y ait pas de bonne réponse : une hésitation honnête et argumentée vaut mieux qu'une posture d'expert plaquée — c'est la consigne officielle de l'école.",
       "Si le jury prend le contre-pied de votre position, tenez-la avec un argument supplémentaire ou nuancez-la avec courtoisie plutôt que de vous rétracter au premier mot.",
@@ -2117,9 +2117,9 @@ export const KEY_QUESTIONS: KeyQuestion[] = [
     subTheme: "Profit",
     question: "Une entreprise peut-elle être rentable tout en étant 100 % éco-responsable ?",
     intent:
-      "Question Impact de Clermont School of Business, axe Profit : teste votre capacité à prendre position immédiatement sur un sujet de société lié à l'économie et à la finance responsable, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
+      "Question Impact de Clermont School of Business, axe Profit : teste votre capacité à prendre position clairement sur un sujet de société lié à l'économie et à la finance responsable, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
     criteria: [
-      "Prenez position dès les premières secondes : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
+      "Prenez position clairement, dès le début ou après quelques phrases de réflexion : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
       "Illustrez immédiatement avec un exemple concret et récent plutôt qu'une explication abstraite.",
       "Acceptez qu'il n'y ait pas de bonne réponse : une hésitation honnête et argumentée vaut mieux qu'une posture d'expert plaquée — c'est la consigne officielle de l'école.",
       "Si le jury prend le contre-pied de votre position, tenez-la avec un argument supplémentaire ou nuancez-la avec courtoisie plutôt que de vous rétracter au premier mot.",
@@ -2138,9 +2138,9 @@ export const KEY_QUESTIONS: KeyQuestion[] = [
     subTheme: "Profit",
     question: "Que vous inspire le modèle des entreprises à mission ou certifiées B-Corp ?",
     intent:
-      "Question Impact de Clermont School of Business, axe Profit : teste votre capacité à prendre position immédiatement sur un sujet de société lié à l'économie et à la finance responsable, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
+      "Question Impact de Clermont School of Business, axe Profit : teste votre capacité à prendre position clairement sur un sujet de société lié à l'économie et à la finance responsable, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
     criteria: [
-      "Prenez position dès les premières secondes : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
+      "Prenez position clairement, dès le début ou après quelques phrases de réflexion : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
       "Illustrez immédiatement avec un exemple concret et récent plutôt qu'une explication abstraite.",
       "Acceptez qu'il n'y ait pas de bonne réponse : une hésitation honnête et argumentée vaut mieux qu'une posture d'expert plaquée — c'est la consigne officielle de l'école.",
       "Si le jury prend le contre-pied de votre position, tenez-la avec un argument supplémentaire ou nuancez-la avec courtoisie plutôt que de vous rétracter au premier mot.",
@@ -2159,9 +2159,9 @@ export const KEY_QUESTIONS: KeyQuestion[] = [
     subTheme: "Profit",
     question: "Le boycott d'une marque par les consommateurs est-il une arme économique efficace ?",
     intent:
-      "Question Impact de Clermont School of Business, axe Profit : teste votre capacité à prendre position immédiatement sur un sujet de société lié à l'économie et à la finance responsable, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
+      "Question Impact de Clermont School of Business, axe Profit : teste votre capacité à prendre position clairement sur un sujet de société lié à l'économie et à la finance responsable, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
     criteria: [
-      "Prenez position dès les premières secondes : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
+      "Prenez position clairement, dès le début ou après quelques phrases de réflexion : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
       "Illustrez immédiatement avec un exemple concret et récent plutôt qu'une explication abstraite.",
       "Acceptez qu'il n'y ait pas de bonne réponse : une hésitation honnête et argumentée vaut mieux qu'une posture d'expert plaquée — c'est la consigne officielle de l'école.",
       "Si le jury prend le contre-pied de votre position, tenez-la avec un argument supplémentaire ou nuancez-la avec courtoisie plutôt que de vous rétracter au premier mot.",
@@ -2180,9 +2180,9 @@ export const KEY_QUESTIONS: KeyQuestion[] = [
     subTheme: "Profit",
     question: "Une entreprise doit-elle privilégier ses actionnaires ou l'ensemble de ses parties prenantes ?",
     intent:
-      "Question Impact de Clermont School of Business, axe Profit : teste votre capacité à prendre position immédiatement sur un sujet de société lié à l'économie et à la finance responsable, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
+      "Question Impact de Clermont School of Business, axe Profit : teste votre capacité à prendre position clairement sur un sujet de société lié à l'économie et à la finance responsable, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
     criteria: [
-      "Prenez position dès les premières secondes : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
+      "Prenez position clairement, dès le début ou après quelques phrases de réflexion : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
       "Illustrez immédiatement avec un exemple concret et récent plutôt qu'une explication abstraite.",
       "Acceptez qu'il n'y ait pas de bonne réponse : une hésitation honnête et argumentée vaut mieux qu'une posture d'expert plaquée — c'est la consigne officielle de l'école.",
       "Si le jury prend le contre-pied de votre position, tenez-la avec un argument supplémentaire ou nuancez-la avec courtoisie plutôt que de vous rétracter au premier mot.",
@@ -2201,9 +2201,9 @@ export const KEY_QUESTIONS: KeyQuestion[] = [
     subTheme: "Profit",
     question: "La finance verte est-elle un vrai levier de transformation ou un outil de communication ?",
     intent:
-      "Question Impact de Clermont School of Business, axe Profit : teste votre capacité à prendre position immédiatement sur un sujet de société lié à l'économie et à la finance responsable, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
+      "Question Impact de Clermont School of Business, axe Profit : teste votre capacité à prendre position clairement sur un sujet de société lié à l'économie et à la finance responsable, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
     criteria: [
-      "Prenez position dès les premières secondes : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
+      "Prenez position clairement, dès le début ou après quelques phrases de réflexion : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
       "Illustrez immédiatement avec un exemple concret et récent plutôt qu'une explication abstraite.",
       "Acceptez qu'il n'y ait pas de bonne réponse : une hésitation honnête et argumentée vaut mieux qu'une posture d'expert plaquée — c'est la consigne officielle de l'école.",
       "Si le jury prend le contre-pied de votre position, tenez-la avec un argument supplémentaire ou nuancez-la avec courtoisie plutôt que de vous rétracter au premier mot.",
@@ -2222,9 +2222,9 @@ export const KEY_QUESTIONS: KeyQuestion[] = [
     subTheme: "Profit",
     question: "Faut-il plafonner les écarts de salaires au sein d'une même entreprise ?",
     intent:
-      "Question Impact de Clermont School of Business, axe Profit : teste votre capacité à prendre position immédiatement sur un sujet de société lié à l'économie et à la finance responsable, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
+      "Question Impact de Clermont School of Business, axe Profit : teste votre capacité à prendre position clairement sur un sujet de société lié à l'économie et à la finance responsable, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
     criteria: [
-      "Prenez position dès les premières secondes : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
+      "Prenez position clairement, dès le début ou après quelques phrases de réflexion : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
       "Illustrez immédiatement avec un exemple concret et récent plutôt qu'une explication abstraite.",
       "Acceptez qu'il n'y ait pas de bonne réponse : une hésitation honnête et argumentée vaut mieux qu'une posture d'expert plaquée — c'est la consigne officielle de l'école.",
       "Si le jury prend le contre-pied de votre position, tenez-la avec un argument supplémentaire ou nuancez-la avec courtoisie plutôt que de vous rétracter au premier mot.",
@@ -2243,9 +2243,9 @@ export const KEY_QUESTIONS: KeyQuestion[] = [
     subTheme: "Profit",
     question: "Les cryptomonnaies ont-elles un avenir dans l'économie réelle ?",
     intent:
-      "Question Impact de Clermont School of Business, axe Profit : teste votre capacité à prendre position immédiatement sur un sujet de société lié à l'économie et à la finance responsable, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
+      "Question Impact de Clermont School of Business, axe Profit : teste votre capacité à prendre position clairement sur un sujet de société lié à l'économie et à la finance responsable, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
     criteria: [
-      "Prenez position dès les premières secondes : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
+      "Prenez position clairement, dès le début ou après quelques phrases de réflexion : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
       "Illustrez immédiatement avec un exemple concret et récent plutôt qu'une explication abstraite.",
       "Acceptez qu'il n'y ait pas de bonne réponse : une hésitation honnête et argumentée vaut mieux qu'une posture d'expert plaquée — c'est la consigne officielle de l'école.",
       "Si le jury prend le contre-pied de votre position, tenez-la avec un argument supplémentaire ou nuancez-la avec courtoisie plutôt que de vous rétracter au premier mot.",
@@ -2264,9 +2264,9 @@ export const KEY_QUESTIONS: KeyQuestion[] = [
     subTheme: "Profit",
     question: "Le low-cost est-il un modèle économique condamné à disparaître ?",
     intent:
-      "Question Impact de Clermont School of Business, axe Profit : teste votre capacité à prendre position immédiatement sur un sujet de société lié à l'économie et à la finance responsable, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
+      "Question Impact de Clermont School of Business, axe Profit : teste votre capacité à prendre position clairement sur un sujet de société lié à l'économie et à la finance responsable, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
     criteria: [
-      "Prenez position dès les premières secondes : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
+      "Prenez position clairement, dès le début ou après quelques phrases de réflexion : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
       "Illustrez immédiatement avec un exemple concret et récent plutôt qu'une explication abstraite.",
       "Acceptez qu'il n'y ait pas de bonne réponse : une hésitation honnête et argumentée vaut mieux qu'une posture d'expert plaquée — c'est la consigne officielle de l'école.",
       "Si le jury prend le contre-pied de votre position, tenez-la avec un argument supplémentaire ou nuancez-la avec courtoisie plutôt que de vous rétracter au premier mot.",
@@ -2285,9 +2285,9 @@ export const KEY_QUESTIONS: KeyQuestion[] = [
     subTheme: "Profit",
     question: "Une entreprise peut-elle être à la fois low-cost et socialement responsable ?",
     intent:
-      "Question Impact de Clermont School of Business, axe Profit : teste votre capacité à prendre position immédiatement sur un sujet de société lié à l'économie et à la finance responsable, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
+      "Question Impact de Clermont School of Business, axe Profit : teste votre capacité à prendre position clairement sur un sujet de société lié à l'économie et à la finance responsable, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
     criteria: [
-      "Prenez position dès les premières secondes : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
+      "Prenez position clairement, dès le début ou après quelques phrases de réflexion : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
       "Illustrez immédiatement avec un exemple concret et récent plutôt qu'une explication abstraite.",
       "Acceptez qu'il n'y ait pas de bonne réponse : une hésitation honnête et argumentée vaut mieux qu'une posture d'expert plaquée — c'est la consigne officielle de l'école.",
       "Si le jury prend le contre-pied de votre position, tenez-la avec un argument supplémentaire ou nuancez-la avec courtoisie plutôt que de vous rétracter au premier mot.",
@@ -2306,9 +2306,9 @@ export const KEY_QUESTIONS: KeyQuestion[] = [
     subTheme: "Profit",
     question: "Faut-il davantage taxer les superprofits des grandes entreprises en période de crise ?",
     intent:
-      "Question Impact de Clermont School of Business, axe Profit : teste votre capacité à prendre position immédiatement sur un sujet de société lié à l'économie et à la finance responsable, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
+      "Question Impact de Clermont School of Business, axe Profit : teste votre capacité à prendre position clairement sur un sujet de société lié à l'économie et à la finance responsable, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
     criteria: [
-      "Prenez position dès les premières secondes : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
+      "Prenez position clairement, dès le début ou après quelques phrases de réflexion : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
       "Illustrez immédiatement avec un exemple concret et récent plutôt qu'une explication abstraite.",
       "Acceptez qu'il n'y ait pas de bonne réponse : une hésitation honnête et argumentée vaut mieux qu'une posture d'expert plaquée — c'est la consigne officielle de l'école.",
       "Si le jury prend le contre-pied de votre position, tenez-la avec un argument supplémentaire ou nuancez-la avec courtoisie plutôt que de vous rétracter au premier mot.",
@@ -2327,9 +2327,9 @@ export const KEY_QUESTIONS: KeyQuestion[] = [
     subTheme: "Profit",
     question: "Le mécénat d'entreprise est-il un acte désintéressé ou une stratégie d'image ?",
     intent:
-      "Question Impact de Clermont School of Business, axe Profit : teste votre capacité à prendre position immédiatement sur un sujet de société lié à l'économie et à la finance responsable, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
+      "Question Impact de Clermont School of Business, axe Profit : teste votre capacité à prendre position clairement sur un sujet de société lié à l'économie et à la finance responsable, sans préparation, et à la tenir si le jury vous oppose l'inverse.",
     criteria: [
-      "Prenez position dès les premières secondes : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
+      "Prenez position clairement, dès le début ou après quelques phrases de réflexion : oui, non, ou une nuance assumée — jamais un pour/contre qui ne tranche pas.",
       "Illustrez immédiatement avec un exemple concret et récent plutôt qu'une explication abstraite.",
       "Acceptez qu'il n'y ait pas de bonne réponse : une hésitation honnête et argumentée vaut mieux qu'une posture d'expert plaquée — c'est la consigne officielle de l'école.",
       "Si le jury prend le contre-pied de votre position, tenez-la avec un argument supplémentaire ou nuancez-la avec courtoisie plutôt que de vous rétracter au premier mot.",
@@ -2367,12 +2367,11 @@ const EDHEC_TRAINING_EXTRA_WORDS = [
 ];
 
 const EDHEC_TRAINING_INTENT =
-  "Première partie de l'entretien EDHEC (« Trilogie ») : le jury vous impose un mot et vous devez prendre la parole dessus, sans préparation. L'exercice teste votre capacité à construire un propos personnel et structuré à partir d'un seul mot, puis à échanger avec le jury sur ce que vous avez dit.";
+  "Première partie de l'entretien EDHEC (« Trilogie ») : le jury vous impose un mot : vous disposez d'1 minute de préparation, puis vous présentez pendant 4 minutes, sans intervention du jury. L'exercice teste votre capacité à construire un propos personnel et structuré à partir d'un seul mot, puis à échanger avec le jury sur ce que vous avez dit.";
 const EDHEC_TRAINING_CRITERIA = [
   "Appropriez-vous le mot immédiatement : définissez-le à votre manière ou racontez ce qu'il évoque pour vous, plutôt que de donner une définition de dictionnaire.",
   "Structurez votre prise de parole : une entrée en matière, deux ou trois idées clairement articulées, une conclusion nette.",
   "Personnalisez : appuyez-vous sur vos expériences, vos lectures ou vos centres d'intérêt pour illustrer le mot.",
-  "Tenez environ 2 minutes de propos continu, sans blanc long ni décrochage.",
   "Si le jury rebondit sur vos propos, défendez vos choix sans vous rétracter au premier mot.",
 ];
 const EDHEC_TRAINING_PITFALLS = [
@@ -2400,8 +2399,7 @@ const EMLYON_CARD_INTENT: Record<string, string> = {
 const EMLYON_CARD_CRITERIA = [
   "Répondez directement à la question posée, sans long préambule.",
   "Ancrez votre réponse dans votre propre expérience, votre personnalité ou votre projet : c'est la personnalisation que le jury attend sur chaque carte.",
-  "Tenez 3 à 4 minutes maximum : une réponse claire et rythmée plutôt qu'un monologue exhaustif.",
-  "Si le jury relance ou vous contredit, tenez votre position en l'ajustant intelligemment.",
+  "Développez chaque carte, environ 3 à 4 minutes, sans monologue exhaustif.",
 ];
 const EMLYON_CARD_PITFALLS = [
   "Une réponse factuelle ou générique qui pourrait être celle de n'importe quel candidat.",
@@ -2428,7 +2426,7 @@ const ESSEC_TRAINING_PITFALLS = [
 
 /** Génère les questions d'entraînement d'une banque école (module « Questions clés »). */
 function buildTrainingQuestions(): KeyQuestion[] {
-  const edhecWords = [...everyOther(EDHEC_WORDS), ...EDHEC_TRAINING_EXTRA_WORDS];
+  const edhecWords = [...EDHEC_WORDS_MODULE, ...EDHEC_TRAINING_EXTRA_WORDS];
   const edhec: KeyQuestion[] = edhecWords.map((word, i) => ({
     id: `edhec-mot-${i + 1}`,
     theme: "EDHEC BS",
@@ -2439,13 +2437,13 @@ function buildTrainingQuestions(): KeyQuestion[] {
   }));
 
   const emlyonBanks: { subTheme: string; bank: string[] }[] = [
-    { subTheme: "Expérience", bank: EMLYON_EXPERIENCE },
-    { subTheme: "Personnalité", bank: EMLYON_PERSONNALITE },
-    { subTheme: "Projet", bank: EMLYON_PROJET },
-    { subTheme: "Créativité", bank: EMLYON_CREATIVITE },
+    { subTheme: "Expérience", bank: EMLYON_MODULE.Expérience },
+    { subTheme: "Personnalité", bank: EMLYON_MODULE.Personnalité },
+    { subTheme: "Projet", bank: EMLYON_MODULE.Projet },
+    { subTheme: "Créativité", bank: EMLYON_MODULE.Créativité },
   ];
   const emlyon: KeyQuestion[] = emlyonBanks.flatMap(({ subTheme, bank }) =>
-    everyOther(bank).map((q, i) => ({
+    bank.map((q, i) => ({
       id: `emlyon-${subTheme.toLowerCase()}-${i + 1}`,
       theme: "emlyon BS",
       subTheme,
