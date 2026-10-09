@@ -1,6 +1,9 @@
 import { describe, expect, it, vi } from "vitest";
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
+import { createElement } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
+import { InterviewDebrief } from "@/components/vivaldi/InterviewDebrief";
 import { controlerTexte, filtrerVerbatims, insererPercentile, LIGNE_INTERROMPU, parseReview } from "./texte";
 import { blocFileForSchool } from "./textes";
 import { produireFeedback } from "../feedback-enchainement";
@@ -98,6 +101,28 @@ describe("rédacteur : traitement du texte", () => {
   });
   it("préserve le texte libre d'un critère non mesuré", () => {
     expect(parseReview("### Ouverture sur le monde\nPas mesuré dans cet entretien.")[0]?.feedback).toBe("Pas mesuré dans cet entretien.");
+  });
+  it("affiche les citations sous leurs puces sans titre global dans le nouveau format", () => {
+    const html = renderToStaticMarkup(
+      createElement(InterviewDebrief, {
+        text: "## Feedback détaillé\n### Présentation\n- Première remarque\nVERBATIMS: Vous : « citation 1 »\n- Remarque sans citation",
+      }),
+    );
+    expect(html).toContain("Première remarque");
+    expect(html).toContain("citation 1");
+    expect(html).toContain("Remarque sans citation");
+    expect(html).not.toContain("Verbatims qui illustrent");
+    expect(html.indexOf("Première remarque")).toBeLessThan(html.indexOf("citation 1"));
+  });
+  it("conserve le bloc global des verbatims pour l'ancien format", () => {
+    const html = renderToStaticMarkup(
+      createElement(InterviewDebrief, {
+        text: "## Feedback détaillé\n### Présentation\nVERBATIMS: Vous : « ancienne citation »\nFEEDBACK:\n- Ancienne remarque",
+      }),
+    );
+    expect(html).toContain("Ancienne remarque");
+    expect(html).toContain("Verbatims qui illustrent");
+    expect(html.indexOf("Ancienne remarque")).toBeLessThan(html.indexOf("Verbatims qui illustrent"));
   });
   it("adapte les libellés de l'export PDF pour les deux formats", () => {
     expect(plain("VERBATIMS: Une citation\nFEEDBACK:\n- Une remarque")).toBe("Verbatims : Une citation\n- Une remarque");
