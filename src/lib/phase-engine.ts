@@ -496,6 +496,15 @@ export class PhaseEngine {
     }
   }
 
+  /**
+   * La mesure d'une phase ouverte part de cet instant (emlyon : première prise
+   * de parole du candidat sur la première carte). Sans effet sur le déroulé.
+   */
+  markMeasureStart(phaseId: string, at: number): void {
+    const timing = this.timingList.find((item) => item.phaseId === phaseId && item.kind !== "monologue");
+    if (timing && !timing.transitionDetectedAt) timing.startedAt = new Date(at).toISOString();
+  }
+
   markPhaseEnd(phaseId: string, at: number): void {
     for (const state of this.monologueStates) {
       if (state.closed) continue;

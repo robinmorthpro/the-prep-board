@@ -425,6 +425,12 @@ export function useJuryAgent({
     syncEngineRef.current();
   }, []);
 
+  /** Le chronomètre d'une phase déjà ouverte repart de cet instant (mesure seulement). */
+  const markMeasureStart = useCallback((phaseId: string) => {
+    engineRef.current?.markMeasureStart(phaseId, Date.now());
+    syncEngineRef.current();
+  }, []);
+
   const markPhaseEnd = useCallback((phaseId: string) => {
     engineRef.current?.markPhaseEnd(phaseId, Date.now());
     syncEngineRef.current();
