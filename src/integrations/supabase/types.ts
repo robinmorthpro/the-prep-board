@@ -14,6 +14,170 @@ export type Database = {
   }
   public: {
     Tables: {
+      bench_results: {
+        Row: {
+          attempts: number
+          case_points: Json
+          citations_retirees: Json
+          cout_estime: number | null
+          created_at: string
+          criterion_points: Json
+          duree_eval_ms: number
+          duree_redaction_ms: number
+          erreurs: Json
+          essai_n: number
+          evaluation_brute: Json | null
+          evaluation_texte: string
+          feedback: string
+          final_score: number | null
+          id: string
+          jetons: Json
+          modele: string
+          penalties: Json
+          percentile: number | null
+          run_id: string
+          score_20: number | null
+          status: string
+          unrated_criteria: Json
+          warnings: Json
+        }
+        Insert: {
+          attempts?: number
+          case_points?: Json
+          citations_retirees?: Json
+          cout_estime?: number | null
+          created_at?: string
+          criterion_points?: Json
+          duree_eval_ms?: number
+          duree_redaction_ms?: number
+          erreurs?: Json
+          essai_n?: number
+          evaluation_brute?: Json | null
+          evaluation_texte?: string
+          feedback?: string
+          final_score?: number | null
+          id?: string
+          jetons?: Json
+          modele: string
+          penalties?: Json
+          percentile?: number | null
+          run_id: string
+          score_20?: number | null
+          status: string
+          unrated_criteria?: Json
+          warnings?: Json
+        }
+        Update: {
+          attempts?: number
+          case_points?: Json
+          citations_retirees?: Json
+          cout_estime?: number | null
+          created_at?: string
+          criterion_points?: Json
+          duree_eval_ms?: number
+          duree_redaction_ms?: number
+          erreurs?: Json
+          essai_n?: number
+          evaluation_brute?: Json | null
+          evaluation_texte?: string
+          feedback?: string
+          final_score?: number | null
+          id?: string
+          jetons?: Json
+          modele?: string
+          penalties?: Json
+          percentile?: number | null
+          run_id?: string
+          score_20?: number | null
+          status?: string
+          unrated_criteria?: Json
+          warnings?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bench_results_run_id_fkey"
+            columns: ["run_id"]
+            isOneToOne: false
+            referencedRelation: "bench_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bench_runs: {
+        Row: {
+          conversation_id: string | null
+          cout_candidat_estime: number | null
+          cout_jury_credits: number | null
+          created_at: string
+          document: string
+          duree_ms: number
+          duree_simulee_s: number
+          ecole: string
+          erreurs: Json
+          graine: number
+          id: string
+          jetons_candidat: Json
+          jury: string
+          lot: string
+          phase_timings: Json
+          profil: string
+          scenario: string
+          statut: string
+          support_label: string
+          tirages: Json
+          turns: Json
+          updated_at: string
+        }
+        Insert: {
+          conversation_id?: string | null
+          cout_candidat_estime?: number | null
+          cout_jury_credits?: number | null
+          created_at?: string
+          document?: string
+          duree_ms?: number
+          duree_simulee_s?: number
+          ecole: string
+          erreurs?: Json
+          graine: number
+          id?: string
+          jetons_candidat?: Json
+          jury: string
+          lot: string
+          phase_timings?: Json
+          profil: string
+          scenario?: string
+          statut?: string
+          support_label?: string
+          tirages?: Json
+          turns?: Json
+          updated_at?: string
+        }
+        Update: {
+          conversation_id?: string | null
+          cout_candidat_estime?: number | null
+          cout_jury_credits?: number | null
+          created_at?: string
+          document?: string
+          duree_ms?: number
+          duree_simulee_s?: number
+          ecole?: string
+          erreurs?: Json
+          graine?: number
+          id?: string
+          jetons_candidat?: Json
+          jury?: string
+          lot?: string
+          phase_timings?: Json
+          profil?: string
+          scenario?: string
+          statut?: string
+          support_label?: string
+          tirages?: Json
+          turns?: Json
+          updated_at?: string
+        }
+        Relationships: []
+      }
       career_projects: {
         Row: {
           companies: string
