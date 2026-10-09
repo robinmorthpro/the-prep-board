@@ -24,9 +24,6 @@ import { evaluateInterview } from "@/lib/evaluateur.functions";
 import { redigerFeedback } from "@/lib/redacteur.functions";
 import { FEEDBACK_ECHEC_MESSAGE, produireFeedback } from "@/lib/feedback-enchainement";
 import type { Tirages } from "@/lib/tirages";
-import { emlyonCartesEtiquetees } from "@/lib/emlyon-kb";
-import { pickEssecSituationTiree } from "@/lib/essec-kb";
-import { IMPACT_AXIS_LABEL } from "@/lib/esc-clermont-kb";
 import {
   useCareerProject,
   useExperiences,
@@ -76,14 +73,14 @@ import { PartNav } from "@/components/vivaldi/PartNav";
 import { schoolLogo } from "@/lib/school-logos";
 import { schoolPhotoOrFallback } from "@/components/vivaldi/school-photos";
 import { pickGemPersona } from "@/lib/gem-kb";
-import { pickEssecSituation } from "@/lib/essec-kb";
-import { drawEmlyonCards } from "@/lib/emlyon-kb";
+import { pickEssecSituationTiree } from "@/lib/essec-kb";
+import { drawEmlyonCards, emlyonCartesEtiquetees } from "@/lib/emlyon-kb";
 import { EMLYON_CARDS_SILENCE_MS, EmlyonCardsSilence } from "@/lib/emlyon-trigger";
 import { pickEdhecWord } from "@/lib/edhec-kb";
 import { drawMontpellierSituations, type MontpellierSituation } from "@/lib/montpellier-kb";
 import { drawKedgeCards } from "@/lib/kedge-kb";
 import { INSEEC_IMAGES, type InseecImage } from "@/lib/inseec-kb";
-import type { ImpactAxis } from "@/lib/esc-clermont-kb";
+import { IMPACT_AXIS_LABEL, type ImpactAxis } from "@/lib/esc-clermont-kb";
 
 
 
