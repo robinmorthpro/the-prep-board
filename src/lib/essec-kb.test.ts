@@ -9,7 +9,10 @@ describe("partition partagée ESSEC", () => {
   });
 
   it("donne au module les trois plus petits numéros de chaque compétence et le complément au jury", () => {
-    const groups = Map.groupBy(ESSEC_SITUATIONS_NUMEROTEES, (item) => item.competence);
+    const groups = new Map<string, typeof ESSEC_SITUATIONS_NUMEROTEES>();
+    for (const item of ESSEC_SITUATIONS_NUMEROTEES) {
+      groups.set(item.competence, [...(groups.get(item.competence) ?? []), item]);
+    }
     for (const [competence, items] of groups) {
       expect(ESSEC_SITUATIONS_MODULE.filter((item) => item.competence === competence).map((item) => item.numero)).toEqual(
         items.slice(0, 3).map((item) => item.numero),
