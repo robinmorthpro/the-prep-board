@@ -376,7 +376,7 @@ const turnSchema = z.object({
   askedAt: z.string().optional(),
   answeredAt: z.string().optional(),
 });
-const contextSchema = z.object({
+export const contextSchema = z.object({
   school: z.string(),
   studentName: z.string().default(""),
   prepa: z.string().default(""),
@@ -386,7 +386,7 @@ const contextSchema = z.object({
   newsTopics: z.string().default(""),
 });
 
-function contextBlock(c: z.infer<typeof contextSchema>) {
+export function contextBlock(c: z.infer<typeof contextSchema>) {
   return `École passée en entretien : ${c.school}
 Candidat : ${c.studentName || "non renseigné"} (${c.prepa || "CPGE"})
 
