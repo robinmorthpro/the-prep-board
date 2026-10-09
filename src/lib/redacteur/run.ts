@@ -4,6 +4,7 @@ import { callEvaluator, createRunIdFetch, DEFAULT_EVAL_MODEL, type Message } fro
 import { repliques, transcriptionHorodatee, type TourEnregistre } from "../evaluateur/transcription";
 import type { PenaliteAppliquee } from "../evaluateur/calcul";
 import { systemPromptRedacteur } from "./textes";
+import { blocTirages } from "../tirages";
 import { controlerTexte, filtrerVerbatims, insererPercentile } from "./texte";
 
 export type SessionPourRedaction = {
@@ -14,6 +15,7 @@ export type SessionPourRedaction = {
   support_label: string | null;
   support_text: string | null;
   inseec_image: string | null;
+  tirages?: unknown;
 };
 
 export type EvaluationPourRedaction = {
@@ -82,6 +84,8 @@ export function userMessageRedacteur(session: SessionPourRedaction, ev: Evaluati
     "TRANSCRIPTION :",
     transcriptionHorodatee((session.turns ?? []) as TourEnregistre[]),
   ];
+  const tires = blocTirages(session.tirages);
+  if (tires) parts.push("", tires);
   if ((session.support_text ?? "").trim()) {
     parts.push("", `CONTENU DU SUPPORT (${session.support_label ?? ""}), transcrit fidèlement :`, session.support_text!.trim());
   }

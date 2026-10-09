@@ -21,7 +21,7 @@ export const redigerFeedback = createServerFn({ method: "POST" })
     const [{ data: session }, { data: ev }] = await Promise.all([
       context.supabase
         .from("interview_sessions")
-        .select("id, school, difficulty, turns, support_label, support_text, inseec_image")
+        .select("id, school, difficulty, turns, support_label, support_text, inseec_image, tirages")
         .eq("id", data.sessionId)
         .eq("user_id", context.userId)
         .maybeSingle(),

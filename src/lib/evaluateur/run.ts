@@ -1,3 +1,4 @@
+import { blocCartesEvaluateur } from "../tirages";
 // Évaluation d'une session : appel IA, vérifications, calcul. Serveur uniquement.
 import { BAREME, grilleKeyForSchool, type GrilleDef } from "./bareme";
 import { calculerNote } from "./calcul";
@@ -16,6 +17,7 @@ export type SessionPourEvaluation = {
   phase_timings: unknown;
   support_text: string | null;
   inseec_image: string | null;
+  tirages?: unknown;
 };
 
 export type LigneEvaluation = {
@@ -91,6 +93,8 @@ export function userMessageFor(session: SessionPourEvaluation): string {
   const parts = [`École : ${session.school}`, "", "Transcription :", transcriptionHorodatee((session.turns ?? []) as TourEnregistre[])];
   if ((session.support_text ?? "").trim()) parts.push("", "Document remis par le candidat :", session.support_text!.trim());
   if ((session.inseec_image ?? "").trim()) parts.push("", "Image INSEEC choisie par le candidat :", session.inseec_image!.trim());
+  const cartes = blocCartesEvaluateur(session.tirages);
+  if (cartes) parts.push("", cartes);
   return parts.join("\n");
 }
 
