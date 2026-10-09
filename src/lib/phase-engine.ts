@@ -15,7 +15,7 @@
  * - à Y−2 la clôture part une seule fois, puis plus aucune consigne de phase.
  */
 import { isDryAnswer, isImposedQuestionAsked, isNothingToAdd, normalizeInterviewText } from "./interview-text";
-import { ADD_QUESTION } from "./school-interviews";
+import { ADD_QUESTION, getSchoolInterviewConfig, secondReplyFor } from "./school-interviews";
 import type { MonologueMeasure, PhaseStep, PhaseTiming } from "./school-interviews";
 
 /** Préfixe de toutes les consignes internes envoyées au jury par l'application. */
@@ -27,6 +27,9 @@ export function isRegieMessage(text: string) {
 }
 
 /** Rappel ajouté à la fin de CHAQUE repère : le jury ne rend jamais la main sans question. */
+/** Phrase de passage aux situations de Montpellier (texte normalisé). */
+export const MONTPELLIER_PASSAGE_RE = /merci passons maintenant aux situations a vous de choisir celle qui vous inspire/;
+
 export const END_WITH_QUESTION = "Termine ta prochaine prise de parole par une question.";
 export const THEME_REMINDER =
   "Rappel : d'ici la fin de l'entretien, au moins 3 expériences, la personnalité, le projet, les 4 points de l'école (pourquoi une école de commerce, pourquoi celle-ci, ce qu'il apportera, sa connaissance de l'école) et l'actualité doivent tous avoir été abordés. L'entretien continue jusqu'à la consigne de clôture.";
@@ -153,6 +156,9 @@ export class PhaseEngine {
   private lastMarkerValue: MarkerInfo | null = null;
   private themeReminderSent = false;
   private readonly variables: Record<string, string>;
+  private readonly hasSecondReply: boolean;
+  /** Montpellier : le repère qui suit la phrase de passage aux situations. */
+  private omitNextQuestion = false;
 
   constructor(opts: {
     school: string;
@@ -162,6 +168,8 @@ export class PhaseEngine {
     startedAt: number;
     /** Variables dynamiques de la session (cartes emlyon tirées…). */
     variables?: Record<string, string>;
+    /** L'école a une deuxième réplique imposée (déduit de l'école par défaut). */
+    hasSecondReply?: boolean;
   }) {
     this.school = opts.school;
     this.variables = opts.variables ?? {};
@@ -169,6 +177,7 @@ export class PhaseEngine {
     this.monologues = opts.monologues;
     this.totalMinutes = opts.totalMinutes;
     this.startedAt = opts.startedAt;
+    this.hasSecondReply = opts.hasSecondReply ?? Boolean(secondReplyFor(getSchoolInterviewConfig(opts.school)));
     const first = this.schedule[0];
     if (first) {
       this.phaseStartedAt[first.id] = this.startedAt;
@@ -214,6 +223,7 @@ export class PhaseEngine {
     // Aucune détection sur le tout premier message du jury.
     if (this.juryMessageCount <= 1) return [];
     const normalized = normalizeInterviewText(text);
+    if (this.school === "Montpellier BS" && MONTPELLIER_PASSAGE_RE.test(normalized)) this.omitNextQuestion = true;
     const currentStep = this.schedule[this.phaseIndex];
     if (currentStep?.closeOnExit?.test(normalized)) return this.closeImmediately(at);
     let detectedIndex: number | null = null;
@@ -400,7 +410,7 @@ export class PhaseEngine {
       advanced.kind === "switch" && this.pendingIndex !== null
         ? this.schedule[this.pendingIndex]
         : this.schedule[this.phaseIndex];
-    const questionSuffix = activeStep?.omitEndWithQuestion ? "" : ` ${END_WITH_QUESTION}`;
+    const questionSuffix = activeStep?.omitEndWithQuestion || this.omitQuestionNow() ? "" : ` ${END_WITH_QUESTION}`;
     const updates = [`${REGIE_PREFIX} ${this.fill(markerText)}${questionSuffix}`];
     if (!this.closing && closing) {
       this.closing = true;
@@ -413,6 +423,23 @@ export class PhaseEngine {
       );
     }
     return updates;
+  }
+
+  /**
+   * Repères sans « Termine ta prochaine prise de parole par une question » :
+   * avant la deuxième réplique, pendant la présentation EDHEC et le pitch
+   * d'EM Strasbourg, et juste après la phrase de passage de Montpellier.
+   */
+  private omitQuestionNow(): boolean {
+    if (this.omitNextQuestion) {
+      this.omitNextQuestion = false;
+      return true;
+    }
+    if (this.hasSecondReply && this.juryMessageCount < 2) return true;
+    const open = (id: string) => !this.monologueStates.some((st) => st.measure.id === id && st.closed);
+    if (this.school === "EDHEC" && open("edhec-presentation")) return true;
+    if (this.school === "EM Strasbourg" && open("em-strasbourg-pitch")) return true;
+    return false;
   }
 
   private closeImmediately(at: number): string[] {
