@@ -936,7 +936,7 @@ ATTENTION FORMAT DE SORTIE : dans le feedback détaillé, place la section de C1
         label: "Les situations",
         minutes: 23,
         detail:
-          "Le jury vous propose des situations (« Racontez une situation où vous avez dû faire face à une difficulté inattendue. »). Vous en choisissez une, vous la développez, le jury creuse jusqu'à épuisement du sujet, puis vous en propose une autre. Comptez 2 à 4 situations traitées sur les 25 minutes. Cet oral ne teste ni votre projet professionnel, ni votre connaissance de l'école, ni votre motivation à l'intégrer : c'est un format purement comportemental (softskills).",
+          "Le jury vous propose des situations (« Vous vous êtes trouvé(e) face à une situation inattendue »). Vous en choisissez une, vous la développez, le jury creuse jusqu'à épuisement du sujet, puis vous en propose une autre. Comptez 2 à 4 situations traitées sur les 25 minutes. Cet oral ne teste ni votre projet professionnel, ni votre connaissance de l'école, ni votre motivation à l'intégrer : c'est un format purement comportemental (softskills).",
         guaranteed: true,
       },
     ],
