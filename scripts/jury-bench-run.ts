@@ -637,7 +637,12 @@ async function jouerEntretien(plan: Plan, document: { label: string; texte: stri
       school === "KEDGE" && !!kedgeDraw && (/autoportrait/.test(demande) || demande.includes(normalizeInterviewText(kedgeDraw.autoportrait).slice(0, 40)));
     const estPresentation =
       !presentationFaite &&
-      (kedgeAutoportrait || (school !== "KEDGE" && /presentez|presenter|pitch|presentation|expose/.test(demande) && turns.length <= 2));
+      (kedgeAutoportrait ||
+        (school !== "KEDGE" &&
+          // Message d'accueil qui annonce la structure (« Est-ce que c'est clair pour vous ? ») : pas encore la présentation.
+          !/est-ce que c'est clair/.test(demande) &&
+          /presentez|presenter|pitch|presentation|expose/.test(demande) &&
+          turns.length <= 2));
     if (estPresentation) {
       [a, b] = fourchettePresentation(school, Boolean(config.support), scenario.presentationS);
       presentationFaite = true;
