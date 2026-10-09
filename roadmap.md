@@ -65,3 +65,10 @@
 
 ## Rédacteur du feedback — étape 2
 - [x] 13 textes copiés (sha256), rédacteur, enchaînement avec secours, colonnes percentile / feedback_source / feedback_evaluation_id, tests, essai NEOMA
+
+## Jury vocal — étape 3
+- [ ] Copier le texte commun et la référence des 15 écoles, avec contrôle SHA-256
+- [ ] Intégrer mot pour mot les 15 textes école dans le code et les vérifier depuis la référence
+- [ ] Appliquer les corrections de régie, niveaux, phases, durées et mesures retenues
+- [ ] Répartir les 30 situations ESSEC : 3 par compétence dans Questions clés, complément dans le jury
+- [ ] Compléter les tests et vérifier la construction
