@@ -15,9 +15,7 @@
 - [x] Fil de l'entretien : prises de parole consécutives du jury concaténées, interruption récupérable, erreurs traduites en français
 
 ## Suivant
-- [ ] Créer l'agent dédié Rennes SB puis enregistrer `ELEVENLABS_AGENT_ID_RENNES_SB` (école affichée « bientôt disponible »)
 - [ ] Généraliser les configs aux 24 écoles (lots suivants)
-- [ ] Contenu du questionnaire Rennes SB (PUMA) quand il sera figé
 
 ## Lot 2 — qualité du jury (fait)
 - [x] Premiers messages validés par école (prénom + nom de l'école) et 2e réplique verbatim après « c'est clair ? »
@@ -67,15 +65,16 @@
 - [x] 13 textes copiés (sha256), rédacteur, enchaînement avec secours, colonnes percentile / feedback_source / feedback_evaluation_id, tests, essai NEOMA
 
 ## Jury vocal — étape 3
-- [ ] Copier le texte commun et la référence des 15 écoles, avec contrôle SHA-256
-- [ ] Intégrer mot pour mot les 15 textes école dans le code et les vérifier depuis la référence
-- [ ] Appliquer les corrections de régie, niveaux, phases, durées et mesures retenues
-- [ ] Répartir les 30 situations ESSEC : 3 par compétence dans Questions clés, complément dans le jury
-- [ ] Compléter les tests et vérifier la construction
+- [x] Copier le texte commun et la référence des 15 écoles, avec contrôle SHA-256
+- [x] Intégrer mot pour mot les 15 textes école dans le code et les vérifier depuis la référence
+- [x] Appliquer les corrections de régie, niveaux, phases, durées et mesures retenues
+- [x] Répartir les 30 situations ESSEC : 3 par compétence dans Questions clés, complément dans le jury
+- [x] Compléter les tests et vérifier la construction
 
 ## Écrans — étape 4
-- [ ] Passer à deux jurys, afficher le positionnement complet et préserver l’historique
-- [ ] Recalculer évolution et radar depuis les évaluations structurées, avec 0 à 3+ simulations testées
-- [ ] Retirer HEC des nouveaux choix et passer Rennes/ISC au format classique
-- [ ] Aligner les écrans et phases des dix écoles listées
-- [ ] Vérifier tous les tests, la construction et capturer tableau de bord et feedback si accessibles
+- [x] Passer à deux jurys, afficher le positionnement complet et préserver l’historique
+- [x] Recalculer évolution et radar depuis les évaluations structurées, avec 0 à 3+ simulations testées
+- [x] Retirer HEC des nouveaux choix et passer Rennes/ISC au format classique
+- [x] Aligner les écrans et phases des dix écoles listées
+- [x] Vérifier tous les tests et la construction
+- [ ] Capturer le tableau de bord et un feedback récent — bloqué par l’authentification Supabase externe non injectable

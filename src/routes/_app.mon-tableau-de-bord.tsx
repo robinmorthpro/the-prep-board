@@ -60,6 +60,8 @@ export const Route = createFileRoute("/_app/mon-tableau-de-bord")({
         property: "og:description",
         content: "Suivez votre niveau par thème d'entretien et ce qu'il reste à travailler avant les oraux.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: CockpitPage,

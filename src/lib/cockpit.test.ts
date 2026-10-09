@@ -4,7 +4,8 @@ import { BAREME } from "./evaluateur/bareme";
 import type { InterviewSession } from "./vivaldi-queries";
 
 function session(ratio: number, createdAt: string, overrides: Record<string, unknown> = {}): InterviewSession {
-  const grid = BAREME.grilles.classique;
+  const grid = BAREME.grilles["classique"];
+  if (!grid) throw new Error("Grille classique introuvable");
   const casePoints = Object.fromEntries(
     grid.criteres.map((criterion) => [
       criterion.cle,
@@ -63,7 +64,8 @@ describe("radar des simulations complètes", () => {
 
   it("ignore une simulation interrompue et les cases non observées", () => {
     const valid = session(1, "2");
-    if (valid.evaluation) valid.evaluation.case_points.ecole.case1 = null;
+    const schoolCases = valid.evaluation?.case_points["ecole"];
+    if (schoolCases) schoolCases["case1"] = null;
     const interrupted = session(0, "1", { interrupted: true });
     expect(computeThemeScores([], [valid, interrupted]).map((theme) => theme.score)).toEqual([100, 100, 100, 100, 100]);
   });
