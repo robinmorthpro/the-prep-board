@@ -197,6 +197,13 @@ export const ESSEC_SITUATIONS_JURY = ESSEC_SITUATIONS_NUMEROTEES.filter(
   (situation) => !ESSEC_MODULE_NUMBERS.has(situation.numero),
 );
 
+if (
+  ESSEC_SITUATIONS_MODULE.length !== 15 ||
+  new Set(ESSEC_SITUATIONS_MODULE.map((situation) => situation.competence)).size !== 5
+) {
+  throw new Error("La banque ESSEC doit fournir exactement trois situations par compétence au module.");
+}
+
 /**
  * Sélectionne au hasard l'énoncé de la mise en situation proposée au
  * candidat pendant l'échange libre de l'entretien ESSEC, injecté via la
