@@ -1536,7 +1536,6 @@ const PHASE_SCHEDULES: Record<string, PhaseStep[]> = {
       allowEarly: true,
       ongoing:
         "Interview inversée : réponds en personnage, ne change pas de phase. Si le candidat semble à court de questions, tu peux sortir brièvement de ton personnage pour lui demander exactement « Avez-vous d'autres questions à me poser ? » (au plus deux fois dans la partie). Ne change jamais de partie de toi-même : l'application te dira au repère suivant quand passer à la suite.",
-      omitEndWithQuestion: true,
       dryEarlySwitch: true,
       timing: { plannedMinutes: 10, floorMinutes: 8.5, criterion: "l'interview inversée", penalizeEarly: true },
     },

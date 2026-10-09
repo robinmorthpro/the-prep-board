@@ -29,9 +29,9 @@ export function isRegieMessage(text: string) {
 /** Rappel ajouté à la fin de CHAQUE repère : le jury ne rend jamais la main sans question. */
 export const END_WITH_QUESTION = "Termine ta prochaine prise de parole par une question.";
 export const THEME_REMINDER =
-  "Rappel : avant la fin de l'entretien, vérifie que tu as creusé au moins trois expériences différentes, la personnalité, le projet professionnel, au moins quatre points précis sur l'école et une question d'actualité. L'entretien continue jusqu'à la consigne de clôture.";
+  "Rappel : d'ici la fin de l'entretien, au moins 3 expériences, la personnalité, le projet, les 4 points de l'école (pourquoi une école de commerce, pourquoi celle-ci, ce qu'il apportera, sa connaissance de l'école) et l'actualité doivent tous avoir été abordés. L'entretien continue jusqu'à la consigne de clôture.";
 export const THEME_REMINDER_WITHOUT_NEWS =
-  "Rappel : avant la fin de l'entretien, vérifie que tu as creusé au moins trois expériences différentes, la personnalité, le projet professionnel et au moins quatre points précis sur l'école. L'entretien continue jusqu'à la consigne de clôture.";
+  "Rappel : d'ici la fin de l'entretien, au moins 3 expériences, la personnalité, le projet et les 4 points de l'école (pourquoi une école de commerce, pourquoi celle-ci, ce qu'il apportera, sa connaissance de l'école) doivent tous avoir été abordés. L'entretien continue jusqu'à la consigne de clôture.";
 export const MONTPELLIER_THEME_REMINDER =
   "Rappel : d'ici la fin de l'entretien, les expériences, la personnalité et l'ouverture doivent avoir été abordées. L'entretien continue jusqu'à la consigne de clôture.";
 
