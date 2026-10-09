@@ -1,117 +1,164 @@
-# Étape 4 — Écrans
+# Étape 5 — le reste de la liste (A à G)
 
-## Périmètre
+Rien ne touche au barème ni aux textes du jury et du rédacteur. Seuls les 3 textes de l'évaluateur joints sont remplacés.
 
-Modifier uniquement les écrans, leurs données et les calculs du tableau de bord. Ne pas toucher au barème, à la notation, à l’évaluateur, au rédacteur, aux textes du jury ni à la configuration ElevenLabs.
+## A. Textes de l'évaluateur
+Fichiers : `src/lib/evaluateur/textes/commun.md`, `ecoles/essec.md`, `ecoles/emlyon.md`. Copie octet pour octet, et contrôle des empreintes. Les empreintes des fichiers joints sont déjà vérifiées et identiques à celles annoncées.
 
-## 1. Deux jurys au lieu de trois
+Différences mesurées avec les fichiers actuels :
+- commun.md : 2 lignes ajoutées après la ligne 37.
+  - « - **Refus de se livrer** du début à la fin : toutes les cases à N1. »
+  - « - **Question de fin** : seule la question de clôture compte, jamais « Avez-vous autre chose à ajouter sur cette partie ? ». »
+- essec.md : 1 ligne ajoutée après la ligne 40 : « - une mise en situation commencée puis écourtée par la clôture reste notée. »
+- emlyon.md, ligne 15 : la phrase « À l'emlyon, la durée et la phrase de fin ne comptent pas dans les niveaux de la Présentation : le N4 reste accessible sans elles. » est ajoutée en fin de ligne.
 
-**Fichiers concernés**
-- `src/lib/interview-kb.ts` : ne proposer que `classique` et `classique_dur`, tout en gardant un alias historique explicite `decouverte → Jury neutre`.
-- `src/lib/school-interviews.ts` : les difficultés proposées viennent de cette liste.
-- `src/routes/_app.partie-8.tsx` : sélecteur, conseil et libellés de l’historique.
-- `src/components/repetia/home.tsx`, `src/components/repetia/site.tsx`, `src/lib/site-content.ts` : mentions publiques des niveaux.
-- `src/lib/ai.functions.ts` reste compatible avec `decouverte` pour les anciennes sessions ; aucune logique d’évaluation ou de jury n’est changée.
+Test : un nouveau test d'empreinte SHA-256 sur les 3 fichiers (`57fb15b0…89fa`, `c23947bc…9b7c`, `f68a16e9…bf42`). Aucun test d'empreinte de l'évaluateur n'existe aujourd'hui.
 
-**Textes actuels → nouveaux**
-- Deux options actuelles portent « Jury neutre » (`decouverte` et `classique`) et une porte « Jury dur » → seulement « Jury neutre » (`classique`) et « Jury dur » (`classique_dur`).
-- « Trois niveaux d'exigence, de la découverte au jury difficile » → « Deux niveaux d'exigence : un jury neutre et un jury difficile ».
-- « Découverte, classique, exigeant : trois niveaux de jury. L'évaluation ne tombe qu'à la fin, comme au concours. » → « Deux niveaux d'exigence : un jury neutre et un jury difficile. L'évaluation ne tombe qu'à la fin, comme au concours. »
-- Conseil actuel : « Pour un premier entraînement, nous vous conseillons de choisir l'entretien de découverte, avec un jury un peu plus aidant. Basculez ensuite vers les entretiens classiques, qui vous mettront face aux exigences du jour J. »
-- **Proposition à valider** : « Pour un premier entraînement, choisissez le jury neutre, qui conduit l'échange comme le jour J. Passez ensuite au jury dur pour vous entraîner à répondre sous davantage de pression. »
+## B. Pénalité du pitch EM Strasbourg
+Dans `src/lib/evaluateur/durees.ts`, `pitch: []` devient `pitch: ["em-strasbourg-pitch"]`. C'est la mesure déjà enregistrée par l'application, de 2 min 30 sur 3 min.
+Tests : pitch de 2 min 10 → pénalité ; pitch de 2 min 40 → aucune ; pitch non mesuré → aucune.
 
-Les sessions anciennes en `decouverte` resteront affichées « Jury neutre » ; elles ne seront ni réécrites ni supprimées.
+## C. Suppression du feedback de secours
+**Ce qui est retiré :**
+- `debriefInterview` dans `ai.functions.ts`. Les fonctions partagées (`contextBlock`, `contextSchema`) sont conservées.
+- Dans `_app.partie-8.tsx` : son import, `askDebrief` et la fonction `ancien`.
+- `NOUVEAU_FEEDBACK_ACTIF` et le paramètre `actif`/`ancien` de `produireFeedback`.
+- Le commentaire qui cite `debriefInterview` dans `elevenlabs-agent-prompt.ts`.
+- La règle de `AGENTS.md` sur le secours. Elle est remplacée par : « Feedback = évaluation puis rédacteur, une relance automatique, puis écran d'échec ».
 
-## 2. Afficher « Ce que ce classement signifie »
+**Relance automatique :** dans `feedback-enchainement.ts`, `produireFeedback` lance la chaîne complète (évaluation puis rédacteur). En cas d'échec ou d'évaluation non « ok », elle relance une seule fois. Après un second échec, elle renvoie un résultat « échec », sans texte.
 
-**Fichiers concernés**
-- `src/components/vivaldi/InterviewDebrief.tsx` : conserver le percentile dans le bandeau et rendre, juste après, la section déjà extraite du feedback.
-- `src/routes/_app.partie-8.tsx` : appliquer le même rendu au feedback courant et à l’historique.
+**Écran d'échec (partie 8, à la place du feedback) :**
+- Texte : « Votre feedback n'a pas pu être généré. Réessayez dans quelques minutes. »
+- Bouton « Réessayer », qui relance la chaîne sur la même session.
+- Le transcript reste affiché et exportable.
+- Aujourd'hui, en cas d'erreur, l'écran revient à « entretien en cours » (`setPhase("running")`) avec un message d'erreur. Ce comportement est retiré.
 
-**Actuel → nouveau**
-- Actuel : le bandeau affiche « Percentile indicatif », `P…` et « Sur cet entretien, vous faites mieux que … % des candidats (± 5 percentiles). » ; le bloc markdown `## Ce que ce classement signifie` est ensuite masqué en entier.
-- Nouveau : même bandeau, puis première section « Ce que ce classement signifie » avec uniquement ses 2 ou 3 phrases explicatives, sans répéter la ligne `P…`.
+**Historique :**
+- Les sessions qui ont déjà un feedback (nouveau ou ancien) s'affichent telles quelles. `percentileDuTexte` est gardé pour lire le percentile des anciennes.
+- Une session terminée sans feedback affiche le même écran d'échec, avec « Réessayer ».
 
-Le même parseur sera utilisé pour les anciens feedbacks et conservera l’alias historique « Positionnement ».
+Tests : succès au 1er essai ; échec puis succès (2 appels) ; deux échecs → « échec » sans texte ; évaluation « invalide » deux fois → « échec ». Les tests de l'ancien secours sont retirés.
 
-## 3. Tableau de bord
+## D. Ce que l'application a tiré, transmis au rédacteur
+Aujourd'hui, ces tirages ne sont pas enregistrés : `interview_sessions` n'a que `support_*` et `inseec_image`.
 
-### 3a. « Mes repères »
+Ajout d'une colonne `tirages` (jsonb, `{}` par défaut) dans `interview_sessions`, par migration sur votre Supabase. Elle est remplie au démarrage, puis complétée pendant l'entretien. Le rédacteur reçoit un bloc « CE QUE L'APPLICATION A TIRÉ », placé après la transcription.
 
-**Fichiers concernés**
-- `src/lib/vivaldi-queries.ts` : lire `interview_sessions.percentile`, `feedback_evaluation_id` et l’évaluation liée (`status`, `interrupted`, `score_20`, `final_score`, `percentile`, `case_points`, `criterion_points`, `grille`). La lecture reste protégée par les règles d’accès propriétaire existantes.
-- `src/lib/cockpit.ts` : remplacer l’extraction `P…` depuis le texte du feedback par les colonnes structurées.
-- `src/routes/_app.mon-tableau-de-bord.tsx` : texte d’évolution.
+| École | Tirage transmis | Forme |
+|---|---|---|
+| emlyon | 4 cartes | `Carte Expérience : « … » (critère : Expériences et personnalité)`, une ligne par carte |
+| EDHEC | mot | `Mot imposé : « audace »` |
+| Montpellier | situation(s) choisie(s) à l'écran, dans l'ordre | `Situation choisie : « … »` |
+| ESSEC | situation | `Mise en situation : « énoncé » — compétence visée : Créativité`* |
+| Clermont | question Impact réellement posée | `Question Impact (axe Planet) : « … »` |
+| TBS | article choisi | `Article : « titre »` |
+| INSEEC | image | déjà transmise : inchangé |
+| GEM | personnage | `Personnage de l'interview inversée : prénom, poste, secteur, fil rouge` (texte de `pickGemPersona`) |
 
-**Actuel → nouveau**
-- « Évolution sur vos simulations : +X percentiles entre votre première et votre dernière simulation. » est actuellement calculé depuis le markdown et affiché pour tout écart → même phrase, mais seulement si l’écart absolu entre la première et la dernière note atteint 1 point sur 20.
-- Sous 1 point → « Évolution sur vos simulations : Niveau stable. »
-- Avec moins de deux simulations complètes → conserver « Passez au moins deux simulations complètes pour visualiser votre progression. »
+\* Aujourd'hui, `pickEssecSituation` ne renvoie que l'énoncé. Elle renverra aussi la compétence, depuis la liste partagée.
 
-Une simulation compte si son évaluation liée est `ok`, non interrompue et possède note et percentile. Le percentile affiché vient de `interview_sessions.percentile`, avec cohérence vérifiée contre celui de l’évaluation.
+Tests : le bloc rendu pour chaque école, et aucun bloc quand rien n'a été tiré.
 
-### 3b. Radar « Mon niveau par thème »
+## E. Jury et régie
+**CONNAISSANCE DU CANDIDAT**
 
-**Calcul de la part simulations**
-1. Prendre les 3 évaluations complètes les plus récentes, dans l’ordre de `interview_sessions.created_at`.
-2. Pour chaque entretien et chaque thème, sommer les valeurs de `case_points` retenues.
-3. Construire le maximum correspondant depuis `bareme.json`, case par case. Une case `null`/non observée est retirée du numérateur et du maximum ; un thème sans case notée est ignoré pour cet entretien.
-4. Convertir en pourcentage, puis faire la moyenne arithmétique des pourcentages disponibles sur les 3 entretiens.
-5. Injecter ce score propre à chaque thème dans la combinaison actuelle avec les Questions clés ; les scores, volumes et poids de la part Questions clés ne changent pas.
+Où le bloc est assemblé : `buildJuryAgentPrompt` coupe le texte commun avant « NIVEAU JOUÉ ». Toute la section « CADRE DE L'ENTRETIEN » de `jury-commun.md` est donc écartée, puis remplacée par la constante `AGENT_DYNAMIC_VARIABLES`, qui contient l'ancienne version.
 
-**Correspondance exacte, toutes grilles**
-- Écoles : `ecole`.
-- Introspection : le critère de présentation (`presentation`, `presentation_longue_essec`, `presentation_mot_edhec`, `autoportrait_kedge`, `presentation_image_inseec`, `pitch_em_strasbourg`) + `experiences.recit/recul` ou `experiences_montpellier.recit/recul`.
-- Projet pro : `projet`.
-- Futur : `experiences.projection` ; Montpellier n’a pas cette case, donc n’alimente pas ce thème.
-- Aisance orale : `conduite`, `clarte`, `destabilisantes`.
-- Exclus du radar : `ouverture`, `mise_en_situation_essec`, `expose_gem`, `interview_inversee_gem`, `article_tbs`, `odd_kedge`, `question_impact_clermont`. Ils restent dans la note et le percentile.
+Le bloc est donc envoyé **une seule fois, mais dans l'ancienne version**. Il manque « ni écrit dans le document qu'il a remis » et « sauf quand tu ouvres un nouveau thème (APRÈS CHAQUE RÉPONSE, cas 5) ».
 
-**Légende actuelle → proposition du fondateur à valider**
-- Actuelle : « Chaque thème est alimenté par les verdicts du jury IA sur vos questions clés (module « Questions clés ») et par le percentile de vos trois dernières simulations complètes. L'aisance orale pèse davantage sur les simulations, car elle ne s'évalue vraiment qu'en situation. »
-- Nouvelle : le texte exact fourni dans `etape-4-ecrans.md`, sans modification avant validation.
+Correction : `AGENT_DYNAMIC_VARIABLES` est extraite telle quelle de `jury-commun.md` (section CADRE, jusqu'au `---` suivant). Le double espace « Tu construis  tes » est conservé.
+Test : le texte envoyé est identique à celui du fichier et ne contient qu'une seule occurrence de « CONNAISSANCE DU CANDIDAT ».
 
-## 4. Liste des écoles
+**I68, suffixe « Termine ta prochaine prise de parole par une question. »**
 
-**Fichiers concernés**
-- `src/lib/vivaldi-data.ts` et `src/routes/_app.informations-personnelles.tsx` : retirer HEC Paris des choix futurs, sans effacer HEC d’un ancien profil.
-- `src/lib/school-interviews.ts` : supprimer le format spécial Rennes et faire hériter Rennes et ISC Paris du format classique.
-- `src/routes/_app.partie-8.tsx` : options réellement proposées.
-- `src/lib/elevenlabs.functions.ts` ne nécessite pas de changement fonctionnel.
+Ce suffixe n'est plus ajouté au repère :
+- avant la deuxième réplique, quand l'école en a une ;
+- pendant la présentation EDHEC, tant que la phrase de transition n'est pas dite ;
+- pendant le pitch de Clermont (phase `clermont-pitch`) et celui d'EM Strasbourg (tant que la mesure du pitch est ouverte) ;
+- au repère qui suit la phrase de passage de Montpellier.
 
-**Actuel → nouveau**
-- HEC Paris est proposée dans la liste BCE → elle ne l’est plus.
-- Rennes : « Rennes SB — format PUMA (mise en situation + débrief) », questionnaire obligatoire, 13 minutes simulées, `comingSoon`, agent dédié déclaré mais secret absent avec repli actuel sur l’agent classique → format classique complet, agent classique partagé, prompt maison, aucun questionnaire, plus de statut « à venir ».
-- ISC Paris : aucun format dédié aujourd’hui ; elle utilise déjà le format et l’agent classiques → rendre ce choix explicite/testé, sans changement visible attendu.
+**Autres réglages de régie :**
+- **ESSEC, pause de 30 s** : elle part à la fin de la prise de parole du jury qui contient « prenez quelques secondes pour réfléchir ». Aujourd'hui, elle part au démarrage de la phase.
+- **ESSEC, sortie anticipée** : si le jury a dit « La mise en situation est terminée » et sa question de clôture, `closeImmediately` n'envoie plus de seconde consigne de clôture.
+- **EDHEC** : relances de silence suspendues jusqu'à la phrase de transition. Aujourd'hui, elles ne le sont que pendant l'écran de préparation. Le rappel des deux tiers est calculé sur la durée de l'entretien individuel (à confirmer à la lecture du code au début de la mise en œuvre).
+- **KEDGE** : « la présentation Autoportrait (C1) » devient « la présentation Autoportrait ».
+- **I29, GEM** : pendant l'interview inversée, les questions courtes du candidat ne comptent plus comme réponses « à sec ». La bascule sur un « non » à « Avez-vous d'autres questions ? » reste.
+- **I52, GEM** : relances de silence suspendues pendant `gem-inversee` (pas pendant la minute de synthèse).
+- **I33, Clermont** : la question Impact n'est tirée que parmi les questions réservées à l'oral. Voir la question 2 plus bas.
+- **I62, emlyon** : aujourd'hui, le chronomètre des cartes part au tirage (`startPhase` dans `triggerEmlyonCards`). Il partira à la première prise de parole du candidat après l'énoncé des cartes. La mesure reste `emlyon-cartes`.
+- **I66** : « EXEMPLES DE TON (extraits d'oraux réels) » devient « EXEMPLES DE TON », puis `docs/agent-jury-elevenlabs.md` est régénéré.
 
-## 5. Écrans et phases par école
+Tests : un par règle ci-dessus, dans `phase-engine.test.ts` et `jury-rendu.test.ts`.
 
-Toutes ces chaînes viennent de `src/lib/school-interviews.ts` et sont rendues par `InterviewBriefDialog.tsx`. Les changements de séquencement touchent aussi `src/lib/phase-engine.ts` et, pour Montpellier, `src/routes/_app.partie-8.tsx`.
+## F. Modules d'entraînement
+**Piles séparées (I50)**
 
-- **ESSEC** — « après une présentation d'environ 5 minutes » → « après une présentation de 3 minutes à 5 minutes 30 » ; « échange libre de 35 minutes » → « échange libre de 40 minutes » ; « L'entretien se termine par vos questions au jury. » → « L'entretien se termine par une question de fin. » ; retirer la phase « Questions du candidat au jury ».
-- **emlyon** — « Vous vous présentez librement, sans minutage imposé » → « Vous vous présentez en une minute environ » ; « Puis 10 minutes d'échange libre » → « Puis 8 à 10 minutes d'échange libre » ; « Présentation libre du candidat, sans minutage strict » → « Présentation du candidat, en une minute environ ».
-- **EDHEC** — « … sans retour sur l'exercice collectif ni sur la présentation » → « … sans retour sur l'exercice collectif » ; dans le popup, « sans retour sur cet exercice de groupe ni sur votre présentation » → « sans retour sur cet exercice de groupe ».
-- **GEM** — « Durée réelle et simulée : 30 minutes (5 + 10 + 15). » → « Durée réelle et simulée : 32 minutes (5 + 2 + 10 + 15). » ; ajouter « Rebond sur l’exposé — 2 minutes » entre exposé et interview inversée.
-- **TBS** — détail « Présentation puis entretien de motivation classique sur le parcours, la personnalité et le projet » → « … le parcours, la personnalité, le projet et l'école » ; accueil actuel « … votre présentation, votre parcours et votre motivation » → formulation harmonisée « … votre parcours, votre personnalité, votre projet et l'école ».
-- **ESC Clermont** — « … le parcours, la personnalité et le projet » → « … le parcours, la personnalité, le projet et l'école » dans le détail et l’accueil.
-- **KEDGE** — « Présentation du parcours et de la personnalité à partir du mot tiré » → « Présentation du parcours à partir du mot tiré ». Le popup réutilise ce détail de phase : une seule source sera modifiée.
-- **INSEEC** — « Futur (le lien avec l'école ou votre projet, si naturel) » → « Futur (où cette qualité vous servira, à l'école ou en entreprise) ».
-- **Montpellier** — une phase unique « Les situations — 25 minutes » → « Présentation — 1 à 2 minutes », puis situations ; ajouter à l’écran « L'entretien se termine par une question d'actualité. ». La grille restera cachée jusqu’à la réplique existante « Merci. Passons maintenant aux situations : à vous de choisir celle qui vous inspire. » ; « Votre situation en cours » disparaîtra à 20 minutes sans arrêter l’entretien ni modifier le jury.
-- **EM Normandie** — « en reprenant vos réponses une à une — y compris la question posée en anglais » → « en s'appuyant sur vos réponses pour les creuser — y compris celle rédigée en anglais ».
+Le module garde ses cartes actuelles (un élément sur deux, rangs 1, 3, 5…). Le jury ne tire plus que dans les autres.
 
-## Tests et vérifications
+| Pile | Total | Module | Jury |
+|---|---|---|---|
+| emlyon Expérience | 46 | 23 | 23 |
+| emlyon Personnalité | 65 | 33 | 32 |
+| emlyon Projet | 41 | 21 | 20 |
+| emlyon Créativité | 64 | 32 | 32 |
+| Mots EDHEC | 75 | 38 (+ 8 mots propres au module) | 37 |
 
-- Niveaux : exactement deux choix ; `decouverte` ancien reste « Jury neutre » ; toutes les mentions publiques passent à deux niveaux.
-- Feedback : percentile présent une seule fois ; section explicative première ; compatibilité avec les anciens titres/formats.
-- Données structurées : simulations interrompues ou sans évaluation ignorées ; ordre chronologique correct ; seuil d’évolution à `0,99`, `1,00` et `-1,00` point.
-- Radar : un test par mapping spécial de présentation, exclusion de chaque critère propre, projection isolée, case non observée ignorée, moyenne des 3 dernières uniquement, Montpellier sans Futur, part Questions clés inchangée.
-- Écoles : HEC absente des nouveaux choix ; anciens profils HEC lisibles ; Rennes et ISC sur l’agent/config classiques, sans questionnaire Rennes.
-- Phases : textes exacts et calendriers ESSEC/GEM/Montpellier ; déclenchement de la grille Montpellier seulement après la phrase imposée et masquage à 20 minutes ; autres libellés école vérifiés mot pour mot.
-- Lancer toute la suite de tests et vérifier la construction et les écrans concernés sur formats ordinateur et mobile.
+Une seule liste partagée par le module et le jury, sur le modèle de l'ESSEC.
+Test : aucune intersection entre les deux listes, et chaque tirage du jury appartient à sa liste.
 
-## Points à valider avant application
+**Textes visibles**
 
-1. Le texte de conseil proposé au point 1.
-2. La légende du radar fournie par le fondateur.
-3. Pour l’évolution, j’utiliserai `final_score` (note sur 20 après éventuelles pénalités), plutôt que `score_20` avant pénalités.
-4. Pour TBS, le texte d’accueil actuel ne dit pas exactement « parcours, personnalité, projet » ; je propose de l’harmoniser entièrement en « parcours, personnalité, projet et école », conformément à l’intention du fichier.
+| Point | Texte actuel | Nouveau |
+|---|---|---|
+| I20 (`ai.functions.ts`, l. 97) | « … Un échec ne se raconte que si le jury pose explicitement la question des défauts (travaillée ailleurs). » | phrase retirée, le reste de la ligne est inchangé |
+| I20 (l. 98) | « - Un seul axe suffit pour le futur : soit l'école, soit le projet pro. Tu ne demandes jamais les deux. » | ligne retirée |
+| I23 (cartes emlyon) | « Si le jury relance ou vous contredit, tenez votre position en l'ajustant intelligemment. » | retiré |
+| I25 | « Tenez 3 à 4 minutes maximum : une réponse claire et rythmée plutôt qu'un monologue exhaustif. » | « Développez chaque carte, environ 3 à 4 minutes, sans monologue exhaustif. » |
+| I28 (EDHEC) | « … vous devez prendre la parole dessus, sans préparation. » | « … vous disposez d'1 minute de préparation, puis vous présentez pendant 4 minutes, sans intervention du jury. » |
+| I28 | « Tenez environ 2 minutes de propos continu, sans blanc long ni décrochage. » | retiré |
+| I34 (36 fiches Clermont) | « Prenez position dès les premières secondes : oui, non, ou une nuance assumée… » | « Prenez position clairement, dès le début ou après quelques phrases de réflexion : oui, non, ou une nuance assumée… » |
+| I34 | « … teste votre capacité à prendre position immédiatement sur … » | « … teste votre capacité à prendre position clairement sur … » |
+| Montpellier (l. 946) | « … une dizaine de situations sous forme de débuts de phrase … » | « … 15 situations … » |
+| Montpellier (l. 939) | « … des situations sous forme de débuts de phrase à compléter (« J'ai dû faire face à une difficulté inattendue quand… »). » | « … des situations (« … ») », avec un exemple de situation complète tiré de la liste |
+
+Tests : les phrases retirées sont absentes des textes.
+
+## G. Étiquettes des cartes emlyon
+- **Stockage** : une table d'étiquettes dans `emlyon-kb.ts`. Par défaut, une carte prend le critère de sa pile. S'y ajoutent les 14 exceptions Créativité de la liste, toutes retrouvées mot pour mot dans la banque, et les cartes Projet sur l'école.
+- **Tirage** : `drawEmlyonCards` renvoie `{ pile, question, critere }` pour chaque carte. Le tirage est enregistré dans `tirages.emlyon_cartes`.
+- **Évaluateur** : bloc « Cartes tirées (critère où chaque carte se note) » dans son message utilisateur, à côté du document et de l'image.
+- **Rédacteur** : même bloc, présenté en D.
+
+**Cartes Projet qui portent sur l'école (proposition à valider)**
+
+Sûres :
+- « Pourquoi voulez-vous intégrer l'emlyon ? »
+- « Quelles sont les particularités du Programme Grande École de l'emlyon ? »
+- « Pensez-vous que l'emlyon vous apportera un esprit critique ? »
+- « Que souhaitez-vous apprendre à l'emlyon ? »
+- « Citez 3 cours que vous aimeriez suivre à l'emlyon et expliquez pourquoi. »
+- « Quels seront pour vous les trois apports de l'emlyon BS ? »
+- « Quels sont les 3 cours que vous attendez avec impatience à l'emlyon ? »
+- « Quel est le principal atout de l'emlyon selon vous ? »
+
+Douteuses (laissées en Projet sauf avis contraire) :
+- « Si vous aviez le don d'ubiquité que feriez-vous en plus de vos études dans notre école ? »
+- « Pourquoi voulez-vous intégrer une école de commerce ? »
+- « Pourquoi une business school ? »
+- « Que choisissez-vous entre avoir 1/3 de votre temps dédié aux stages et 2/3 aux cours, et l'inverse ? »
+- « Dans quel pays ne souhaiteriez-vous pas partir en échange universitaire ? »
+
+Tests : les 14 exceptions, une carte par défaut de chaque pile, une carte Projet sur l'école, et la présence de l'étiquette dans les deux messages.
+
+## Points ambigus ou contraires à l'app
+1. **Évaluateur** : son texte commun dit « Tu reçois … la transcription. Rien d'autre ». Il reçoit pourtant déjà le document et l'image, et G y ajoute les cartes. Je l'applique ainsi, sans toucher au texte.
+2. **Clermont, I33** : aujourd'hui, le module publie les 72 questions Impact (24 par axe). Aucune n'est réservée à l'oral. Proposition : même partage qu'emlyon, soit 12 questions par axe dans le module (36 au lieu de 72) et 12 réservées au jury. À valider.
+3. **KEDGE** : les 5 cartes tirées ne figurent pas dans la liste D. Je propose de les transmettre aussi. À valider.
+4. **Montpellier** : le premier message du jury dit « à travers des débuts de phrase que vous choisirez ». Il est figé depuis l'étape 3, donc je ne change que l'écran.
+5. **I20** : ces deux phrases n'existent que dans `ai.functions.ts` : rien à corriger dans `vivaldi-data.ts`.
+6. **I62** : le chronomètre part aujourd'hui au tirage, contrairement à ce qui était indiqué à l'étape précédente.
+7. **D, migration** : la nouvelle colonne est ajoutée sur votre Supabase « The Prep Board ». Les anciennes sessions gardent `{}`.
+
+## Vérifications finales
+Tous les tests, la construction, la liste des fichiers modifiés et le tableau des empreintes.
