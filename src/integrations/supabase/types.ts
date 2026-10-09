@@ -201,9 +201,12 @@ export type Database = {
           created_at: string
           debrief: string
           difficulty: string
+          feedback_evaluation_id: string | null
+          feedback_source: string | null
           format: string
           id: string
           inseec_image: string
+          percentile: number | null
           phase_timings: Json
           school: string
           status: string
@@ -218,9 +221,12 @@ export type Database = {
           created_at?: string
           debrief?: string
           difficulty?: string
+          feedback_evaluation_id?: string | null
+          feedback_source?: string | null
           format?: string
           id?: string
           inseec_image?: string
+          percentile?: number | null
           phase_timings?: Json
           school?: string
           status?: string
@@ -235,9 +241,12 @@ export type Database = {
           created_at?: string
           debrief?: string
           difficulty?: string
+          feedback_evaluation_id?: string | null
+          feedback_source?: string | null
           format?: string
           id?: string
           inseec_image?: string
+          percentile?: number | null
           phase_timings?: Json
           school?: string
           status?: string
@@ -248,7 +257,15 @@ export type Database = {
           updated_at?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "interview_sessions_feedback_evaluation_id_fkey"
+            columns: ["feedback_evaluation_id"]
+            isOneToOne: false
+            referencedRelation: "interview_evaluations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       interview_supports: {
         Row: {
