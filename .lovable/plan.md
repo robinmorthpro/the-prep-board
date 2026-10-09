@@ -1,164 +1,131 @@
-# Étape 5 — le reste de la liste (A à G)
+# Étape 3.5 — Banc d'essai complet
 
-Rien ne touche au barème ni aux textes du jury et du rédacteur. Seuls les 3 textes de l'évaluateur joints sont remplacés.
+Rien ne change dans l'application elle-même. Ce qui change : le banc (`scripts/`), deux tables réservées à l'admin, et des tests.
 
-## A. Textes de l'évaluateur
-Fichiers : `src/lib/evaluateur/textes/commun.md`, `ecoles/essec.md`, `ecoles/emlyon.md`. Copie octet pour octet, et contrôle des empreintes. Les empreintes des fichiers joints sont déjà vérifiées et identiques à celles annoncées.
+## 1. `scripts/jury-bench-run.ts` remis sur l'app actuelle
 
-Différences mesurées avec les fichiers actuels :
-- commun.md : 2 lignes ajoutées après la ligne 37.
-  - « - **Refus de se livrer** du début à la fin : toutes les cases à N1. »
-  - « - **Question de fin** : seule la question de clôture compte, jamais « Avez-vous autre chose à ajouter sur cette partie ? ». »
-- essec.md : 1 ligne ajoutée après la ligne 40 : « - une mise en situation commencée puis écourtée par la clôture reste notée. »
-- emlyon.md, ligne 15 : la phrase « À l'emlyon, la durée et la phrase de fin ne comptent pas dans les niveaux de la Présentation : le N4 reste accessible sans elles. » est ajoutée en fin de ligne.
+- **Retiré** : les versions old / new / v2, `OLD_COMMIT`, `oldPrompts`, les campagnes « ordre d'envoi », « mode écrit » et « oral », les rapports de comparaison et l'écriture de fichiers dans `scripts/bench-output/`. Le dossier est supprimé (46 fichiers) et ajouté au `.gitignore`.
+- **Importé depuis `src/`** : tout ce qui a une source dans l'app.
+  - Le jury : `buildJuryAgentPrompt`, `buildAgentIdentity`, `difficultyBlock` et les textes de `src/lib/jury/`.
+  - L'entretien : configuration de l'école, premier message, deuxième réplique, consigne d'ouverture et déroulé des phases (`school-interviews.ts`), moteur de phases et préfixe de régie (`phase-engine.ts`), règle des 5 s d'emlyon (`emlyon-trigger.ts`), découpage des réponses (`interview-text.ts`).
+  - Les tirages, dans les seules piles du jury : `drawEmlyonCards`, `pickEdhecWord`, `CLERMONT_IMPACT_JURY` via `buildClermontImpactVariables`, `pickEssecSituationTiree`, `drawKedgeCards`, `pickGemPersona`, et l'article TBS de `tbs-articles.ts`. Le tout est assemblé par `src/lib/tirages.ts`.
+  - La notation : `evaluerSession` puis `redigerFeedbackSession`, sans aucune modification.
+- **Ce qui reste recopié de `src/routes/_app.partie-8.tsx`**, parce que c'est écrit dans le composant et pas dans une fonction exportée :
+  1. l'assemblage des variables envoyées au jury (bloc `agent.start`) ;
+  2. la construction de l'objet `tirages` au démarrage ;
+  3. les secours du jury : question Impact de Clermont, annonce des cartes emlyon, « main rendue sans question » ;
+  4. le compte des silences et les règles de pause (30 s de l'ESSEC, présentation EDHEC, interview inversée GEM) ;
+  5. la suite de la présentation EDHEC (`edhecStage`) et le choix de situation de Montpellier.
 
-Test : un nouveau test d'empreinte SHA-256 sur les 3 fichiers (`57fb15b0…89fa`, `c23947bc…9b7c`, `f68a16e9…bf42`). Aucun test d'empreinte de l'évaluateur n'existe aujourd'hui.
+  Ces blocs sont recopiés tels quels en tête du script, entre balises `// RECOPIE partie-8 : <nom>`. Pour chacun, le script garde l'empreinte SHA-256 du texte source (lignes repérées par des marqueurs de début et de fin, sans dépendre des numéros de ligne).
+- **Test de divergence** (`src/lib/bench-recopie.test.ts`) : il relit `_app.partie-8.tsx`, extrait chaque bloc et compare son empreinte à celle du script. Si la source change, le test échoue et nomme le bloc concerné. Comme on ne touche pas à l'app, je repère les blocs par des phrases déjà présentes dans le code, sans ajouter de commentaire-marqueur.
+- **Horloge virtuelle** : la même qu'aujourd'hui. Durée d'une prise de parole du candidat = nombre de mots / 150 mots par minute. Le jury reste au débit actuel du banc. Les silences (5 s d'emlyon, 30 s de l'ESSEC) sont avancés sur l'horloge sans attente réelle. Les mesures de durée (`phase_timings`) viennent du moteur de phases, exactement comme dans l'app.
 
-## B. Pénalité du pitch EM Strasbourg
-Dans `src/lib/evaluateur/durees.ts`, `pitch: []` devient `pitch: ["em-strasbourg-pitch"]`. C'est la mesure déjà enregistrée par l'application, de 2 min 30 sur 3 min.
-Tests : pitch de 2 min 10 → pénalité ; pitch de 2 min 40 → aucune ; pitch non mesuré → aucune.
+## 2. Le candidat joué par une IA
 
-## C. Suppression du feedback de secours
-**Ce qui est retiré :**
-- `debriefInterview` dans `ai.functions.ts`. Les fonctions partagées (`contextBlock`, `contextSchema`) sont conservées.
-- Dans `_app.partie-8.tsx` : son import, `askDebrief` et la fonction `ancien`.
-- `NOUVEAU_FEEDBACK_ACTIF` et le paramètre `actif`/`ancien` de `produireFeedback`.
-- Le commentaire qui cite `debriefInterview` dans `elevenlabs-agent-prompt.ts`.
-- La règle de `AGENTS.md` sur le secours. Elle est remplacée par : « Feedback = évaluation puis rédacteur, une relance automatique, puis écran d'échec ».
+- **Modèle** : `anthropic/claude-sonnet-5`, appelé par la passerelle sur `/v1/messages` en flux, la méthode déjà utilisée par `gateway.ts`.
+- **Consigne fixe** :
+  - « Tu es [prénom], candidat en 2e année de prépa ECG, à l'oral d'admission de [école]. »
+  - Il parle comme à l'oral : phrases parlées, quelques hésitations selon le profil, aucune mise en forme.
+  - Il ne sort jamais de son rôle et ne connaît que son profil. Il n'invente rien de précis sur l'école au-delà de ce que son profil lui donne.
+  - Une longueur cible lui est donnée en mots. Exemple : 40 s à 1 min 30 donne 100 à 225 mots, tirés au hasard à partir de la graine.
+- **Les consignes [RÉGIE] ne lui parviennent jamais** : elles sont retirées de ce qu'il reçoit, avec `isRegieMessage` et `cleanJuryMessage`. Un test le vérifie.
+- **Les durées sont réalistes à deux niveaux** :
+  1. la consigne vise un nombre de mots ;
+  2. le code contrôle le résultat : une réponse en dehors de la fourchette de plus de 30 % est redemandée une fois.
 
-**Relance automatique :** dans `feedback-enchainement.ts`, `produireFeedback` lance la chaîne complète (évaluation puis rédacteur). En cas d'échec ou d'évaluation non « ok », elle relance une seule fois. Après un second échec, elle renvoie un résultat « échec », sans texte.
+  Pour les présentations, pitchs et exposés, la cible vient de la durée attendue par l'école, ou de la durée imposée par un scénario « trop court ».
+- **5 profils**, dans un nouveau fichier `scripts/bench-profils.json` : excellent, bon, moyen, faible, passif, avec tous les champs de la spécification. Je rédige les profils (contenu inventé) et je vous les montre avant le pilote. Ce que chaque profil sait de l'école reste générique et commun à toutes les écoles.
+- **Scénarios**, dans `scripts/bench-scenarios.ts` : « normal », plus les 13 cas limites. Chaque cas limite ajoute une consigne au candidat, par exemple « tu arrêtes à la 10e minute », ou un réglage de durée (exposé de 3 min, pitch de 1 min 30…). L'arrêt de TBS est joué comme le bouton « Arrêter » de l'app : statut `stopped`.
 
-**Écran d'échec (partie 8, à la place du feedback) :**
-- Texte : « Votre feedback n'a pas pu être généré. Réessayez dans quelques minutes. »
-- Bouton « Réessayer », qui relance la chaîne sur la même session.
-- Le transcript reste affiché et exportable.
-- Aujourd'hui, en cas d'erreur, l'écran revient à « entretien en cours » (`setPhase("running")`) avec un message d'erreur. Ce comportement est retiré.
+## 3. Documents des 5 écoles à document
 
-**Historique :**
-- Les sessions qui ont déjà un feedback (nouveau ou ancien) s'affichent telles quelles. `percentileDuTexte` est gardé pour lire le percentile des anciennes.
-- Une session terminée sans feedback affiche le même écran d'échec, avec « Réessayer ».
+- ESCP, NEOMA, SKEMA, EM Normandie et BSB : Claude Sonnet 5 remplit, à partir du profil, exactement les questions du document de l'école prises dans `src/lib/supports-kb.ts` (CV projectif ou questionnaire, avec les mêmes intitulés). Il ne se sert que du profil.
+- Le texte est mis en forme comme `support_text` dans l'app, puis passé au jury dans la même variable et avec le même libellé. Il est enregistré dans la session du banc (`document`). Le même document sert devant les deux jurys.
 
-Tests : succès au 1er essai ; échec puis succès (2 appels) ; deux échecs → « échec » sans texte ; évaluation « invalide » deux fois → « échec ». Les tests de l'ancien secours sont retirés.
+## 4. Les deux tables (migration)
 
-## D. Ce que l'application a tiré, transmis au rédacteur
-Aujourd'hui, ces tirages ne sont pas enregistrés : `interview_sessions` n'a que `support_*` et `inseec_image`.
+Les deux tables ne sont accessibles qu'aux comptes qui ont le rôle admin, par `has_role(auth.uid(), 'admin')`. Aucun autre compte ne peut les lire, et aucune lecture n'est ouverte aux visiteurs.
 
-Ajout d'une colonne `tirages` (jsonb, `{}` par défaut) dans `interview_sessions`, par migration sur votre Supabase. Elle est remplie au démarrage, puis complétée pendant l'entretien. Le rédacteur reçoit un bloc « CE QUE L'APPLICATION A TIRÉ », placé après la transcription.
+**`bench_runs`** (un entretien) :
+- `lot`, `ecole`, `jury` (`classique` / `classique_dur`), `profil`, `scenario`, `graine`, `essai_n`
+- `turns` (jsonb, même format que `interview_sessions.turns`), `phase_timings`, `tirages`, `document`, `support_label`
+- `conversation_id` (ElevenLabs), `duree_ms`, `duree_simulee_s`
+- `cout_jury_estime`, `cout_candidat_estime`, `jetons_candidat` (jsonb)
+- `statut` (`en_cours` / `ok` / `erreur` / `interrompu`), `erreurs` (jsonb)
+- `created_at`, `updated_at`
+- un index unique sur (`lot`, `ecole`, `jury`, `scenario`, `graine`), qui sert à la reprise
 
-| École | Tirage transmis | Forme |
-|---|---|---|
-| emlyon | 4 cartes | `Carte Expérience : « … » (critère : Expériences et personnalité)`, une ligne par carte |
-| EDHEC | mot | `Mot imposé : « audace »` |
-| Montpellier | situation(s) choisie(s) à l'écran, dans l'ordre | `Situation choisie : « … »` |
-| ESSEC | situation | `Mise en situation : « énoncé » — compétence visée : Créativité`* |
-| Clermont | question Impact réellement posée | `Question Impact (axe Planet) : « … »` |
-| TBS | article choisi | `Article : « titre »` |
-| INSEEC | image | déjà transmise : inchangé |
-| GEM | personnage | `Personnage de l'interview inversée : prénom, poste, secteur, fil rouge` (texte de `pickGemPersona`) |
+**`bench_results`** (une notation) :
+- `run_id` → `bench_runs`, `modele`, `essai_n`
+- `evaluation_brute` (sortie complète), `status`, `attempts`, `case_points`, `criterion_points`, `unrated_criteria`, `penalties`, `score_20`, `final_score`, `percentile`, `warnings`
+- `feedback`, `citations_retirees`
+- `duree_eval_ms`, `duree_redaction_ms`, `jetons` (jsonb, par étape), `cout_estime`, `erreurs`
+- `created_at`
+- un index unique sur (`run_id`, `modele`, `essai_n`)
 
-\* Aujourd'hui, `pickEssecSituation` ne renvoie que l'énoncé. Elle renverra aussi la compétence, depuis la liste partagée.
+**Droits** : le compte admin peut lire et modifier les deux tables, et le service (`service_role`) a tous les droits. Le banc écrit avec le service, uniquement depuis la machine de travail, jamais depuis le navigateur. Comme il n'y a pas d'interface dans l'app, la lecture admin servira à des requêtes ou à un futur écran.
 
-Tests : le bloc rendu pour chaque école, et aucun bloc quand rien n'a été tiré.
+## 5. La chaîne évaluateur + rédacteur, sans compte utilisateur
 
-## E. Jury et régie
-**CONNAISSANCE DU CANDIDAT**
+- Le banc appelle directement `evaluerSession(sessionDuBanc, { model, triggeredBy: "bench" })` puis `redigerFeedbackSession(sessionDuBanc, eval, contexte, { model })`. Ce sont les fonctions internes des fonctions serveur, sans passer par `createServerFn` ni par la connexion.
+- La « session du banc » a la même forme qu'une ligne de `interview_sessions` : école, niveau de jury, tours, mesures, tirages, document. Le `user_id` est fixe et ne sert qu'à la forme de l'objet. Rien n'est écrit dans `interview_evaluations` ni dans `interview_sessions`.
+- Le contexte du rédacteur est construit avec `contextBlock` (de `ai.functions.ts`) à partir du profil, comme l'app le fait avec les fiches de l'élève.
+- Deux modèles, l'un après l'autre :
+  - A : `google/gemini-3.7-flash`
+  - B : `anthropic/claude-sonnet-5`
 
-Où le bloc est assemblé : `buildJuryAgentPrompt` coupe le texte commun avant « NIVEAU JOUÉ ». Toute la section « CADRE DE L'ENTRETIEN » de `jury-commun.md` est donc écartée, puis remplacée par la constante `AGENT_DYNAMIC_VARIABLES`, qui contient l'ancienne version.
+  Le rédacteur ne tourne que si l'évaluation est « ok ». Sinon, la ligne est enregistrée avec son statut et ses erreurs.
+- **Stabilité** : pour 10 entretiens d'écoles différentes, l'évaluateur seul est relancé 3 fois par modèle (`essai_n` 1 à 3), sans rédacteur. Si vous voulez aussi relancer le rédacteur, dites-le.
 
-Le bloc est donc envoyé **une seule fois, mais dans l'ancienne version**. Il manque « ni écrit dans le document qu'il a remis » et « sauf quand tu ouvres un nouveau thème (APRÈS CHAQUE RÉPONSE, cas 5) ».
+## 6. Où et comment le banc s'exécute
 
-Correction : `AGENT_DYNAMIC_VARIABLES` est extraite telle quelle de `jury-commun.md` (section CADRE, jusqu'au `---` suivant). Le double espace « Tu construis  tes » est conservé.
-Test : le texte envoyé est identique à celui du fichier et ne contient qu'une seule occurrence de « CONNAISSANCE DU CANDIDAT ».
+- **Lieu** : sur ma machine de travail (le bac à sable), avec `bun scripts/jury-bench-run.ts --lot <nom> --plan pilote|principal|limites|stabilite`. Les clés ElevenLabs, passerelle et service Supabase y sont déjà présentes, et vérifiées.
+- **Ordre** : les entretiens d'un lot s'enchaînent un par un. L'agent ElevenLabs ne supporte que peu de conversations à la fois, et la passerelle partage une seule limite d'appels. Les notations d'un entretien terminé tournent en parallèle de l'entretien suivant, avec 2 au plus en même temps.
+- **Durée estimée** :
+  - Un entretien de 25 à 30 min simulées compte environ 40 à 60 échanges. Chaque échange prend environ 3 à 8 s pour le jury, en texte, et 5 à 15 s pour le candidat. Total : environ **10 à 15 min réelles par entretien**.
+  - Notation par modèle : environ 1 min avec Gemini (35 s + 24 s au dernier essai), 2 à 3 min avec Claude.
+  - Lot principal (46 entretiens) : **environ 9 à 12 h**. Cas limites : environ 3 h. Stabilité : environ 1 h 30.
+  - Une commande ne peut pas dépasser 10 minutes : le banc tourne en arrière-plan et j'en suis l'avancement. Il faudra plusieurs tours de conversation pour un grand lot.
+- **Reprise** : avant chaque entretien, le banc cherche (`lot`, `ecole`, `jury`, `scenario`, `graine`).
+  - Statut `ok` : il passe directement à la notation manquante.
+  - `erreur` ou `en_cours` (coupure) : il rejoue l'entretien en remplaçant la ligne.
+  - Une notation (`run_id`, `modele`, `essai_n`) déjà « ok » n'est jamais refaite.
+- **Erreurs de la passerelle** : les erreurs 429 et 5xx sont relancées avec attente, 3 fois au plus. Les erreurs 402 et 403, ou un refus du modèle, arrêtent tout le lot et vous sont signalées.
 
-**I68, suffixe « Termine ta prochaine prise de parole par une question. »**
+## 7. Estimation des coûts
 
-Ce suffixe n'est plus ajouté au repère :
-- avant la deuxième réplique, quand l'école en a une ;
-- pendant la présentation EDHEC, tant que la phrase de transition n'est pas dite ;
-- pendant le pitch de Clermont (phase `clermont-pitch`) et celui d'EM Strasbourg (tant que la mesure du pitch est ouverte) ;
-- au repère qui suit la phrase de passage de Montpellier.
+- **Passerelle** : le banc lit, sans toucher au code de l'app, le nombre de jetons de chaque réponse (`usage` en clair, `message_delta.usage` en flux). Le coût est estimé à partir de ces jetons, au tarif public du modèle inscrit dans le script, puis enregistré par étape : candidat, document, évaluation, rédaction. La passerelle ne donne pas le montant réellement facturé : c'est une estimation.
+- **ElevenLabs** : après chaque conversation, le banc lit `GET /v1/convai/conversations/{id}`, qui donne la durée et le coût en crédits, et le crédit consommé sur l'abonnement (`/v1/user/subscription`, avant et après). Le coût en euros = crédits × prix du crédit de votre formule, à me confirmer.
 
-**Autres réglages de régie :**
-- **ESSEC, pause de 30 s** : elle part à la fin de la prise de parole du jury qui contient « prenez quelques secondes pour réfléchir ». Aujourd'hui, elle part au démarrage de la phase.
-- **ESSEC, sortie anticipée** : si le jury a dit « La mise en situation est terminée » et sa question de clôture, `closeImmediately` n'envoie plus de seconde consigne de clôture.
-- **EDHEC** : relances de silence suspendues jusqu'à la phrase de transition. Aujourd'hui, elles ne le sont que pendant l'écran de préparation. Le rappel des deux tiers est calculé sur la durée de l'entretien individuel (à confirmer à la lecture du code au début de la mise en œuvre).
-- **KEDGE** : « la présentation Autoportrait (C1) » devient « la présentation Autoportrait ».
-- **I29, GEM** : pendant l'interview inversée, les questions courtes du candidat ne comptent plus comme réponses « à sec ». La bascule sur un « non » à « Avez-vous d'autres questions ? » reste.
-- **I52, GEM** : relances de silence suspendues pendant `gem-inversee` (pas pendant la minute de synthèse).
-- **I33, Clermont** : la question Impact n'est tirée que parmi les questions réservées à l'oral. Voir la question 2 plus bas.
-- **I62, emlyon** : aujourd'hui, le chronomètre des cartes part au tirage (`startPhase` dans `triggerEmlyonCards`). Il partira à la première prise de parole du candidat après l'énoncé des cartes. La mesure reste `emlyon-cartes`.
-- **I66** : « EXEMPLES DE TON (extraits d'oraux réels) » devient « EXEMPLES DE TON », puis `docs/agent-jury-elevenlabs.md` est régénéré.
+## 8. L'essai pilote
 
-Tests : un par règle ci-dessus, dans `phase-engine.test.ts` et `jury-rendu.test.ts`.
+- Lot `pilote` : ESC Clermont BS, profil « bon », scénario normal, même graine pour les deux passages. Premier entretien devant le jury neutre, second devant le jury dur.
+- Pour chacun : notation par Gemini puis par Claude (évaluateur et rédacteur), soit 4 lignes dans `bench_results`.
+- **Ce que je vous rends** :
+  - la durée réelle de chaque entretien et de chaque notation ;
+  - le coût par poste : jury (crédits ElevenLabs), candidat, évaluation et feedback, par modèle ;
+  - un contrôle de l'enregistrement : transcription horodatée, `phase_timings` (pitch, question Impact), tirages (axe et question Impact, pris parmi les questions 13 à 24), identifiant de conversation, notes sur 20, pénalités, percentiles, citations retirées ;
+  - la transcription et les deux feedbacks, à lire dans la base ou exportés dans un fichier hors du dépôt (`/mnt/documents/banc-3.5/pilote.md`) si vous le voulez.
+- Rien d'autre n'est lancé avant votre validation.
 
-## F. Modules d'entraînement
-**Piles séparées (I50)**
+## 9. Tests ajoutés
 
-Le module garde ses cartes actuelles (un élément sur deux, rangs 1, 3, 5…). Le jury ne tire plus que dans les autres.
+- `bench-recopie.test.ts` : les empreintes des blocs recopiés de `partie-8`.
+- Les tests des fonctions pures du banc (`src/lib/jury-bench.ts`) :
+  - le candidat ne reçoit jamais de [RÉGIE] ;
+  - la durée d'une prise de parole = mots / 150 ;
+  - l'affectation des profils aux 23 écoles est celle de la spécification, et les 13 cas limites aussi ;
+  - la clé de reprise est la même d'une exécution à l'autre ;
+  - les tirages viennent des piles du jury.
+- `jury-bench.test.ts` est mis à jour : les tests qui portent sur les versions old / new disparaissent.
 
-| Pile | Total | Module | Jury |
-|---|---|---|---|
-| emlyon Expérience | 46 | 23 | 23 |
-| emlyon Personnalité | 65 | 33 | 32 |
-| emlyon Projet | 41 | 21 | 20 |
-| emlyon Créativité | 64 | 32 | 32 |
-| Mots EDHEC | 75 | 38 (+ 8 mots propres au module) | 37 |
+## Points ambigus ou impossibles
 
-Une seule liste partagée par le module et le jury, sur le modèle de l'ESSEC.
-Test : aucune intersection entre les deux listes, et chaque tirage du jury appartient à sa liste.
-
-**Textes visibles**
-
-| Point | Texte actuel | Nouveau |
-|---|---|---|
-| I20 (`ai.functions.ts`, l. 97) | « … Un échec ne se raconte que si le jury pose explicitement la question des défauts (travaillée ailleurs). » | phrase retirée, le reste de la ligne est inchangé |
-| I20 (l. 98) | « - Un seul axe suffit pour le futur : soit l'école, soit le projet pro. Tu ne demandes jamais les deux. » | ligne retirée |
-| I23 (cartes emlyon) | « Si le jury relance ou vous contredit, tenez votre position en l'ajustant intelligemment. » | retiré |
-| I25 | « Tenez 3 à 4 minutes maximum : une réponse claire et rythmée plutôt qu'un monologue exhaustif. » | « Développez chaque carte, environ 3 à 4 minutes, sans monologue exhaustif. » |
-| I28 (EDHEC) | « … vous devez prendre la parole dessus, sans préparation. » | « … vous disposez d'1 minute de préparation, puis vous présentez pendant 4 minutes, sans intervention du jury. » |
-| I28 | « Tenez environ 2 minutes de propos continu, sans blanc long ni décrochage. » | retiré |
-| I34 (36 fiches Clermont) | « Prenez position dès les premières secondes : oui, non, ou une nuance assumée… » | « Prenez position clairement, dès le début ou après quelques phrases de réflexion : oui, non, ou une nuance assumée… » |
-| I34 | « … teste votre capacité à prendre position immédiatement sur … » | « … teste votre capacité à prendre position clairement sur … » |
-| Montpellier (l. 946) | « … une dizaine de situations sous forme de débuts de phrase … » | « … 15 situations … » |
-| Montpellier (l. 939) | « … des situations sous forme de débuts de phrase à compléter (« J'ai dû faire face à une difficulté inattendue quand… »). » | « … des situations (« … ») », avec un exemple de situation complète tiré de la liste |
-
-Tests : les phrases retirées sont absentes des textes.
-
-## G. Étiquettes des cartes emlyon
-- **Stockage** : une table d'étiquettes dans `emlyon-kb.ts`. Par défaut, une carte prend le critère de sa pile. S'y ajoutent les 14 exceptions Créativité de la liste, toutes retrouvées mot pour mot dans la banque, et les cartes Projet sur l'école.
-- **Tirage** : `drawEmlyonCards` renvoie `{ pile, question, critere }` pour chaque carte. Le tirage est enregistré dans `tirages.emlyon_cartes`.
-- **Évaluateur** : bloc « Cartes tirées (critère où chaque carte se note) » dans son message utilisateur, à côté du document et de l'image.
-- **Rédacteur** : même bloc, présenté en D.
-
-**Cartes Projet qui portent sur l'école (proposition à valider)**
-
-Sûres :
-- « Pourquoi voulez-vous intégrer l'emlyon ? »
-- « Quelles sont les particularités du Programme Grande École de l'emlyon ? »
-- « Pensez-vous que l'emlyon vous apportera un esprit critique ? »
-- « Que souhaitez-vous apprendre à l'emlyon ? »
-- « Citez 3 cours que vous aimeriez suivre à l'emlyon et expliquez pourquoi. »
-- « Quels seront pour vous les trois apports de l'emlyon BS ? »
-- « Quels sont les 3 cours que vous attendez avec impatience à l'emlyon ? »
-- « Quel est le principal atout de l'emlyon selon vous ? »
-
-Douteuses (laissées en Projet sauf avis contraire) :
-- « Si vous aviez le don d'ubiquité que feriez-vous en plus de vos études dans notre école ? »
-- « Pourquoi voulez-vous intégrer une école de commerce ? »
-- « Pourquoi une business school ? »
-- « Que choisissez-vous entre avoir 1/3 de votre temps dédié aux stages et 2/3 aux cours, et l'inverse ? »
-- « Dans quel pays ne souhaiteriez-vous pas partir en échange universitaire ? »
-
-Tests : les 14 exceptions, une carte par défaut de chaque pile, une carte Projet sur l'école, et la présence de l'étiquette dans les deux messages.
-
-## Points ambigus ou contraires à l'app
-1. **Évaluateur** : son texte commun dit « Tu reçois … la transcription. Rien d'autre ». Il reçoit pourtant déjà le document et l'image, et G y ajoute les cartes. Je l'applique ainsi, sans toucher au texte.
-2. **Clermont, I33** : aujourd'hui, le module publie les 72 questions Impact (24 par axe). Aucune n'est réservée à l'oral. Proposition : même partage qu'emlyon, soit 12 questions par axe dans le module (36 au lieu de 72) et 12 réservées au jury. À valider.
-3. **KEDGE** : les 5 cartes tirées ne figurent pas dans la liste D. Je propose de les transmettre aussi. À valider.
-4. **Montpellier** : le premier message du jury dit « à travers des débuts de phrase que vous choisirez ». Il est figé depuis l'étape 3, donc je ne change que l'écran.
-5. **I20** : ces deux phrases n'existent que dans `ai.functions.ts` : rien à corriger dans `vivaldi-data.ts`.
-6. **I62** : le chronomètre part aujourd'hui au tirage, contrairement à ce qui était indiqué à l'étape précédente.
-7. **D, migration** : la nouvelle colonne est ajoutée sur votre Supabase « The Prep Board ». Les anciennes sessions gardent `{}`.
-
-## Vérifications finales
-Tous les tests, la construction, la liste des fichiers modifiés et le tableau des empreintes.
+1. **Rennes** : `ELEVENLABS_AGENT_ID_RENNES_SB` est absent des secrets. Je propose de jouer Rennes avec l'agent du jury classique, ce que fait l'app aujourd'hui sans ce secret. À confirmer.
+2. **« Jury classique_dur »** : c'est le même agent ElevenLabs, avec un texte différent (bloc de difficulté). Aucun second agent n'est nécessaire.
+3. **Banc en texte** : le jury reçoit et rend du texte. Ni la voix ni la détection de silence à l'oral ne sont testées. Les règles des 5 s d'emlyon et des pauses passent par l'horloge virtuelle, comme en mode test écrit.
+4. **Durée totale** : avec la limite de 10 minutes par commande, le lot principal demandera plusieurs tours de suivi de ma part. Il ne peut pas tourner tout seul jusqu'au bout pendant un seul de mes tours.
+5. **Coûts** : ce sont des estimations, d'après les tarifs publics pour la passerelle, et d'après les crédits et le prix de votre formule pour ElevenLabs.
+6. **Dépôt public** : aucun résultat n'est écrit dans `scripts/`. Les profils et les scénarios, eux, sont dans le dépôt : ce sont des personnages inventés, sans donnée réelle.
+7. **ISC Paris, cas 12 et 13** : les deux graines changent les tirages et les choix aléatoires du candidat. La variété des questions du jury dépend aussi du modèle d'ElevenLabs, que nous ne contrôlons pas.
