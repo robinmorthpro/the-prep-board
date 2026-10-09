@@ -150,31 +150,31 @@ describe("rédacteur : traitement du texte", () => {
   });
 });
 
-describe("enchaînement et secours", () => {
-  const ancien = vi.fn(async () => ({ debrief: "## Ce que ce classement signifie\nP42 - vous faites mieux que 42 % des candidats (± 5 percentiles)." }));
-  it("évaluation « invalide » : ancien debrief, source « ancien »", async () => {
+describe("enchaînement : une relance automatique, puis échec", () => {
+  const ok = async () => ({ ok: true, id: "e", status: "ok" });
+  it("succès au premier essai : un seul passage", async () => {
+    const evaluer = vi.fn(ok);
+    const r = await produireFeedback({ evaluer, rediger: async () => ({ debrief: "texte", percentile: 67 }) });
+    expect(r).toEqual({ ok: true, debrief: "texte", percentile: 67, source: "nouveau", evaluationId: "e" });
+    expect(evaluer).toHaveBeenCalledTimes(1);
+  });
+  it("échec puis succès : deux passages", async () => {
+    const evaluer = vi.fn(ok);
+    const rediger = vi.fn().mockRejectedValueOnce(new Error("x")).mockResolvedValueOnce({ debrief: "texte", percentile: 50 });
+    const r = await produireFeedback({ evaluer, rediger });
+    expect(r.ok).toBe(true);
+    expect(evaluer).toHaveBeenCalledTimes(2);
+  });
+  it("deux échecs : échec, sans texte", async () => {
+    const evaluer = vi.fn(async () => { throw new Error("x"); });
+    const r = await produireFeedback({ evaluer, rediger: vi.fn() });
+    expect(r).toEqual({ ok: false });
+    expect(evaluer).toHaveBeenCalledTimes(2);
+  });
+  it("évaluation « invalide » deux fois : échec, rédacteur jamais appelé", async () => {
     const rediger = vi.fn();
-    const r = await produireFeedback({ actif: true, evaluer: async () => ({ ok: true, id: "e", status: "invalide" }), rediger, ancien });
-    expect(r.source).toBe("ancien");
-    expect(r.percentile).toBe(42);
+    const r = await produireFeedback({ evaluer: async () => ({ ok: true, id: "e", status: "invalide" }), rediger });
+    expect(r).toEqual({ ok: false });
     expect(rediger).not.toHaveBeenCalled();
-  });
-  it("évaluation en échec : ancien debrief", async () => {
-    const r = await produireFeedback({ actif: true, evaluer: async () => { throw new Error("x"); }, rediger: vi.fn(), ancien });
-    expect(r.source).toBe("ancien");
-  });
-  it("rédacteur en échec : ancien debrief", async () => {
-    const r = await produireFeedback({ actif: true, evaluer: async () => ({ ok: true, id: "e", status: "ok" }), rediger: async () => { throw new Error("x"); }, ancien });
-    expect(r.source).toBe("ancien");
-  });
-  it("tout va bien : nouveau feedback", async () => {
-    const r = await produireFeedback({ actif: true, evaluer: async () => ({ ok: true, id: "e", status: "ok" }), rediger: async () => ({ debrief: "texte", percentile: 67 }), ancien });
-    expect(r).toEqual({ debrief: "texte", percentile: 67, source: "nouveau", evaluationId: "e" });
-  });
-  it("interrupteur coupé : ancien debrief sans évaluation", async () => {
-    const evaluer = vi.fn();
-    const r = await produireFeedback({ actif: false, evaluer, rediger: vi.fn(), ancien });
-    expect(r.source).toBe("ancien");
-    expect(evaluer).not.toHaveBeenCalled();
   });
 });
