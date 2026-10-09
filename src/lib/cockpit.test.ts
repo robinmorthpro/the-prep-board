@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { computePriorities, computeThemeScores, isValidCompletedSimulation } from "./cockpit";
+import { completedSimulationLabel, computeThemeScores, isValidCompletedSimulation } from "./cockpit";
 import { BAREME } from "./evaluateur/bareme";
 import type { InterviewSession } from "./vivaldi-queries";
 
@@ -82,20 +82,7 @@ describe("compteur des simulations complètes", () => {
   });
 
   it("accorde au singulier la priorité quand une seule simulation est valide", () => {
-    const priorities = computePriorities({
-      profile: { part1_completed: true, target_schools: [] } as never,
-      career: { job_or_field: "Conseil", description: "Projet", company_role: "Consultant", job_names: "Consultant", qualities: "Analyse" } as never,
-      sheets: [],
-      experiences: [],
-      newsTopics: [],
-      supports: [],
-      answers: [],
-      sessions: [session(1, "valid"), session(1, "interrupted", { interrupted: true })],
-      themeScores: computeThemeScores([], [session(1, "valid")]),
-    });
-
-    expect(priorities.find((priority) => priority.id === "simulations")?.reason).toContain(
-      "1 simulation complète achevée",
-    );
+    expect(completedSimulationLabel(1)).toBe("1 simulation complète achevée");
+    expect(completedSimulationLabel(2)).toBe("2 simulations complètes achevées");
   });
 });

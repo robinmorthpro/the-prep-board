@@ -145,6 +145,10 @@ export function isValidCompletedSimulation(session: InterviewSession) {
   return session.status === "done" && session.evaluation?.status === "ok" && !session.evaluation.interrupted;
 }
 
+export function completedSimulationLabel(count: number) {
+  return `${count} simulation${count > 1 ? "s" : ""} complète${count > 1 ? "s" : ""} achevée${count > 1 ? "s" : ""}`;
+}
+
 export const THEME_SHORT: Record<CockpitTheme, string> = {
   "Connaissance écoles": "Écoles",
   "Introspection et récit personnel": "Introspection",
@@ -357,12 +361,11 @@ export function computePriorities(input: {
   }
 
   const doneInterviews = sessions.filter(isValidCompletedSimulation).length;
-  const simulationCountLabel = `${doneInterviews} simulation${doneInterviews > 1 ? "s" : ""} complète${doneInterviews > 1 ? "s" : ""} achevée${doneInterviews > 1 ? "s" : ""}`;
   if (doneInterviews < 3) {
     out.push({
       id: "simulations",
       title: "Passer une simulation complète",
-      reason: `${simulationCountLabel} : c'est le seul exercice qui mesure votre tenue sur 30 minutes.`,
+      reason: `${completedSimulationLabel(doneInterviews)} : c'est le seul exercice qui mesure votre tenue sur 30 minutes.`,
       to: "/partie-8",
       cta: "Lancer une simulation",
       level: doneInterviews === 0 ? "important" : "consolidation",

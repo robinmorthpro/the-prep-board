@@ -27,6 +27,7 @@ import { useSession } from "@/hooks/useSession";
 import {
   computePriorities,
   computeThemeScores,
+  completedSimulationLabel,
   isValidCompletedSimulation,
   radarData,
   readinessScore,
@@ -164,7 +165,7 @@ function CockpitPage() {
             <Metric value={`${validatedQuestions}`} label="réponses validées par le jury IA" />
             <Metric
               value={`${doneSessions.length}`}
-              label={`simulation${doneSessions.length > 1 ? "s" : ""} complète${doneSessions.length > 1 ? "s" : ""} achevée${doneSessions.length > 1 ? "s" : ""}`}
+              label={completedSimulationLabel(doneSessions.length).replace(/^\d+\s/, "")}
             />
             <Metric
               value={bestPercentile ? `P${bestPercentile}` : "-"}
