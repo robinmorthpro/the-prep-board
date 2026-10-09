@@ -62,3 +62,6 @@
 - [x] Appel, vérifications, calcul, table interview_evaluations, déclenchement en arrière-plan, outil admin
 - [x] Décision Robin : ignorer les ** (gras) des textes dans la vérification de « manque_pour_n4 »
 - [ ] Étape suivante : enregistrer les tirages (cartes, mot EDHEC, article TBS, situation ESSEC)
+
+## Rédacteur du feedback — étape 2
+- [x] 13 textes copiés (sha256), rédacteur, enchaînement avec secours, colonnes percentile / feedback_source / feedback_evaluation_id, tests, essai NEOMA

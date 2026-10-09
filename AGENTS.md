@@ -13,3 +13,7 @@
 
 - L'évaluateur IA (src/lib/evaluateur/) ne rend que des niveaux par case ; points, note, pénalités de durée et percentile sont calculés par le code à partir de bareme.json : la note reste reproductible et vérifiable.
 - Les textes de l'évaluateur et bareme.json sont copiés octet pour octet depuis les originaux et ne sont jamais reformatés (exclus de Prettier).
+
+- Le feedback de fin d'entretien suit `src/lib/feedback-enchainement.ts` : évaluation (src/lib/evaluateur/) puis rédacteur (src/lib/redacteur/), avec secours vers debriefInterview ; l'interrupteur NOUVEAU_FEEDBACK_ACTIF y revient en une ligne. Pourquoi : l'utilisateur doit toujours recevoir un feedback.
+- Le rédacteur ne note jamais : la ligne du percentile est insérée par le code et les citations VERBATIMS non retrouvées sont retirées par le code. Pourquoi : le percentile affiché doit être exactement celui calculé.
+- Les textes du rédacteur (src/lib/redacteur/textes/) sont copiés octet pour octet et exclus de Prettier. Pourquoi : vérification par empreinte avec les originaux.
