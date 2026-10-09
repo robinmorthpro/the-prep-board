@@ -1,98 +1,117 @@
-# Étape 3 — Nouveau texte du jury vocal
+# Étape 4 — Écrans
 
-## Résultat visé
+## Périmètre
 
-Remplacer le texte injecté à l’agent ElevenLabs par les nouveaux textes communs et les 15 variantes école, puis aligner la régie applicative sur ces textes. L’agent ElevenLabs, sa voix et sa configuration dans le tableau de bord ElevenLabs restent inchangés : tout sera fourni par les `overrides` de l’application.
+Modifier uniquement les écrans, leurs données et les calculs du tableau de bord. Ne pas toucher au barème, à la notation, à l’évaluateur, au rédacteur, aux textes du jury ni à la configuration ElevenLabs.
 
-Les deux références ont déjà été contrôlées :
-- `jury-commun.md` : `66c80177b87ae57678c516ed9a7ed8ccceb0ce2cd0582d2fe7907e1264c715d7`
-- `jury-ecoles-final.md` : `4111cab825f9326463468a7d3b930931c443fcb08a66aa8a9338ee863d4d94c6`
+## 1. Deux jurys au lieu de trois
 
-## Fichiers, précisément
+**Fichiers concernés**
+- `src/lib/interview-kb.ts` : ne proposer que `classique` et `classique_dur`, tout en gardant un alias historique explicite `decouverte → Jury neutre`.
+- `src/lib/school-interviews.ts` : les difficultés proposées viennent de cette liste.
+- `src/routes/_app.partie-8.tsx` : sélecteur, conseil et libellés de l’historique.
+- `src/components/repetia/home.tsx`, `src/components/repetia/site.tsx`, `src/lib/site-content.ts` : mentions publiques des niveaux.
+- `src/lib/ai.functions.ts` reste compatible avec `decouverte` pour les anciennes sessions ; aucune logique d’évaluation ou de jury n’est changée.
 
-### Textes et construction du prompt
+**Textes actuels → nouveaux**
+- Deux options actuelles portent « Jury neutre » (`decouverte` et `classique`) et une porte « Jury dur » → seulement « Jury neutre » (`classique`) et « Jury dur » (`classique_dur`).
+- « Trois niveaux d'exigence, de la découverte au jury difficile » → « Deux niveaux d'exigence : un jury neutre et un jury difficile ».
+- « Découverte, classique, exigeant : trois niveaux de jury. L'évaluation ne tombe qu'à la fin, comme au concours. » → « Deux niveaux d'exigence : un jury neutre et un jury difficile. L'évaluation ne tombe qu'à la fin, comme au concours. »
+- Conseil actuel : « Pour un premier entraînement, nous vous conseillons de choisir l'entretien de découverte, avec un jury un peu plus aidant. Basculez ensuite vers les entretiens classiques, qui vous mettront face aux exigences du jour J. »
+- **Proposition à valider** : « Pour un premier entraînement, choisissez le jury neutre, qui conduit l'échange comme le jour J. Passez ensuite au jury dur pour vous entraîner à répondre sous davantage de pression. »
 
-- **Créer `src/lib/jury/textes/jury-commun.md`** par copie exacte du fichier final, puis contrôler son SHA-256.
-- **Créer `src/lib/jury/textes/jury-ecoles-final.md`** par copie exacte du fichier final, puis contrôler son SHA-256.
-- **Modifier `src/lib/elevenlabs-agent-prompt.ts`** pour importer ces références en `?raw`, résoudre les variables dynamiques et assembler le prompt réellement envoyé. Les lignes `Réglage du code :` resteront des spécifications, jamais du texte envoyé au jury. La dernière section `[RÉGIE]` du texte commun restera hors prompt et sera envoyée par le moteur de phases.
-- **Modifier `src/lib/interview-kb.ts`** uniquement pour le niveau joué : `classique` → « Jury neutre », `classique_dur` → « Jury dur », et `decouverte` → même texte neutre. La valeur historique `decouverte` reste acceptée ; aucun écran ni enregistrement existant ne change.
-- **Modifier `src/lib/school-interviews.ts`** pour les premiers messages, deuxièmes répliques, consignes d’ouverture, conduites, phrases de transition, calendriers et mesures propres aux écoles.
-- **Modifier `src/hooks/useJuryAgent.ts`** seulement si nécessaire pour transmettre les nouveaux blocs/variables sans changer la connexion ElevenLabs ni la voix.
+Les sessions anciennes en `decouverte` resteront affichées « Jury neutre » ; elles ne seront ni réécrites ni supprimées.
 
-### Régie et déclencheurs
+## 2. Afficher « Ce que ce classement signifie »
 
-- **Modifier `src/lib/phase-engine.ts`** pour :
-  - ne plus ajouter systématiquement « Termine… par une question » quand une phrase imposée, un silence ou une étape sans question est attendu ;
-  - distinguer une phase imposée d’un échange libre ;
-  - envoyer en échange libre le rappel court « Tu es dans… encore environ N min : ne change pas de partie » ;
-  - gérer les exceptions ESSEC, GEM, Montpellier et emlyon ;
-  - éviter une seconde consigne de clôture quand la sortie anticipée contient déjà la question finale.
-- **Modifier `src/lib/interview-text.ts`** pour reconnaître « quelques secondes pour réfléchir » comme une invitation et empêcher une question parasite.
-- **Modifier `src/routes/_app.partie-8.tsx`** uniquement pour les déclencheurs non visuels : pauses de régie, début/fin de mesure, bascules reconnues et rappels. Aucun texte ni comportement d’écran ne sera retouché.
-- **Modifier `src/lib/essec-kb.ts` et `src/lib/vivaldi-data.ts`** seulement après résolution du point ESSEC ci-dessous, afin que le module Questions clés et le jury utilisent une répartition explicitement partagée.
-- **Modifier `src/lib/emlyon-kb.ts`** pour exposer l’étiquette de thème de chaque carte, nécessaire au rappel de transition vers l’échange libre, sans enregistrer les tirages en base.
+**Fichiers concernés**
+- `src/components/vivaldi/InterviewDebrief.tsx` : conserver le percentile dans le bandeau et rendre, juste après, la section déjà extraite du feedback.
+- `src/routes/_app.partie-8.tsx` : appliquer le même rendu au feedback courant et à l’historique.
 
-### Tests
+**Actuel → nouveau**
+- Actuel : le bandeau affiche « Percentile indicatif », `P…` et « Sur cet entretien, vous faites mieux que … % des candidats (± 5 percentiles). » ; le bloc markdown `## Ce que ce classement signifie` est ensuite masqué en entier.
+- Nouveau : même bandeau, puis première section « Ce que ce classement signifie » avec uniquement ses 2 ou 3 phrases explicatives, sans répéter la ligne `P…`.
 
-- **Modifier `src/lib/elevenlabs-agent-prompt.test.ts`** : texte commun reconstruit exactement, variables résolues, absence des lignes explicatives/régie, deux niveaux seulement au runtime.
-- **Créer `src/lib/school-interviews.test.ts`** : pour chacune des 15 écoles, vérifier premier message, deuxième réplique éventuelle, ouverture, conduite, phrases imposées et variables.
-- **Modifier `src/lib/phase-engine.test.ts`** : repères imposés/libres, suffixe question conditionnel, rappels commun/sans actualité/Montpellier, sorties anticipées et exceptions école.
-- **Modifier `src/lib/interview-text.test.ts`** : invitation ESSEC et absence de question parasite.
-- **Ajouter/adapter les tests de mesure** : seuils exacts du barème, démarrage/arrêt et reprises de monologue.
-- Exécuter tous les tests, contrôler les deux SHA-256 et vérifier la construction.
+Le même parseur sera utilisé pour les anciens feedbacks et conservera l’alias historique « Positionnement ».
 
-## Changements école par école
+## 3. Tableau de bord
 
-1. **ESSEC** — textes finaux exacts ; présentation 5 min et échange libre 40 min ; cas ordonné à 35 min pour 8 min ; repères libres raccourcis ; pas de suffixe-question à l’entrée du cas ; pause d’environ 30 s après « réfléchir » ; invitation reconnue ; clôture non doublée ; mesure de présentation **2 min 30 à 5 min 30**. Le jury tirera dans le complément du module Questions clés selon la décision à confirmer ci-dessous.
-2. **emlyon** — textes exacts ; présentation 3 min, cartes 15 min, échange libre 9 min ; seuil cartes 12 min 45 inchangé ; garde-fou « deux repères » neutralisé ; transition anticipée reconnue ; rappel calculé à partir des thèmes réellement tirés ; chronomètre des cartes démarré avec la première réponse à la première carte.
-3. **EDHEC** — textes exacts ; ouverture commune simplifiée ; mesure de présentation corrigée à **3 min 15 sur 4 min** ; silences applicatifs suspendus jusqu’à la transition vers l’entretien individuel ; rappel des deux tiers conservé sur la durée totale de 25 min. La variable `edhec_mot` reste disponible mais n’est pas injectée dans un texte qui ne l’emploie pas.
-4. **GEM** — textes exacts ; durée totale **32 min** ; exposé + rebond jusqu’à la minute 7, interview inversée 10 min, échange libre 15 min ; mesure de l’exposé **4 min 15 sur 5 min** seulement, sans inclure les 2 min de rebond ; interview inversée à partir de la minute 7 ; enveloppes sans suffixe-question pour l’interview inversée et la minute de synthèse ; silences suspendus pendant l’interview inversée hors synthèse ; reprise du candidat incluse dans la mesure de l’exposé ; rappel sans actualité.
-5. **TBS Education** — textes exacts ; ouverture simplifiée ; rappel sans actualité ; repères libres non contradictoires ; mesure **4 min 15 sur 5 min** inchangée.
-6. **ESC Clermont BS** — textes exacts ; ouverture simplifiée ; rappel sans actualité ; mesure **4 min 15 sur 5 min** inchangée.
-7. **KEDGE** — textes exacts ; suppression de la phase technique `kedge-conclusion` au profit de la clôture commune ; seuil Autoportrait **2 min 30** au lieu de 2 min 33 ; libellé de mesure sans « (C1) » ; conduite et transitions alignées sur le texte final.
-8. **INSEEC Grande École** — textes exacts ; repère propre à la présentation par l’image ; aucun lien école/projet ni contradiction imposés dans cette partie ; passage vers l’échange classique sans suffixe-question parasite ; rappel et échange libre communs ensuite ; mesure **4 min 15 sur 5 min** inchangée.
-9. **Montpellier BS** — textes exacts ; maintien du rappel spécifique des deux tiers ; phrase de passage sans suffixe-question ; interdiction de forcer projet/école ; aucun changement de l’écran de choix des situations.
-10. **EM Strasbourg** — textes exacts ; conduite sur plusieurs lignes ; ajout de la mesure du pitch **2 min 30 sur 3 min**, démarrée à la deuxième prise de parole du jury selon la spécification.
-11. **ESCP** — textes exacts ; nouvelle ouverture dédiée aux écoles avec document, sans deuxième réplique ; conduite multiligne.
-12. **NEOMA** — même branche « document » dédiée ; textes exacts ; conduite multiligne.
-13. **SKEMA** — même branche « document » dédiée ; textes exacts ; conduite multiligne.
-14. **EM Normandie** — même branche « document » dédiée ; textes exacts ; conduite multiligne.
-15. **BSB** — même branche « document » dédiée ; textes exacts ; conduite multiligne.
+### 3a. « Mes repères »
 
-## Alignement avec le barème intégré
+**Fichiers concernés**
+- `src/lib/vivaldi-queries.ts` : lire `interview_sessions.percentile`, `feedback_evaluation_id` et l’évaluation liée (`status`, `interrupted`, `score_20`, `final_score`, `percentile`, `case_points`, `criterion_points`, `grille`). La lecture reste protégée par les règles d’accès propriétaire existantes.
+- `src/lib/cockpit.ts` : remplacer l’extraction `P…` depuis le texte du feedback par les colonnes structurées.
+- `src/routes/_app.mon-tableau-de-bord.tsx` : texte d’évolution.
 
-Différences à corriger dans `MONOLOGUE_MEASURES` / `floorMinutes` :
-- ESSEC : `3` → `2.5` ; maximum `5.5` conservé.
-- EDHEC : `3 + 25/60` → `3.25`.
-- GEM exposé : ajout de `4.25` pour une durée notée de 5 min ; l’interview inversée reste à `8.5/10`.
-- KEDGE : `2.55` → `2.5`, et libellé nettoyé.
-- EM Strasbourg : ajout de `2.5/3`.
-- emlyon `12.75/15`, TBS, Clermont et INSEEC `4.25/5` sont déjà alignés et resteront inchangés.
+**Actuel → nouveau**
+- « Évolution sur vos simulations : +X percentiles entre votre première et votre dernière simulation. » est actuellement calculé depuis le markdown et affiché pour tout écart → même phrase, mais seulement si l’écart absolu entre la première et la dernière note atteint 1 point sur 20.
+- Sous 1 point → « Évolution sur vos simulations : Niveau stable. »
+- Avec moins de deux simulations complètes → conserver « Passez au moins deux simulations complètes pour visualiser votre progression. »
 
-## Corrections retenues ou laissées de côté
+Une simulation compte si son évaluation liée est `ok`, non interrompue et possède note et percentile. Le percentile affiché vient de `interview_sessions.percentile`, avec cohérence vérifiée contre celui de l’évaluation.
 
-### Retenues
+### 3b. Radar « Mon niveau par thème »
 
-- Repères conditionnels et distinction phase imposée/échange libre.
-- Trois rappels : commun, sans actualité pour GEM/TBS/Clermont, propre à Montpellier.
-- Ouverture dédiée aux cinq écoles à document et ouverture commune simplifiée ailleurs.
-- Deux niveaux de jury au runtime, avec repli de `decouverte` vers neutre.
-- Mesures, seuils, calendriers et durées listés ci-dessus.
-- Déclencheurs ESSEC, emlyon, GEM et silences dont le comportement est spécifié sans ambiguïté.
-- Tests de prompt, régie, transitions, mesures et compatibilité historique.
+**Calcul de la part simulations**
+1. Prendre les 3 évaluations complètes les plus récentes, dans l’ordre de `interview_sessions.created_at`.
+2. Pour chaque entretien et chaque thème, sommer les valeurs de `case_points` retenues.
+3. Construire le maximum correspondant depuis `bareme.json`, case par case. Une case `null`/non observée est retirée du numérateur et du maximum ; un thème sans case notée est ignoré pour cet entretien.
+4. Convertir en pourcentage, puis faire la moyenne arithmétique des pourcentages disponibles sur les 3 entretiens.
+5. Injecter ce score propre à chaque thème dans la combinaison actuelle avec les Questions clés ; les scores, volumes et poids de la part Questions clés ne changent pas.
 
-### Laissées volontairement
+**Correspondance exacte, toutes grilles**
+- Écoles : `ecole`.
+- Introspection : le critère de présentation (`presentation`, `presentation_longue_essec`, `presentation_mot_edhec`, `autoportrait_kedge`, `presentation_image_inseec`, `pitch_em_strasbourg`) + `experiences.recit/recul` ou `experiences_montpellier.recit/recul`.
+- Projet pro : `projet`.
+- Futur : `experiences.projection` ; Montpellier n’a pas cette case, donc n’alimente pas ce thème.
+- Aisance orale : `conduite`, `clarte`, `destabilisantes`.
+- Exclus du radar : `ouverture`, `mise_en_situation_essec`, `expose_gem`, `interview_inversee_gem`, `article_tbs`, `odd_kedge`, `question_impact_clermont`. Ils restent dans la note et le percentile.
 
-- Tous les changements marqués **Écran** : conseils, accueil, site, fenêtres, détail visuel des phases et libellé historique des anciens entretiens.
-- Tableau de bord « +X percentiles ».
-- `debriefSupplement`, évaluateur, barème et rédacteur.
-- Enregistrement des tirages en base.
-- Points explicitement notés **« à vérifier au test »** : réglage fin de tour ElevenLabs, micro/synthèse GEM, pauses orales qui pourraient couper un monologue. Ils seront signalés dans le compte rendu, pas modifiés à l’aveugle.
-- Toute nouvelle voix, tout agent supplémentaire et toute modification dans le tableau de bord ElevenLabs.
+**Légende actuelle → proposition du fondateur à valider**
+- Actuelle : « Chaque thème est alimenté par les verdicts du jury IA sur vos questions clés (module « Questions clés ») et par le percentile de vos trois dernières simulations complètes. L'aisance orale pèse davantage sur les simulations, car elle ne s'évalue vraiment qu'en situation. »
+- Nouvelle : le texte exact fourni dans `etape-4-ecrans.md`, sans modification avant validation.
 
-## Deux confirmations nécessaires
+## 4. Liste des écoles
 
-1. **ESSEC : conflit dans les pièces.** Le texte final demande que le jury tire les numéros pairs, complément exact des numéros impairs affichés dans Questions clés. `corrections-code-3.4.md` demande aussi de passer les numéros 24 et 30 en « Créativité » et vise 3 situations par compétence, mais ces deux retouches ne donnent pas 3/3/3/3/3 avec la liste actuelle. Proposition : faire primer le texte final — partage impair/pair exact, sans retoucher les catégories 24/30 — et signaler la répartition obtenue.
-2. **emlyon : déclenchement des cartes.** « Après la réponse à la présentation » est ambigu quand la présentation arrive en plusieurs morceaux. Proposition robuste : laisser le prompt demander la fin de présentation et démarrer les cartes sur la transition réellement prononcée par le jury, plutôt que sur le premier silence détecté ; aucun délai ElevenLabs ne sera changé.
+**Fichiers concernés**
+- `src/lib/vivaldi-data.ts` et `src/routes/_app.informations-personnelles.tsx` : retirer HEC Paris des choix futurs, sans effacer HEC d’un ancien profil.
+- `src/lib/school-interviews.ts` : supprimer le format spécial Rennes et faire hériter Rennes et ISC Paris du format classique.
+- `src/routes/_app.partie-8.tsx` : options réellement proposées.
+- `src/lib/elevenlabs.functions.ts` ne nécessite pas de changement fonctionnel.
 
-Après confirmation de ces deux choix, l’exécution ne nécessitera aucune action dans ElevenLabs.
+**Actuel → nouveau**
+- HEC Paris est proposée dans la liste BCE → elle ne l’est plus.
+- Rennes : « Rennes SB — format PUMA (mise en situation + débrief) », questionnaire obligatoire, 13 minutes simulées, `comingSoon`, agent dédié déclaré mais secret absent avec repli actuel sur l’agent classique → format classique complet, agent classique partagé, prompt maison, aucun questionnaire, plus de statut « à venir ».
+- ISC Paris : aucun format dédié aujourd’hui ; elle utilise déjà le format et l’agent classiques → rendre ce choix explicite/testé, sans changement visible attendu.
+
+## 5. Écrans et phases par école
+
+Toutes ces chaînes viennent de `src/lib/school-interviews.ts` et sont rendues par `InterviewBriefDialog.tsx`. Les changements de séquencement touchent aussi `src/lib/phase-engine.ts` et, pour Montpellier, `src/routes/_app.partie-8.tsx`.
+
+- **ESSEC** — « après une présentation d'environ 5 minutes » → « après une présentation de 3 minutes à 5 minutes 30 » ; « échange libre de 35 minutes » → « échange libre de 40 minutes » ; « L'entretien se termine par vos questions au jury. » → « L'entretien se termine par une question de fin. » ; retirer la phase « Questions du candidat au jury ».
+- **emlyon** — « Vous vous présentez librement, sans minutage imposé » → « Vous vous présentez en une minute environ » ; « Puis 10 minutes d'échange libre » → « Puis 8 à 10 minutes d'échange libre » ; « Présentation libre du candidat, sans minutage strict » → « Présentation du candidat, en une minute environ ».
+- **EDHEC** — « … sans retour sur l'exercice collectif ni sur la présentation » → « … sans retour sur l'exercice collectif » ; dans le popup, « sans retour sur cet exercice de groupe ni sur votre présentation » → « sans retour sur cet exercice de groupe ».
+- **GEM** — « Durée réelle et simulée : 30 minutes (5 + 10 + 15). » → « Durée réelle et simulée : 32 minutes (5 + 2 + 10 + 15). » ; ajouter « Rebond sur l’exposé — 2 minutes » entre exposé et interview inversée.
+- **TBS** — détail « Présentation puis entretien de motivation classique sur le parcours, la personnalité et le projet » → « … le parcours, la personnalité, le projet et l'école » ; accueil actuel « … votre présentation, votre parcours et votre motivation » → formulation harmonisée « … votre parcours, votre personnalité, votre projet et l'école ».
+- **ESC Clermont** — « … le parcours, la personnalité et le projet » → « … le parcours, la personnalité, le projet et l'école » dans le détail et l’accueil.
+- **KEDGE** — « Présentation du parcours et de la personnalité à partir du mot tiré » → « Présentation du parcours à partir du mot tiré ». Le popup réutilise ce détail de phase : une seule source sera modifiée.
+- **INSEEC** — « Futur (le lien avec l'école ou votre projet, si naturel) » → « Futur (où cette qualité vous servira, à l'école ou en entreprise) ».
+- **Montpellier** — une phase unique « Les situations — 25 minutes » → « Présentation — 1 à 2 minutes », puis situations ; ajouter à l’écran « L'entretien se termine par une question d'actualité. ». La grille restera cachée jusqu’à la réplique existante « Merci. Passons maintenant aux situations : à vous de choisir celle qui vous inspire. » ; « Votre situation en cours » disparaîtra à 20 minutes sans arrêter l’entretien ni modifier le jury.
+- **EM Normandie** — « en reprenant vos réponses une à une — y compris la question posée en anglais » → « en s'appuyant sur vos réponses pour les creuser — y compris celle rédigée en anglais ».
+
+## Tests et vérifications
+
+- Niveaux : exactement deux choix ; `decouverte` ancien reste « Jury neutre » ; toutes les mentions publiques passent à deux niveaux.
+- Feedback : percentile présent une seule fois ; section explicative première ; compatibilité avec les anciens titres/formats.
+- Données structurées : simulations interrompues ou sans évaluation ignorées ; ordre chronologique correct ; seuil d’évolution à `0,99`, `1,00` et `-1,00` point.
+- Radar : un test par mapping spécial de présentation, exclusion de chaque critère propre, projection isolée, case non observée ignorée, moyenne des 3 dernières uniquement, Montpellier sans Futur, part Questions clés inchangée.
+- Écoles : HEC absente des nouveaux choix ; anciens profils HEC lisibles ; Rennes et ISC sur l’agent/config classiques, sans questionnaire Rennes.
+- Phases : textes exacts et calendriers ESSEC/GEM/Montpellier ; déclenchement de la grille Montpellier seulement après la phrase imposée et masquage à 20 minutes ; autres libellés école vérifiés mot pour mot.
+- Lancer toute la suite de tests et vérifier la construction et les écrans concernés sur formats ordinateur et mobile.
+
+## Points à valider avant application
+
+1. Le texte de conseil proposé au point 1.
+2. La légende du radar fournie par le fondateur.
+3. Pour l’évolution, j’utiliserai `final_score` (note sur 20 après éventuelles pénalités), plutôt que `score_20` avant pénalités.
+4. Pour TBS, le texte d’accueil actuel ne dit pas exactement « parcours, personnalité, projet » ; je propose de l’harmoniser entièrement en « parcours, personnalité, projet et école », conformément à l’intention du fichier.
