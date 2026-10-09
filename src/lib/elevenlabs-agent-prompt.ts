@@ -77,10 +77,11 @@ ${conductNote}`;
 export function buildJuryAgentPrompt(variant: InterviewVariant, durationMinutes: number, conductNote?: string) {
   const common = buildAgentIdentity(durationMinutes);
   const neutralStart = common.indexOf("NIVEAU JOUÉ : Jury neutre");
-  const frameStart = common.indexOf("CADRE DE L'ENTRETIEN");
+  const hardStart = common.indexOf("NIVEAU JOUÉ : Jury dur");
+  const frameStart = common.indexOf("CADRE DE L'ENTRETIEN", hardStart);
   if (neutralStart < 0 || frameStart < 0) throw new Error("Sections du texte commun introuvables.");
   const fixed = common.slice(0, neutralStart).trimEnd();
-  const dynamic = common.slice(frameStart).trimStart();
+  const dynamic = common.slice(frameStart).replace(AGENT_DYNAMIC_VARIABLES.trim(), "").trim();
   return [fixed, difficultyBlock(variant), ...(conductNote ? [conductBlock(conductNote)] : []), dynamic].join(
     "\n\n---\n\n",
   );

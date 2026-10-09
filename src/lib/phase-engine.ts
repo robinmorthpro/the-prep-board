@@ -29,7 +29,9 @@ export function isRegieMessage(text: string) {
 /** Rappel ajouté à la fin de CHAQUE repère : le jury ne rend jamais la main sans question. */
 export const END_WITH_QUESTION = "Termine ta prochaine prise de parole par une question.";
 export const THEME_REMINDER =
-  "Rappel : d'ici la fin de l'entretien, les cinq thèmes (expériences, personnalité, projet, école, ouverture) doivent tous avoir été abordés. L'entretien continue jusqu'à la consigne de clôture.";
+  "Rappel : avant la fin de l'entretien, vérifie que tu as creusé au moins trois expériences différentes, la personnalité, le projet professionnel, au moins quatre points précis sur l'école et une question d'actualité. L'entretien continue jusqu'à la consigne de clôture.";
+export const THEME_REMINDER_WITHOUT_NEWS =
+  "Rappel : avant la fin de l'entretien, vérifie que tu as creusé au moins trois expériences différentes, la personnalité, le projet professionnel et au moins quatre points précis sur l'école. L'entretien continue jusqu'à la consigne de clôture.";
 export const MONTPELLIER_THEME_REMINDER =
   "Rappel : d'ici la fin de l'entretien, les expériences, la personnalité et l'ouverture doivent avoir été abordées. L'entretien continue jusqu'à la consigne de clôture.";
 
@@ -370,7 +372,12 @@ export class PhaseEngine {
     this.lastMarkerValue = { kind: advanced.kind, timeOnly };
     const reminder = this.themeReminder(at, elapsed, advanced.kind);
     const markerText = advanced.kind === "ongoing" ? `${advanced.text}${reminder}` : `${timeOnly}${advanced.text}`;
-    const updates = [`${REGIE_PREFIX} ${markerText} ${END_WITH_QUESTION}`];
+    const activeStep =
+      advanced.kind === "switch" && this.pendingIndex !== null
+        ? this.schedule[this.pendingIndex]
+        : this.schedule[this.phaseIndex];
+    const questionSuffix = activeStep?.omitEndWithQuestion ? "" : ` ${END_WITH_QUESTION}`;
+    const updates = [`${REGIE_PREFIX} ${markerText}${questionSuffix}`];
     if (!this.closing && closing) {
       this.closing = true;
       this.pendingIndex = null;
@@ -378,7 +385,7 @@ export class PhaseEngine {
       this.pendingOrderedAt = null;
       this.record("closing", at);
       updates.push(
-        `${REGIE_PREFIX} Il reste 2 minutes : pose maintenant ta question de clôture puis la phrase de sortie. ${END_WITH_QUESTION}`,
+        `${REGIE_PREFIX} Il reste 2 minutes : pose maintenant ta question de clôture puis la phrase de sortie.`,
       );
     }
     return updates;
@@ -403,7 +410,12 @@ export class PhaseEngine {
     const threshold = this.freeExchangeReminderAt();
     if (at < threshold || elapsed >= this.totalMinutes - 2) return "";
     this.themeReminderSent = true;
-    const text = this.school === "Montpellier BS" ? MONTPELLIER_THEME_REMINDER : THEME_REMINDER;
+    const text =
+      this.school === "Montpellier BS"
+        ? MONTPELLIER_THEME_REMINDER
+        : ["GEM (Grenoble EM)", "TBS Education", "ESC Clermont BS"].includes(this.school)
+          ? THEME_REMINDER_WITHOUT_NEWS
+          : THEME_REMINDER;
     return ` ${text}`;
   }
 
@@ -598,7 +610,10 @@ export class PhaseEngine {
     const next = this.schedule[index + 1];
     const dueAt = next ? this.dueAtFor(next) : null;
     const remaining = dueAt === null ? "" : ` encore environ ${Math.max(1, Math.ceil((dueAt - at) / 60_000))} min`;
-    return `INTERDICTION DE CHANGER DE PARTIE. Tu es en « ${step.topic ?? step.name} »${remaining}. Ta prochaine prise de parole doit être une relance sur ce sujet, jamais une transition. Temps écoulé : ${elapsed} min sur ${this.totalMinutes} min. ${step.ongoing}${this.addQuestionSuffix(step, dueAt, at)}`;
+    const frame = step.freeExchange
+      ? `Tu es dans « ${step.topic ?? step.name} »${remaining} : ne change pas de partie.`
+      : `INTERDICTION DE CHANGER DE PARTIE. Tu es en « ${step.topic ?? step.name} »${remaining}. Ta prochaine prise de parole doit être une relance sur ce sujet, jamais une transition.`;
+    return `${frame} Temps écoulé : ${elapsed} min sur ${this.totalMinutes} min. ${step.ongoing}${this.addQuestionSuffix(step, dueAt, at)}`;
   }
 
   /**
@@ -668,7 +683,7 @@ export class PhaseEngine {
       // Garde-fou : ordre non suivi après 2 repères de plus → la phase suivante
       // est considérée comme commencée, sans malus.
       this.pendingMarkerCount += 1;
-      if (this.pendingMarkerCount > 2) {
+      if (this.pendingMarkerCount > 2 && !this.schedule[pending]?.disableForcedTransition) {
         const forcedStep = this.schedule[pending]!;
         this.confirmPhase(pending, at, true);
         this.record("forced-after-2-markers", at, forcedStep.id);
