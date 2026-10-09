@@ -8,3 +8,4 @@ bun.lock
 routeTree.gen.ts
 src/lib/evaluateur/textes/**
 src/lib/evaluateur/bareme.json
+src/lib/redacteur/textes/**
