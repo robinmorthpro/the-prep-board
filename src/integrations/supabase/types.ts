@@ -213,6 +213,7 @@ export type Database = {
           support_label: string
           support_path: string
           support_text: string
+          tirages: Json
           turns: Json
           updated_at: string
           user_id: string
@@ -233,6 +234,7 @@ export type Database = {
           support_label?: string
           support_path?: string
           support_text?: string
+          tirages?: Json
           turns?: Json
           updated_at?: string
           user_id: string
@@ -253,6 +255,7 @@ export type Database = {
           support_label?: string
           support_path?: string
           support_text?: string
+          tirages?: Json
           turns?: Json
           updated_at?: string
           user_id?: string
