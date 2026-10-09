@@ -10,7 +10,7 @@ describe("prompt du jury vocal", () => {
     expect(prompt).not.toContain("25 mots");
     expect(prompt).toContain("Une seule question par prise de parole");
     expect(prompt).toContain("Tu ne commentes JAMAIS la qualité");
-    expect(prompt).toContain("15 à 25 % du temps de parole");
+    expect(prompt).toContain("Ton temps de parole : 15 à 25 %");
     expect(prompt).toContain("EXEMPLES DE TON");
     expect(prompt).toContain("L'apport à l'école se vérifie à partir de ses engagements");
     expect(prompt).toContain("Vérifier les cinq thèmes n'est pas une course.");
@@ -31,9 +31,10 @@ describe("prompt du jury vocal", () => {
     },
   );
 
-  it.each(INTERVIEW_VARIANTS)("injecte uniquement le bloc exact du niveau $code", (variant) => {
+  it.each(INTERVIEW_VARIANTS)("injecte uniquement le niveau officiel correspondant à $code", (variant) => {
     const block = difficultyBlock(variant.code);
-    expect(block).toBe(`NIVEAU JOUÉ : ${variant.label}\n${variant.instructions}`);
+    expect(block).toContain(`NIVEAU JOUÉ : ${variant.code === "classique_dur" ? "Jury dur" : "Jury neutre"}`);
+    expect(block).not.toContain(variant.code === "classique_dur" ? "NIVEAU JOUÉ : Jury neutre" : "NIVEAU JOUÉ : Jury dur");
   });
 
   it.each(["ESSEC", "GEM (Grenoble EM)", "emlyon", "KEDGE", "Montpellier BS"])(
@@ -41,7 +42,7 @@ describe("prompt du jury vocal", () => {
     (school) => {
       const config = getSchoolInterviewConfig(school);
       const prompt = promptFor(config, "classique") ?? "";
-      for (const title of ["CRITÈRES À VÉRIFIER", "COMMENT TU LES VÉRIFIES", "PARTIES IMPOSÉES PAR L'ÉCOLE", "CREUSER UNE RÉPONSE"]) {
+      for (const title of ["LES CINQ THÈMES À COUVRIR", "APRÈS CHAQUE RÉPONSE", "PARTIES IMPOSÉES PAR L'ÉCOLE", "CREUSER UNE RÉPONSE"]) {
         expect(prompt).toContain(title);
         expect(prompt.split(title)).toHaveLength(2);
       }
@@ -51,11 +52,10 @@ describe("prompt du jury vocal", () => {
     },
   );
 
-  it("conserve les codes cités par les conduites", () => {
+  it("conserve les règles communes citées par les conduites", () => {
     const prompt = buildJuryAgentPrompt("classique", 30, getSchoolInterviewConfig("GEM (Grenoble EM)").conductNote);
-    for (const code of ["E5", "F5", "D3", "D4", "D5", "D6", "D7", "R1", "R2", "M1", "M2"]) {
-      expect(prompt).toContain(`${code} «`);
-    }
+    expect(prompt).toContain("APRÈS CHAQUE RÉPONSE");
+    expect(prompt).toContain("TU NE COUPES JAMAIS LE CANDIDAT");
   });
 
   it("porte la conduite ESSEC à 35 minutes et interdit l'au revoir prématuré", () => {
