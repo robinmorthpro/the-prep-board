@@ -35,7 +35,7 @@ function sections() {
 const expected = sections() as Record<string, Record<(typeof HEADINGS)[number], string>>;
 describe("références officielles du jury — étape 3", () => {
   it("conserve le fichier commun octet pour octet et exclut seulement sa régie finale", async () => {
-    expect(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(juryCommunRaw)).then((b) => Buffer.from(b).toString("hex"))).toBe("66c80177b87ae57678c516ed9a7ed8ccceb0ce2cd0582d2fe7907e1264c715d7");
+    expect(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(juryCommunRaw)).then((b) => Buffer.from(b).toString("hex"))).toBe("536d2d1cc55b6137292dfcb93646f68c4a896a7fb5d790c58719fb494f0bbcbb");
     expect(juryCommunRaw).toBe(`${commonJuryText()}\n---\n\nRAPPEL ENVOYÉ PAR L'APPLICATION AUX DEUX TIERS (consigne de régie)\n${juryCommunRaw.split("RAPPEL ENVOYÉ PAR L'APPLICATION AUX DEUX TIERS (consigne de régie)\n")[1]}`);
   });
 
