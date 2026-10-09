@@ -637,7 +637,12 @@ async function jouerEntretien(plan: Plan, document: { label: string; texte: stri
       school === "KEDGE" && !!kedgeDraw && (/autoportrait/.test(demande) || demande.includes(normalizeInterviewText(kedgeDraw.autoportrait).slice(0, 40)));
     const estPresentation =
       !presentationFaite &&
-      (kedgeAutoportrait || (school !== "KEDGE" && /presentez|pitch|presentation|expose/.test(demande) && turns.length <= 2));
+      (kedgeAutoportrait ||
+        (school !== "KEDGE" &&
+          // Message d'accueil qui annonce la structure (« Est-ce que c'est clair pour vous ? ») : pas encore la présentation.
+          !/est-ce que c'est clair/.test(demande) &&
+          /presentez|presenter|pitch|presentation|expose/.test(demande) &&
+          turns.length <= 2));
     if (estPresentation) {
       [a, b] = fourchettePresentation(school, Boolean(config.support), scenario.presentationS);
       presentationFaite = true;
@@ -908,8 +913,27 @@ if (quel === "renoter") {
 } else {
   const docs = new Map<string, { label: string; texte: string }>();
   for (const p of plans) {
-    const run = await executer(p, docs);
-    if (run) for (const m of MODELES_NOTATION) await noterRun(run["id"], run, m, 1, true);
+    // Un entretien en échec n'arrête pas le lot : l'erreur est notée dans bench_runs.
+    try {
+      const run = await executer(p, docs);
+      if (run)
+        for (const m of MODELES_NOTATION) {
+          try {
+            await noterRun(run["id"], run, m, 1, true);
+          } catch (e) {
+            const msg = `Notation ${m} : ${e instanceof Error ? e.message : String(e)}`;
+            console.log(`  ${msg}`);
+            await db.from("bench_runs").update({ erreurs: [...((run["erreurs"] as string[]) ?? []), msg] as never }).eq("id", run["id"]);
+          }
+        }
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
+      console.log(`${p.ecole} / ${p.jury} : ÉCHEC ${msg}`);
+      await db
+        .from("bench_runs")
+        .update({ statut: "erreur", erreurs: [msg] as never })
+        .match({ lot: p.lot, ecole: p.ecole, jury: p.jury, scenario: p.scenario.id, graine: p.graine });
+    }
   }
 }
 console.log("Banc terminé.");
