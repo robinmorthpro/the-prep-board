@@ -15,6 +15,7 @@ import { INSEEC_IMAGES } from "./inseec-kb";
 
 import { INTERVIEW_VARIANTS, type InterviewVariant } from "./interview-kb";
 import { TBS_ARTICLES } from "./tbs-articles";
+import { JURY_SCHOOL_TEXTS } from "./jury/school-texts";
 
 
 export const CLASSIQUE_AGENT_ENV = "ELEVENLABS_AGENT_ID_CLASSIQUE";
@@ -1150,6 +1151,12 @@ Si les trois cartes sont épuisées avant la fin du temps imparti et que le proj
 },
 ];
 
+/** Les textes validés remplacent les anciennes chaînes pour les 15 écoles de l'étape 3. */
+for (const config of CONFIGS) {
+  const text = JURY_SCHOOL_TEXTS[config.school];
+  if (text) config.conductNote = text.conduct;
+}
+
 
 
 const BY_SCHOOL = new Map(CONFIGS.map((c) => [c.school, c]));
@@ -1877,6 +1884,17 @@ export function buildFirstMessage(
   const schoolName = schoolDisplayName(config.school);
   // « Bonjour Robin, et bienvenue à l'entretien de SKEMA. »
   const welcome = `${hello.replace(/\.$/, "")}, et bienvenue à l'entretien ${schoolName.preposition}.`;
+  const official = JURY_SCHOOL_TEXTS[config.school]?.firstMessage;
+  if (official) {
+    return official
+      .replaceAll("${welcome}", welcome)
+      .replaceAll("${hello}", hello)
+      .replaceAll("${minutes}", String(minutes))
+      .replaceAll("${support}", config.support?.label ?? "")
+      .replaceAll("${article}", opts.articleTitle ?? "")
+      .replaceAll("${edhec_mot}", opts.edhecWord ?? "(mot non tiré)")
+      .replaceAll("${inseec_image}", opts.inseecImage ?? "");
+  }
 
   switch (config.school) {
     case "ESC Clermont BS":
@@ -1968,6 +1986,8 @@ export function schoolDisplayName(school: string) {
  * terminent par « Est-ce que c'est clair pour vous ? »).
  */
 export function secondReplyFor(config: SchoolInterviewConfig): string | null {
+  const official = JURY_SCHOOL_TEXTS[config.school]?.secondReply;
+  if (official !== undefined) return official || null;
   switch (config.school) {
     case "ESSEC":
       return "Très bien. Vous disposez d'environ cinq minutes pour vous présenter, je vous écoute.";
@@ -1989,6 +2009,11 @@ export function secondReplyFor(config: SchoolInterviewConfig): string | null {
 
 /** Consigne d'ouverture injectée dans le prompt du jury maison. */
 export function openingNote(config: SchoolInterviewConfig): string {
+  const official = JURY_SCHOOL_TEXTS[config.school]?.opening;
+  if (official) {
+    const second = secondReplyFor(config) ?? "";
+    return official.replaceAll("${second}", second);
+  }
   const second = secondReplyFor(config);
   if (!second) {
     return "OUVERTURE : le premier message est fourni par l'application. Dis-le tel quel, n'ajoute rien avant ni après. Aucune deuxième réplique imposée n'existe sauf si l'application la fournit explicitement dans cette consigne.";
