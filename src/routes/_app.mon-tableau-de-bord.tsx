@@ -27,7 +27,6 @@ import { useSession } from "@/hooks/useSession";
 import {
   computePriorities,
   computeThemeScores,
-  percentileOfDebrief,
   radarData,
   readinessScore,
   verdictOf,
@@ -99,14 +98,20 @@ function CockpitPage() {
 
   const correctedQuestions = answers.filter((a) => verdictOf(a.ai_feedback) !== null).length;
   const validatedQuestions = answers.filter((a) => verdictOf(a.ai_feedback) === "Validé").length;
-  const doneSessions = sessions.filter((s) => s.status === "done");
+  const doneSessions = sessions.filter(
+    (session) => session.status === "done" && session.evaluation?.status === "ok" && !session.evaluation.interrupted,
+  );
   const percentiles = doneSessions
-    .map((s) => percentileOfDebrief(s.debrief))
-    .filter((v): v is number => v !== null);
+    .map((session) => session.percentile ?? session.evaluation?.percentile ?? null)
+    .filter((value): value is number => typeof value === "number");
   const bestPercentile = percentiles.length ? Math.max(...percentiles) : null;
   const lastPercentile = percentiles[0] ?? null;
   const trend =
     percentiles.length >= 2 ? (percentiles[0] ?? 0) - (percentiles[percentiles.length - 1] ?? 0) : null;
+  const firstScore = doneSessions[doneSessions.length - 1]?.evaluation?.final_score;
+  const lastScore = doneSessions[0]?.evaluation?.final_score;
+  const scoreChange =
+    typeof firstScore === "number" && typeof lastScore === "number" ? lastScore - firstScore : null;
 
   const objectives = [profile?.choice_1, profile?.choice_2, profile?.choice_3].filter(
     (c): c is string => !!c && c.trim().length > 0,
@@ -166,14 +171,20 @@ function CockpitPage() {
               }
             />
           </div>
-          {trend !== null ? (
+          {trend !== null && scoreChange !== null ? (
             <p className="mt-5 text-sm text-muted-foreground">
               Évolution sur vos simulations :{" "}
-              <span className={trend >= 0 ? "font-medium text-success" : "font-medium text-destructive"}>
-                {trend >= 0 ? "+" : ""}
-                {trend} percentiles
-              </span>{" "}
-              entre votre première et votre dernière simulation.
+              {Math.abs(scoreChange) >= 1 ? (
+                <>
+                  <span className={trend >= 0 ? "font-medium text-success" : "font-medium text-destructive"}>
+                    {trend >= 0 ? "+" : ""}
+                    {trend} percentiles
+                  </span>{" "}
+                  entre votre première et votre dernière simulation.
+                </>
+              ) : (
+                "Niveau stable."
+              )}
             </p>
           ) : (
             <p className="mt-5 text-sm text-muted-foreground">
@@ -249,7 +260,12 @@ function CockpitPage() {
             </div>
           </div>
           <div className="mt-4 h-[340px] w-full">
-            <ResponsiveContainer width="100%" height="100%">
+            {!scored.length ? (
+              <div className="flex h-full items-center justify-center px-6 text-center text-base text-muted-foreground">
+                Passez une simulation complète pour voir votre niveau par thème.
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height="100%">
               <RadarChart data={radarData(themeScores)} outerRadius="72%">
                 <PolarGrid stroke="var(--border)" />
                 <PolarAngleAxis dataKey="short" tick={{ fontSize: 12, fill: "var(--muted-foreground)" }} />
@@ -269,12 +285,17 @@ function CockpitPage() {
                   fillOpacity={0.28}
                 />
               </RadarChart>
-            </ResponsiveContainer>
+              </ResponsiveContainer>
+            )}
           </div>
-          <p className="text-sm leading-relaxed text-muted-foreground">
-            Chaque thème est alimenté par les verdicts du jury IA sur vos questions clés (module « Questions clés »)
-            et par le percentile de vos trois dernières simulations complètes. L'aisance orale pèse davantage sur
-            les simulations, car elle ne s'évalue vraiment qu'en situation.
+          <p className="whitespace-pre-line text-sm leading-relaxed text-muted-foreground">
+            {`Chaque thème combine vos scores aux 3 dernières simulations complètes.
+Écoles = critère École
+Introspection = Présentation, Expériences et personnalité
+Projet pro = Projet professionnel
+Futur = votre projection
+Aisance orale = Conduite de l’échange, Clarté, Gestion des situations déstabilisantes.
+L’ouverture sur le monde et les épreuves propres à certaines écoles comptent dans votre percentile affiché à la fin de chaque entretien, mais ne sont pas affichés dans ce graphique.`}
           </p>
         </Card>
 
@@ -295,7 +316,7 @@ function CockpitPage() {
             </p>
           ) : (
             <p className="mt-4 border-t border-border pt-4 text-sm leading-relaxed text-muted-foreground">
-              Travaillez quelques questions clés pour faire apparaître votre profil.
+              Passez une simulation complète pour voir votre niveau par thème.
             </p>
           )}
         </Card>
