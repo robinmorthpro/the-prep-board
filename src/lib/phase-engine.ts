@@ -409,7 +409,7 @@ export class PhaseEngine {
       this.pendingOrderedAt = null;
       this.record("closing", at);
       updates.push(
-        `${REGIE_PREFIX} Il reste 2 minutes : pose maintenant ta question de clôture puis la phrase de sortie. ${END_WITH_QUESTION}`,
+        `${REGIE_PREFIX} Il reste 2 minutes : pose maintenant ta question de clôture puis la phrase de sortie.`,
       );
     }
     return updates;
