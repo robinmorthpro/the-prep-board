@@ -1,0 +1,1 @@
+ALTER TABLE public.bench_runs ADD COLUMN IF NOT EXISTS journal jsonb NOT NULL DEFAULT '[]'::jsonb;
