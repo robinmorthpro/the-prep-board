@@ -58,6 +58,14 @@ describe("rédacteur : traitement du texte", () => {
     expect(text).not.toContain('« faux »');
     expect(retirees).toHaveLength(1);
   });
+  it("accepte une ligne VERBATIMS indentée, avec tiret ou en gras en conservant la mise en forme", () => {
+    const input = `### Présentation\n- Remarque\n  VERBATIMS: Vous : « je suis en deuxième année de prépa ECG »\n- Autre remarque\n- VERBATIMS: Vous : « au lycée du Parc »\n- Encore une\n**VERBATIMS:** Vous : « Robin »`;
+    const { text, retirees } = filtrerVerbatims(input, TRANSCRIPTION);
+    expect(retirees).toHaveLength(0);
+    expect(text).toContain("  VERBATIMS: Vous : « je suis en deuxième année de prépa ECG »");
+    expect(text).toContain("- VERBATIMS: Vous : « au lycée du Parc »");
+    expect(text).toContain("**VERBATIMS:** Vous : « Robin »");
+  });
   it("garde une citation tirée du document remis", () => {
     const t = TEXTE.replace("j'ai dirigé une équipe de cinquante personnes", "trésorier du BDE");
     const { retirees } = filtrerVerbatims(t, TRANSCRIPTION, "Expériences : trésorier du BDE en 2025.");
@@ -87,6 +95,14 @@ describe("rédacteur : traitement du texte", () => {
           { feedback: "Troisième remarque", verbatims: ['Vous : « citation 3 »'] },
         ],
       },
+    ]);
+  });
+  it("rattache les lignes VERBATIMS indentée, avec tiret ou en gras à la puce précédente sans créer de nouvelle puce", () => {
+    const parts = parseReview(`### Présentation\n- Première remarque\n  VERBATIMS: Vous : « citation 1 »\n- Deuxième remarque\n- VERBATIMS: Vous : « citation 2 »\n- Troisième remarque\n**VERBATIMS:** Vous : « citation 3 »`);
+    expect(parts[0]?.items).toEqual([
+      { feedback: "Première remarque", verbatims: ['Vous : « citation 1 »'] },
+      { feedback: "Deuxième remarque", verbatims: ['Vous : « citation 2 »'] },
+      { feedback: "Troisième remarque", verbatims: ['Vous : « citation 3 »'] },
     ]);
   });
   it("préserve la structure de l'ancien format", () => {
