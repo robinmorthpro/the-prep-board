@@ -28,7 +28,7 @@ export const ESSEC_SITUATIONS: EssecSituation[] = [
       "Vous devenez trésorier ou trésorière d'une association de l'ESSEC qui organise des activités de soutien scolaire. Vous découvrez que le trésorier précédent s'est fait rembourser des notes de frais illégales, et que rendre ce fait public risque d'abîmer gravement l'image de l'association, voire de la faire disparaître. Comment gérez-vous cette situation ?",
   },
   {
-    competence: "Capacités d'organisation",
+    competence: "Compétences collectives",
     enonce:
       "Dans une équipe de six étudiants d'une association sportive de l'ESSEC, vous remportez une récompense offerte par une entreprise partenaire. Vous prenez seul ou seule l'initiative de choisir la récompense sous forme de bons d'achat de 50 euros par étudiant. Une fois les bons d'achat arrivés, les autres membres de l'équipe vous disent qu'ils ne sont pas du tout favorables à ce choix. Comment réagissez-vous ?",
   },
@@ -55,7 +55,7 @@ export const ESSEC_SITUATIONS: EssecSituation[] = [
       "Vous êtes secrétaire du BDS (bureau des sports) et devez traiter une centaine de mails pour l'événement que vous organisez, mais le temps vous manque. Comment vous organisez-vous ?",
   },
   {
-    competence: "Compétences collectives",
+    competence: "Créativité",
     enonce:
       "On vous demande de concevoir une campagne publicitaire originale pour promouvoir l'ESSEC auprès de futurs candidats. Quelle formule proposez-vous ?",
   },
@@ -65,11 +65,11 @@ export const ESSEC_SITUATIONS: EssecSituation[] = [
       "Vous avez la garde d'un enfant pour l'après-midi et devez organiser son emploi du temps. Comment procédez-vous ?",
   },
   {
-    competence: "Compétences collectives",
+    competence: "Créativité",
     enonce: "On vous confie la conception d'un escape game original. Quel concept proposez-vous ?",
   },
   {
-    competence: "Capacités d'organisation",
+    competence: "Créativité",
     enonce: "On vous demande de repenser entièrement la salle d'attente d'un aéroport. Quelles sont vos propositions ?",
   },
   {
@@ -78,7 +78,7 @@ export const ESSEC_SITUATIONS: EssecSituation[] = [
       "Vous dirigez un journal dont les ventes s'effondrent depuis plusieurs mois. Comment redressez-vous la situation ?",
   },
   {
-    competence: "Capacités d'organisation",
+    competence: "Compétences collectives",
     enonce:
       "Dans votre groupe projet, trois membres sur six ne participent pas depuis le début du travail. Comment réagissez-vous ?",
   },
@@ -105,7 +105,7 @@ export const ESSEC_SITUATIONS: EssecSituation[] = [
       "Vous êtes trésorier ou trésorière d'une association étudiante. Votre principal partenaire financier se désengage deux semaines avant l'événement phare de l'année. Comment réagissez-vous ?",
   },
   {
-    competence: "Créativité",
+    competence: "Compétences collectives",
     enonce:
       "Dans votre groupe de projet de six personnes, deux membres ne se parlent plus après un désaccord, et le rendu est dans trois jours. Comment gérez-vous la situation ?",
   },
@@ -118,12 +118,12 @@ export const ESSEC_SITUATIONS: EssecSituation[] = [
     enonce: "On vous confie un local vide dans le hall de votre établissement pour un mois. Qu'en faites-vous ?",
   },
   {
-    competence: "Créativité",
+    competence: "Capacités d'organisation",
     enonce:
       "Vous devez faire découvrir votre ville à un étudiant étranger qui ne dispose que de six heures avant son train. Comment organisez-vous ce temps ?",
   },
   {
-    competence: "Créativité",
+    competence: "Capacités d'organisation",
     enonce:
       "Vous organisez un voyage associatif pour quarante personnes. La moitié des participants annule trois jours avant le départ. Comment réagissez-vous ?",
   },
@@ -138,7 +138,7 @@ export const ESSEC_SITUATIONS: EssecSituation[] = [
       "Vous disposez d'un mois et de deux cents euros pour tester une idée de petit commerce sur votre campus. Que faites-vous ?",
   },
   {
-    competence: "Compétences collectives",
+    competence: "Créativité",
     enonce:
       "On vous demande une intervention de vingt minutes dans votre lycée d'origine pour donner envie à des lycéens de faire une classe préparatoire. Comment construisez-vous cette intervention ?",
   },
@@ -167,7 +167,7 @@ export const ESSEC_SITUATIONS: EssecSituation[] = [
       "Vous devez réserver une salle, un traiteur et un intervenant pour un événement dans dix jours. L'intervenant se désiste la veille de la date limite de réservation de la salle. Comment réagissez-vous ?",
   },
   {
-    competence: "Capacités d'organisation",
+    competence: "Créativité",
     enonce:
       "Une association caritative que vous représentez voit ses dons chuter de moitié cette année. Vous devez inverser la tendance sans passer par les réseaux sociaux. Que proposez-vous ?",
   },
