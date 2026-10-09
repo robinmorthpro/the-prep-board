@@ -1269,6 +1269,10 @@ export type PhaseStep = {
   addQuestionAllowed?: boolean;
   /** Phase éligible au rappel des thèmes. */
   freeExchange?: boolean;
+  /** Ce repère impose une phrase seule ou un silence : aucun suffixe-question. */
+  omitEndWithQuestion?: boolean;
+  /** Ne jamais forcer cette bascule après deux repères (emlyon). */
+  disableForcedTransition?: boolean;
   /** L'entrée dans cette phase déclenche aussitôt la clôture. */
   closeOnEnter?: boolean;
   /** Une phrase de sortie détectée pendant cette phase déclenche aussitôt la clôture. */
@@ -1452,8 +1456,9 @@ const PHASE_SCHEDULES: Record<string, PhaseStep[]> = {
       switchInstruction: switchTo(
         "la mise en situation finale",
         P_ESSEC_SITUATION,
-        "Fais-le à la fin du sujet en cours, au plus tard dans tes deux prochaines prises de parole, puis énonce la mise en situation MOT POUR MOT, sans la reformuler. Ne coupe jamais une réponse en cours.",
+        "Contrairement à ce qui précède, tu peux d'abord finir le sujet en cours : fais la transition au plus tard dans ta deuxième prise de parole à partir de maintenant, puis énonce la mise en situation MOT POUR MOT, sans la reformuler. Termine par « prenez quelques secondes pour réfléchir » : cette prise de parole se termine sur cette phrase, pas par une question.",
       ),
+      omitEndWithQuestion: true,
       // Le jury peut sortir de la situation avant 8 min quand le sujet est
       // épuisé : aucune phrase anticipée rattrapée, aucun malus.
       allowEarlyPhrase: true,
@@ -1469,7 +1474,7 @@ const PHASE_SCHEDULES: Record<string, PhaseStep[]> = {
       afterMinutes: 8,
       phrase: P_ESSEC_SORTIE,
       switchInstruction:
-        "La mise en situation est terminée. Pose maintenant ta question de clôture puis la phrase de sortie.",
+        "Remercie le candidat et mets un terme au cas. La mise en situation est terminée. Pose maintenant ta question de clôture puis la phrase de sortie.",
       detect: /question a me poser|quelque chose a ajouter|bonne continuation/,
       closeOnEnter: true,
       ongoing: "Clôture : pose maintenant ta question de clôture puis la phrase de sortie.",
@@ -1498,6 +1503,7 @@ const PHASE_SCHEDULES: Record<string, PhaseStep[]> = {
         P_INSEEC_CLASSIQUE,
         "Enchaîne immédiatement, dans la même prise de parole, avec une question d'ouverture de la banque de questions.",
       ),
+      omitEndWithQuestion: true,
       detect: /entretien classique|seconde partie|deuxieme partie|partie plus classique/,
       allowEarly: true,
       ongoing: "Entretien classique : mène l'entretien normalement, plus aucune bascule de phase à prévoir.",
@@ -1512,23 +1518,25 @@ const PHASE_SCHEDULES: Record<string, PhaseStep[]> = {
       ongoing: `Reste sur l'exposé et son rebond : ne change pas de phase. ${RELANCES}`,
       dryEarlySwitch: true,
       addQuestionAllowed: true,
-      timing: { plannedMinutes: 5, criterion: "l'exposé", penalizeEarly: true },
+      timing: { plannedMinutes: 7, criterion: "l'exposé", penalizeEarly: true },
     },
     {
       id: "gem-inversee",
       name: "Partie 2 — interview inversée",
       topic: "l'interview inversée",
-      startMinute: 5,
+      startMinute: 7,
       phrase: P_GEM_INVERSEE,
       switchInstruction: switchTo(
         "la partie 2, l'interview inversée",
         P_GEM_INVERSEE,
         "Tu t'arrêtes net après cette annonce : c'est au candidat de t'interroger.",
       ),
+      omitEndWithQuestion: true,
       detect: /interview inversee|c'est a vous de m'interroger/,
       allowEarly: true,
       ongoing:
         "Interview inversée : réponds en personnage, ne change pas de phase. Si le candidat semble à court de questions, tu peux sortir brièvement de ton personnage pour lui demander exactement « Avez-vous d'autres questions à me poser ? » (au plus deux fois dans la partie). Ne change jamais de partie de toi-même : l'application te dira au repère suivant quand passer à la suite.",
+      omitEndWithQuestion: true,
       dryEarlySwitch: true,
       timing: { plannedMinutes: 10, floorMinutes: 8.5, criterion: "l'interview inversée", penalizeEarly: true },
     },
@@ -1547,6 +1555,7 @@ const PHASE_SCHEDULES: Record<string, PhaseStep[]> = {
       phrase: P_GEM_MINUTE,
       switchInstruction:
         `Si le candidat n'a pas encore amorcé sa restitution, annonce-lui maintenant, sur un ton neutre, qu'il lui reste une minute et que c'est le moment de sa synthèse, par exemple : « ${P_GEM_MINUTE} ». Tu peux le formuler à ta manière, puis reste silencieux pendant sa restitution.`,
+      omitEndWithQuestion: true,
       earlyPhrase: P_GEM_MINUTE_EARLY,
       earlySwitchInstruction: switchTo(
         "la minute de restitution",
@@ -1617,6 +1626,7 @@ const PHASE_SCHEDULES: Record<string, PhaseStep[]> = {
       ),
       detect: /termine avec les (4|quatre) cartes|fin des cartes/,
       allowEarly: true,
+      disableForcedTransition: true,
       ongoing: FREE_EXCHANGE,
     },
   ],
@@ -1658,20 +1668,6 @@ const PHASE_SCHEDULES: Record<string, PhaseStep[]> = {
       allowEarlyPhrase: true,
       ongoing:
         "Traitement des cartes : le candidat choisit une carte à la fois ; approfondis la carte en cours et rebondis sur les perches personnelles. Si les trois cartes ont été traitées, enchaîne sur des sujets classiques de motivation non encore couverts. Ne passe jamais à la conclusion de toi-même.",
-    },
-    {
-      id: "kedge-conclusion",
-      name: "Conclusion",
-      topic: "la conclusion",
-      startMinute: 27,
-      phrase: P_KEDGE_CLOTURE,
-      switchInstruction: switchTo(
-        "la conclusion",
-        P_KEDGE_CLOTURE,
-        "Fais-le à la fin de la carte en cours : ta question de clôture doit inviter le candidat à poser une question ou à ajouter quelque chose.",
-      ),
-      detect: /question a me poser|quelque chose a ajouter/,
-      ongoing: "Conclusion : termine l'entretien comme prévu.",
     },
   ],
 };
@@ -1720,9 +1716,9 @@ const MONOLOGUE_MEASURES: Record<string, MonologueMeasure[]> = {
     {
       id: "kedge-autoportrait-monologue",
       label: "Présentation Autoportrait (prise de parole du candidat)",
-      criterion: "la présentation Autoportrait (C1)",
+      criterion: "la présentation Autoportrait",
       plannedMinutes: 3,
-      floorMinutes: 2.55,
+      floorMinutes: 2.5,
       stepId: "kedge-autoportrait",
       start: { stepId: "kedge-autoportrait" },
     },
@@ -1733,7 +1729,7 @@ const MONOLOGUE_MEASURES: Record<string, MonologueMeasure[]> = {
       label: "Présentation EDHEC",
       criterion: "la présentation",
       plannedMinutes: 4,
-      floorMinutes: 3 + 25 / 60,
+      floorMinutes: 3.25,
       start: { event: "edhec-presentation" },
     },
   ],
@@ -1743,8 +1739,18 @@ const MONOLOGUE_MEASURES: Record<string, MonologueMeasure[]> = {
       label: "Présentation initiale ESSEC",
       criterion: "la présentation",
       plannedMinutes: 5,
-      floorMinutes: 3,
+      floorMinutes: 2.5,
       maxMinutes: 5.5,
+      start: { juryMessage: 2 },
+    },
+  ],
+  "EM Strasbourg": [
+    {
+      id: "em-strasbourg-pitch",
+      label: "Pitch EM Strasbourg",
+      criterion: "le pitch",
+      plannedMinutes: 3,
+      floorMinutes: 2.5,
       start: { juryMessage: 2 },
     },
   ],
