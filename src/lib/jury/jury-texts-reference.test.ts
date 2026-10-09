@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import juryCommunRaw from "./textes/jury-commun.md?raw";
 import { commonJuryText } from "../elevenlabs-agent-prompt";
 import { JURY_SCHOOL_TEXTS } from "./school-texts";
-import { buildFirstMessage, getSchoolInterviewConfig, openingNote, secondReplyFor } from "../school-interviews";
+import { buildFirstMessage, getSchoolInterviewConfig, greeting, openingNote, schoolDisplayName, secondReplyFor, simulatedMinutes } from "../school-interviews";
 
 const reference = readFileSync(new URL("./textes/jury-ecoles-final.md", import.meta.url), "utf8");
 const HEADINGS = ["PREMIER MESSAGE", "DEUXIÈME RÉPLIQUE", "CONSIGNE D'OUVERTURE", "CONDUITE PROPRE À L'ÉCOLE", "CONSIGNES ENVOYÉES PENDANT L'ENTRETIEN"] as const;
@@ -30,10 +30,10 @@ function sections() {
 }
 
 const expected = sections() as Record<string, Record<(typeof HEADINGS)[number], string>>;
-const renderTemplate = (text: string) => text
-  .replaceAll("${welcome}", "Bonjour Robin, et bienvenue à l'entretien de l'ÉCOLE.")
+const renderTemplate = (text: string, school: string) => text
+  .replaceAll("${welcome}", `Bonjour Robin, et bienvenue à l'entretien ${schoolDisplayName(school).preposition}.`)
   .replaceAll("${hello}", "Bonjour Robin.")
-  .replaceAll("${minutes}", "30")
+  .replaceAll("${minutes}", String(simulatedMinutes(getSchoolInterviewConfig(school))))
   .replaceAll("${support}", "document")
   .replaceAll("${article}", "Article test")
   .replaceAll("${edhec_mot}", "audace")
@@ -58,7 +58,7 @@ describe("références officielles du jury — étape 3", () => {
     const conductPrefix = "CONDUITE PROPRE À L'ÉCOLE (elle prime sur la trame générique)\n";
     expect(text.conduct).toBe(expected[school]!["CONDUITE PROPRE À L'ÉCOLE"].replace(conductPrefix, ""));
     expect(buildFirstMessage(config, { firstName: "Robin", articleTitle: "Article test", edhecWord: "audace", inseecImage: "Image test" }))
-      .toBe(renderTemplate(text.firstMessage).replace("l'entretien de l'ÉCOLE", `l'entretien ${school === "ESSEC" || school === "EDHEC" || school === "ESCP" ? "de l'" + school : "de " + school}`));
+      .toBe(renderTemplate(text.firstMessage, school));
     expect(secondReplyFor(config) ?? "").toBe(text.secondReply);
     expect(openingNote(config)).toBe(text.opening.replaceAll("${second}", text.secondReply));
   });
