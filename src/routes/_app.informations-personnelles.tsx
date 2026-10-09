@@ -36,7 +36,13 @@ export const Route = createFileRoute("/_app/informations-personnelles")({
   component: PersonalInfo,
 });
 
-const SCHOOL_NAMES = new Set(SCHOOLS.map((school) => school.name));
+const SCHOOL_NAMES = new Set([...SCHOOLS.map((school) => school.name), "HEC Paris"]);
+
+const selectableSchools = (selected: string[]) => {
+  const options = [...SCHOOLS];
+  if (selected.includes("HEC Paris")) options.unshift({ name: "HEC Paris", concours: "BCE" });
+  return options;
+};
 
 const sanitizeSchoolSelection = (values: Array<string | null | undefined>) =>
   values.filter((value): value is string => typeof value === "string" && SCHOOL_NAMES.has(value));
@@ -268,7 +274,7 @@ function PersonalInfo() {
             Écoles des concours BCE et Ecricome, classées dans l'ordre du classement SIGEM.
           </p>
           <div className="grid gap-2 sm:grid-cols-2">
-            {SCHOOLS.map((s) => (
+            {selectableSchools(schools).map((s) => (
               <label key={s.name} className="flex items-center gap-3 rounded-md border border-border/60 px-3 py-2 text-sm">
                 <Checkbox checked={schools.includes(s.name)} onCheckedChange={() => toggleSchool(s.name)} />
                 <span className="flex-1">{s.name}</span>

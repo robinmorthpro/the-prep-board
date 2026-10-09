@@ -165,7 +165,7 @@ const CONFIGS: SchoolInterviewConfig[] = [
     school: "ESSEC",
     format: "special",
     agentIdEnv: CLASSIQUE_AGENT_ENV,
-    durationSeconds: 2700,
+    durationSeconds: 2730,
     requiresUpload: false,
     useHouseJuryPrompt: true,
     conductNote:
