@@ -18,6 +18,8 @@ export interface EssecSituation {
   enonce: string;
 }
 
+export type NumberedEssecSituation = EssecSituation & { numero: number };
+
 export const ESSEC_SITUATIONS: EssecSituation[] = [
   // --- 5 cas officiels ESSEC ---
   {
@@ -26,7 +28,7 @@ export const ESSEC_SITUATIONS: EssecSituation[] = [
       "Vous devenez trésorier ou trésorière d'une association de l'ESSEC qui organise des activités de soutien scolaire. Vous découvrez que le trésorier précédent s'est fait rembourser des notes de frais illégales, et que rendre ce fait public risque d'abîmer gravement l'image de l'association, voire de la faire disparaître. Comment gérez-vous cette situation ?",
   },
   {
-    competence: "Compétences collectives",
+    competence: "Capacités d'organisation",
     enonce:
       "Dans une équipe de six étudiants d'une association sportive de l'ESSEC, vous remportez une récompense offerte par une entreprise partenaire. Vous prenez seul ou seule l'initiative de choisir la récompense sous forme de bons d'achat de 50 euros par étudiant. Une fois les bons d'achat arrivés, les autres membres de l'équipe vous disent qu'ils ne sont pas du tout favorables à ce choix. Comment réagissez-vous ?",
   },
@@ -76,7 +78,7 @@ export const ESSEC_SITUATIONS: EssecSituation[] = [
       "Vous dirigez un journal dont les ventes s'effondrent depuis plusieurs mois. Comment redressez-vous la situation ?",
   },
   {
-    competence: "Compétences collectives",
+    competence: "Créativité",
     enonce:
       "Dans votre groupe projet, trois membres sur six ne participent pas depuis le début du travail. Comment réagissez-vous ?",
   },
@@ -116,7 +118,7 @@ export const ESSEC_SITUATIONS: EssecSituation[] = [
     enonce: "On vous confie un local vide dans le hall de votre établissement pour un mois. Qu'en faites-vous ?",
   },
   {
-    competence: "Capacités d'organisation",
+    competence: "Créativité",
     enonce:
       "Vous devez faire découvrir votre ville à un étudiant étranger qui ne dispose que de six heures avant son train. Comment organisez-vous ce temps ?",
   },
@@ -171,6 +173,30 @@ export const ESSEC_SITUATIONS: EssecSituation[] = [
   },
 ];
 
+/** Numérotation éditoriale stable (1 à 30) partagée par le module et le jury. */
+export const ESSEC_SITUATIONS_NUMEROTEES: NumberedEssecSituation[] = ESSEC_SITUATIONS.map((situation, index) => ({
+  ...situation,
+  numero: index + 1,
+}));
+
+/** Les trois plus petits numéros de chaque compétence sont visibles dans Questions clés. */
+export const ESSEC_SITUATIONS_MODULE: NumberedEssecSituation[] = (() => {
+  const counts = new Map<string, number>();
+  return ESSEC_SITUATIONS_NUMEROTEES.filter((situation) => {
+    const count = counts.get(situation.competence) ?? 0;
+    if (count >= 3) return false;
+    counts.set(situation.competence, count + 1);
+    return true;
+  });
+})();
+
+const ESSEC_MODULE_NUMBERS = new Set(ESSEC_SITUATIONS_MODULE.map((situation) => situation.numero));
+
+/** Complément exact des situations du module, réservé au tirage du jury. */
+export const ESSEC_SITUATIONS_JURY = ESSEC_SITUATIONS_NUMEROTEES.filter(
+  (situation) => !ESSEC_MODULE_NUMBERS.has(situation.numero),
+);
+
 /**
  * Sélectionne au hasard l'énoncé de la mise en situation proposée au
  * candidat pendant l'échange libre de l'entretien ESSEC, injecté via la
@@ -179,6 +205,6 @@ export const ESSEC_SITUATIONS: EssecSituation[] = [
  * (cf. `conductNote` d'ESSEC dans school-interviews.ts) — jamais avant.
  */
 export function pickEssecSituation(): string {
-  const index = Math.floor(Math.random() * ESSEC_SITUATIONS.length);
-  return (ESSEC_SITUATIONS[index] ?? ESSEC_SITUATIONS[0]!).enonce;
+  const index = Math.floor(Math.random() * ESSEC_SITUATIONS_JURY.length);
+  return (ESSEC_SITUATIONS_JURY[index] ?? ESSEC_SITUATIONS_JURY[0]!).enonce;
 }

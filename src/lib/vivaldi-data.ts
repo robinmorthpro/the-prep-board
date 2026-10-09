@@ -1,6 +1,6 @@
 import { EDHEC_WORDS } from "@/lib/edhec-kb";
 import { EMLYON_CREATIVITE, EMLYON_EXPERIENCE, EMLYON_PERSONNALITE, EMLYON_PROJET } from "@/lib/emlyon-kb";
-import { ESSEC_SITUATIONS } from "@/lib/essec-kb";
+import { ESSEC_SITUATIONS_MODULE } from "@/lib/essec-kb";
 
 /** Écoles BCE + Ecricome, classées dans l'ordre du classement SIGEM (aucun doublon). */
 export const SCHOOLS: { name: string; concours: "BCE" | "Ecricome" }[] = [
@@ -2457,7 +2457,7 @@ function buildTrainingQuestions(): KeyQuestion[] {
     })),
   );
 
-  const essec: KeyQuestion[] = everyOther(ESSEC_SITUATIONS).map((s, i) => ({
+  const essec: KeyQuestion[] = ESSEC_SITUATIONS_MODULE.map((s, i) => ({
     id: `essec-situation-${i + 1}`,
     theme: "ESSEC BS",
     subTheme: s.competence,
