@@ -11,7 +11,7 @@ export const INTERVIEW_DIFFICULTY_ADVICE =
   "Pour un premier entraînement, choisissez le jury neutre, qui conduit l'échange comme le jour J. Passez ensuite au jury dur pour vous entraîner à répondre sous davantage de pression.";
 
 export const INTERVIEW_VARIANTS: Array<{
-  code: InterviewVariant;
+  code: Exclude<InterviewVariant, "decouverte">;
   label: string;
   hint: string;
   instructions: string;
@@ -55,7 +55,7 @@ export const INTERVIEW_VARIANTS: Array<{
   },
 ];
 
-/** Fond commun aux trois variantes. Paramétrée par la durée réelle de l'école (durationMinutes). */
+/** Fond commun aux deux variantes proposées. Paramétrée par la durée réelle de l'école (durationMinutes). */
 export function buildInterviewTrame(durationMinutes: number) {
   return `FORMAT : entretien de motivation classique, ${durationMinutes} minutes, mené en voix. Vouvoiement systématique.
 
