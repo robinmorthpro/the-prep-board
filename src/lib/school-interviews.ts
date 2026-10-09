@@ -725,7 +725,7 @@ CALCUL DU SCORE FINAL EDHEC : la grille totale de cette école est sur 21 points
     school: "GEM (Grenoble EM)",
     format: "special",
     agentIdEnv: CLASSIQUE_AGENT_ENV,
-    durationSeconds: 1800,
+    durationSeconds: 1920,
     requiresUpload: false,
     useHouseJuryPrompt: true,
     conductNote: `RAPPEL DU FORMAT GEM : cet entretien comporte 3 parties strictement ordonnées, 30 minutes au total — 1) l'exposé (~5 min), 2) l'interview inversée (~10 min), 3) l'échange classique (~15 min). Les parties 1 et 2 ne portent jamais sur le candidat lui-même : c'est en partie 3 qu'il se présente pour la première fois de cet oral.
