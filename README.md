@@ -95,16 +95,16 @@ Les variables client sont dans `.env` ; les secrets serveur sont à déclarer da
 
 Le projet a démarré en août 2026 sous le nom **Repetia**. Le 1er octobre 2026, il a été **migré vers ce dépôt et un nouveau projet Supabase** pour repartir sur une base propre (nouvelle configuration Supabase, authentification Google via Supabase Auth, images rapatriées). L'historique Git commence donc à cette date ; les **migrations SQL** (`supabase/migrations/`, datées depuis le 18/08/2026) conservent la trace de l'évolution du schéma depuis l'origine.
 
-Les commits intitulés « Changes » ou « Work in progress » sont les commits automatiques de Lovable. Les jalons du projet sont repérés par des tags :
+Les commits intitulés « Changes » ou « Work in progress » sont les commits automatiques de Lovable. Les jalons du projet :
 
-| Tag | Commit | Jalon |
+| Module | Commit | Jalon |
 |---|---|---|
-| `M0-setup` | `2ba076e` | Initialisation du projet (template TanStack Start) |
-| `M2-supabase` | `8843be2` | Connexion du nouveau projet Supabase |
-| `M2-auth` | `c8c0283` | Authentification Google via Supabase Auth (relais OAuth pour l'aperçu) |
-| `M3-design-system` | `af0e7a8` | Application du brand kit v1 |
-| `M3-ux` | `e91a5f0` | Validation et refonte visuelle des pages |
-| `M4-ia-jury-vocal` | `055035c` | Itérations sur le jury vocal (tours de parole, débit, relances) |
+| M0 | [`2ba076e`](https://github.com/robinmorthpro/the-prep-board/commit/2ba076e) | Initialisation du projet (template TanStack Start) |
+| M2 | [`8843be2`](https://github.com/robinmorthpro/the-prep-board/commit/8843be2) | Connexion du nouveau projet Supabase |
+| M2 | [`c8c0283`](https://github.com/robinmorthpro/the-prep-board/commit/c8c0283) | Authentification Google via Supabase Auth (relais OAuth pour l'aperçu) |
+| M3 | [`af0e7a8`](https://github.com/robinmorthpro/the-prep-board/commit/af0e7a8) | Application du brand kit v1 |
+| M3 | [`e91a5f0`](https://github.com/robinmorthpro/the-prep-board/commit/e91a5f0) | Validation et refonte visuelle des pages |
+| M4 | [`055035c`](https://github.com/robinmorthpro/the-prep-board/commit/055035c) | Itérations sur le jury vocal (tours de parole, débit, relances) |
 
 La suite (sécurisation, audit, documentation) est tracée par des commits nommés `M4 - …` et `M5 - …`.
 
