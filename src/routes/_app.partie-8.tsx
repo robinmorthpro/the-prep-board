@@ -68,6 +68,7 @@ import { schoolPhotoOrFallback } from "@/components/vivaldi/school-photos";
 import { pickGemPersona } from "@/lib/gem-kb";
 import { pickEssecSituation } from "@/lib/essec-kb";
 import { drawEmlyonCards } from "@/lib/emlyon-kb";
+import { EMLYON_CARDS_SILENCE_MS, EmlyonCardsSilence } from "@/lib/emlyon-trigger";
 import { pickEdhecWord } from "@/lib/edhec-kb";
 import { drawMontpellierSituations, type MontpellierSituation } from "@/lib/montpellier-kb";
 import { drawKedgeCards } from "@/lib/kedge-kb";
@@ -284,6 +285,10 @@ function Part7() {
   const emlyonTriggeredRef = useRef(false);
   // emlyon : on repère le tour où le jury a demandé la présentation.
   const emlyonPresentationAskedRef = useRef(false);
+  // emlyon : le tirage attend 5 s de silence complet après la présentation.
+  const emlyonSilenceRef = useRef(new EmlyonCardsSilence());
+  const emlyonArmedRef = useRef(false);
+  const emlyonSilenceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   // Secours limité quand le jury rend la main sans poser de question.
   const mainRenduRef = useRef(0);
   // Nombre de prises de parole du jury (le tout premier message ne déclenche
@@ -693,8 +698,30 @@ function Part7() {
       emlyonPresentationAskedRef.current && /presentez-vous|presentation/.test(normalizeInterviewText(questionRef.current));
     if (config.school === "emlyon" && !emlyonTriggeredRef.current) {
       if (answeredPresentation || (!emlyonPresentationAskedRef.current && nextTurns.length >= 2)) {
-        triggerEmlyonCards();
+        emlyonArmedRef.current = true;
       }
+      if (emlyonArmedRef.current) armEmlyonCardsSilence();
+    }
+  }
+
+  /** emlyon : 5 s de silence complet après la fin de la prise de parole, puis tirage. */
+  function armEmlyonCardsSilence() {
+    emlyonSilenceRef.current.answerEnded(Date.now());
+    if (emlyonSilenceTimerRef.current) clearTimeout(emlyonSilenceTimerRef.current);
+    emlyonSilenceTimerRef.current = setTimeout(() => {
+      emlyonSilenceTimerRef.current = null;
+      if (closedRef.current || emlyonTriggeredRef.current) return;
+      if (emlyonSilenceRef.current.isDue(Date.now())) triggerEmlyonCards();
+    }, EMLYON_CARDS_SILENCE_MS);
+  }
+
+  /** Le candidat reprend la parole : le compte des 5 s est annulé. */
+  function handleCandidateVoice() {
+    if (config.school !== "emlyon" || emlyonTriggeredRef.current) return;
+    emlyonSilenceRef.current.voice();
+    if (emlyonSilenceTimerRef.current) {
+      clearTimeout(emlyonSilenceTimerRef.current);
+      emlyonSilenceTimerRef.current = null;
     }
   }
 
@@ -712,6 +739,7 @@ function Part7() {
   const agent = useJuryAgent({
     onQuestion: handleJuryQuestion,
     onAnswer: handleCandidateAnswer,
+    onCandidateVoice: handleCandidateVoice,
     onError: (message) => toast.error(message),
     // Coupure côté ElevenLabs avant la première question : on ne laisse pas
     // l'écran tourner indéfiniment sur « Connexion vocale en cours ».
@@ -868,6 +896,10 @@ function Part7() {
 
     emlyonTriggeredRef.current = false;
     emlyonPresentationAskedRef.current = false;
+    emlyonArmedRef.current = false;
+    emlyonSilenceRef.current.reset();
+    if (emlyonSilenceTimerRef.current) clearTimeout(emlyonSilenceTimerRef.current);
+    emlyonSilenceTimerRef.current = null;
     emlyonCardsInstructionRef.current = null;
     clermontAxisOfferedRef.current = false;
     clermontAxisSentRef.current = false;
