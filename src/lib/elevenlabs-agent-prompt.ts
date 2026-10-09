@@ -18,7 +18,7 @@ VOIX : la voix choisie et configurée directement dans le dashboard ElevenLabs -
 RÉGLAGES DE VOIX : stability 0,45 · similarity_boost 0,75 · speed 1,0.
 MODÈLE VOCAL : eleven_flash_v2_5 (latence basse, qualité élevée, multilingue).
 MODÈLE DE LANGAGE DE L'AGENT : claude-sonnet-5, seul modèle testé qui tient les phases.
-FIN DE PAROLE : détection automatique (VAD), seuil de silence 0,6 à 0,8 s - un jury n'attend pas deux secondes avant de rebondir.
+FIN DE PAROLE : détection automatique (modèle de tour de parole turn_v3), empressement « patient » (turn_eagerness = patient) - le jury attend plus longtemps avant de prendre la parole et ne coupe pas le candidat pendant ses pauses.
 INTERRUPTIONS : le candidat peut couper le jury ; le jury ne coupe JAMAIS le candidat et attend toujours la fin de sa réponse pour parler.
 DURÉE MAX DE SESSION : la durée réelle de l'entretien (15 à 35 minutes selon l'école pour les entretiens classiques) plus une marge de 10 minutes.
 OVERRIDES À AUTORISER dans la configuration de l'agent : prompt, first message, language. Sans cela l'application ne peut pas injecter la difficulté ni le document remis par le candidat. La voix n'est plus imposée par l'application.
