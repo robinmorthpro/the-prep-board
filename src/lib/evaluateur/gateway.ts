@@ -2,6 +2,8 @@
 export const DEFAULT_EVAL_MODEL = "google/gemini-3.7-flash";
 
 const BASE = "https://ai.gateway.lovable.dev/v1";
+/** Limite de jetons de sortie de l'évaluateur, tous modèles (Claude dépassait 16 000). */
+export const EVAL_MAX_OUTPUT_TOKENS = 32000;
 const RUN_ID = "X-Lovable-AIG-Run-ID";
 
 export type Message = { role: "user" | "assistant"; content: string };
@@ -40,6 +42,7 @@ async function callChat(f: Fetcher, key: string, model: string, system: string, 
     body: JSON.stringify({
       model,
       temperature: 0,
+      max_tokens: EVAL_MAX_OUTPUT_TOKENS,
       ...(jsonOut ? { response_format: { type: "json_object" } } : {}),
       messages: [{ role: "system", content: system }, ...messages],
     }),
@@ -60,7 +63,7 @@ async function callMessages(f: Fetcher, key: string, model: string, system: stri
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}`, "X-Lovable-AIG-SDK": "fetch" },
     body: JSON.stringify({
       model,
-      max_tokens: 16000,
+      max_tokens: EVAL_MAX_OUTPUT_TOKENS,
       // Claude Sonnet 5 refuse le paramètre temperature (400) : non envoyé.
       stream: true,
       system,

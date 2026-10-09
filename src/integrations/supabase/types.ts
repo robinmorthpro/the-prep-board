@@ -117,6 +117,7 @@ export type Database = {
           graine: number
           id: string
           jetons_candidat: Json
+          journal: Json
           jury: string
           lot: string
           phase_timings: Json
@@ -141,6 +142,7 @@ export type Database = {
           graine: number
           id?: string
           jetons_candidat?: Json
+          journal?: Json
           jury: string
           lot: string
           phase_timings?: Json
@@ -165,6 +167,7 @@ export type Database = {
           graine?: number
           id?: string
           jetons_candidat?: Json
+          journal?: Json
           jury?: string
           lot?: string
           phase_timings?: Json

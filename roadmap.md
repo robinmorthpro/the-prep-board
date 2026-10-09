@@ -87,3 +87,9 @@
 - [x] E. CONNAISSANCE DU CANDIDAT, I68, I29, I52, I33 (jury : questions 13 à 24), I62, I66
 - [x] F. Piles séparées emlyon/EDHEC et textes du module
 - [x] G. Étiquettes des cartes emlyon transmises à l'évaluateur et au rédacteur
+
+## Étape 3.5 — banc d'essai
+- [x] Tables bench_runs / bench_results, banc remis à jour, tests
+- [x] Pilote Clermont (bon, neutre puis dur, Gemini puis Claude)
+- [ ] Lot principal, cas limites, stabilité (attendent la validation du pilote)
+- [ ] Claude Sonnet 5 coupé à 16 000 jetons par l'évaluateur : décision du fondateur attendue

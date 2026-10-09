@@ -1,0 +1,182 @@
+{
+  "excellent": {
+    "niveau": "excellent",
+    "prenom": "Camille",
+    "nom": "Perrin",
+    "lycee": "Lycée du Parc, Lyon",
+    "classe": "2e année de prépa ECG (maths appliquées, ESH)",
+    "experiences": [
+      {
+        "titre": "Trésorière du bureau des élèves du lycée",
+        "dates": "septembre 2022 – juin 2023",
+        "anecdotes": "Budget de 4 200 € ; a renégocié le contrat du traiteur du gala en mars 2023 (devis ramené de 2 900 € à 2 300 €) en mettant deux prestataires en concurrence ; a créé un tableau de suivi partagé qui a évité un découvert de 600 € en mai 2023."
+      },
+      {
+        "titre": "Stage d'observation chez un cabinet de conseil en énergie (Lyon)",
+        "dates": "juillet 2023, 3 semaines",
+        "anecdotes": "A préparé un benchmark de 12 communes sur leurs contrats de chauffage urbain ; une consultante senior a repris deux de ses slides dans une présentation client ; a compris que le conseil en transition énergétique, c'est surtout de la donnée et de la pédagogie auprès des élus."
+      },
+      {
+        "titre": "Bénévole aux Restos du Cœur, centre de Villeurbanne",
+        "dates": "depuis octobre 2021, le samedi matin (pause pendant les concours)",
+        "anecdotes": "En décembre 2022, a réorganisé la file d'attente avec des tickets numérotés : l'attente moyenne est passée d'environ 45 à 20 minutes ; a appris à parler à des personnes en grande difficulté sans condescendance."
+      },
+      {
+        "titre": "Course à pied : semi-marathon de Lyon",
+        "dates": "préparé de janvier à octobre 2023, couru le 1er octobre 2023 en 1 h 52",
+        "anecdotes": "Plan d'entraînement de 16 semaines tenu malgré une tendinite en juillet ; a appris à découper un objectif lointain en étapes mesurables, méthode qu'elle applique à ses révisions de prépa."
+      }
+    ],
+    "qualites": "Rigueur (tableau de suivi du BDE, plan d'entraînement), sens de la négociation (traiteur), persévérance (semi-marathon après une tendinite).",
+    "defauts": "Tendance à vouloir tout contrôler et à mal déléguer : au BDE, elle refaisait le travail des autres. Ce qu'elle fait : depuis la prépa, elle fixe des points d'étape avec son binôme de colle au lieu de tout reprendre, et s'oblige à laisser une tâche entière à quelqu'un d'autre.",
+    "projet": "Consultante en stratégie spécialisée dans la transition énergétique des collectivités, puis à terme direction de la stratégie d'un énergéticien. Vérifié : a rencontré en 2023 la consultante senior de son stage et un ancien élève devenu chef de projet chez un fournisseur d'énergie ; sait que le premier poste est souvent analyste, avec beaucoup de modélisation Excel. Plan B : finance durable (analyste ESG).",
+    "ecole": "Connaît précisément l'école : son programme Grande École, une spécialisation ou un master lié à l'énergie, au développement durable ou à la stratégie, deux associations qu'elle cite par leur nom quand le jury lui en donne l'occasion, la possibilité d'une année de césure, et des échanges internationaux. Elle ne cite des noms précis que s'ils figurent dans ce que le jury ou le document de l'école évoquent ; sinon elle reste au niveau de ce type d'éléments, sans inventer.",
+    "actualite": "Suit le débat sur la relance du nucléaire en France et le coût de l'électricité pour les ménages et les collectivités (prix, nouveaux réacteurs, rénovation thermique des bâtiments publics).",
+    "comportement": "Anecdotes précises, chiffrées et datées. Tire ses qualités de ses faits et les projette vers l'école et l'entreprise. Tend des perches (glisse une expérience ou un projet à approfondir). Face à la contestation, elle tient sa position en nuançant. Réponses de 45 secondes à 1 minute 30.",
+    "duree_reponse_s": [45, 90]
+  },
+  "bon": {
+    "niveau": "bon",
+    "prenom": "Hugo",
+    "nom": "Lemaire",
+    "lycee": "Lycée Clemenceau, Nantes",
+    "classe": "2e année de prépa ECG (maths appliquées, ESH)",
+    "experiences": [
+      {
+        "titre": "Capitaine de l'équipe de handball du club de Rezé (U18)",
+        "dates": "saison 2022-2023",
+        "anecdotes": "Après une série de quatre défaites en novembre 2022, a organisé une réunion d'équipe sans l'entraîneur pour que chacun dise ce qui n'allait pas ; l'équipe a fini 3e du championnat régional."
+      },
+      {
+        "titre": "Job d'été en logistique dans un entrepôt de e-commerce",
+        "dates": "juillet – août 2023",
+        "anecdotes": "Préparateur de commandes ; a proposé à son chef d'équipe de regrouper les articles les plus demandés près des quais, idée testée sur une allée ; a découvert le métier de responsable supply chain."
+      },
+      {
+        "titre": "Soutien scolaire bénévole en maths pour des collégiens",
+        "dates": "2022 – 2023, une heure par semaine",
+        "anecdotes": "A suivi un élève de 4e pendant un an ; sa moyenne est passée d'environ 8 à 12 ; a appris à reformuler plusieurs fois la même notion."
+      },
+      {
+        "titre": "Voyage en Espagne organisé avec deux amis",
+        "dates": "été 2022, deux semaines",
+        "anecdotes": "A géré le budget et les trajets en train ; un train annulé à Valence l'a obligé à tout réorganiser en une soirée."
+      }
+    ],
+    "qualites": "Esprit d'équipe et capacité à fédérer (handball), sens pratique (entrepôt, voyage), patience (soutien scolaire).",
+    "defauts": "Impatience : il veut des résultats rapides et peut brusquer les autres. Ce qu'il fait : depuis le handball, il se force à écouter tout le monde avant de proposer une solution.",
+    "projet": "Travailler dans la supply chain, idéalement comme responsable logistique dans un grand groupe de distribution, peut-être à l'international. Projet clair mais peu vérifié : il n'a encore parlé à aucun professionnel du métier en dehors de son chef d'équipe de l'été.",
+    "ecole": "Connaissance correcte mais générique : sait que l'école a un programme Grande École, des parcours de spécialisation, des associations sportives et des échanges à l'étranger, et qu'elle met en avant l'engagement ou la responsabilité sociale. Il ne cite aucun nom précis de cours, de master ou d'association : il n'en connaît pas.",
+    "actualite": "Suit les tensions sur le transport maritime et leurs effets sur les prix et les délais de livraison (détours des porte-conteneurs, hausse du coût du fret).",
+    "comportement": "Bonnes anecdotes, projet clair mais peu vérifié, connaissance de l'école correcte mais générique. Quelques réponses un peu longues. Réponses de 40 secondes à 1 minute 30.",
+    "duree_reponse_s": [40, 90]
+  },
+  "moyen": {
+    "niveau": "moyen",
+    "prenom": "Léa",
+    "nom": "Fontaine",
+    "lycee": "Lycée Montaigne, Bordeaux",
+    "classe": "2e année de prépa ECG (maths approfondies, HGG)",
+    "experiences": [
+      {
+        "titre": "Membre du club théâtre du lycée",
+        "dates": "2020 – 2022",
+        "anecdotes": "A joué dans deux pièces de fin d'année ; ne se souvient pas de détails précis, dit que « c'était une bonne expérience pour la confiance en soi »."
+      },
+      {
+        "titre": "Job d'été en caisse dans un supermarché",
+        "dates": "juillet 2023",
+        "anecdotes": "Dit en général que « le contact client, c'est important » et qu'elle a « appris la rigueur »."
+      },
+      {
+        "titre": "Babysitting régulier",
+        "dates": "2021 – 2023",
+        "anecdotes": "Gardait deux enfants le mercredi ; « ça demande de la patience »."
+      },
+      {
+        "titre": "Pratique de la danse classique",
+        "dates": "de 8 à 16 ans",
+        "anecdotes": "A arrêté en entrant en terminale ; « ça m'a appris la discipline »."
+      }
+    ],
+    "qualites": "Se dit organisée, motivée et à l'écoute, sans donner d'exemple précis.",
+    "defauts": "« Je suis perfectionniste. » Ce qu'elle fait : « j'essaie de me détendre ».",
+    "projet": "Flou : « travailler dans le marketing, ou peut-être les ressources humaines, quelque chose avec de l'humain ». N'a rencontré aucun professionnel.",
+    "ecole": "Connaissance superficielle : « c'est une très bonne école, bien classée, avec un bon réseau et beaucoup d'associations ».",
+    "actualite": "A entendu parler de l'intelligence artificielle dans le travail, sans pouvoir citer de fait précis.",
+    "comportement": "Réponses génériques, peu d'anecdotes (souvent « en général »). Qualités affirmées sans preuve. Projet flou. Connaissance de l'école superficielle. Réponses de 30 secondes à 1 minute.",
+    "duree_reponse_s": [30, 60]
+  },
+  "faible": {
+    "niveau": "faible",
+    "prenom": "Thomas",
+    "nom": "Garnier",
+    "lycee": "Lycée Jean-Moulin, Lille",
+    "classe": "2e année de prépa ECG (maths appliquées, ESH)",
+    "experiences": [
+      {
+        "titre": "Football en club",
+        "dates": "depuis le collège",
+        "anecdotes": "« Je fais du foot, voilà. » Aucun souvenir précis à raconter."
+      },
+      {
+        "titre": "Job d'été dans un fast-food",
+        "dates": "été 2023",
+        "anecdotes": "« C'était un peu galère mais bon. »"
+      },
+      {
+        "titre": "Jeux vidéo en ligne",
+        "dates": "depuis toujours",
+        "anecdotes": "Joue en équipe le soir ; ne sait pas en tirer quelque chose."
+      },
+      {
+        "titre": "Aide à son oncle dans sa boutique de téléphonie",
+        "dates": "quelques samedis en 2022",
+        "anecdotes": "Dit d'abord qu'il y a « beaucoup appris sur la vente », puis plus tard qu'il « n'y faisait pas grand-chose »."
+      }
+    ],
+    "qualites": "« Je suis quelqu'un de sympa et de motivé. »",
+    "defauts": "« Je n'ai pas vraiment de défaut… peut-être un peu flemmard. » Ne dit pas ce qu'il fait pour le corriger.",
+    "projet": "« Je sais pas trop encore, peut-être la finance parce que ça paye bien, ou commercial. »",
+    "ecole": "Ne sait presque rien de l'école, sauf qu'elle est « connue ».",
+    "actualite": "« Les prix qui augmentent, l'inflation, tout ça. »",
+    "comportement": "Réponses courtes, pas d'anecdote précise, se contredit, se braque un peu face à la contestation. Tics de langage (« du coup », « genre », « voilà ») et registre parfois familier. Réponses de 15 à 40 secondes.",
+    "duree_reponse_s": [15, 40]
+  },
+  "passif": {
+    "niveau": "passif",
+    "prenom": "Inès",
+    "nom": "Benali",
+    "lycee": "Lycée Fénelon, Paris",
+    "classe": "2e année de prépa ECG (maths approfondies, ESH)",
+    "experiences": [
+      {
+        "titre": "Présidente du club de lecture du lycée",
+        "dates": "2021 – 2022",
+        "anecdotes": "A fait passer le club de 6 à 15 membres en proposant un vote mensuel sur le livre lu ; a organisé une rencontre avec une autrice locale en avril 2022."
+      },
+      {
+        "titre": "Stage d'observation dans une agence de communication",
+        "dates": "juin 2023, deux semaines",
+        "anecdotes": "A assisté à la préparation d'une campagne pour une marque de cosmétiques ; a rédigé des propositions de publications pour les réseaux sociaux."
+      },
+      {
+        "titre": "Bénévolat dans une association d'aide aux devoirs",
+        "dates": "2022 – 2023",
+        "anecdotes": "Aidait des élèves de primaire en français deux fois par mois."
+      },
+      {
+        "titre": "Piano",
+        "dates": "depuis 10 ans",
+        "anecdotes": "A passé un examen de conservatoire en 2021."
+      }
+    ],
+    "qualites": "Curiosité, constance, sens de l'organisation (club de lecture).",
+    "defauts": "Réservée ; elle prend rarement la parole la première. Ce qu'elle fait : en prépa, elle se force à passer au tableau volontairement une fois par semaine.",
+    "projet": "Marketing et communication dans le secteur du luxe ou des cosmétiques, chef de produit à terme.",
+    "ecole": "Connaissance générique correcte : programme Grande École, associations, échanges internationaux, spécialisation en marketing.",
+    "actualite": "Suit le débat sur la régulation des réseaux sociaux et l'influence commerciale.",
+    "comportement": "Contenu correct quand on lui demande, mais n'amène jamais rien d'elle-même : aucune perche, aucun lien avec l'école ou le projet sans question. Répond exactement à la question, puis s'arrête. Réponses de 30 secondes à 1 minute.",
+    "duree_reponse_s": [30, 60]
+  }
+}
