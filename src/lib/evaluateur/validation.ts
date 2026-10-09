@@ -32,19 +32,26 @@ export function parseJson(text: string): unknown {
   return JSON.parse(t);
 }
 
+export type MorceauRetire = { case: string; morceau: string };
+
 export function validerSortie(
   text: string,
   attendu: { grilleKey: string; grille: GrilleDef; transcription: string; textesEvaluateur: string },
-): { ok: true; sortie: SortieValidee } | { ok: false; erreurs: string[]; brut: unknown } {
+):
+  | { ok: true; sortie: SortieValidee }
+  | { ok: false; erreurs: string[]; brut: unknown; bloquant: true }
+  | { ok: false; erreurs: string[]; brut: unknown; bloquant: false; sortieNettoyee: SortieValidee; retires: MorceauRetire[] } {
   let data: unknown;
   try {
     data = parseJson(text);
   } catch {
-    return { ok: false, erreurs: ["La réponse n'est pas un JSON valide."], brut: null };
+    return { ok: false, erreurs: ["La réponse n'est pas un JSON valide."], brut: null, bloquant: true };
   }
-  if (!isObj(data)) return { ok: false, erreurs: ["La réponse doit être un objet JSON."], brut: data };
+  if (!isObj(data)) return { ok: false, erreurs: ["La réponse doit être un objet JSON."], brut: data, bloquant: true };
   const d = data as { grille?: unknown; entretien_interrompu?: unknown; criteres?: unknown };
   const erreurs: string[] = [];
+  const manques: string[] = [];
+  const retires: MorceauRetire[] = [];
   if (d.grille !== attendu.grilleKey) erreurs.push(`« grille » vaut ${JSON.stringify(d.grille)} au lieu de "${attendu.grilleKey}".`);
   if (typeof d.entretien_interrompu !== "boolean") erreurs.push("« entretien_interrompu » doit être true ou false.");
 
@@ -94,12 +101,32 @@ export function validerSortie(
             erreurs.push(`« ${id} » : « manque_pour_n4 » doit être [] pour un ${v.niveau}.`);
           }
           for (const m of v.manque_pour_n4) {
-            if (!textes.includes(normaliserTextes(m))) erreurs.push(`« ${id} » : morceau de « manque_pour_n4 » introuvable mot pour mot dans les textes de l'évaluateur : « ${m} ».`);
+            if (!textes.includes(normaliserTextes(m))) {
+              retires.push({ case: id, morceau: m });
+              manques.push(`« ${id} » : morceau de « manque_pour_n4 » introuvable mot pour mot dans les textes de l'évaluateur : « ${m} ».`);
+            }
           }
         }
       }
     }
   }
-  if (erreurs.length) return { ok: false, erreurs, brut: data };
+  if (erreurs.length) return { ok: false, erreurs: [...erreurs, ...manques], brut: data, bloquant: true };
+  if (manques.length) {
+    // Non bloquant : on retire seulement les morceaux introuvables (niveaux et citations intacts).
+    const nettoye = JSON.parse(JSON.stringify(data)) as { criteres: Record<string, Record<string, { manque_pour_n4: string[] }>> };
+    for (const r of retires) {
+      const [cr, ca] = r.case.split(".") as [string, string];
+      const cell = nettoye.criteres[cr]![ca]!;
+      cell.manque_pour_n4 = cell.manque_pour_n4.filter((m) => m !== r.morceau);
+    }
+    return {
+      ok: false,
+      erreurs: manques,
+      brut: data,
+      bloquant: false,
+      retires,
+      sortieNettoyee: { niveaux, entretien_interrompu: d.entretien_interrompu as boolean, brut: nettoye },
+    };
+  }
   return { ok: true, sortie: { niveaux, entretien_interrompu: d.entretien_interrompu as boolean, brut: data } };
 }
