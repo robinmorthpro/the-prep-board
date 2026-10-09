@@ -12,6 +12,11 @@ export function normaliser(s: string): string {
     .trim();
 }
 
+/** Pour manque_pour_n4 uniquement : retire `**` et les accents graves, `<br>` → espace, puis normaliser(). */
+export function normaliserTextes(s: string): string {
+  return normaliser(s.replace(/\*\*/g, "").replace(/`/g, "").replace(/<br\s*\/?>/gi, " "));
+}
+
 export type SortieValidee = {
   niveaux: NiveauxParCase;
   entretien_interrompu: boolean;
@@ -44,7 +49,7 @@ export function validerSortie(
   if (typeof d.entretien_interrompu !== "boolean") erreurs.push("« entretien_interrompu » doit être true ou false.");
 
   const transcription = normaliser(attendu.transcription);
-  const textes = normaliser(attendu.textesEvaluateur);
+  const textes = normaliserTextes(attendu.textesEvaluateur);
   const niveaux: NiveauxParCase = {};
   const criteres = d.criteres;
   if (!isObj(criteres)) {
@@ -89,7 +94,7 @@ export function validerSortie(
             erreurs.push(`« ${id} » : « manque_pour_n4 » doit être [] pour un ${v.niveau}.`);
           }
           for (const m of v.manque_pour_n4) {
-            if (!textes.includes(normaliser(m))) erreurs.push(`« ${id} » : morceau de « manque_pour_n4 » introuvable mot pour mot dans les textes de l'évaluateur : « ${m} ».`);
+            if (!textes.includes(normaliserTextes(m))) erreurs.push(`« ${id} » : morceau de « manque_pour_n4 » introuvable mot pour mot dans les textes de l'évaluateur : « ${m} ».`);
           }
         }
       }

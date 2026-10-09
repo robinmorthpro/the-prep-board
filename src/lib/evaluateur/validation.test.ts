@@ -35,4 +35,19 @@ describe("vérification de la sortie", () => {
     expect(textes).toContain("\n\n# Format classique (grille `classique`)");
     expect(textes).toContain("\n\n# Format de sortie de l'évaluateur");
   });
+  function avecManque(m: string) {
+    const o = JSON.parse(sortie("Je m'appelle Robin"));
+    const c = grille.criteres[0]!;
+    o.criteres[c.cle][c.cases[0]!.cle] = { niveau: "N3", justification: "ok", manque_pour_n4: [m], citations: [] };
+    return JSON.stringify(o);
+  }
+  it("manque_pour_n4 recopié sans les ** accepté", () => {
+    expect(validerSortie(avecManque("racontées par au moins 2 anecdotes précises chacune"), attendu).ok).toBe(true);
+  });
+  it("manque_pour_n4 qui traverse un <br> accepté", () => {
+    expect(validerSortie(avecManque("aucune projection). 2. Générique ou sans preuve : N2 au mieux"), attendu).ok).toBe(true);
+  });
+  it("manque_pour_n4 inventé toujours rejeté", () => {
+    expect(validerSortie(avecManque("racontées par au moins 5 anecdotes"), attendu).ok).toBe(false);
+  });
 });

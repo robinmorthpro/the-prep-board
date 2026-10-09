@@ -60,5 +60,5 @@
 ## Évaluateur v2 — étape 1 (en coulisses)
 - [x] Textes et barème copiés octet pour octet (sha256 identiques)
 - [x] Appel, vérifications, calcul, table interview_evaluations, déclenchement en arrière-plan, outil admin
-- [ ] Décision Robin : ignorer les ** (gras) des textes dans la vérification de « manque_pour_n4 »
+- [x] Décision Robin : ignorer les ** (gras) des textes dans la vérification de « manque_pour_n4 »
 - [ ] Étape suivante : enregistrer les tirages (cartes, mot EDHEC, article TBS, situation ESSEC)
