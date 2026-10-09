@@ -42,7 +42,7 @@ describe("prompt du jury vocal", () => {
     (school) => {
       const config = getSchoolInterviewConfig(school);
       const prompt = promptFor(config, "classique") ?? "";
-      for (const title of ["LES CINQ THÈMES À COUVRIR", "APRÈS CHAQUE RÉPONSE", "PARTIES IMPOSÉES PAR L'ÉCOLE", "CREUSER UNE RÉPONSE"]) {
+      for (const title of ["THÈMES À VÉRIFIER", "COMMENT TU VÉRIFIES LES THÈMES", "PARTIES IMPOSÉES PAR L'ÉCOLE", "CREUSER UNE RÉPONSE"]) {
         expect(prompt).toContain(title);
         expect(prompt.split(title)).toHaveLength(2);
       }

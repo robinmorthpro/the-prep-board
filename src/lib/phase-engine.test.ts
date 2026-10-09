@@ -263,7 +263,7 @@ const MONOLOGUES: Array<{
     name: "GEM (Grenoble EM)",
     school: "GEM (Grenoble EM)",
     totalMinutes: 30,
-    dueMinute: 5,
+    dueMinute: 7,
     measureId: "gem-expose-monologue",
     stepId: "gem-expose",
     phrase: PHRASES.gemInversee,
@@ -558,7 +558,7 @@ describe("ESSEC", () => {
   };
 
   it("présentation de 2'30 : aucun malus", () => {
-    expect(presentation(2.5)).toContain("Phase écourtée");
+    expect(presentation(2.5)).not.toContain("Phase écourtée");
   });
 
   it("présentation de 6' : malus (trop longue)", () => {
@@ -599,7 +599,7 @@ describe("rappel des thèmes aux deux tiers", () => {
     marker(engine, 7.1);
     jury(engine, PHRASES.kedgeCartes, 7.2);
     expect(marker(engine, 20)).not.toContain(THEME_REMINDER);
-    expect(marker(engine, 20.5)).toContain(THEME_REMINDER);
+    expect(marker(engine, 23)).toContain(THEME_REMINDER);
   });
 
   it.each([
@@ -613,7 +613,10 @@ describe("rappel des thèmes aux deux tiers", () => {
     engine.markPhaseStart(phaseId, at(total === 28 ? 20 : total === 30 ? 15 : 5));
     jury(engine, phrase, total === 28 ? 20.1 : total === 30 ? 15.1 : 5.1);
     expect(marker(engine, minute - 0.2)).not.toContain(THEME_REMINDER);
-    expect(marker(engine, minute)).toContain(THEME_REMINDER);
+    const expectedReminder = ["TBS Education", "ESC Clermont BS", "GEM (Grenoble EM)"].includes(school)
+      ? THEME_REMINDER_WITHOUT_NEWS
+      : THEME_REMINDER;
+    expect(marker(engine, minute)).toContain(expectedReminder);
   });
 
   it("n'est jamais ajouté au repère de clôture", () => {
