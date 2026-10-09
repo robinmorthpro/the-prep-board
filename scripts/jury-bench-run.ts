@@ -276,7 +276,7 @@ async function genererDocument(ecole: string, p: ProfilDef) {
 // ---------------------------------------------------------- un entretien
 type Plan = { lot: string; ecole: string; jury: Jury; profil: Profil; scenario: Scenario; graine: number };
 
-async function jouerEntretien(plan: Plan, document: { label: string; texte: string }) {
+async function jouerEntretien(plan: Plan, document: { label: string; texte: string }, runId?: string) {
   const { ecole: school, jury: variant, scenario } = plan;
   const config = getSchoolInterviewConfig(school);
   const profil = PROFILS[plan.profil];
@@ -690,6 +690,20 @@ async function jouerEntretien(plan: Plan, document: { label: string; texte: stri
       if (emlyonSilence.isDue(now + 5_000)) triggerEmlyonCards();
     }
     lastMessageAt = 0;
+    // Avancement visible en base à chaque réponse (sans attendre la fin de l'entretien).
+    if (runId) {
+      const { error } = await db
+        .from("bench_runs")
+        .update({
+          turns: turns as never,
+          journal: journal as never,
+          tirages: tirages as never,
+          duree_simulee_s: Math.round((now - t0) / 1000),
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", runId);
+      if (error) console.log(`    avancement non enregistré : ${error.message}`);
+    }
   }
   try {
     socket.close(1000, "fin du banc");
@@ -812,7 +826,7 @@ async function executer(plan: Plan, docCache: Map<string, { label: string; texte
     const erreurs: string[] = [];
     let r: Awaited<ReturnType<typeof jouerEntretien>> | null = null;
     try {
-      r = await jouerEntretien(plan, doc);
+      r = await jouerEntretien(plan, doc, ins.id);
     } catch (e) {
       erreurs.push(e instanceof Error ? e.message : String(e));
     }
