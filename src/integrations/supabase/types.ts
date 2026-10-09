@@ -136,6 +136,7 @@ export type Database = {
           triggered_by: string
           unrated_criteria: Json
           user_id: string
+          warnings: Json
         }
         Insert: {
           attempts?: number
@@ -159,6 +160,7 @@ export type Database = {
           triggered_by?: string
           unrated_criteria?: Json
           user_id: string
+          warnings?: Json
         }
         Update: {
           attempts?: number
@@ -182,6 +184,7 @@ export type Database = {
           triggered_by?: string
           unrated_criteria?: Json
           user_id?: string
+          warnings?: Json
         }
         Relationships: [
           {
