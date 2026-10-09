@@ -155,7 +155,7 @@ describe("E. jury et régie", () => {
   const engine = (school: string) =>
     new PhaseEngine({
       school,
-      schedule: phaseScheduleFor(getSchoolInterviewConfig(school)),
+      schedule: phaseScheduleFor(getSchoolInterviewConfig(school)) ?? [],
       monologues: monologueMeasuresFor(school),
       totalMinutes: 30,
       startedAt: 0,
@@ -188,7 +188,7 @@ describe("E. jury et régie", () => {
   });
 
   it("KEDGE : plus de « (C1) » dans le nom de la mesure", () => {
-    const steps = phaseScheduleFor(getSchoolInterviewConfig("KEDGE"));
+    const steps = phaseScheduleFor(getSchoolInterviewConfig("KEDGE")) ?? [];
     expect(JSON.stringify(steps)).not.toContain("(C1)");
   });
 
