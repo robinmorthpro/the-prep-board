@@ -89,17 +89,20 @@ export function useJuryAgent({
   onAnswer,
   onError,
   onDisconnect,
+  onCandidateVoice,
 }: {
   onQuestion: (text: string) => void;
   onAnswer: (text: string) => void;
   onError?: (message: string) => void;
   onDisconnect?: () => void;
+  /** Le micro détecte la voix du candidat (oral uniquement). */
+  onCandidateVoice?: () => void;
 }) {
   const getToken = useServerFn(juryAgentToken);
   /** MODE TEST ÉCRIT (à retirer après les tests). */
   const getSignedUrl = useServerFn(juryAgentSignedUrl);
   const [muted, setMuted] = useState(false);
-  const cbRef = useRef({ onQuestion, onAnswer, onError, onDisconnect });
+  const cbRef = useRef({ onQuestion, onAnswer, onError, onDisconnect, onCandidateVoice });
   const textOnlyRef = useRef(false);
   const pendingConnectionRef = useRef<PendingConnection | null>(null);
   /** Moteur de phases : seul détenteur de l'état des phases et des durées. */
@@ -127,7 +130,7 @@ export function useJuryAgent({
    * déclencher de repères en rafale).
    */
   const preSentMarkerRef = useRef(false);
-  cbRef.current = { onQuestion, onAnswer, onError, onDisconnect };
+  cbRef.current = { onQuestion, onAnswer, onError, onDisconnect, onCandidateVoice };
 
   const settlePendingConnection = useCallback((error?: Error) => {
     const pending = pendingConnectionRef.current;
@@ -186,6 +189,9 @@ export function useJuryAgent({
 
   const conversation = useConversation({
     onConnect: () => settlePendingConnection(),
+    onVadScore: ({ vadScore }: { vadScore: number }) => {
+      if (vadScore > 0.5) cbRef.current.onCandidateVoice?.();
+    },
     onModeChange: ({ mode }: { mode: string }) => {
       juryModeRef.current = mode === "speaking" ? "speaking" : "listening";
       // Le jury vient de finir de parler : c'est le vrai début d'un monologue,
