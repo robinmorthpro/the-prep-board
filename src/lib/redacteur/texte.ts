@@ -36,6 +36,60 @@ export function controlerTexte(text: string): string[] {
   return erreurs;
 }
 
+/**
+ * D13 — mots internes interdits dans le feedback (hors lignes VERBATIMS, qui
+ * citent la transcription). Renvoie les mots trouvés.
+ */
+const MOTS_INTERNES: { mot: string; re: RegExp }[] = [
+  { mot: "zone rouge", re: /\bzone rouge\b/i },
+  { mot: "zone grise", re: /\bzone grise\b/i },
+  { mot: "zone verte", re: /\bzone verte\b/i },
+  { mot: "zone bleue", re: /\bzone bleue\b/i },
+  { mot: "code de critère", re: /\bC(?:[1-9]|1[01])\b/ },
+  { mot: "N1 à N4", re: /\bN[1-4]\b/ },
+  { mot: "ce qui vous coûte des points", re: /ce qui vous co[uû]te des points/i },
+  { mot: "points (note)", re: /\b\d+(?:[,.]\d+)?\s*points?\b|\b(?:perd(?:re|u|ez)?|gagn(?:er|é|ez)|co[uû]te(?:nt)?|retir(?:er|é)s?)\s+(?:des\s+|de\s+|\d+\s+)?points?\b|\bpoints? perdus?\b/i },
+  { mot: "grille", re: /\bgrilles?\b/i },
+  { mot: "case", re: /\bcases?\b/i },
+  { mot: "score", re: /\bscores?\b/i },
+  { mot: "seuil", re: /\bseuils?\b/i },
+  { mot: "percentile", re: /\bpercentiles?\b/i },
+];
+
+export function motsInternes(text: string): string[] {
+  const corps = text
+    .split("\n")
+    .filter((l) => !/^\s*(?:[-*]\s+)?\**VERBATIMS?\**\s*:/i.test(l))
+    .join("\n");
+  return MOTS_INTERNES.filter((m) => m.re.test(corps)).map((m) => m.mot);
+}
+
+/** D15 — tranche du percentile et expression attendue dans « Ce que ce classement signifie ». */
+export function trancheAttendue(percentile: number): string {
+  if (percentile <= 24) return "en danger";
+  if (percentile <= 60) return "dans la moyenne";
+  if (percentile <= 87) return "au-dessus de la moyenne";
+  return "très haut";
+}
+
+/** Texte de la section « Ce que ce classement signifie ». */
+function sectionClassement(text: string): string {
+  const lines = text.split("\n");
+  const i = lines.findIndex((l) => l.trim() === SECTIONS[0]);
+  if (i < 0) return "";
+  const fin = lines.findIndex((l, j) => j > i && /^##\s/.test(l.trim()));
+  return lines.slice(i + 1, fin < 0 ? undefined : fin).join("\n");
+}
+
+/** Erreur si la phrase du classement ne correspond pas à la tranche du percentile. */
+export function controlerClassement(text: string, percentile: number | null, interrompu: boolean): string[] {
+  if (interrompu || percentile === null) return [];
+  const attendue = trancheAttendue(percentile);
+  const section = sectionClassement(text).toLowerCase().replace(/[\u2010-\u2014]/g, "-");
+  const ok = attendue === "dans la moyenne" ? /dans la moyenne/.test(section) && !/au-dessus de la moyenne/.test(section) : section.includes(attendue);
+  return ok ? [] : [`La section « Ce que ce classement signifie » doit dire « ${attendue} » (tranche du percentile reçu).`];
+}
+
 /** Insère la ligne du percentile (ou d'entretien interrompu) juste sous le titre de la première section. */
 export function insererPercentile(text: string, percentile: number | null, interrompu: boolean): string {
   const ligne = interrompu || percentile === null ? LIGNE_INTERROMPU : lignePercentile(percentile);
@@ -60,8 +114,16 @@ export function citationTrouvee(citation: string, sources: string): boolean {
  * Dans chaque ligne VERBATIMS, retire les éléments (séparés par « // ») dont
  * une citation « … » est introuvable dans la transcription ou le document remis.
  */
-export function filtrerVerbatims(text: string, transcription: string, document = ""): { text: string; retirees: string[] } {
+export function filtrerVerbatims(
+  text: string,
+  transcription: string,
+  document = "",
+  /** D14 : paroles du candidat et du jury, séparées. */
+  parRole?: { candidat: string; jury: string },
+): { text: string; retirees: string[] } {
   const sources = normaliser(`${transcription}\n${document}`);
+  const candidat = parRole ? normaliser(`${parRole.candidat}\n${document}`) : sources;
+  const jury = parRole ? normaliser(parRole.jury) : sources;
   const retirees: string[] = [];
   const out = text.split("\n").flatMap((line) => {
     const m = line.match(/^(\s*(?:[-*]\s+)?\**VERBATIMS?\**\s*:\s*\**\s*)(.*)$/i);
@@ -72,7 +134,9 @@ export function filtrerVerbatims(text: string, transcription: string, document =
     const items = content.split(/\s*\/\/\s*/).filter((x) => x.trim());
     const gardes = items.filter((item) => {
       const quotes = [...item.matchAll(/«\s*([^»]*?)\s*»/g)].flatMap((q) => (q[1] === undefined ? [] : [q[1]]));
-      const ok = quotes.every((q) => citationTrouvee(q, sources));
+      // « Vous : » doit venir d'une réponse du candidat, « Jury : » d'une question du jury.
+      const role = /\bVous\s*:\s*«/.test(item) ? candidat : /\bJury\s*:\s*«/.test(item) ? jury : sources;
+      const ok = quotes.every((q) => citationTrouvee(q, role));
       if (!ok) retirees.push(item.trim());
       return ok;
     });

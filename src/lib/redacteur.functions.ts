@@ -35,5 +35,5 @@ export const redigerFeedback = createServerFn({ method: "POST" })
     ]);
     if (!session || !ev) throw new Error("Session ou évaluation introuvable.");
     const r = await redigerFeedbackSession(session, ev as never, contextBlock(data.context), { model: data.model });
-    return { debrief: r.debrief, percentile: r.percentile, attempts: r.attempts, duration_ms: r.duration_ms };
+    return { debrief: r.debrief, percentile: r.percentile, attempts: r.attempts, duration_ms: r.duration_ms, alertes: r.alertes };
   });

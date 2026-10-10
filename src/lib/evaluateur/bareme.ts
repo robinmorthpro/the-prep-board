@@ -6,7 +6,7 @@ export type NiveauOuNonObserve = Niveau | "non observé";
 export type CaseDef = { cle: string; nom: string; points: Record<Niveau, number> };
 export type CritereDef = { cle: string; nom: string; total: number; cases: CaseDef[] };
 export type GrilleDef = { criteres: CritereDef[]; total_brut: number };
-export type SeuilDuree = { partie: string; type: "trop_court" | "trop_long"; seuil_s: number; seuil: string };
+export type SeuilDuree = { partie: string; type: "trop_court" | "trop_long"; seuil_s: number; seuil: string; mesure?: string };
 export type LignePercentile = { note: number; percentile: number };
 
 type Bareme = {

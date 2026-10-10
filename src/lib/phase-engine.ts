@@ -14,7 +14,9 @@
  * - `anticipee` = bascule avant l'échéance ET ordonnée par l'application ;
  * - à Y−2 la clôture part une seule fois, puis plus aucune consigne de phase.
  */
-import { isDryAnswer, isImposedQuestionAsked, isNothingToAdd, normalizeInterviewText } from "./interview-text";
+import { isDryAnswer, isNothingToAdd, normalizeInterviewText } from "./interview-text";
+
+const countWords = (text: string) => text.trim().split(/\s+/).filter(Boolean).length;
 import { ADD_QUESTION, getSchoolInterviewConfig, secondReplyFor } from "./school-interviews";
 import type { MonologueMeasure, PhaseStep, PhaseTiming } from "./school-interviews";
 
@@ -32,13 +34,57 @@ export const MONTPELLIER_PASSAGE_RE = /merci\W*passons maintenant aux situations
 
 export const END_WITH_QUESTION = "Termine ta prochaine prise de parole par une question.";
 /** Après la réponse du candidat à la question de clôture. */
-export const EXIT_PHRASE_INSTRUCTION = "Dis maintenant la phrase de sortie, seule.";
+export const EXIT_PHRASE_INSTRUCTION =
+  "S'il t'a posé une question, réponds-y en une ou deux phrases, sans rien inventer sur l'école, puis dis la phrase de sortie. Sinon, dis seulement la phrase de sortie.";
+/** Message de la moitié de l'échange libre (texte commun). */
 export const THEME_REMINDER =
-  "Rappel : d'ici la fin de l'entretien, au moins 3 expériences, la personnalité, le projet, les 4 points de l'école (pourquoi une école de commerce, pourquoi celle-ci, ce qu'il apportera, sa connaissance de l'école) et l'actualité doivent tous avoir été abordés. L'entretien continue jusqu'à la consigne de clôture.";
+  "Seconde moitié de l'échange libre. Avant la fin, au moins 3 expériences, la personnalité, le projet, les 4 points de l'école (pourquoi une école de commerce, pourquoi celle-ci, ce qu'il apportera, sa connaissance de l'école) et l'actualité doivent tous avoir été abordés. N'aborde que ceux qui manquent, un à la fois, en partant de ses réponses, sans jamais citer cette liste. L'entretien continue jusqu'à la consigne de clôture.";
+/** GEM, TBS, Clermont : la même phrase sans « et l'actualité ». */
 export const THEME_REMINDER_WITHOUT_NEWS =
-  "Rappel : d'ici la fin de l'entretien, au moins 3 expériences, la personnalité, le projet, les 4 points de l'école (pourquoi une école de commerce, pourquoi celle-ci, ce qu'il apportera, sa connaissance de l'école) doivent tous avoir été abordés. L'entretien continue jusqu'à la consigne de clôture.";
+  "Seconde moitié de l'échange libre. Avant la fin, au moins 3 expériences, la personnalité, le projet, les 4 points de l'école (pourquoi une école de commerce, pourquoi celle-ci, ce qu'il apportera, sa connaissance de l'école) doivent tous avoir été abordés. N'aborde que ceux qui manquent, un à la fois, en partant de ses réponses, sans jamais citer cette liste. L'entretien continue jusqu'à la consigne de clôture.";
 export const MONTPELLIER_THEME_REMINDER =
-  "Rappel : d'ici la fin de l'entretien, au moins 3 expériences, la personnalité et la question d'actualité doivent avoir été abordées. L'entretien continue jusqu'à la consigne de clôture.";
+  "Seconde moitié de l'échange libre. Avant la fin, au moins 3 expériences, la personnalité et la question d'actualité doivent avoir été abordées. N'aborde que ce qui manque, un à la fois, en partant de ses réponses, sans jamais citer cette liste. L'entretien continue jusqu'à la consigne de clôture.";
+
+/** Questions de clôture, tirées au sort au début de l'entretien. */
+export const CLOSING_QUESTIONS = {
+  A: "L'entretien touche à sa fin, avez-vous quelque chose à ajouter avant de terminer l'entretien ou une question à poser au jury ?",
+  B: "Vous avez le mot de la fin : un seul mot.",
+  C: "Quelle question auriez-vous aimé qu'on vous pose ?",
+} as const;
+export type ClosingVariant = keyof typeof CLOSING_QUESTIONS;
+
+export function pickClosingVariant(random: () => number = Math.random): ClosingVariant {
+  const keys = Object.keys(CLOSING_QUESTIONS) as ClosingVariant[];
+  return keys[Math.min(keys.length - 1, Math.floor(random() * keys.length))]!;
+}
+
+/** Consigne de clôture, commune à toutes les clôtures. */
+export function closingInstruction(question: string): string {
+  return `Pose maintenant, mot pour mot, la question de clôture : « ${question} ». Tu diras la phrase de sortie après la réponse du candidat.`;
+}
+
+/** Phrase de sortie reconnue (ancienne et nouvelle), sur texte normalisé. */
+export const EXIT_SENTENCE_RE = /bonne continuation|l'entretien est desormais termine/;
+
+/** ESSEC, fin du cas avec plus de 2 minutes restantes. */
+export const ESSEC_RETOUR_LIBRE =
+  "Remercie le candidat et mets un terme au cas. La mise en situation est terminée. Reviens à l'échange libre jusqu'à la consigne de clôture : aborde un point pas encore traité, sans nouvelle mise en situation.";
+/** ESSEC, fin du cas dans les 2 dernières minutes. */
+export function essecSortieCloture(question: string): string {
+  return `Remercie le candidat et mets un terme au cas. La mise en situation est terminée. ${closingInstruction(question)}`;
+}
+
+/** EDHEC : consigne jointe au repère qui suit le passage à l'entretien individuel. */
+export const EDHEC_INDIVIDUEL = "Entretien individuel : la présentation est terminée. Ne reprends jamais le mot tiré.";
+/** Phrase de passage EDHEC (texte normalisé). */
+export const EDHEC_PASSAGE_RE = /nous passons maintenant a l'entretien individuel/;
+
+/** GEM : le candidat clôt lui-même l'interview inversée (texte normalisé). */
+export const GEM_FIN_INVERSEE_RE =
+  /je n'ai plus de questions?|je n'ai pas d'autres? questions?|j'ai fait le tour|ca repond a mes questions|cela repond a mes questions/;
+
+/** Réponse assez longue pour être déjà la présentation (environ 60 mots). */
+export const PRESENTATION_MIN_WORDS = 60;
 
 /**
  * Fonction PURE de la file de consignes (utilisée par `withQueuedInstructions`
@@ -82,7 +128,9 @@ export type EngineEvent = {
     | "recovered-switch"
     | "forced-after-2-markers"
     | "closing"
-    | "exit-phrase";
+    | "exit-phrase"
+    | "early-ordered-candidate-closed"
+    | "second-reply-skipped";
   phaseId?: string;
 };
 
@@ -164,6 +212,15 @@ export class PhaseEngine {
   private readonly hasSecondReply: boolean;
   /** Montpellier : le repère qui suit la phrase de passage aux situations. */
   private omitNextQuestion = false;
+  private readonly closingQuestion: string;
+  private answerCount = 0;
+  private lastJuryMessageAt: number | null = null;
+  /** Consignes jointes au repère qui suit la PROCHAINE réponse du candidat. */
+  private attachments: { text: string; afterAnswer: number }[] = [];
+  /** Montpellier : un repère d'au moins 20 min a été envoyé (fin des situations). */
+  private montpellierLateMarkerSent = false;
+  /** La deuxième réplique n'est plus attendue : le candidat s'est déjà présenté. */
+  private secondReplySkipped = false;
 
   constructor(opts: {
     school: string;
@@ -175,7 +232,10 @@ export class PhaseEngine {
     variables?: Record<string, string>;
     /** L'école a une deuxième réplique imposée (déduit de l'école par défaut). */
     hasSecondReply?: boolean;
+    /** Question de clôture tirée au sort (variante A par défaut). */
+    closingQuestion?: string;
   }) {
+    this.closingQuestion = opts.closingQuestion ?? CLOSING_QUESTIONS.A;
     this.school = opts.school;
     this.variables = opts.variables ?? {};
     this.schedule = opts.schedule;
@@ -223,14 +283,23 @@ export class PhaseEngine {
    */
   onJuryMessage(text: string, at: number): string[] {
     this.juryMessageCount += 1;
+    this.lastJuryMessageAt = at;
     this.closeOpenMonologues(at);
     this.startMonologues((measure) => "juryMessage" in measure.start && measure.start.juryMessage === this.juryMessageCount, at);
     // Aucune détection sur le tout premier message du jury.
     if (this.juryMessageCount <= 1) return [];
     const normalized = normalizeInterviewText(text);
     if (this.school === "Montpellier BS" && MONTPELLIER_PASSAGE_RE.test(normalized)) this.omitNextQuestion = true;
+    if (this.school === "EDHEC" && EDHEC_PASSAGE_RE.test(normalized)) this.attachToNextAnswer(EDHEC_INDIVIDUEL);
     const currentStep = this.schedule[this.phaseIndex];
     if (currentStep?.closeOnExit?.test(normalized)) {
+      // ESSEC : le cas se termine avec plus de 2 minutes restantes → retour à
+      // l'échange libre, sans clôture (D27).
+      if (this.school === "ESSEC" && !EXIT_SENTENCE_RE.test(normalized) && this.remainingMs(at) > 120_000) {
+        const nextIndex = this.phaseIndex + 1;
+        if (this.schedule[nextIndex]) this.confirmPhase(nextIndex, at, false);
+        return [];
+      }
       // ESSEC : le jury a déjà dit « La mise en situation est terminée » et posé
       // sa question de clôture : aucune seconde consigne de clôture.
       if (this.school === "ESSEC" && /mise en situation est terminee/.test(normalized) && text.includes("?")) {
@@ -279,17 +348,38 @@ export class PhaseEngine {
       if (recovery) return [recovery];
     }
     this.confirmPhase(detectedIndex, at, false, improvised);
-    if (next.closeOnEnter) return this.closeImmediately(at);
+    if (next.closeOnEnter && this.remainingMs(at) <= 120_000) return this.closeImmediately(at);
+    if (next.closeOnEnter) return [];
     if (!orderedBefore && next.earlyEnterInstruction && dueAt !== null && at < dueAt) {
-      return [`${REGIE_PREFIX} ${this.fill(next.earlyEnterInstruction)}`];
+      // emlyon (D22) : jamais seule après la transition du jury, jointe au
+      // repère qui suit la réponse suivante du candidat.
+      this.attachToNextAnswer(this.fill(next.earlyEnterInstruction, at));
     }
     return [];
+  }
+
+  private attachToNextAnswer(text: string) {
+    if (this.attachments.some((item) => item.text === text)) return;
+    this.attachments.push({ text, afterAnswer: this.answerCount });
+  }
+
+  /** Consignes jointes devenues dues (une réponse du candidat a suivi). */
+  private takeAttachments(): string[] {
+    const due = this.attachments.filter((item) => this.answerCount > item.afterAnswer);
+    this.attachments = this.attachments.filter((item) => this.answerCount <= item.afterAnswer);
+    return due.map((item) => item.text);
+  }
+
+  private remainingMs(at: number): number {
+    return this.startedAt + this.totalMinutes * 60_000 - at;
   }
 
   /** Consigne de rattrapage, tant que la limite de deux par phase n'est pas atteinte. */
   private tryRecover(at: number): string | null {
     const current = this.schedule[this.phaseIndex];
     if (!current) return null;
+    // D9 : jamais de rattrapage pendant une partie libre.
+    if (current.freeExchange || current.silentMarkers) return null;
     const used = this.recoveryCount[current.id] ?? 0;
     if (used >= 2) return null;
     this.recoveryCount[current.id] = used + 1;
@@ -298,7 +388,15 @@ export class PhaseEngine {
   }
 
   /** Remplit les variables connues seulement à l'exécution. */
-  private fill(text: string): string {
+  private fill(text: string, at?: number): string {
+    if (text.includes("{essec_sortie}")) {
+      const remaining = at === undefined ? 0 : this.remainingMs(at);
+      text = text.replaceAll(
+        "{essec_sortie}",
+        remaining > 120_000 ? ESSEC_RETOUR_LIBRE : essecSortieCloture(this.closingQuestion),
+      );
+    }
+    if (text.includes("{question_cloture}")) text = text.replaceAll("{question_cloture}", this.closingQuestion);
     if (!text.includes("{cartes_emlyon}")) return text;
     const v = this.variables;
     const cards = [
@@ -325,7 +423,8 @@ export class PhaseEngine {
 
   /**
    * Fin de réponse du candidat (MODE ÉCRIT) : enregistre la réponse et renvoie
-   * le repère de temps à envoyer. Inchangé.
+   * les consignes à envoyer (repère des parties imposées, ordre de bascule,
+   * message de la moitié, consignes jointes, clôture).
    */
   onCandidateAnswer(text: string, at: number): string[] {
     this.applyCandidateAnswer(text, at);
@@ -333,16 +432,14 @@ export class PhaseEngine {
       this.lastMarkerValue = null;
       return [];
     }
-    return this.buildMarker(at, this.elapsedMinutes(at));
+    return this.buildMarker(at, this.elapsedMinutes(at), true);
   }
 
   /**
-   * Fin de réponse du candidat À L'ORAL, quand le repère de temps a déjà été
-   * pré-envoyé en fin de prise de parole du jury (`markerAtJuryTurnEnd`).
-   * La réponse est enregistrée exactement comme en écrit (réponses sèches,
-   * « rien à ajouter », mesures de monologue) mais on ne renvoie un repère QUE
-   * si cette réponse vient de déclencher un ORDRE de bascule anticipée : lui
-   * dépend du contenu de la réponse et n'était donc pas dans le repère pré-envoyé.
+   * Fin de réponse du candidat À L'ORAL, quand le repère a déjà été pré-envoyé
+   * en fin de prise de parole du jury (`markerAtJuryTurnEnd`). On ne renvoie
+   * ici que ce qui dépend de cette réponse : un ordre de bascule (anticipée ou
+   * devenue due), la clôture, le message de la moitié et les consignes jointes.
    */
   onCandidateAnswerAfterPreSentMarker(text: string, at: number): string[] {
     const pendingBefore = this.pendingIndex;
@@ -352,34 +449,30 @@ export class PhaseEngine {
       return [];
     }
     const elapsed = this.elapsedMinutes(at);
-    // Clôture due pendant la réponse : elle part juste après, sinon elle n'arriverait
-    // qu'à la fin de la prise de parole suivante du jury, soit une question trop tard.
-    const closingDue = !this.closing && elapsed >= this.totalMinutes - 2;
-    // Bascule devenue DUE pendant la réponse du candidat : l'ordre part juste
-    // après, sans attendre la fin de la prise de parole suivante du jury (sinon
-    // la bascule arriverait une question trop tard).
+    // Réponse à la question de clôture : consigne de sortie (D3), une fois.
+    if (this.closing) return this.buildMarker(at, elapsed, true);
+    const closingDue = elapsed >= this.totalMinutes - 2;
     const switchDue = !closingDue && !this.closing && this.pendingIndex === null && this.nextSwitchDue(at, elapsed);
     if (this.pendingIndex === pendingBefore && !closingDue && !switchDue) {
-      // On NE remet PAS lastMarkerValue à null : le repère pré-envoyé reste la
-      // référence, pour que les consignes en file attendent bien le repère suivant.
-      return [];
+      // Le repère pré-envoyé reste la référence : seules les consignes propres à
+      // cette réponse partent (message de la moitié, consignes jointes).
+      const extras = [...this.midpointNow(at, elapsed), ...this.takeAttachments()];
+      return extras.length ? [`${REGIE_PREFIX} ${extras.join(" ")}`] : [];
     }
-    return this.buildMarker(at, elapsed);
+    return this.buildMarker(at, elapsed, true);
   }
 
   /**
-   * ORAL — repère valable à l'instant où le jury finit de parler : exactement le
-   * même repère que produirait `onCandidateAnswer` au même instant (ordre de
-   * bascule répété jusqu'à détection, forçage après 2 repères, clôture à Y−2
-   * prioritaire). Le comptage des repères se fait donc bien là où le repère est
-   * réellement envoyé.
+   * ORAL — repère valable à l'instant où le jury finit de parler : même repère
+   * que `onCandidateAnswer` au même instant, sans les consignes qui dépendent de
+   * la réponse suivante (message de la moitié, consignes jointes).
    */
   markerAtJuryTurnEnd(at: number): string[] {
     if (this.totalMinutes <= 0) {
       this.lastMarkerValue = null;
       return [];
     }
-    return this.buildMarker(at, this.elapsedMinutes(at));
+    return this.buildMarker(at, this.elapsedMinutes(at), false);
   }
 
   private elapsedMinutes(at: number) {
@@ -388,7 +481,28 @@ export class PhaseEngine {
 
   /** Enregistrement d'une réponse du candidat, sans aucun envoi. */
   private applyCandidateAnswer(text: string, at: number) {
+    this.answerCount += 1;
     this.lastAnswerEnd = at;
+    // D8 : la réponse à « Est-ce que c'est clair pour vous ? » est déjà la
+    // présentation : la deuxième réplique n'est plus attendue et la mesure de
+    // la présentation (ou du pitch) porte sur cette réponse.
+    if (
+      this.hasSecondReply &&
+      this.juryMessageCount === 1 &&
+      this.answerCount === 1 &&
+      countWords(text) >= PRESENTATION_MIN_WORDS
+    ) {
+      this.secondReplySkipped = true;
+      this.record("second-reply-skipped", at);
+      this.startMonologues(
+        (measure) => "juryMessage" in measure.start && measure.start.juryMessage === 2,
+        this.lastJuryMessageAt ?? this.startedAt,
+      );
+      for (const state of this.monologueStates) {
+        if (state.closed || state.answers > 0) continue;
+        state.awaitingSpeechEnd = false;
+      }
+    }
     for (const state of this.monologueStates) {
       if (state.closed) continue;
       state.answers += 1;
@@ -397,6 +511,14 @@ export class PhaseEngine {
     }
     if (this.totalMinutes <= 0) return;
     const current = this.schedule[this.phaseIndex];
+    // D7 : GEM, le candidat clôt lui-même l'interview inversée → synthèse.
+    if (current?.id === "gem-inversee" && this.pendingIndex === null) {
+      const normalized = normalizeInterviewText(text);
+      if (GEM_FIN_INVERSEE_RE.test(normalized) || !text.includes("?")) {
+        this.orderEarlySwitch(at, "early-ordered-candidate-closed");
+        return;
+      }
+    }
     if (current?.dryEarlySwitch) {
       // GEM : pendant l'interview inversée, les questions courtes du candidat
       // ne comptent jamais comme réponses « à sec ».
@@ -412,40 +534,62 @@ export class PhaseEngine {
     }
   }
 
+  /** Vrai si la deuxième réplique n'est plus attendue (D8). */
+  get secondReplyWasSkipped(): boolean {
+    return this.secondReplySkipped;
+  }
 
-  private buildMarker(at: number, elapsed: number): string[] {
+  /** Partie libre en cours (ou école sans parties) : aucun repère après les réponses. */
+  private inFreePart(): boolean {
+    if (!this.schedule.length) return true;
+    const current = this.schedule[this.phaseIndex];
+    return Boolean(current?.freeExchange || current?.silentMarkers);
+  }
+
+  private buildMarker(at: number, elapsed: number, withExtras: boolean): string[] {
+    const timeOnly = `Temps écoulé : ${elapsed} min.`;
     // La question de clôture a déjà été demandée : cette réponse est celle du
-    // candidat à la question de clôture → le jury dit la phrase de sortie, rien d'autre.
+    // candidat à la question de clôture → le jury répond puis dit la phrase de sortie.
     if (this.closing) {
-      const timeOnlyAfter = `Temps écoulé : ${elapsed} min sur ${this.totalMinutes} min.`;
-      this.lastMarkerValue = { kind: "none", timeOnly: timeOnlyAfter };
+      this.lastMarkerValue = { kind: "none", timeOnly };
+      if (!withExtras) return [];
+      if (this.eventList.some((event) => event.type === "exit-phrase")) return [];
       this.record("exit-phrase", at);
-      return [`${REGIE_PREFIX} ${timeOnlyAfter} ${EXIT_PHRASE_INSTRUCTION}`];
+      return [`${REGIE_PREFIX} ${EXIT_PHRASE_INSTRUCTION}`];
     }
-    // Dans les deux dernières minutes, la clôture l'emporte : aucune bascule.
-    const closing = elapsed >= this.totalMinutes - 2;
-    const advanced = closing ? { text: "", kind: "none" as MarkerKind } : this.advance(at, elapsed);
-    const timeOnly = `Temps écoulé : ${elapsed} min sur ${this.totalMinutes} min.`;
-    this.lastMarkerValue = { kind: advanced.kind, timeOnly };
-    const reminder = this.themeReminder(at, elapsed, advanced.kind);
-    const markerText = advanced.kind === "ongoing" ? `${advanced.text}${reminder}` : `${timeOnly}${advanced.text}`;
-    const activeStep =
-      advanced.kind === "switch" && this.pendingIndex !== null
-        ? this.schedule[this.pendingIndex]
-        : this.schedule[this.phaseIndex];
-    const questionSuffix = activeStep?.omitEndWithQuestion || this.omitQuestionNow() ? "" : ` ${END_WITH_QUESTION}`;
-    const updates = [`${REGIE_PREFIX} ${this.fill(markerText)}${questionSuffix}`];
-    if (!this.closing && closing) {
+    // Dans les deux dernières minutes, la clôture l'emporte sur tout le reste.
+    if (elapsed >= this.totalMinutes - 2) {
       this.closing = true;
       this.pendingIndex = null;
       this.pendingMarkerCount = 0;
       this.pendingOrderedAt = null;
+      this.attachments = [];
       this.record("closing", at);
-      updates.push(
-        `${REGIE_PREFIX} Il reste 2 minutes : pose maintenant ta question de clôture, seule. Tu diras la phrase de sortie après la réponse du candidat.`,
-      );
+      this.lastMarkerValue = { kind: "none", timeOnly };
+      return [`${REGIE_PREFIX} ${closingInstruction(this.closingQuestion)}`];
     }
-    return updates;
+    const advanced = this.advance(at, elapsed);
+    const extras = withExtras ? [...this.midpointNow(at, elapsed, advanced.kind), ...this.takeAttachments()] : [];
+    const join = (text: string) => [text, ...extras].filter(Boolean).join(" ");
+    if (advanced.kind === "switch") {
+      this.lastMarkerValue = { kind: "switch", timeOnly };
+      const step = this.pendingIndex !== null ? this.schedule[this.pendingIndex] : undefined;
+      const suffix = step?.omitEndWithQuestion || this.omitQuestionNow() ? "" : ` ${END_WITH_QUESTION}`;
+      return [`${REGIE_PREFIX} ${join(`${timeOnly}${this.fill(advanced.text, at)}${suffix}`)}`];
+    }
+    // D1 : partie libre ou école sans parties → aucun repère après les réponses,
+    // sauf Montpellier pendant les situations (ses règles lisent le temps écoulé).
+    const montpellierMarker = this.school === "Montpellier BS" && !this.montpellierLateMarkerSent;
+    if (this.inFreePart() && !montpellierMarker) {
+      this.lastMarkerValue = null;
+      return extras.length ? [`${REGIE_PREFIX} ${extras.join(" ")}`] : [];
+    }
+    if (montpellierMarker && elapsed >= 20) this.montpellierLateMarkerSent = true;
+    this.lastMarkerValue = { kind: "ongoing", timeOnly };
+    const markerText = this.schedule.length ? advanced.text : timeOnly;
+    const step = this.schedule[this.phaseIndex];
+    const suffix = step?.omitEndWithQuestion || this.omitQuestionNow() ? "" : ` ${END_WITH_QUESTION}`;
+    return [`${REGIE_PREFIX} ${join(`${this.fill(markerText, at)}${suffix}`)}`];
   }
 
   /**
@@ -458,7 +602,7 @@ export class PhaseEngine {
       this.omitNextQuestion = false;
       return true;
     }
-    if (this.hasSecondReply && this.juryMessageCount < 2) return true;
+    if (this.hasSecondReply && this.juryMessageCount < 2 && !this.secondReplySkipped) return true;
     const open = (id: string) => !this.monologueStates.some((st) => st.measure.id === id && st.closed);
     if (this.school === "EDHEC" && open("edhec-presentation")) return true;
     if (this.school === "EM Strasbourg" && open("em-strasbourg-pitch")) return true;
@@ -479,24 +623,28 @@ export class PhaseEngine {
     return this.schedule[this.phaseIndex]?.id ?? null;
   }
 
+  /** Question de clôture tirée pour cet entretien. */
+  get closingQuestionText(): string {
+    return this.closingQuestion;
+  }
+
   private closeImmediately(at: number): string[] {
     if (this.closing) return [];
     this.closing = true;
     this.pendingIndex = null;
     this.pendingMarkerCount = 0;
     this.pendingOrderedAt = null;
+    this.attachments = [];
     this.record("closing", at);
-    return [`Pose maintenant ta question de clôture, seule. Tu diras la phrase de sortie après la réponse du candidat. ${END_WITH_QUESTION}`];
+    return [closingInstruction(this.closingQuestion)];
   }
 
-  /** Rappel unique aux deux tiers du temps cumulé des phases éligibles. */
-  private themeReminder(at: number, elapsed: number, kind: MarkerKind): string {
-    if (this.themeReminderSent || this.closing || kind !== "ongoing") return "";
-    const current = this.schedule[this.phaseIndex];
-    const isFreeExchange = this.schedule.length === 0 || current?.freeExchange === true;
-    if (!isFreeExchange) return "";
+  /** Message unique de la moitié de l'échange libre (D2), s'il est dû maintenant. */
+  private midpointNow(at: number, elapsed: number, kind: MarkerKind = "ongoing"): string[] {
+    if (this.themeReminderSent || this.closing || kind === "switch") return [];
+    if (!this.inFreePart()) return [];
     const threshold = this.freeExchangeReminderAt();
-    if (at < threshold || elapsed >= this.totalMinutes - 2) return "";
+    if (at < threshold || elapsed >= this.totalMinutes - 2) return [];
     this.themeReminderSent = true;
     const text =
       this.school === "Montpellier BS"
@@ -504,28 +652,28 @@ export class PhaseEngine {
         : ["GEM (Grenoble EM)", "TBS Education", "ESC Clermont BS"].includes(this.school)
           ? THEME_REMINDER_WITHOUT_NEWS
           : THEME_REMINDER;
-    return ` ${text}`;
+    return [text];
   }
 
   private freeExchangeReminderAt(): number {
-    // EDHEC : deux tiers de l'entretien individuel, qui suit la présentation.
+    // EDHEC : moitié de l'entretien individuel, qui suit la présentation.
     if (this.school === "EDHEC") {
       const pres = this.monologueStates.find((st) => st.measure.id === "edhec-presentation" && st.closed);
       if (!pres?.closedAt) return Number.POSITIVE_INFINITY;
       const end = this.startedAt + this.totalMinutes * 60_000;
-      return pres.closedAt + ((end - pres.closedAt) * 2) / 3;
+      return pres.closedAt + (end - pres.closedAt) / 2;
     }
     const eligible = this.schedule.filter((step) => step.freeExchange);
-    if (!eligible.length) return this.startedAt + (this.totalMinutes * 2 * 60_000) / 3;
+    if (!eligible.length) return this.startedAt + (this.totalMinutes * 60_000) / 2;
     const spans = eligible.flatMap((step) => {
       const index = this.schedule.indexOf(step);
       const start = this.phaseStartedAt[step.id] ?? this.dueAtFor(step);
       const end = this.schedule[index + 1] ? this.dueAtFor(this.schedule[index + 1]!) : this.startedAt + this.totalMinutes * 60_000;
       return start !== null && end !== null && end > start ? [{ start, end }] : [];
     });
-    if (!spans.length) return this.startedAt + (this.totalMinutes * 2 * 60_000) / 3;
+    if (!spans.length) return this.startedAt + (this.totalMinutes * 60_000) / 2;
     const total = spans.reduce((sum, span) => sum + span.end - span.start, 0);
-    const target = (total * 2) / 3;
+    const target = total / 2;
     let traversed = 0;
     for (const span of spans) {
       const length = span.end - span.start;
@@ -713,11 +861,13 @@ export class PhaseEngine {
     if (!step) return "";
     const next = this.schedule[index + 1];
     const dueAt = next ? this.dueAtFor(next) : null;
-    const remaining = dueAt === null ? "" : ` encore environ ${Math.max(1, Math.ceil((dueAt - at) / 60_000))} min`;
+    // Compte à rebours : seulement pour les cartes emlyon (D1).
+    const remaining =
+      dueAt === null || step.id !== "emlyon-cartes" ? "" : ` encore environ ${Math.max(1, Math.ceil((dueAt - at) / 60_000))} min`;
     const frame = step.freeExchange
       ? `Tu es dans « ${step.topic ?? step.name} »${remaining} : ne change pas de partie.`
       : `INTERDICTION DE CHANGER DE PARTIE. Tu es en « ${step.topic ?? step.name} »${remaining}. ${step.ongoingRule ?? "Ta prochaine prise de parole doit être une relance sur ce sujet, jamais une transition."}`;
-    return `${frame} Temps écoulé : ${elapsed} min sur ${this.totalMinutes} min. ${step.ongoing}${this.addQuestionSuffix(step, dueAt, at)}`;
+    return `${frame} Temps écoulé : ${elapsed} min. ${step.ongoing}${this.addQuestionSuffix(step, dueAt, at)}`;
   }
 
   /**
@@ -756,7 +906,7 @@ export class PhaseEngine {
   /** Avance l'état des phases, puis rend le texte du repère (phase ou bascule). */
   private advance(at: number, elapsed: number): { text: string; kind: MarkerKind } {
     if (!this.schedule.length) {
-      return { text: `Temps écoulé : ${elapsed} min sur ${this.totalMinutes} min.`, kind: "ongoing" };
+      return { text: `Temps écoulé : ${elapsed} min.`, kind: "ongoing" };
     }
     const index = this.phaseIndex;
     let candidate = this.pendingIndex ?? index + 1;

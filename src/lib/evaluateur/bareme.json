@@ -2872,7 +2872,8 @@
             "seuil_s": 150,
             "seuil": "2 min 30",
             "duree_prevue": "3 min à 5 min 30",
-            "sauf": "le candidat a été interrompu"
+            "sauf": "le candidat a été interrompu",
+            "mesure": "temps de parole du candidat seul"
           },
           {
             "partie": "presentation_longue",
@@ -2880,7 +2881,8 @@
             "seuil_s": 330,
             "seuil": "5 min 30",
             "duree_prevue": "3 min à 5 min 30",
-            "sauf": "le candidat a été interrompu"
+            "sauf": "le candidat a été interrompu",
+            "mesure": "temps de parole du candidat seul"
           }
         ],
         "edhec": [
@@ -2889,7 +2891,8 @@
             "type": "trop_court",
             "seuil_s": 195,
             "seuil": "3 min 15",
-            "duree_prevue": "4 min"
+            "duree_prevue": "4 min",
+            "mesure": "temps de parole du candidat seul"
           }
         ],
         "gem": [
@@ -2898,7 +2901,8 @@
             "type": "trop_court",
             "seuil_s": 255,
             "seuil": "4 min 15",
-            "duree_prevue": "5 min"
+            "duree_prevue": "5 min",
+            "mesure": "temps de parole du candidat seul"
           },
           {
             "partie": "interview_inversee",
@@ -2906,7 +2910,7 @@
             "seuil_s": 510,
             "seuil": "8 min 30",
             "duree_prevue": "10 min (9 + 1 de synthèse)",
-            "mesure": "synthèse comprise"
+            "mesure": "toute la partie, relances du jury comprises, synthèse comprise"
           }
         ],
         "tbs": [
@@ -2915,7 +2919,8 @@
             "type": "trop_court",
             "seuil_s": 255,
             "seuil": "4 min 15",
-            "duree_prevue": "5 min"
+            "duree_prevue": "5 min",
+            "mesure": "toute la partie, relances du jury comprises"
           }
         ],
         "kedge": [
@@ -2925,7 +2930,8 @@
             "seuil_s": 150,
             "seuil": "2 min 30",
             "duree_prevue": "environ 3 min",
-            "note": "les cartes ne sont pas chronométrées"
+            "note": "les cartes ne sont pas chronométrées",
+            "mesure": "temps de parole du candidat seul"
           }
         ],
         "clermont": [
@@ -2934,7 +2940,8 @@
             "type": "trop_court",
             "seuil_s": 255,
             "seuil": "4 min 15",
-            "duree_prevue": "5 min"
+            "duree_prevue": "5 min",
+            "mesure": "toute la partie, relances du jury comprises"
           }
         ],
         "inseec": [
@@ -2943,7 +2950,8 @@
             "type": "trop_court",
             "seuil_s": 255,
             "seuil": "4 min 15",
-            "duree_prevue": "5 min"
+            "duree_prevue": "5 min",
+            "mesure": "toute la partie, relances du jury comprises"
           }
         ],
         "em_strasbourg": [
@@ -2952,7 +2960,8 @@
             "type": "trop_court",
             "seuil_s": 150,
             "seuil": "2 min 30",
-            "duree_prevue": "3 min"
+            "duree_prevue": "3 min",
+            "mesure": "temps de parole du candidat seul"
           }
         ]
       },

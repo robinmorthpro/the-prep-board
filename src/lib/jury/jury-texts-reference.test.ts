@@ -35,12 +35,12 @@ function sections() {
 const expected = sections() as Record<string, Record<(typeof HEADINGS)[number], string>>;
 describe("références officielles du jury — étape 3", () => {
   it("conserve le fichier commun octet pour octet et exclut seulement sa régie finale", async () => {
-    expect(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(juryCommunRaw)).then((b) => Buffer.from(b).toString("hex"))).toBe("9b9004dcc39bc5b78f7759c6e57c39795b810a1868151a6189798d386397fe97");
-    expect(juryCommunRaw).toBe(`${commonJuryText()}\n---\n\nRAPPEL ENVOYÉ PAR L'APPLICATION AUX DEUX TIERS (consigne de régie)\n${juryCommunRaw.split("RAPPEL ENVOYÉ PAR L'APPLICATION AUX DEUX TIERS (consigne de régie)\n")[1]}`);
+    expect(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(juryCommunRaw)).then((b) => Buffer.from(b).toString("hex"))).toBe("6852bfedda9ac4bc4c4054f4d6ede1986048d1c4826ff7cf74801cb5fa176b7c");
+    expect(juryCommunRaw).toBe(`${commonJuryText()}\n---\n\nMESSAGE ENVOYÉ PAR L'APPLICATION À LA MOITIÉ DE L'ÉCHANGE LIBRE (consigne de régie)\n${juryCommunRaw.split("MESSAGE ENVOYÉ PAR L'APPLICATION À LA MOITIÉ DE L'ÉCHANGE LIBRE (consigne de régie)\n")[1]}`);
   });
 
   it("conserve la référence des 15 écoles octet pour octet", async () => {
-    expect(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(reference)).then((b) => Buffer.from(b).toString("hex"))).toBe("a9ffd4eda873c1a7fb22e53992a1fa5c30228f9aa5d17fa26ab3d4068427738b");
+    expect(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(reference)).then((b) => Buffer.from(b).toString("hex"))).toBe("e0e5c7d8da19fe9688ee5b0e7ef4a986067924bd9a6bc769bfb86dd8f454a9f5");
     expect(Object.keys(expected)).toHaveLength(15);
   });
 

@@ -24,7 +24,7 @@ DURÉE MAX DE SESSION : la durée réelle de l'entretien (15 à 35 minutes selon
 OVERRIDES À AUTORISER dans la configuration de l'agent : prompt, first message, language. Sans cela l'application ne peut pas injecter la difficulté ni le document remis par le candidat. La voix n'est plus imposée par l'application.
 PREMIER MESSAGE : il est toujours fourni par l'application selon l'école ; l'agent ne doit jamais utiliser d'ouverture stockée générique.`;
 
-const REGIE_SECTION = "\n---\n\nRAPPEL ENVOYÉ PAR L'APPLICATION AUX DEUX TIERS (consigne de régie)\n";
+export const REGIE_SECTION = "\n---\n\nMESSAGE ENVOYÉ PAR L'APPLICATION À LA MOITIÉ DE L'ÉCHANGE LIBRE (consigne de régie)\n";
 
 /** Texte commun officiel, sans la section finale envoyée séparément par la régie. */
 export function commonJuryText() {
@@ -72,8 +72,13 @@ ${conductNote}`;
  * Prompt système complet, prêt à être envoyé en override à l'agent.
  * `conductNote` : conduite officielle propre à l'école, lue avant l'ouverture.
  */
-export function buildJuryAgentPrompt(variant: InterviewVariant, durationMinutes: number, conductNote?: string) {
-  const common = buildAgentIdentity(durationMinutes);
+export function buildJuryAgentPrompt(
+  variant: InterviewVariant,
+  durationMinutes: number,
+  conductNote?: string,
+  school?: string,
+) {
+  const common = adaptCommonForSchool(buildAgentIdentity(durationMinutes), school);
   const neutralStart = common.indexOf("NIVEAU JOUÉ : Jury neutre");
   const hardStart = common.indexOf("NIVEAU JOUÉ : Jury dur");
   const frameStart = common.indexOf("CADRE DE L'ENTRETIEN", hardStart);
@@ -82,6 +87,88 @@ export function buildJuryAgentPrompt(variant: InterviewVariant, durationMinutes:
   return [fixed, difficultyBlock(variant), ...(conductNote ? [conductBlock(conductNote)] : []), AGENT_DYNAMIC_VARIABLES].join(
     "\n\n---\n\n",
   );
+}
+
+/** Remplacement exigé : le passage doit exister une seule fois dans le texte commun. */
+function swap(text: string, from: string, to: string): string {
+  const at = text.indexOf(from);
+  if (at < 0 || text.indexOf(from, at + from.length) >= 0) {
+    throw new Error(`Passage du texte commun introuvable ou ambigu : ${from.slice(0, 60)}`);
+  }
+  return text.slice(0, at) + to + text.slice(at + from.length);
+}
+
+/** Bloc complet d'une ligne de thème (« N. Titre : … ») jusqu'au thème suivant exclu. */
+function themeBlock(text: string, start: string, nextStart: string): string {
+  const from = text.indexOf(`\n${start}`);
+  const to = text.indexOf(`\n${nextStart}`, from + 1);
+  if (from < 0 || to < 0) throw new Error(`Thème introuvable dans le texte commun : ${start}`);
+  return text.slice(from + 1, to + 1);
+}
+
+const OUVERTURE_COUVERTE: Record<string, string> = {
+  "GEM (Grenoble EM)": "l'exposé",
+  "TBS Education": "l'article",
+  "ESC Clermont BS": "la question Impact",
+};
+
+/**
+ * Texte commun adapté à l'école : le fichier reste unique, l'application retire
+ * ou remplace seulement les passages qui contredisent le format de l'école.
+ */
+export function adaptCommonForSchool(common: string, school?: string): string {
+  if (!school) return common;
+  let text = common;
+  const couverte = OUVERTURE_COUVERTE[school];
+  if (couverte) {
+    text = swap(
+      text,
+      themeBlock(text, "5. Ouverture sur le monde : ", "Les questions citées sont des exemples"),
+      `5. Ouverture sur le monde : déjà couverte par ${couverte}. Pas de question d'actualité en plus.\n`,
+    );
+  }
+  if (school === "Montpellier BS") {
+    text = swap(
+      text,
+      "Ton rôle est d'obtenir, sur chacun de ces cinq thèmes, une réponse assez développée pour qu'on puisse en juger la qualité. Les cinq sont obligatoires : tous doivent avoir été abordés avant la fin de l'entretien.",
+      "Ton rôle est d'obtenir, sur les expériences, la personnalité et l'actualité, une réponse assez développée pour qu'on puisse en juger la qualité. Les trois sont obligatoires : tous doivent avoir été abordés avant la fin de l'entretien.",
+    );
+    text = swap(text, " Et en quoi cela lui servira, à l'école puis en entreprise.", "");
+    const projetEcole = themeBlock(text, "3. Projet professionnel : ", "5. Ouverture sur le monde : ");
+    text = swap(
+      text,
+      projetEcole,
+      "3 et 4. Projet professionnel et École : jamais abordés à Montpellier (voir la conduite de l'école).\n",
+    );
+    text = swap(
+      text,
+      " (« En quoi cette expérience, ou cette qualité que vous avez dégagée, vous aidera-t-elle dans notre école ? »)",
+      "",
+    );
+    text = swap(text, ", puis en quoi cela lui servira à l'école puis en entreprise", "");
+    const projetLine = text.slice(text.indexOf("\nQuand il parle de son projet : ") + 1);
+    text = swap(text, projetLine.slice(0, projetLine.indexOf("\n") + 1), "");
+    for (const head of ["\nProjet : ", "\nÉcole : "]) {
+      const line = text.slice(text.indexOf(head) + 1);
+      text = swap(text, line.slice(0, line.indexOf("\n") + 1), "");
+    }
+  }
+  if (school === "ESSEC") {
+    text = swap(
+      text,
+      "(ludique, hypothétique, mise en situation, personnelle ou inconfortable : exemples dans la banque de questions)",
+      "(ludique, hypothétique, personnelle ou inconfortable : exemples dans la banque de questions)",
+    );
+    text = swap(text, " · « Vendez-moi ce stylo. »", "");
+  }
+  if (school === "emlyon") {
+    text = swap(
+      text,
+      "dans des registres variés : études, travail,",
+      "dans des registres variés : études (à l'emlyon : jamais la prépa ni le lycée), travail,",
+    );
+  }
+  return text;
 }
 
 /** Premier message du jury (verbatim de la trame). */

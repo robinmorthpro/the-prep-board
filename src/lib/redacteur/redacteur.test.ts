@@ -146,7 +146,7 @@ describe("rédacteur : traitement du texte", () => {
   it("conserve l'empreinte exacte du texte commun du rédacteur", () => {
     const file = new URL("./textes/redacteur-commun.md", import.meta.url);
     const hash = createHash("sha256").update(readFileSync(file)).digest("hex");
-    expect(hash).toBe("dc65a76ee5992166c5bbc0b609272ed6dad8a239ec586540f391c6f9edfb6417");
+    expect(hash).toBe("6fe38423df9e292005e9dd2da856f71e5cf0c0b2f3f75ce6f0901cdf2b77e7b8");
   });
 });
 

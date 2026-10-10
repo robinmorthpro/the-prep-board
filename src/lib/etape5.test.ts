@@ -28,7 +28,7 @@ const sha = (p: string) => createHash("sha256").update(readFileSync(new URL(p, i
 
 describe("A. textes de l'évaluateur", () => {
   it("empreintes exactes", () => {
-    expect(sha("./evaluateur/textes/commun.md")).toBe("57fb15b0a94bd5de597766fa7b079a69094d76907e7cd6eb3939f901131589fa");
+    expect(sha("./evaluateur/textes/commun.md")).toBe("7d6a18be6ec3b63096efdfe7c27fb336e4122981d3d78ff6818304ff1f2e7ecd");
     expect(sha("./evaluateur/textes/ecoles/essec.md")).toBe("c23947bcaf1db1c117850784d3d2f63a0b9d2bcc65868ae253250ba52a089b7c");
     expect(sha("./evaluateur/textes/ecoles/emlyon.md")).toBe("f68a16e9a34127a7d10053be56d11fd528bc0efd1b1afc8ff5101fb823f0bf42");
   });

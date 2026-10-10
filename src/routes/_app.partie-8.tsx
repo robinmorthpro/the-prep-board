@@ -25,6 +25,8 @@ import { redigerFeedback } from "@/lib/redacteur.functions";
 import { FEEDBACK_ECHEC_MESSAGE, produireFeedback } from "@/lib/feedback-enchainement";
 import { MONTPELLIER_PASSAGE_RE } from "@/lib/phase-engine";
 import type { Tirages } from "@/lib/tirages";
+import { CLOSING_QUESTIONS, EXIT_SENTENCE_RE, PRESENTATION_MIN_WORDS, pickClosingVariant } from "@/lib/phase-engine";
+import { MAIN_RENDUE_NUDGE, mainRendueBloquee } from "@/lib/main-rendue";
 import {
   useCareerProject,
   useExperiences,
@@ -655,7 +657,7 @@ function Part7() {
       setEdhecPrepRemaining(59);
       setEdhecPresentationRemaining(240);
     }
-    if (juryMessageCountRef.current > 1 && /bonne continuation/.test(normalized)) {
+    if (juryMessageCountRef.current > 1 && EXIT_SENTENCE_RE.test(normalized)) {
       const closingAllowed = elapsed >= simulatedMinutes(config) * 60 - 180 || agent.closingSent;
       if (closingAllowed) {
         setClosed(true);
@@ -674,6 +676,13 @@ function Part7() {
       juryMessageCountRef.current > 1 &&
       !nudgeJustSent &&
       !INVITATION_RE.test(normalized) &&
+      !mainRendueBloquee({
+        normalized,
+        phrases: (phaseScheduleFor(config) ?? []).flatMap((step) => [step.phrase, step.earlyPhrase]),
+        closingQuestion: tiragesRef.current.question_cloture?.texte,
+        closingSent: agent.closingSent,
+        phaseId: agent.currentPhaseId(),
+      }) &&
       // EDHEC : phase silencieuse tant que la transition n'a pas eu lieu.
       !(config.school === "EDHEC" && edhecStageRef.current !== "after") &&
       // GEM : exposé du candidat, le jury n'a pas encore à poser de question.
@@ -685,9 +694,7 @@ function Part7() {
         handRescueTimerRef.current = null;
         if (closedRef.current || answeredSinceRef.current) return;
         mainRenduRef.current += 1;
-        sendNudge(
-          "Tu viens de rendre la main sans poser de question. Pose immédiatement ta question suivante, en une phrase, sans revenir sur ce que tu as déjà dit.",
-        );
+        sendNudge(MAIN_RENDUE_NUDGE);
       }, mode === "text" ? 1500 : 4000);
     }
   }
@@ -739,7 +746,9 @@ function Part7() {
     const answeredPresentation =
       emlyonPresentationAskedRef.current && /presentez-vous|presentation/.test(normalizeInterviewText(questionRef.current));
     if (config.school === "emlyon" && !emlyonTriggeredRef.current) {
-      if (answeredPresentation || (!emlyonPresentationAskedRef.current && nextTurns.length >= 2)) {
+      // D8 : la réponse à « c'est clair ? » est déjà la présentation (≥ 60 mots).
+      const alreadyPresented = nextTurns.length === 1 && text.trim().split(/\s+/).length >= PRESENTATION_MIN_WORDS;
+      if (answeredPresentation || alreadyPresented || (!emlyonPresentationAskedRef.current && nextTurns.length >= 2)) {
         emlyonArmedRef.current = true;
       }
       if (emlyonArmedRef.current) armEmlyonCardsSilence();
@@ -1028,7 +1037,9 @@ function Part7() {
       setInseecDone(false);
       clermontAxisOfferedRef.current = false;
       clermontAxisSentRef.current = false;
+      const closingVariant = pickClosingVariant();
       tiragesRef.current = {
+        question_cloture: { variante: closingVariant, texte: CLOSING_QUESTIONS[closingVariant] },
         ...(emlyonDraw ? { emlyon_cartes: emlyonCartesEtiquetees(emlyonDraw) } : {}),
         ...(kedgeDraw
           ? {
@@ -1062,6 +1073,7 @@ function Part7() {
         totalMinutes: simulatedMinutes(config),
         // Les bascules de phase sont ordonnées par l'application dans les repères de temps.
         phaseSchedule: phaseScheduleFor(config),
+        closingQuestion: CLOSING_QUESTIONS[closingVariant],
         onPhaseTimingsChange: (next) => {
           phaseTimingsRef.current = next;
           setPhaseTimings(next);

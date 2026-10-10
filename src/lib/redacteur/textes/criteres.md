@@ -20,7 +20,7 @@ La présentation attendue (« Présentez-vous », 1 min 30 à 2 min)
 
 ### Comment rédiger ce critère
 
-- Sauf format spécial (EDHEC : voir sa fiche) : d'où est partie la première question. Par exemple : « Votre phrase de fin a amené la question sur [thème] : c'est le but. » ou « Le jury est parti de [expérience] : c'est la porte que vous mettiez le plus en avant. »
+- Sauf format spécial (EDHEC : voir sa fiche) : d'où est partie la première question. La puce Présentation commence toujours par là. Par exemple : « Votre phrase de fin a amené la question sur [thème] : c'est le but. » ou « Le jury est parti de [expérience] : c'est la porte que vous mettiez le plus en avant. »
 - N4 / N3 : ce qui marche (structure, contexte, perche), puis la piste pour aller plus loin (mettre en relief l'expérience forte, finir sur un thème précis avec l'école nommée).
 - N2 : le défaut exact, avec ses mots. Puis ce qu'attendent les jurys : les 4 blocs, le contexte sans apports, les catégories par ordre d'importance, 2 ou 3 expériences par catégorie, une phrase de fin qui oriente.
 - N1 : « Votre présentation ne présente aucune expérience : le jury n'a rien pour démarrer. » Puis la structure en 4 blocs.
@@ -119,7 +119,7 @@ Chaque temps finit par une piste concrète. Par exemple : « Citez deux ou trois
 - « Pourquoi une école de commerce ? » : Deux sous-questions : pourquoi ces études, pourquoi la voie école (stages, cas pratiques, intervenants professionnels, international, réseau). On donne un argument, on le justifie, puis on fait un bref lien avec l'école. On ne dénigre pas les autres voies. Pièges : « parcours logique », « pas de chômage », l'international comme seul argument, répondre à « pourquoi notre école ».
 - « Pourquoi notre école ? » : 3 ou 4 arguments nommés, l'argument professionnel ou académique d'abord, jamais les associations en premier. Chaque argument est relié à soi, et on dit ce qui distingue l'école. Pièges : le classement, la famille ou le copain, la ville sans lien, la plaquette récitée.
 - « Que voulez-vous faire chez nous ? » : Un parcours nommé et chronologique : cours, spécialisation, stages, césure, associations.
-- « Qu'apporteriez-vous à notre école ? » : Du concret : une situation nommée (une association, un événement) et la qualité qui la garantit. Voir plus loin, avec son rôle futur d'ancien. Pas d'utopie.
+- « Qu'apporteriez-vous à notre école ? » : Au moins deux situations concrètes et nommées dans l'école (une association, un événement, un projet, un échange, des travaux de groupe), chacune avec ce qu'il y fera et la qualité qui la garantit. Voir plus loin, avec son rôle futur d'ancien. Pas d'utopie.
 - Devise, valeurs, campus, région (case 4) : Les connaître, et idéalement les relier à son passé et à son avenir. Les citer sans lien ne suffit pas.
 - « Si vous étiez refusé ? » · « Entre notre école et une autre ? » : Ne jamais dire « je retente l'an prochain » ni préférer l'autre école. On intègre une autre école pour réaliser son projet, puis on redit brièvement les atouts concrets de celle-ci.
 - Le cursus (cours, parcours, spécialisations, stages et entreprises, international, associations) pèse plus que la ville, la région ou les chiffres.
@@ -130,10 +130,10 @@ Chaque temps finit par une piste concrète. Par exemple : « Citez deux ou trois
 
 - **Pourquoi une école de commerce** : ce qu'attendent les jurys (les deux sous-questions), puis ce qu'il a dit.
 - **Pourquoi cette école** : ce qu'attendent les jurys (3 ou 4 arguments nommés, le professionnel d'abord, ce qui distingue l'école), puis ce qu'il a cité.
-- **Ce qu'il apportera** : ce qu'attendent les jurys (du concret, une association nommée, la qualité qui le garantit), puis ce qu'il a proposé.
+- **Ce qu'il apportera** : ce qu'attendent les jurys (au moins deux situations concrètes et nommées, avec ce qu'il y fera et la qualité qui le garantit), puis ce qu'il a proposé.
 - **Connaissance générale** : ce qu'il sait ou non de l'école, avec les points à revoir.
 
-Chaque temps finit par une piste concrète. Par exemple : « Nommez l'association que vous rejoindrez et ce que vous y ferez. »
+Chaque temps finit par une piste concrète. Par exemple : « Nommez deux situations de l'école où vous servirez, ce que vous y ferez et la qualité que vous y apporterez. »
 
 - Jury neutre : si le candidat n'a fait qu'un lien léger, il pose la question directe. Jury dur : il ne la pose pas, et le debrief le reproche.
 - Jury dur : un point de l'école jamais abordé est toujours posé, un point effleuré n'est pas repris.
@@ -196,7 +196,7 @@ Chaque temps se termine par une piste concrète. Exemple : « Quand on vous cont
 **Le debrief, en 2 temps**
 
 - **Répondre à la question, au bon format** : ce qu'attendent les jurys (répondre d'abord, le plus important en premier, des éléments en réserve ; la longueur n'est citée que si elle a gêné l'échange), puis un moment précis de l'entretien.
-- **Piloter l'échange** : ce qu'attendent les jurys (perches, prise de hauteur, question de fin utile), puis ce qu'a fait le candidat, y compris sa réponse à la question de fin.
+- **Piloter l'échange** : ce qu'attendent les jurys (perches, prise de hauteur, question de fin utile), puis ce qu'a fait le candidat, y compris sa réponse à la question de fin, jugée selon la question tirée (une vraie question ou un ajout utile ; un seul mot cohérent avec l'entretien ; un sujet nouveau sur lui), jamais plus favorablement que la justification de l'évaluateur.
 
 Chaque temps se termine par une piste concrète. Exemple : « Commencez par répondre en une phrase, puis développez ; gardez une anecdote en réserve pour la relance. »
 
@@ -209,7 +209,6 @@ Chaque temps se termine par une piste concrète. Exemple : « Commencez par rép
 
 - Registre : Le registre courant : « s'adresser aux jurys comme à vos beaux-parents ». Pas de familier : « entreprise » et non « boîte », pas d'abréviations comme « fac », « foot », « prépa », « assos ». Pas de soutenu artificiel non plus, ni de passé simple ou de tournures « dignes de livres ».
 - Mots justes : Pas de mots trop forts : « passion » pour un simple centre d'intérêt, « un voyage qui m'a marqué » quand les souvenirs sont flous. Ils créent une attente que la suite déçoit.
-- Naturel : Ne pas réciter des réponses écrites mot pour mot. Rien n'est pire pour le jury qu'un candidat qui « appuie sur le bouton On ». Une réponse récitée l'empêche aussi de s'adapter à une question formulée autrement.
 - Structure : Un argument, sa justification, puis un exemple.
 - Tics : Les jurys relèvent les tics de langage sans les sanctionner lourdement. On ne juge ici que les tics de langage.
 
@@ -218,7 +217,7 @@ Chaque temps se termine par une piste concrète. Exemple : « Commencez par rép
 **Le debrief, en 2 temps**
 
 - **Structure** : ce qu'on attend (l'idée d'abord, puis les arguments dans l'ordre et un exemple), puis une réponse précise de l'entretien, bien ou mal construite.
-- **Langage et naturel** : ce qu'on attend (registre courant, mots justes, naturel), puis les mots ou les tics précis relevés, avec leur remplacement (« boîte » → « entreprise », « passion » → « centre d'intérêt »).
+- **Langage** : ce qu'on attend (registre courant, mots justes), puis chaque mot familier et chaque tic relevés dans la transcription, avec leur remplacement (« boîte » → « entreprise », « passion » → « centre d'intérêt »).
 
 Chaque temps se termine par une piste concrète.
 
