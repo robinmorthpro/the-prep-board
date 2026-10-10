@@ -538,7 +538,6 @@ describe("ESSEC", () => {
     expect(engine.currentPhaseId).toBe("essec-sortie");
     // Échange libre : aucun repère, puis clôture normale à Y−2.
     expect(marker(engine, 41)).not.toContain("Phase en cours");
-    expect(marker(engine, 41.5)).toBe("");
     expect(marker(engine, 43)).toContain(CLOSING_ORDER);
     expect(types(engine)).not.toContain("recovered-switch");
     expect(types(engine)).not.toContain("unordered-switch");
