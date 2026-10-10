@@ -5,7 +5,17 @@ import { repliques, transcriptionHorodatee, type TourEnregistre } from "../evalu
 import type { PenaliteAppliquee } from "../evaluateur/calcul";
 import { systemPromptRedacteur } from "./textes";
 import { blocTirages } from "../tirages";
-import { controlerTexte, filtrerVerbatims, insererPercentile } from "./texte";
+import { controlerClassement, controlerTexte, filtrerVerbatims, insererPercentile, motsInternes } from "./texte";
+
+/** Modèle du rédacteur (D16) ; l'évaluateur reste sur DEFAULT_EVAL_MODEL. */
+export const DEFAULT_REDACTEUR_MODEL = "anthropic/claude-sonnet-5";
+
+/** D23 : le rédacteur ne reçoit jamais les pénalités écrites par l'évaluateur. */
+export function sortieSansPenalites(raw: unknown): unknown {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return raw;
+  const { penalites: _penalites, ...reste } = raw as Record<string, unknown>;
+  return reste;
+}
 
 export type SessionPourRedaction = {
   id: string;
@@ -41,7 +51,9 @@ export function blocCalcule(ev: EvaluationPourRedaction): string {
   const grille = BAREME.grilles[ev.grille];
   const lignes: string[] = ["CE QUE LE CODE A CALCULÉ"];
   lignes.push(`Percentile : ${ev.interrupted || ev.percentile === null ? "aucun (entretien interrompu)" : `P${ev.percentile}`}`);
-  const appliquees = ((ev.penalties as { appliquees?: PenaliteAppliquee[] } | null)?.appliquees ?? []) as PenaliteAppliquee[];
+  const appliquees = ev.interrupted
+    ? []
+    : (((ev.penalties as { appliquees?: PenaliteAppliquee[] } | null)?.appliquees ?? []) as PenaliteAppliquee[]);
   lignes.push("Pénalités de durée retenues :");
   if (!appliquees.length) lignes.push("- aucune");
   for (const p of appliquees) {
@@ -75,7 +87,7 @@ export function userMessageRedacteur(session: SessionPourRedaction, ev: Evaluati
     `Entretien interrompu : ${ev.interrupted ? "oui" : "non"}`,
     "",
     "SORTIE DE L'ÉVALUATEUR (JSON) :",
-    JSON.stringify(ev.raw_output, null, 2),
+    JSON.stringify(sortieSansPenalites(ev.raw_output), null, 2),
     "",
     blocCalcule(ev),
     "",
@@ -97,6 +109,8 @@ export type ResultatRedaction = {
   percentile: number | null;
   attempts: number;
   citations_retirees: string[];
+  /** D13 : mots internes restés après la nouvelle demande. */
+  alertes: string[];
   model: string;
   duration_ms: number;
 };
@@ -109,7 +123,7 @@ export async function redigerFeedbackSession(
 ): Promise<ResultatRedaction> {
   if (ev.status !== "ok") throw new Error("Évaluation non valide : pas de rédaction.");
   const started = Date.now();
-  const model = opts.model?.trim() || DEFAULT_EVAL_MODEL;
+  const model = opts.model?.trim() || DEFAULT_REDACTEUR_MODEL;
   const hasSupport = Boolean((session.support_text ?? "").trim());
   const system = systemPromptRedacteur({
     school: session.school,
@@ -123,10 +137,23 @@ export async function redigerFeedbackSession(
   for (let i = 0; i < 2; i++) {
     attempts++;
     const brut = (await callEvaluator(f, model, system, messages, undefined, { json: false })).trim();
-    const erreurs = controlerTexte(brut);
-    if (!erreurs.length) {
-      const transcription = repliques((session.turns ?? []) as TourEnregistre[]).map((r) => r.texte).join("\n");
-      const { text, retirees } = filtrerVerbatims(brut, transcription, session.support_text ?? "");
+    const percentileRecu = ev.interrupted ? null : ev.percentile;
+    const mots = motsInternes(brut);
+    const bloquantes = [...controlerTexte(brut), ...controlerClassement(brut, percentileRecu, ev.interrupted)];
+    const erreurs = [
+      ...bloquantes,
+      ...(mots.length ? [`Le texte emploie du vocabulaire interne interdit : ${mots.join(", ")}. Reformule sans ces mots.`] : []),
+    ];
+    // Après la nouvelle demande, des mots internes seuls ne bloquent plus : alerte enregistrée.
+    if (!erreurs.length || (i === 1 && !bloquantes.length)) {
+      if (mots.length) console.warn(`Rédacteur : vocabulaire interne restant (alerte)`, mots);
+      const liste = repliques((session.turns ?? []) as TourEnregistre[]);
+      const transcription = liste.map((r) => r.texte).join("\n");
+      const parRole = {
+        candidat: liste.filter((r) => r.role === "Candidat").map((r) => r.texte).join("\n"),
+        jury: liste.filter((r) => r.role === "Jury").map((r) => r.texte).join("\n"),
+      };
+      const { text, retirees } = filtrerVerbatims(brut, transcription, session.support_text ?? "", parRole);
       if (retirees.length) console.warn(`Rédacteur : ${retirees.length} citation(s) retirée(s)`, retirees);
       const percentile = ev.interrupted ? null : ev.percentile;
       return {
@@ -134,6 +161,7 @@ export async function redigerFeedbackSession(
         percentile,
         attempts,
         citations_retirees: retirees,
+        alertes: mots,
         model,
         duration_ms: Date.now() - started,
       };
