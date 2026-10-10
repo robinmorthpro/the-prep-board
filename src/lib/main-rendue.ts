@@ -8,7 +8,7 @@ export const MAIN_RENDUE_NUDGE =
 
 /** Phrases imposées hors calendrier (cartes, situations). Texte normalisé. */
 const PHRASES_IMPOSEES_RE =
-  /passer a une autre situation|merci pour ce recit|il nous reste (trois|deux|[23]) cartes|laquelle voulez-vous traiter|quelle carte souhaitez-vous|nous avons termine avec les (4|quatre) cartes|nous passons maintenant a/;
+  /passer a une autre situation|merci pour ce recit|il nous reste (une|trois|deux|[123]) cartes?|derniere carte|laquelle voulez-vous traiter|quelle carte souhaitez-vous|nous avons termine avec les (4|quatre) cartes|nous passons maintenant a/;
 
 export function mainRendueBloquee(opts: {
   /** Texte normalisé de la prise de parole du jury. */
