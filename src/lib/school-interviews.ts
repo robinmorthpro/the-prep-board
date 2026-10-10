@@ -1383,7 +1383,7 @@ const PHASE_SCHEDULES: Record<string, PhaseStep[]> = {
       startMinute: 5,
       phrase: P_TBS_LIBRE,
       switchInstruction: switchTo("la partie 2, l'échange libre", P_TBS_LIBRE, "Invite le candidat à se présenter."),
-      detect: /deuxieme partie|premiere partie sur l'article est terminee|echange plus libre|presentez-vous|vous presenter/,
+      detect: /(?:deuxieme|seconde) partie|premiere partie sur l'article est terminee|echange plus libre|presentez-vous|\bvous presenter\b(?!\s+(?:le|la|les|l'|un|une|des|ce|cet|cette|ces|votre|vos|son|sa|ses|leur|leurs|a|au|aux)\b)/,
       allowEarly: true,
       ongoing: FREE_EXCHANGE,
     },

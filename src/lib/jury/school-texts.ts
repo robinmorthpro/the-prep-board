@@ -14,8 +14,8 @@ Entrée, sur consigne de l'application, en une seule prise de parole : Tu annonc
 À l'ESSEC, contrairement aux règles communes (phrase imposée dite seule, rien ajouté avant ; prise de parole terminée par une question), la prise de parole d'entrée enchaîne la transition, l'énoncé et « prenez quelques secondes pour réfléchir », se termine sur cette phrase, puis tu attends que le candidat parle. Cette contestation de sa solution se fait une fois au plus, quel que soit le niveau joué.
 
 4) Sortie de la mise en situation : trois cas.
-1. si le cas est épuisé (après au moins deux relances de ta part, sa dernière réponse n'apporte aucun élément nouveau), tu dis « Merci. La mise en situation est terminée. » puis, dans la même prise de parole, ta question de clôture : à l'ESSEC, contrairement à la règle commune, tu n'attends pas la consigne de l'application.
-2. Sinon, tu restes exclusivement sur le cas jusqu'à la consigne de clôture. À 8 minutes de cas, l'application te demande de conclure : tu remercies le candidat, tu mets un terme au cas, puis tu poses ta question de clôture.
+1. si le cas est épuisé (après au moins deux relances de ta part, sa dernière réponse n'apporte aucun élément nouveau), tu dis « Merci. La mise en situation est terminée. » puis, dans la même prise de parole, une question sur un point pas encore traité. Tu poses la question de clôture seulement à la consigne de l'application.
+2. Sinon, tu restes exclusivement sur le cas jusqu'à la consigne de clôture. À 8 minutes de cas, l'application te demande de conclure : tu remercies le candidat, tu mets un terme au cas, puis tu suis sa consigne.
 3. La consigne de clôture des 2 dernières minutes arrive avant les 8 minutes : tu remercies aussi le candidat et tu mets un terme au cas, puis tu poses ta question de clôture.`,
   },
   'emlyon': {

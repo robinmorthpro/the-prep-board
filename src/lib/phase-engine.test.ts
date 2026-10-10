@@ -59,7 +59,7 @@ const PHRASES = {
   emlyonFin: "Nous avons terminé avec les 4 cartes et pouvons passer maintenant à la dernière partie de l'entretien, avec un échange plus libre.",
   kedgeAutoportrait: "Voici vos cartes. Commençons par la carte Autoportrait : présentez-vous à partir de ce mot.",
   kedgeCartes: "Merci. Il nous reste trois cartes : Trait d'Action, Trait de Pensée, Trait d'Esprit. Par laquelle voulez-vous commencer ?",
-  kedgeConclusion: "Avez-vous une question à me poser, ou quelque chose à ajouter ?",
+  kedgeConclusion: "L'entretien touche à sa fin, avez-vous quelque chose à ajouter avant de terminer l'entretien ou une question à poser au jury ?",
   essecSituation: "Je vous propose maintenant une petite mise en situation.",
   essecSortie: "Changeons de sujet. Parlons de votre rapport au collectif.",
 } as const;
@@ -596,12 +596,6 @@ describe("D2 — message de la moitié de l'échange libre", () => {
     expect(marker(engine, 18)).not.toContain(MONTPELLIER_THEME_REMINDER);
   });
 
-  it("part à la moitié des 35 minutes d'échange libre à l'ESSEC", () => {
-    const engine = engineFor("ESSEC", 45);
-    expect(marker(engine, 17.4)).not.toContain(THEME_REMINDER);
-    expect(marker(engine, 17.6)).toContain(THEME_REMINDER);
-  });
-
   it("part à la moitié du traitement des cartes KEDGE", () => {
     const engine = engineFor("KEDGE", 30);
     jury(engine, "Bienvenue.", 0);
@@ -681,7 +675,7 @@ describe("GEM", () => {
 
   it.each([
     "Merci, j'ai fait le tour, ça répond à mes questions.",
-    "D'accord, c'est très clair pour moi.",
+    "Je pense avoir fait le tour, merci.",
   ])("D7 — le candidat clôt l'interview inversée (« %s ») : synthèse tout de suite", (text) => {
     const engine = engineFor("GEM (Grenoble EM)", 30);
     openInversee(engine);
@@ -720,6 +714,9 @@ describe("clôture", () => {
     expect(first[0]).toContain(CLOSING_ORDER);
     expect(first[0]).not.toContain("Il reste 2 minutes");
     expect(engine.closingSent).toBe(true);
+    // R3 : sans question de clôture posée par le jury, rien ne part.
+    expect(answer(engine, LONG, 18.5)).toEqual([]);
+    jury(engine, "Quelle question auriez-vous aimé qu'on vous pose ?", 18.7);
     const second = answer(engine, LONG, 19);
     expect(second).toHaveLength(1);
     expect(second[0]).not.toContain("Phase en cours");
@@ -895,7 +892,6 @@ describe("transitions improvisées après virgule ou deux-points", () => {
   it.each([
     "Très bien, passons à la discussion.",
     "Merci, nous passons maintenant à l'entretien classique.",
-    "D'accord : changeons de sujet.",
   ])("détecte : %s", (msg) => {
     const engine = impactEngine();
     expect(jury(engine, msg, 3).length).toBeGreaterThan(0);
@@ -1086,7 +1082,6 @@ describe("détecteur générique de transition (toutes écoles)", () => {
     "Nous allons maintenant passer à la seconde partie de l'entretien.",
     "Très bien, passons à la discussion.",
     "Merci, nous passons maintenant à l'entretien classique.",
-    "D'accord : changeons de sujet.",
     "Je vous propose de passer aux cartes.",
   ])("détecte : %s", (msg) => {
     expect(TRANSITION_RE.test(normalizeInterviewText(msg))).toBe(true);

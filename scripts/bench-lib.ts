@@ -1,6 +1,6 @@
 // Fonctions pures du banc d'essai 3.5 (testées dans src/lib/bench.test.ts).
 import { createHash } from "node:crypto";
-import { isRegieMessage } from "../src/lib/phase-engine";
+import { isRegieMessage, pickClosingVariant, type ClosingVariant } from "../src/lib/phase-engine";
 
 export type Jury = "classique" | "classique_dur";
 export type Profil = "excellent" | "bon" | "moyen" | "faible" | "passif";
@@ -201,6 +201,7 @@ export const RECOPIES: { nom: string; debut: string; fin: string; sha256: string
   { nom: "Clermont : vérification et secours de la question Impact", debut: "    if (config.school === \"ESC Clermont BS\" && !clermontRescueDoneRef.current && juryMessageCountRef.current > 1) {", fin: "    // emlyon — secours : le tirage des cartes n'a pas été annoncé.", sha256: "125a6dff0a5a72a50215abef9a61c36c25597e5e5d97e0d869c5f310d1645b79" },
   { nom: "Clermont : axe repéré dans la réponse du candidat", debut: "    if (config.school === \"ESC Clermont BS\" && clermontAxisOfferedRef.current && !clermontAxisSentRef.current) {", fin: "    // emlyon : l'épreuve des 4 cartes est lancée par l'application dès la fin", sha256: "522cdb855f70266684b7465729c2b2cfb199860e56a14b9a5c4d9d604e6b36b2" },
   { nom: "detectImpactAxis", debut: "  function detectImpactAxis(t: string, loose = false): ImpactAxis | null {", fin: "   * Démarrage de l'entretien, déclenché depuis le popup de structure.", sha256: "67d521c789060cc666ce2942d5b5b07f3b20621bb83aa090675c48bf9c29d225" },
+  { nom: "emlyon : armement des cartes", debut: "      const alreadyPresented = nextTurns.length === 1", fin: "  /** emlyon : 5 s de silence complet après la fin de la prise de parole, puis tirage. */", sha256: "abe7849f0950049313f951f3c0a22562060b3db0ef4fe6c77d280da02979482b" },
   { nom: "emlyon : consigne du tirage des cartes", debut: "  function triggerEmlyonCards() {", fin: "  const agent = useJuryAgent({", sha256: "301b3a155b5cc3c1922f000c3a9c688ab534f3658e6df79eb0569d987e81ea20" },
   { nom: "clôture et secours « main rendue »", debut: "    if (juryMessageCountRef.current > 1 && EXIT_SENTENCE_RE.test(normalized)) {", fin: "  /** Le candidat vient de finir sa prise de parole : le fil est complété. */", sha256: "6a459f4accee3a222111bdd611774dd265d1ada7cf162a4a4399a4506330305a" },
   { nom: "Montpellier : message au clic sur une situation", debut: "                            agent.notifyContext(", fin: "                          }}", sha256: "94f8bb4c70daaf769158be001a897f80721be81ee8895e09ca4be273b23779bc" },
@@ -230,3 +231,41 @@ export const coutJetons = (modele: string, j: Jetons) => {
   const t = TARIFS[modele];
   return t ? (j.entree * t.entree + j.sortie * t.sortie) / 1_000_000 : null;
 };
+
+/** R11 : question de clôture tirée avec un générateur séparé, dérivé de la graine. */
+export function tirerClotureBanc(graine: number): ClosingVariant {
+  const sel = [..."cloture"].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7);
+  return pickClosingVariant(seeded((graine ^ sel) >>> 0));
+}
+
+/** D17 : règle d'ouverture du candidat simulé. */
+export function regleOuvertureCandidat(scenario: Scenario, article: string | null | undefined): string {
+  return `${
+    scenario.commenceDesAccueil
+      ? ""
+      : "\n- Tu attends que le jury t'invite à te présenter avant de le faire : à « Est-ce que c'est clair pour vous ? », tu réponds seulement que c'est clair."
+  }${article ? `\n- Tu commences l'entretien en présentant l'article de presse que tu as choisi : « ${article} ».` : ""}`;
+}
+
+/** Rédacteur de l'application (R12). */
+export const REDACTEUR_APP = "anthropic/claude-sonnet-5";
+
+/** R12 : rédacteur selon le plan et l'option `--redacteur=<modèle>|aucun`. */
+export function redacteurPourPlan(plan: string, option: string | undefined): string | null {
+  if (option === "aucun") return null;
+  if (option) return option;
+  return plan === "renoter" ? null : REDACTEUR_APP;
+}
+
+/** R12 : `--feedback-sur=id1,id2` → ensemble d'identifiants, ou null (tous). */
+export function feedbackSurListe(option: string | undefined): Set<string> | null {
+  const ids = (option ?? "").split(",").map((x) => x.trim()).filter(Boolean);
+  return ids.length ? new Set(ids) : null;
+}
+
+/** D18 : la renotation écrit toujours un essai distinct ; l'essai 1 n'est jamais écrasé. */
+export function essaiRenotation(option: string | undefined): number {
+  const n = Number(option ?? "2");
+  if (!Number.isInteger(n) || n < 2) throw new Error("Renotation : l'essai 1 (tour 1) ne peut pas être écrasé ; utilisez --essai=2 ou plus.");
+  return n;
+}

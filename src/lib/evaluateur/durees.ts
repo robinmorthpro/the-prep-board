@@ -39,8 +39,9 @@ export function mesuresPour(grille: string, partie: string, mesure: string | und
   const m = MESURES[grille]?.[partie];
   if (!m) return [];
   const paroleSeule = (mesure ?? "").startsWith("temps de parole du candidat seul");
-  const ordre = paroleSeule ? [m.parole, m.partie] : [m.partie, m.parole];
-  return ordre.filter((id): id is string => Boolean(id));
+  // R14 : seule la mesure demandée ; si elle n'existe pas, aucune pénalité.
+  const id = paroleSeule ? m.parole : m.partie;
+  return id ? [id] : [];
 }
 
 /** Durées mesurées par le code et pénalités qui en découlent. Dans le doute : aucune pénalité. */

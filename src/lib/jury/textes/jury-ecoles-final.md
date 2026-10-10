@@ -29,8 +29,8 @@ Entrée, sur consigne de l'application, en une seule prise de parole : Tu annonc
 À l'ESSEC, contrairement aux règles communes (phrase imposée dite seule, rien ajouté avant ; prise de parole terminée par une question), la prise de parole d'entrée enchaîne la transition, l'énoncé et « prenez quelques secondes pour réfléchir », se termine sur cette phrase, puis tu attends que le candidat parle. Cette contestation de sa solution se fait une fois au plus, quel que soit le niveau joué.
 
 4) Sortie de la mise en situation : trois cas.
-1. si le cas est épuisé (après au moins deux relances de ta part, sa dernière réponse n'apporte aucun élément nouveau), tu dis « Merci. La mise en situation est terminée. » puis, dans la même prise de parole, ta question de clôture : à l'ESSEC, contrairement à la règle commune, tu n'attends pas la consigne de l'application.
-2. Sinon, tu restes exclusivement sur le cas jusqu'à la consigne de clôture. À 8 minutes de cas, l'application te demande de conclure : tu remercies le candidat, tu mets un terme au cas, puis tu poses ta question de clôture.
+1. si le cas est épuisé (après au moins deux relances de ta part, sa dernière réponse n'apporte aucun élément nouveau), tu dis « Merci. La mise en situation est terminée. » puis, dans la même prise de parole, une question sur un point pas encore traité. Tu poses la question de clôture seulement à la consigne de l'application.
+2. Sinon, tu restes exclusivement sur le cas jusqu'à la consigne de clôture. À 8 minutes de cas, l'application te demande de conclure : tu remercies le candidat, tu mets un terme au cas, puis tu suis sa consigne.
 3. La consigne de clôture des 2 dernières minutes arrive avant les 8 minutes : tu remercies aussi le candidat et tu mets un terme au cas, puis tu poses ta question de clôture.
 Réglage du code : phases ESSEC. « Présentation du jury » 1 min (exclue, inchangée) ; « Présentation du candidat » 5 min (inchangée) ; « Échange libre avec le jury » 40 min ;  (phase retirée). Durée simulée 5 + 40 = 45 min, inchangée : ${durationMinutes} = 45 dans la partie commune ; durationSeconds: 2700 inchangé.
 Réglage du code : mise en situation ordonnée à la 35e minute (startMinute: 35, inchangé) ; sortie 8 minutes après son début (afterMinutes: 8, inchangé) ; clôture commune à 2 minutes de la fin, soit la 43e minute (inchangée).
@@ -40,20 +40,7 @@ Réglage du code (J50) : relances de silence suspendues environ 30 secondes apr�
 ---
 
 CONSIGNES ENVOYÉES PENDANT L'ENTRETIEN
-Réglage du code : chaque consigne ci-dessous part dans un repère [RÉGIE] envoyé après une réponse du candidat, dans le cadre commun du moteur de phases (phase en cours : « INTERDICTION DE CHANGER DE PARTIE. Tu es en « … » encore environ N min. Ta prochaine prise de parole doit être une relance sur ce sujet, jamais une transition. Temps écoulé : … », modifié ci-dessous pour l'échange libre ; bascule : « Phase en cours : … ») et suivie de « Termine ta prochaine prise de parole par une question. ». Le rappel des thèmes aux deux tiers (texte de la partie commune) part une fois, à la 23e minute (deux tiers de 0 à 35 minutes).
-Réglage du code : de la 0e à la 35e minute, à chaque repère (sujet « l'échange libre ») ; le cadre commun change seulement pour les phases d'échange libre (freeExchange), ${step.topic ?? step.name} = « l'échange libre », ${step.ongoing} = la ligne suivante :
-Tu es dans « ${step.topic ?? step.name} »${remaining} : ne change pas de partie. Temps écoulé : ${elapsed} min sur ${this.totalMinutes} min. ${step.ongoing}${this.addQuestionSuffix(step, dueAt, at)}
-Échange libre : mène l'entretien normalement, ne lance aucune mise en situation.
-Réglage du code : à partir de la 35e minute, ordre répété à chaque repère jusqu'à la transition (au 3e repère sans transition, la mise en situation est considérée commencée) ; ${target} = « la mise en situation finale », ${phrase} = « Je vous propose maintenant une petite mise en situation. » :
-C'est maintenant le moment de passer à ${target} : dans ta prochaine prise de parole, annonce la transition, par exemple : « ${phrase} ». Tu peux la formuler à ta manière, mais tu dois annoncer clairement le passage à ${target}.
-Contrairement à ce qui précède, tu peux d'abord finir le sujet en cours : fais la transition au plus tard dans ta deuxième prise de parole à partir de maintenant, puis énonce la mise en situation MOT POUR MOT, sans la reformuler. Termine par « prenez quelques secondes pour réfléchir » : cette prise de parole se termine sur cette phrase, pas par une question.
-Réglage du code : pendant la mise en situation, à chaque repère (sujet « la mise en situation ») :
-Mise en situation en cours : reste exclusivement sur le cas ; creuse la décision, les options et les risques. Ne pose aucune question étrangère au cas.
-Réglage du code : 8 minutes après le début de la mise en situation (si la clôture commune n'est pas déjà partie) :
-Remercie le candidat et mets un terme au cas. La mise en situation est terminée. Pose maintenant ta question de clôture, seule. Tu diras la phrase de sortie après la réponse du candidat.
-Réglage du code : après l'entrée en clôture (en pratique jamais envoyée : la clôture part dès l'entrée dans cette phase) :
-Clôture : pose maintenant ta question de clôture, seule. Tu diras la phrase de sortie après la réponse du candidat.
-Réglage du code : consignes communes à toutes les écoles, inchangées : sortie anticipée détectée (« La mise en situation est terminée. ») → « Pose maintenant ta question de clôture, seule. Tu diras la phrase de sortie après la réponse du candidat. », qui n'est plus envoyée quand la même prise de parole contient déjà la question de clôture (cas 1 de l'étape 4) ; à la 43e minute → « Il reste 2 minutes : pose maintenant ta question de clôture, seule. Tu diras la phrase de sortie après la réponse du candidat. ».
+Réglage du code : régie du tour 2, voir src/lib/phase-engine.ts (aucun repère pendant l'échange libre, compte à rebours seulement pendant les cartes emlyon et la question Impact de Clermont, message de la moitié, question de clôture tirée au sort).
 
 # ÉCOLE : emlyon
 
@@ -102,27 +89,7 @@ Dans les deux cas, annonce clairement que les 4 cartes sont terminées et que vo
 ---
 
 CONSIGNES ENVOYÉES PENDANT L'ENTRETIEN
-Réglage du code : chaque repère de phase passe par le modèle commun de phase-engine.ts (préfixe [RÉGIE], « INTERDICTION DE CHANGER DE PARTIE. Tu es en « [sujet] » encore environ X min. Ta prochaine prise de parole doit être une relance sur ce sujet, jamais une transition. Temps écoulé : … », puis la consigne de la phase, puis « Termine ta prochaine prise de parole par une question. »). Sujets emlyon : « la présentation », « les cartes », « l'échange libre ». Phases : présentation 3 min, cartes 15 min (seuil 12 min 45), échange libre 9 min.
-
-Réglage du code : moment = pendant la présentation (phase « emlyon-presentation », minute 0) ; en pratique envoyé une fois, au repère qui suit le « oui » au premier message.
-Reste sur la présentation jusqu'au tirage des cartes déclenché par l'application. Ta prochaine prise de parole est la deuxième réplique fournie par l'application, sans rien ajouter.
-
-Réglage du code : moment = dès la fin de la réponse du candidat à la demande de présentation (src/routes/_app.partie-8.tsx, triggerEmlyonCards), envoyé avant le repère de temps ; renvoyé une seule fois en secours si la phrase du tirage n'a pas été dite ; démarre le chronomètre des cartes. ${EMLYON_CARDS_PHRASE} = « Passons maintenant au tirage de vos quatre cartes. »
-La présentation est terminée. Ta prochaine prise de parole commence par cette phrase et ne contient aucune autre question avant : « ${EMLYON_CARDS_PHRASE} », dite mot pour mot, puis énonce les quatre questions tirées (Expérience, Personnalité, Projet, Créativité) telles qu'elles figurent dans ta conduite, sans les reformuler, et laisse le candidat choisir son ordre en terminant par « Par quelle carte souhaitez-vous commencer ? ».
-
-Réglage du code : moment = à chaque repère pendant les cartes (phase « emlyon-cartes », bascule anticipée autorisée), avec « encore environ X min » jusqu'à la 15e minute des cartes.
-Reste sur les cartes : ne change pas de phase de toi-même. Seule exception à l'interdiction de changer de partie : Si les 4 cartes ont toutes été traitées, annonce dès maintenant, sans attendre le repère de temps, que les 4 cartes sont terminées et que vous passez à la dernière partie, un échange plus libre.
-
-Réglage du code : moment = au premier repère après la 15e minute des cartes (afterMinutes: 15) ; texte = modèle commun switchTo de school-interviews.ts (« C'est maintenant le moment de passer à [cible] : dans ta prochaine prise de parole, annonce la transition, par exemple : « [phrase] ». Tu peux la formuler à ta manière, mais tu dois annoncer clairement le passage à [cible]. [suite] ») avec la cible, la phrase et la suite des trois lignes suivantes ; si l'ordre n'est pas suivi au bout de 2 repères, l'application considère aujourd'hui l'échange libre commencé (à neutraliser pour emlyon : voir Hors texte). {thèmes des cartes tirées, d'après leur étiquette} = calcul à ajouter (étiquette de chaque carte de la banque).
-la dernière partie, l'échange libre
-Nous avons terminé avec les 4 cartes et pouvons passer maintenant à la dernière partie de l'entretien, avec un échange plus libre.
-Fais-le à la fin de la dernière carte : s'il reste des cartes non traitées, tu ne poses plus de question après une carte et tu demandes « Quelle carte souhaitez-vous prendre ensuite ? » jusqu'à la dernière, en indiquant clairement que les 4 cartes sont terminées. Ne coupe jamais une carte en cours. Les cartes ont déjà porté sur : {thèmes des cartes tirées, d'après leur étiquette}. Il reste à couvrir, dans cet ordre : l'école (pourquoi une école de commerce, pourquoi celle-ci, ce qu'il apportera, sa connaissance de l'école), le projet, au moins 3 expériences (sinon, fais raconter une expérience de la présentation pas encore creusée), l'actualité si aucune carte ne l'a abordée. Ajuste avec ce que tu as entendu.
-
-Réglage du code : moment = dès que l'application reconnaît la transition annoncée par le jury de lui-même (bascule anticipée, 4 cartes traitées avant la 15e minute), envoi unique en [RÉGIE] ; nouvelle consigne, à coder (même calcul que ci-dessus).
-Les cartes ont déjà porté sur : {thèmes des cartes tirées, d'après leur étiquette}. Il reste à couvrir, dans cet ordre : l'école (pourquoi une école de commerce, pourquoi celle-ci, ce qu'il apportera, sa connaissance de l'école), le projet, au moins 3 expériences (sinon, fais raconter une expérience de la présentation pas encore creusée), l'actualité si aucune carte ne l'a abordée. Ajuste avec ce que tu as entendu.
-
-Réglage du code : moment = à chaque repère de l'échange libre (constante commune FREE_EXCHANGE, partagée avec d'autres écoles) ; s'y ajoutent le rappel commun aux deux tiers et la clôture commune à 2 minutes de la fin (25e minute).
-Échange libre : mène l'entretien normalement, plus aucune bascule de phase à prévoir.
+Réglage du code : régie du tour 2, voir src/lib/phase-engine.ts (aucun repère pendant l'échange libre, compte à rebours seulement pendant les cartes emlyon et la question Impact de Clermont, message de la moitié, question de clôture tirée au sort).
 
 # ÉCOLE : EDHEC
 
@@ -165,18 +132,7 @@ Phrase de transition obligatoire (verbatim, dite une seule fois, dès que la pr�
 ---
 
 CONSIGNES ENVOYÉES PENDANT L'ENTRETIEN
-Réglage du code : l'EDHEC n'a pas de calendrier de phases (aucune entrée EDHEC dans PHASE_SCHEDULES, phaseScheduleFor renvoie null) : aucune consigne de phase, aucun ordre de bascule. La présentation est mesurée de la fin de la préparation (écran) jusqu'à la phrase de transition, repérée par /nous passons maintenant a l'entretien individuel/, qui retire aussi le mot de l'écran. Aucun changement.
-Réglage du code : durée totale 1500 s (25 minutes = 5 + 20) ; préparation 59 s puis présentation 240 s à l'écran ; présentation prévue 4 minutes, seuil 3 + 25 / 60 (3 min 25). Aucun changement ici (seuil : voir « Hors texte du jury »).
-Réglage du code : moment = à la fin de chaque prise de parole du jury, dès le premier message (repère commun, inchangé) ; texte :
-[RÉGIE — consigne interne, ne jamais la lire ni la mentionner]
-Temps écoulé : ${elapsed} min sur ${this.totalMinutes} min.
-Termine ta prochaine prise de parole par une question.
-Réglage du code : moment = une seule fois, ajouté au premier repère après les deux tiers de la durée totale (16 min 40 s sur 25 min) ; texte commun, remplacé dans la partie commune (J31), non repris ici :
-Rappel : d'ici la fin de l'entretien, les cinq thèmes (expériences, personnalité, projet, école, ouverture) doivent tous avoir été abordés. L'entretien continue jusqu'à la consigne de clôture.
-Réglage du code : moment = premier repère à partir de la 23e minute (25 − 2), une seule fois (inchangé) ; texte :
-Il reste 2 minutes : pose maintenant ta question de clôture, seule. Tu diras la phrase de sortie après la réponse du candidat.
-Termine ta prochaine prise de parole par une question.
-Réglage du code : relances de silence (communes, interview-text.ts) suspendues seulement pendant l'écran de préparation ; secours « main rendue sans question » bloqué jusqu'à la phrase de transition. Aucun changement de texte.
+Réglage du code : régie du tour 2, voir src/lib/phase-engine.ts (aucun repère pendant l'échange libre, compte à rebours seulement pendant les cartes emlyon et la question Impact de Clermont, message de la moitié, question de clôture tirée au sort).
 
 # ÉCOLE : GEM (Grenoble EM)
 
@@ -192,7 +148,7 @@ OUVERTURE : le premier message est fourni par l'application. Dis-le tel quel, n'
 Réglage du code : texte de openingNote commun aux écoles sans deuxième réplique, inchangé.
 
 CONDUITE PROPRE À L'ÉCOLE
-Réglage du code : durationSeconds 1800 → 1920 (J70) : l'entretien dure 32 minutes, ce qui change aussi ${durationMinutes} dans la partie commune et les repères « Temps écoulé : X min sur 32 min ».
+Réglage du code : régie du tour 2, voir src/lib/phase-engine.ts (aucun repère pendant l'échange libre, compte à rebours seulement pendant les cartes emlyon et la question Impact de Clermont, message de la moitié, question de clôture tirée au sort).
 RAPPEL DU FORMAT GEM : cet entretien comporte 3 parties strictement ordonnées, 32 minutes au total — 1) l'exposé (~5 min) et son rebond (~2 min), 2) l'interview inversée (~10 min), 3) l'échange classique (~15 min). Les parties 1 et 2 ne portent jamais sur le candidat lui-même : c'est en partie 3 qu'il se présente pour la première fois de cet oral.
 
 
@@ -229,53 +185,7 @@ Tu peux, une fois, relier une réponse du candidat à ce qu'il a évoqué en par
 
 
 CONSIGNES ENVOYÉES PENDANT L'ENTRETIEN
-Réglage du code : chaque consigne part juste après une réponse du candidat, précédée de « [RÉGIE — consigne interne, ne jamais la lire ni la mentionner] » et placée dans l'enveloppe générique de phase-engine.ts (repère « Temps écoulé : X min sur 32 min » ; pendant une phase : « INTERDICTION DE CHANGER DE PARTIE. Tu es en « … » encore environ X min. Ta prochaine prise de parole doit être une relance sur ce sujet, jamais une transition. » ; en fin de repère : « Termine ta prochaine prise de parole par une question. »). J5 : ce dernier ordre n'est plus ajouté aux repères des étapes « gem-inversee » et « gem-minute », ni aux repères qui ordonnent d'y entrer.
-Réglage du code : pour les étapes « gem-inversee » et « gem-minute » seulement, l'enveloppe de phase (ongoingText) devient :
-INTERDICTION DE CHANGER DE PARTIE. Tu es en « ${step.topic ?? step.name} »${remaining}. Ta prochaine prise de parole doit être en personnage (interview inversée) ou le silence (synthèse), jamais une transition. Temps écoulé : ${elapsed} min sur ${this.totalMinutes} min.
-
-Réglage du code : de la 0e à la 7e minute (exposé et rebond, étape « gem-expose »), à chaque repère :
-Reste sur l'exposé et son rebond : ne change pas de phase. Approfondis avec des relances variées, sans jamais répéter la même : fais détailler une analyse ou un raisonnement, fais traiter un axe non encore couvert, prends une fois (et une seule) le contre-pied, ouvre un thème voisin de son sujet, ou fais un lien avec son projet s'il en a parlé dans l'exposé.
-Réglage du code : consigne propre à GEM (comme J80 pour INSEEC) ; la constante ${RELANCES} reste inchangée pour TBS.
-Réglage du code : dans les 40 % finaux de cette phase (à partir d'environ 4 min 12 s), s'ajoute la constante commune ADD_QUESTION, inchangée :
-Si, après au moins une relance, le candidat te semble à court d'éléments sur cette partie, tu peux lui demander exactement « Avez-vous autre chose à ajouter sur cette partie ? » (au plus deux fois dans la partie). Tu poses cette question seule, telle quelle, sans y ajouter de complément ni de précision. Quelle que soit sa réponse, ne change jamais de partie de toi-même : si le candidat a encore des choses à dire, écoute-le puis relance ; l'application te dira au repère suivant quand passer à la suite.
-
-Réglage du code : bascule vers la partie 2, due à la 7e minute (J70 : startMinute de « gem-inversee » 5 → 7), répétée jusqu'à ce que la transition soit reconnue (forcée après 2 repères). Texte construit par switchTo avec les trois morceaux qui suivent (cible, phrase, suite) :
-C'est maintenant le moment de passer à ${target} : dans ta prochaine prise de parole, annonce la transition, par exemple : « ${phrase} ». Tu peux la formuler à ta manière, mais tu dois annoncer clairement le passage à ${target}.
-la partie 2, l'interview inversée
-Merci pour cet exposé. Nous passons maintenant à l'interview inversée : c'est à vous de m'interroger.
-Juste après cette annonce, présente-toi en une phrase (prénom, poste, secteur), puis tu t'arrêtes net : c'est au candidat de t'interroger.
-
-Réglage du code : de la 7e à environ la 16e minute (étape « gem-inversee »), à chaque repère :
-Interview inversée : réponds en personnage, sans poser de question, ne change pas de phase. Si le candidat dit qu'il n'a plus de question, ou te rend la parole sans te poser de question, tu peux sortir brièvement de ton personnage pour lui demander exactement « Avez-vous d'autres questions à me poser ? » (au plus deux fois dans la partie). Ne change jamais de partie de toi-même : l'application te dira au repère suivant quand passer à la suite.
-
-Réglage du code : synthèse, ordonnée 8 min 45 s après le début de l'interview inversée (vers 15 min 45), repère sautable (étape « gem-minute ») :
-Si le candidat n'a pas encore amorcé sa restitution, annonce-lui maintenant, sur un ton neutre, qu'il lui reste une minute et que c'est le moment de sa synthèse, par exemple : « ${P_GEM_MINUTE} ». Tu peux le formuler à ta manière, puis reste silencieux pendant sa restitution.
-Réglage du code : ${P_GEM_MINUTE} (J72) :
-Il vous reste une minute, c'est le moment de faire votre synthèse.
-Réglage du code : variante quand l'application a ordonné la synthèse en avance (3 réponses sèches du candidat), construite par switchTo (cible, phrase, suite) :
-la minute de restitution
-Très bien. C'est le moment de faire votre synthèse.
-Tu t'arrêtes net après cette annonce et tu restes silencieux pendant sa synthèse.
-
-Réglage du code : pendant la synthèse, à chaque repère :
-Minute de restitution : reste silencieux, ne l'interromps pas.
-
-Réglage du code : bascule vers la partie 3, ordonnée avec la première réponse du candidat qui finit au moins 45 s après le début de la synthèse, et au plus tard 10 min après le début de l'interview inversée (vers la 17e minute). Texte construit par switchTo (cible, phrase, suite) :
-la partie 3, l'échange classique
-Merci. Nous passons maintenant à un échange plus classique.
-Enchaîne avec la phrase de présentation : « Vous avez environ une minute trente pour vous présenter, allez-y quand vous êtes prêt. ».
-
-Réglage du code : de la 17e minute à la clôture (étape « gem-classique »), à chaque repère :
-Échange classique : mène l'entretien normalement, plus aucune bascule de phase à prévoir.
-Réglage du code : aux deux tiers de la partie 3, une seule fois, le rappel des thèmes de la partie commune, variante GEM sans « et l'actualité » (J31, déjà dans la partie commune).
-
-Réglage du code : à la 30e minute (durée − 2), une seule fois :
-Il reste 2 minutes : pose maintenant ta question de clôture, seule. Tu diras la phrase de sortie après la réponse du candidat.
-
-Réglage du code : si le jury annonce un changement de partie non ordonné, hors interview inversée et synthèse (inchangé) :
-Tu viens d'annoncer un changement de partie alors que ce n'est pas le moment. Reprends immédiatement la partie en cours, ${current.topic ?? current.name}, sans mentionner ce changement ni t'excuser : pose une nouvelle question sur ce sujet.
-Réglage du code : même cas pendant les étapes « gem-inversee » et « gem-minute » :
-Tu viens d'annoncer un changement de partie alors que ce n'est pas le moment. Reprends immédiatement la partie en cours, ${current.topic ?? current.name}, sans mentionner ce changement ni t'excuser : réponds en personnage à sa dernière question.
+Réglage du code : régie du tour 2, voir src/lib/phase-engine.ts (aucun repère pendant l'échange libre, compte à rebours seulement pendant les cartes emlyon et la question Impact de Clermont, message de la moitié, question de clôture tirée au sort).
 
 # ÉCOLE : TBS Education
 
@@ -312,40 +222,7 @@ b. Les 4 axes sont couverts : Tu restes sur l'article en variant les angles jusq
 4. PARTIE 2 : entretien classique parcours / personnalité / projet et l'école, comme pour un jury standard. Pas de question d'actualité en plus : l'article en tient lieu. La partie 2 commence par sa présentation, que tu lui demandes dans ta phrase de transition.
 
 ## CONSIGNES ENVOYÉES PENDANT L'ENTRETIEN
-
-Réglage du code : durée simulée 20 minutes (durationSeconds 1200) ; partie 1 de la minute 0 à la minute 5 (startMinute 0) ; partie 2 due à la minute 5 (startMinute 5) ; prise de parole du candidat sur l'article mesurée à partir du premier message, seuil 4 min 15 (floorMinutes 4.25) ; bascule anticipée possible après 3 réponses sèches (dryEarlySwitch) ; aucun changement de réglage.
-
-Réglage du code : partie 1, phase « tbs-article », sujet « l'article de presse » ; consigne répétée à chaque repère de temps jusqu'à la bascule.
-Reste sur l'article : ne change pas de phase. ${RELANCES} Axes à couvrir sur cet article : le journal et le contexte, sans résumé ; les enjeux et les parties prenantes ; un avis appuyé par un fait à lui ; pourquoi cet article.
-Réglage du code : `${RELANCES}` vaut (texte commun à TBS, Clermont, INSEEC et GEM, inchangé) :
-Approfondis avec des relances variées, sans jamais répéter la même : fais détailler une analyse ou un raisonnement, fais traiter un axe non encore couvert, prends une fois (et une seule) le contre-pied, fais un lien avec l'actualité ou avec le projet du candidat.
-Réglage du code : ajouté à la consigne de la partie 1 dans ses 40 % finaux (à partir de la minute 3), texte commun inchangé :
-Si, après au moins une relance, le candidat te semble à court d'éléments sur cette partie, tu peux lui demander exactement « Avez-vous autre chose à ajouter sur cette partie ? » (au plus deux fois dans la partie). Tu poses cette question seule, telle quelle, sans y ajouter de complément ni de précision. Quelle que soit sa réponse, ne change jamais de partie de toi-même : si le candidat a encore des choses à dire, écoute-le puis relance ; l'application te dira au repère suivant quand passer à la suite.
-
-Réglage du code : bascule vers la partie 2, ordonnée au premier repère à partir de la minute 5 (ou plus tôt après 3 réponses sèches), répétée jusqu'à ce que le jury l'annonce. Texte = gabarit commun switchTo, avec la cible « la partie 2, l'échange libre », la phrase P_TBS_LIBRE et la suite « Invite le candidat à se présenter. » ; inchangé.
-C'est maintenant le moment de passer à ${target} : dans ta prochaine prise de parole, annonce la transition, par exemple : « ${phrase} ». Tu peux la formuler à ta manière, mais tu dois annoncer clairement le passage à ${target}.
-Merci. Cette première partie sur l'article est terminée : nous passons maintenant à la deuxième partie, un échange plus libre. Je vous invite à vous présenter.
-Invite le candidat à se présenter.
-
-Réglage du code : partie 2, phase « tbs-libre » (sans sujet : le gabarit affiche « Partie 2 — échange libre ») ; consigne répétée à chaque repère jusqu'à la clôture ; inchangée.
-Échange libre : mène l'entretien normalement, plus aucune bascule de phase à prévoir.
-
-Réglage du code : rappel des thèmes, une seule fois, aux deux tiers de la partie 2 (vers la minute 15) ; variante sans actualité pour GEM, TBS et Clermont (code : choix du rappel selon l'école, comme pour Montpellier).
-Rappel : d'ici la fin de l'entretien, au moins 3 expériences, la personnalité, le projet, les 4 points de l'école (pourquoi une école de commerce, pourquoi celle-ci, ce qu'il apportera, sa connaissance de l'école) doivent tous avoir été abordés. L'entretien continue jusqu'à la consigne de clôture.
-
-Réglage du code : gabarits communs à toutes les écoles à phases, rendus pour TBS (non modifiés ici ; voir le contrôle 3 et « Hors texte du jury »). Préfixe de chaque consigne :
-[RÉGIE — consigne interne, ne jamais la lire ni la mentionner]
-Réglage du code : repère pendant une phase (partie 1 : « l'article de presse » ; partie 2 : « Partie 2 — échange libre ») :
-INTERDICTION DE CHANGER DE PARTIE. Tu es en « ${step.topic ?? step.name} »${remaining}. Ta prochaine prise de parole doit être une relance sur ce sujet, jamais une transition. Temps écoulé : ${elapsed} min sur ${this.totalMinutes} min. ${step.ongoing}
-Réglage du code : `${remaining}` vaut « encore environ N min » quand la bascule suivante est calculable (partie 1), rien sinon. Repère qui porte l'ordre de bascule :
-Temps écoulé : ${elapsed} min sur ${this.totalMinutes} min.
-Phase en cours : ${this.schedule[index]!.topic ?? this.schedule[index]!.name}. ${instruction}
-Réglage du code : ajouté à la fin de chaque repère :
-Termine ta prochaine prise de parole par une question.
-Réglage du code : si le jury annonce la partie 2 avant la minute 5 sans ordre de l'application (au plus deux fois) :
-Tu viens d'annoncer un changement de partie alors que ce n'est pas le moment. Reprends immédiatement la partie en cours, ${current.topic ?? current.name}, sans mentionner ce changement ni t'excuser : pose une nouvelle question sur ce sujet.
-Réglage du code : à la minute 18 (2 minutes avant la fin) :
-Il reste 2 minutes : pose maintenant ta question de clôture, seule. Tu diras la phrase de sortie après la réponse du candidat. ${END_WITH_QUESTION}
+Réglage du code : régie du tour 2, voir src/lib/phase-engine.ts (aucun repère pendant l'échange libre, compte à rebours seulement pendant les cartes emlyon et la question Impact de Clermont, message de la moitié, question de clôture tirée au sort).
 
 # ÉCOLE : ESC Clermont BS
 
@@ -389,46 +266,7 @@ c. Les relances : Relance en variant les angles (un argument à détailler, un e
 
 
 ## CONSIGNES ENVOYÉES PENDANT L'ENTRETIEN
-
-Réglage du code : durée simulée 25 minutes (durationSeconds 1500) ; pitch sans échéance de temps (la partie 2 démarre quand le candidat nomme un axe, événement de l'application) ; question Impact de 5 minutes à partir de ce choix (afterMinutes 5), seuil 4 min 15 (floorMinutes 4.25) ; bascule anticipée possible après 3 réponses sèches (dryEarlySwitch) ; aucun changement de réglage.
-
-Réglage du code : partie 1, phase « clermont-pitch », sujet « le pitch » ; consigne envoyée à chaque repère jusqu'au choix de l'axe (le premier part dès la fin du premier message).
-Reste sur le pitch jusqu'au choix de l'axe Impact : ne change pas de phase. Dès la fin du pitch, ta prochaine prise de parole est la phrase de ta conduite : « Merci. Passons à la question Impact : choisissez un axe parmi People, Planet, ou Profit. » Ce n'est pas un changement de partie : la question Impact commence quand le candidat a choisi son axe.
-
-Réglage du code : si le jury a confirmé l'axe sans poser mot pour mot la question tirée (comparaison des 40 premiers caractères), une seule fois, envoyé par l'écran d'entretien (routes/_app.partie-8.tsx) ; inchangé :
-Pose maintenant, mot pour mot, sans l'introduire ni la commenter, la question suivante : « ${question} »
-
-Réglage du code : partie 2, phase « clermont-impact », sujet « la question Impact » ; consigne répétée à chaque repère jusqu'à la bascule.
-Reste sur la question Impact : ne change pas de phase. Approfondis avec des relances variées, sans jamais répéter la même : un argument à détailler, un exemple, une conséquence, un lien avec l'actualité ; prends une fois (et une seule) le contre-pied. Ne mentionne jamais les deux autres axes.
-Réglage du code : à Clermont, la consigne n'utilise plus `${RELANCES}` (texte commun à TBS, INSEEC et GEM, qui reste inchangé pour eux) ; texte retiré pour Clermont :
-
-Réglage du code : ajouté à la consigne de la partie 2 dans ses 40 % finaux (les 2 dernières minutes), texte commun inchangé :
-Si, après au moins une relance, le candidat te semble à court d'éléments sur cette partie, tu peux lui demander exactement « Avez-vous autre chose à ajouter sur cette partie ? » (au plus deux fois dans la partie). Tu poses cette question seule, telle quelle, sans y ajouter de complément ni de précision. Quelle que soit sa réponse, ne change jamais de partie de toi-même : si le candidat a encore des choses à dire, écoute-le puis relance ; l'application te dira au repère suivant quand passer à la suite.
-
-Réglage du code : bascule vers la partie 3, ordonnée au premier repère 5 minutes après le choix de l'axe (ou plus tôt après 3 réponses sèches), répétée jusqu'à ce que le jury l'annonce. Texte = gabarit commun switchTo, avec la cible « la partie 3, la discussion sur le parcours et les projets », la phrase P_CLERMONT_DISCUSSION et la suite « Enchaîne immédiatement avec une question. » ; inchangé.
-C'est maintenant le moment de passer à ${target} : dans ta prochaine prise de parole, annonce la transition, par exemple : « ${phrase} ». Tu peux la formuler à ta manière, mais tu dois annoncer clairement le passage à ${target}.
-Merci pour cet échange. Parlons maintenant de votre parcours et de vos projets.
-Enchaîne immédiatement avec une question.
-
-Réglage du code : partie 3, phase « clermont-discussion », sujet « la discussion » ; consigne répétée à chaque repère jusqu'à la clôture ; inchangée.
-Discussion classique : mène l'entretien normalement, plus aucune bascule de phase à prévoir.
-
-Réglage du code : rappel des thèmes, une seule fois, aux deux tiers de la Discussion ; variante sans actualité pour GEM, TBS et Clermont (code : choix du rappel selon l'école, comme pour Montpellier).
-Rappel : d'ici la fin de l'entretien, au moins 3 expériences, la personnalité, le projet, les 4 points de l'école (pourquoi une école de commerce, pourquoi celle-ci, ce qu'il apportera, sa connaissance de l'école) doivent tous avoir été abordés. L'entretien continue jusqu'à la consigne de clôture.
-
-Réglage du code : gabarits communs à toutes les écoles à phases, rendus pour Clermont (non modifiés ici ; voir le contrôle 3 et « Hors texte du jury »). Préfixe de chaque consigne :
-[RÉGIE — consigne interne, ne jamais la lire ni la mentionner]
-Réglage du code : repère pendant une phase (« le pitch », « la question Impact », « la discussion ») :
-INTERDICTION DE CHANGER DE PARTIE. Tu es en « ${step.topic ?? step.name} »${remaining}. Ta prochaine prise de parole doit être une relance sur ce sujet, jamais une transition. Temps écoulé : ${elapsed} min sur ${this.totalMinutes} min. ${step.ongoing}
-Réglage du code : `${remaining}` vaut « encore environ N min » pendant la question Impact, rien pendant le pitch ni la Discussion. Repère qui porte l'ordre de bascule :
-Temps écoulé : ${elapsed} min sur ${this.totalMinutes} min.
-Phase en cours : ${this.schedule[index]!.topic ?? this.schedule[index]!.name}. ${instruction}
-Réglage du code : ajouté à la fin de chaque repère :
-Termine ta prochaine prise de parole par une question.
-Réglage du code : si le jury annonce la Discussion avant l'échéance sans ordre de l'application (au plus deux fois) :
-Tu viens d'annoncer un changement de partie alors que ce n'est pas le moment. Reprends immédiatement la partie en cours, ${current.topic ?? current.name}, sans mentionner ce changement ni t'excuser : pose une nouvelle question sur ce sujet.
-Réglage du code : à la minute 23 (2 minutes avant la fin) :
-Il reste 2 minutes : pose maintenant ta question de clôture, seule. Tu diras la phrase de sortie après la réponse du candidat. ${END_WITH_QUESTION}
+Réglage du code : régie du tour 2, voir src/lib/phase-engine.ts (aucun repère pendant l'échange libre, compte à rebours seulement pendant les cartes emlyon et la question Impact de Clermont, message de la moitié, question de clôture tirée au sort).
 
 # ÉCOLE : KEDGE
 
@@ -485,40 +323,7 @@ Les trois cartes — Action, Pensée, Esprit — doivent TOUTES être abordées 
 7) Durée : La présentation Autoportrait dure environ 3 minutes et c'est l'application qui t'indique quand passer aux cartes ; le traitement des cartes n'a pas de durée imposée, il s'étend jusqu'à ce que l'application te demande de conclure.
 
 ## CONSIGNES ENVOYÉES PENDANT L'ENTRETIEN
-
-Réglage du code : chaque consigne de phase « en cours » est précédée de l'en-tête commun « INTERDICTION DE CHANGER DE PARTIE. Tu es en « [sujet] » encore environ [X] min. Ta prochaine prise de parole doit être une relance sur ce sujet, jamais une transition. Temps écoulé : [X] min sur 30 min. » et toute consigne se termine par « Termine ta prochaine prise de parole par une question. » (phase-engine.ts, inchangé).
-Réglage du code : chaque bascule suit le modèle commun switchTo : « C'est maintenant le moment de passer à [cible] : dans ta prochaine prise de parole, annonce la transition, par exemple : « [phrase] ». Tu peux la formuler à ta manière, mais tu dois annoncer clairement le passage à [cible]. [complément] » ; pour chaque bascule ci-dessous, les trois lignes sont la cible, la phrase et le complément.
-
-Moment : après chaque réponse du candidat, de la connexion jusqu'à l'annonce des cartes (phase « Ouverture et annonce des cartes »).
-Ouverture : annonce les cinq cartes puis demande au candidat de se présenter en environ trois minutes à partir du mot Autoportrait, comme prévu dans ta conduite.
-
-Moment : après chaque réponse, pendant la présentation Autoportrait (de l'annonce « Carte Autoportrait » jusqu'à 3 minutes plus tard).
-Reste sur la présentation Autoportrait : ne change pas de phase.
-Réglage du code : la ligne suivante est la constante RELANCES_AUTOPORTRAIT, collée à la précédente dans le message.
-Approfondis avec des relances variées, sans jamais répéter la même : un exemple concret qui illustre le lien avec le mot, où il retrouve ce mot dans son parcours, un élément de parcours ou de personnalité évoqué mais pas développé.
-
-Moment : ajouté à la consigne précédente dans les 40 % finaux de la présentation Autoportrait (après environ 1 min 50).
-Si, après au moins une relance, le candidat te semble à court d'éléments sur cette partie, tu peux lui demander exactement « Avez-vous autre chose à ajouter sur cette partie ? » (au plus deux fois dans la partie). Tu poses cette question seule, telle quelle, sans y ajouter de complément ni de précision. Quelle que soit sa réponse, ne change jamais de partie de toi-même : si le candidat a encore des choses à dire, écoute-le puis relance ; l'application te dira au repère suivant quand passer à la suite.
-
-Moment : bascule vers les cartes, 3 minutes après le début de la présentation Autoportrait (ou plus tôt si l'application l'ordonne après 3 réponses sèches ou un « rien à ajouter »).
-la partie des trois cartes restantes
-Merci. Il nous reste trois cartes : Trait d'Action, Trait de Pensée, Trait d'Esprit. Par laquelle voulez-vous commencer ?
-Nomme les trois cartes restantes (Trait d'Action, Trait de Pensée, Trait d'Esprit) telles quelles et laisse le candidat choisir par laquelle commencer.
-
-Moment : après chaque réponse, pendant le traitement des cartes (jusqu'à la 28e minute, après la suppression de l'étape « Conclusion » ; le rappel commun des deux tiers s'y ajoute une fois).
-Traitement des cartes : le candidat choisit une carte à la fois ; approfondis la carte en cours et rebondis sur les perches personnelles. Si les trois cartes ont été traitées, enchaîne sur des sujets classiques de motivation non encore couverts. Ne passe jamais à la conclusion de toi-même. Passer d'une carte à la suivante n'est pas un changement de partie : tu le fais avec la relance du point 5.1 de ta conduite.
-
-Moment : étape « Conclusion » de la 27e minute, retirée (décision : la clôture commune de la 28e minute porte la question du point 6). Bascule retirée :
-
-
-
-
-Moment : consigne de phase de l'étape « Conclusion », retirée avec elle.
-
-
-Moment : à la 28e minute, consigne commune de clôture (« Il reste 2 minutes : … »), inchangée : le jury y pose la question du point 6 de sa conduite.
-
-Réglage du code : durée 30 minutes (durationSeconds 1800) ; passage aux cartes 3 minutes après le début de la présentation Autoportrait (afterMinutes 3) ; étape « kedge-conclusion » (startMinute 27) supprimée, la clôture commune part à la 28e minute ; présentation Autoportrait mesurée : durée prévue 3 minutes, seuil 2,55 minutes (voir « Hors texte du jury »).
+Réglage du code : régie du tour 2, voir src/lib/phase-engine.ts (aucun repère pendant l'échange libre, compte à rebours seulement pendant les cartes emlyon et la question Impact de Clermont, message de la moitié, question de clôture tirée au sort).
 
 # ÉCOLE : INSEEC Grande École
 
@@ -558,26 +363,7 @@ Les points ci-dessous arrivent dans cet ordre. À l'INSEEC, l'échange libre don
 5) Clôture : comme le prévoit la règle commune (CLÔTURE), sur consigne de l'application.
 
 ## CONSIGNES ENVOYÉES PENDANT L'ENTRETIEN
-
-Réglage du code : chaque consigne de phase « en cours » est précédée de l'en-tête commun « INTERDICTION DE CHANGER DE PARTIE. Tu es en « [sujet] » encore environ [X] min. Ta prochaine prise de parole doit être une relance sur ce sujet, jamais une transition. Temps écoulé : [X] min sur 25 min. » et toute consigne se termine par « Termine ta prochaine prise de parole par une question. » (phase-engine.ts, inchangé).
-Réglage du code : la bascule suit le modèle commun switchTo : « C'est maintenant le moment de passer à [cible] : dans ta prochaine prise de parole, annonce la transition, par exemple : « [phrase] ». Tu peux la formuler à ta manière, mais tu dois annoncer clairement le passage à [cible]. [complément] » ; les trois lignes de la bascule ci-dessous sont la cible, la phrase et le complément.
-Réglage du code : la consigne de la partie 1 utilisait la constante commune RELANCES (texte barré ci-dessous) ; après J80, l'INSEEC a son propre texte, la constante reste pour TBS, Clermont et GEM.
-
-Moment : après chaque réponse du candidat, pendant la partie 1 (de 0 à 5 minutes).
-Reste sur l'image et la présentation du candidat : ne change pas de phase. Approfondis avec des relances variées, sans jamais répéter la même : une expérience liée à l'image, ce qu'elle dit de son parcours, un élément évoqué mais pas développé. Jamais de contre-pied (contestation) ni de lien imposé avec l'école, le projet ou l'actualité.
-
-Moment : ajouté à la consigne précédente dans les 40 % finaux de la partie 1 (à partir de 3 minutes).
-Si, après au moins une relance, le candidat te semble à court d'éléments sur cette partie, tu peux lui demander exactement « Avez-vous autre chose à ajouter sur cette partie ? » (au plus deux fois dans la partie). Tu poses cette question seule, telle quelle, sans y ajouter de complément ni de précision. Quelle que soit sa réponse, ne change jamais de partie de toi-même : si le candidat a encore des choses à dire, écoute-le puis relance ; l'application te dira au repère suivant quand passer à la suite.
-
-Moment : bascule vers la partie 2, à la 5e minute (ou plus tôt si l'application l'ordonne après 3 réponses sèches ou un « rien à ajouter »).
-la partie 2, l'entretien classique
-Merci. Nous passons maintenant à l'entretien classique.
-Enchaîne immédiatement, dans la même prise de parole, avec une question d'ouverture de la banque de questions.
-
-Moment : après chaque réponse, pendant la partie 2 (de la 5e minute à la consigne commune de clôture, à la 23e minute ; le rappel commun des deux tiers s'y ajoute une fois).
-Entretien classique : mène l'entretien normalement, plus aucune bascule de phase à prévoir.
-
-Réglage du code : durée simulée 25 minutes (durationSeconds 1500) ; partie 2 à la 5e minute (startMinute 5) ; présentation par l'image mesurée : durée prévue 5 minutes, seuil 4,25 minutes (4 min 15).
+Réglage du code : régie du tour 2, voir src/lib/phase-engine.ts (aucun repère pendant l'échange libre, compte à rebours seulement pendant les cartes emlyon et la question Impact de Clermont, message de la moitié, question de clôture tirée au sort).
 
 # ÉCOLE : Montpellier BS
 
@@ -622,22 +408,7 @@ Cas 4 — sinon : tu relances sur la situation en cours (étape 3).
 6. CLÔTURE : Pose ensuite, seulement quand l'application te le demande, la question de clôture de la règle commune (CLÔTURE).
 
 ## CONSIGNES ENVOYÉES PENDANT L'ENTRETIEN
-
-Réglage du code : durée simulée 1500 s (25 min) ; une seule phase « Les situations » (25 min) ; aucun calendrier de phases (l'application n'ordonne aucune bascule : présentation, situations et actualité sont menées par le jury) ; rappel des thèmes au premier repère après 16 min 40 s (deux tiers de 25 min) ; clôture ordonnée au premier repère à partir de 23 min.
-
-Moment : à chaque fin de réponse du candidat, assemblé par le code dans cet ordre (préfixe, temps, éventuel rappel, fin) :
-[RÉGIE — consigne interne, ne jamais la lire ni la mentionner]
-Temps écoulé : ${elapsed} min sur ${this.totalMinutes} min.
-Termine ta prochaine prise de parole par une question.
-
-Moment : une seule fois, inséré après le temps écoulé, au premier repère après 16 min 40 s :
-Rappel : d'ici la fin de l'entretien, au moins 3 expériences, la personnalité et la question d'actualité doivent avoir été abordées. L'entretien continue jusqu'à la consigne de clôture.
-
-Moment : une seule fois, au premier repère à partir de 23 min (après le préfixe [RÉGIE], suivi de la phrase de fin ci-dessus) :
-Il reste 2 minutes : pose maintenant ta question de clôture, seule. Tu diras la phrase de sortie après la réponse du candidat.
-
-Moment : quand le candidat clique sur une situation à l'écran (mise à jour de contexte, sans préfixe [RÉGIE]) :
-Le candidat vient de choisir à l'écran la situation suivante à développer : "${s.text}". Attends qu'il commence à raconter, puis creuse normalement (concret, recul) sur cette situation précise.
+Réglage du code : régie du tour 2, voir src/lib/phase-engine.ts (aucun repère pendant l'échange libre, compte à rebours seulement pendant les cartes emlyon et la question Impact de Clermont, message de la moitié, question de clôture tirée au sort).
 
 # ÉCOLE : EM Strasbourg
 
@@ -668,19 +439,7 @@ Réglage du code : ${second} = la deuxième réplique ci-dessus.
 2. LA CARTOGRAPHIE : Une fois ce pitch fait (fin de sa première réponse après ta deuxième réplique), bascule sur la cartographie déposée pour construire le reste de l'échange : projection année par année dans le programme. À EM Strasbourg, contrairement à la règle commune OUVERTURE, ta première question après le pitch part de la cartographie (un élément qu'il y a écrit). La cartographie sert de point d'appui ; les thèmes du format classique restent tous à couvrir, dont au moins trois expériences. Ce qui est seulement écrit dans la cartographie doit être dit à l'oral.
 
 ## CONSIGNES ENVOYÉES PENDANT L'ENTRETIEN
-
-Réglage du code : durée simulée 1500 s (25 min) ; phases : « Cartographie complétée en amont » 0 min (exclue), « Pitch sur une réussite personnelle » 3 min, « Échange appuyé sur la cartographie » 22 min, « Questions du candidat au jury » 3 min (exclue) ; aucun calendrier de phases (l'application n'ordonne aucune bascule) ; pitch non mesuré aujourd'hui (aucune mesure de monologue pour EM Strasbourg) ; rappel des thèmes au premier repère après 16 min 40 s ; clôture ordonnée au premier repère à partir de 23 min.
-
-Moment : à chaque fin de réponse du candidat, assemblé par le code dans cet ordre (préfixe, temps, éventuel rappel, fin) :
-[RÉGIE — consigne interne, ne jamais la lire ni la mentionner]
-Temps écoulé : ${elapsed} min sur ${this.totalMinutes} min.
-Termine ta prochaine prise de parole par une question.
-
-Moment : une seule fois, inséré après le temps écoulé, au premier repère après 16 min 40 s (rappel commun, changement J31 de la partie commune) :
-Rappel : d'ici la fin de l'entretien, au moins 3 expériences, la personnalité, le projet, les 4 points de l'école (pourquoi une école de commerce, pourquoi celle-ci, ce qu'il apportera, sa connaissance de l'école) et l'actualité doivent tous avoir été abordés. L'entretien continue jusqu'à la consigne de clôture.
-
-Moment : une seule fois, au premier repère à partir de 23 min (après le préfixe [RÉGIE], suivi de la phrase de fin ci-dessus) :
-Il reste 2 minutes : pose maintenant ta question de clôture, seule. Tu diras la phrase de sortie après la réponse du candidat.
+Réglage du code : régie du tour 2, voir src/lib/phase-engine.ts (aucun repère pendant l'échange libre, compte à rebours seulement pendant les cartes emlyon et la question Impact de Clermont, message de la moitié, question de clôture tirée au sort).
 
 # ÉCOLE : ESCP
 
@@ -714,20 +473,7 @@ Le candidat a déposé son questionnaire écrit avant l'entretien.
 Réglage du code : le bloc envoyé au jury est « CONDUITE PROPRE À L'ÉCOLE (elle prime sur la trame générique) », puis la consigne d'ouverture, une ligne vide, puis la conduite ; conductNote passe sur plusieurs lignes (« \n » avant chaque étape et chaque tiret).
 
 ## CONSIGNES ENVOYÉES PENDANT L'ENTRETIEN
-
-Réglage du code : aucune consigne de phase propre à l'ESCP (pas de calendrier de phases : phaseScheduleFor renvoie null). Restent les trois consignes communes ci-dessous, avec totalMinutes = 25.
-
-Réglage du code : moment = après chaque réponse du candidat (et, à l'oral, à la fin de chaque prise de parole du jury), jusqu'à la clôture.
-[RÉGIE — consigne interne, ne jamais la lire ni la mentionner]
-Temps écoulé : ${elapsed} min sur ${this.totalMinutes} min.
-Termine ta prochaine prise de parole par une question.
-
-Réglage du code : moment = une seule fois, au premier repère après 16 min 40 s (deux tiers de 25 min), ajouté au repère de temps. Texte commun (J31, partie commune), donné ici avec son changement.
-Rappel : d'ici la fin de l'entretien, au moins 3 expériences, la personnalité, le projet, les 4 points de l'école (pourquoi une école de commerce, pourquoi celle-ci, ce qu'il apportera, sa connaissance de l'école) et l'actualité doivent tous avoir été abordés. L'entretien continue jusqu'à la consigne de clôture.
-
-Réglage du code : moment = une seule fois, au premier repère à partir de la 23e minute (25 − 2), en plus du repère de temps.
-Il reste 2 minutes : pose maintenant ta question de clôture, seule. Tu diras la phrase de sortie après la réponse du candidat.
-Termine ta prochaine prise de parole par une question.
+Réglage du code : régie du tour 2, voir src/lib/phase-engine.ts (aucun repère pendant l'échange libre, compte à rebours seulement pendant les cartes emlyon et la question Impact de Clermont, message de la moitié, question de clôture tirée au sort).
 
 # ÉCOLE : NEOMA
 
@@ -761,20 +507,7 @@ Le candidat a déposé son questionnaire NEOMA avant l'entretien.
 Réglage du code : le bloc envoyé au jury est « CONDUITE PROPRE À L'ÉCOLE (elle prime sur la trame générique) », puis la consigne d'ouverture, une ligne vide, puis la conduite ; conductNote passe sur plusieurs lignes (« \n » avant chaque étape et chaque tiret).
 
 ## CONSIGNES ENVOYÉES PENDANT L'ENTRETIEN
-
-Réglage du code : aucune consigne de phase propre à NEOMA (pas de calendrier de phases : phaseScheduleFor renvoie null). Restent les trois consignes communes ci-dessous, avec totalMinutes = 25.
-
-Réglage du code : moment = après chaque réponse du candidat (et, à l'oral, à la fin de chaque prise de parole du jury), jusqu'à la clôture.
-[RÉGIE — consigne interne, ne jamais la lire ni la mentionner]
-Temps écoulé : ${elapsed} min sur ${this.totalMinutes} min.
-Termine ta prochaine prise de parole par une question.
-
-Réglage du code : moment = une seule fois, au premier repère après 16 min 40 s (deux tiers de 25 min), ajouté au repère de temps. Texte commun (J31, partie commune), donné ici avec son changement.
-Rappel : d'ici la fin de l'entretien, au moins 3 expériences, la personnalité, le projet, les 4 points de l'école (pourquoi une école de commerce, pourquoi celle-ci, ce qu'il apportera, sa connaissance de l'école) et l'actualité doivent tous avoir été abordés. L'entretien continue jusqu'à la consigne de clôture.
-
-Réglage du code : moment = une seule fois, au premier repère à partir de la 23e minute (25 − 2), en plus du repère de temps.
-Il reste 2 minutes : pose maintenant ta question de clôture, seule. Tu diras la phrase de sortie après la réponse du candidat.
-Termine ta prochaine prise de parole par une question.
+Réglage du code : régie du tour 2, voir src/lib/phase-engine.ts (aucun repère pendant l'échange libre, compte à rebours seulement pendant les cartes emlyon et la question Impact de Clermont, message de la moitié, question de clôture tirée au sort).
 
 # ÉCOLE : SKEMA
 
@@ -809,20 +542,7 @@ Le candidat a déposé son CV projectif avant l'entretien.
 Réglage du code : le bloc envoyé au jury est « CONDUITE PROPRE À L'ÉCOLE (elle prime sur la trame générique) », puis la consigne d'ouverture, une ligne vide, puis la conduite ; conductNote passe sur plusieurs lignes (« \n » avant chaque étape et chaque tiret).
 
 ## CONSIGNES ENVOYÉES PENDANT L'ENTRETIEN
-
-Réglage du code : aucune consigne de phase propre à SKEMA (pas de calendrier de phases : phaseScheduleFor renvoie null). Restent les trois consignes communes ci-dessous, avec totalMinutes = 25.
-
-Réglage du code : moment = après chaque réponse du candidat (et, à l'oral, à la fin de chaque prise de parole du jury), jusqu'à la clôture.
-[RÉGIE — consigne interne, ne jamais la lire ni la mentionner]
-Temps écoulé : ${elapsed} min sur ${this.totalMinutes} min.
-Termine ta prochaine prise de parole par une question.
-
-Réglage du code : moment = une seule fois, au premier repère après 16 min 40 s (deux tiers de 25 min), ajouté au repère de temps. Texte commun (J31, partie commune), donné ici avec son changement.
-Rappel : d'ici la fin de l'entretien, au moins 3 expériences, la personnalité, le projet, les 4 points de l'école (pourquoi une école de commerce, pourquoi celle-ci, ce qu'il apportera, sa connaissance de l'école) et l'actualité doivent tous avoir été abordés. L'entretien continue jusqu'à la consigne de clôture.
-
-Réglage du code : moment = une seule fois, au premier repère à partir de la 23e minute (25 − 2), en plus du repère de temps.
-Il reste 2 minutes : pose maintenant ta question de clôture, seule. Tu diras la phrase de sortie après la réponse du candidat.
-Termine ta prochaine prise de parole par une question.
+Réglage du code : régie du tour 2, voir src/lib/phase-engine.ts (aucun repère pendant l'échange libre, compte à rebours seulement pendant les cartes emlyon et la question Impact de Clermont, message de la moitié, question de clôture tirée au sort).
 
 # ÉCOLE : EM Normandie
 
@@ -856,20 +576,7 @@ Le candidat a déposé son dossier de motivation avant l'entretien.
 Réglage du code : le bloc envoyé au jury est « CONDUITE PROPRE À L'ÉCOLE (elle prime sur la trame générique) », puis la consigne d'ouverture, une ligne vide, puis la conduite ; conductNote passe sur plusieurs lignes (« \n » avant chaque étape et chaque tiret).
 
 ## CONSIGNES ENVOYÉES PENDANT L'ENTRETIEN
-
-Réglage du code : aucune consigne de phase propre à l'EM Normandie (pas de calendrier de phases : phaseScheduleFor renvoie null). Restent les trois consignes communes ci-dessous, avec totalMinutes = 20.
-
-Réglage du code : moment = après chaque réponse du candidat (et, à l'oral, à la fin de chaque prise de parole du jury), jusqu'à la clôture.
-[RÉGIE — consigne interne, ne jamais la lire ni la mentionner]
-Temps écoulé : ${elapsed} min sur ${this.totalMinutes} min.
-Termine ta prochaine prise de parole par une question.
-
-Réglage du code : moment = une seule fois, au premier repère après 13 min 20 s (deux tiers de 20 min), ajouté au repère de temps. Texte commun (J31, partie commune), donné ici avec son changement.
-Rappel : d'ici la fin de l'entretien, au moins 3 expériences, la personnalité, le projet, les 4 points de l'école (pourquoi une école de commerce, pourquoi celle-ci, ce qu'il apportera, sa connaissance de l'école) et l'actualité doivent tous avoir été abordés. L'entretien continue jusqu'à la consigne de clôture.
-
-Réglage du code : moment = une seule fois, au premier repère à partir de la 18e minute (20 − 2), en plus du repère de temps.
-Il reste 2 minutes : pose maintenant ta question de clôture, seule. Tu diras la phrase de sortie après la réponse du candidat.
-Termine ta prochaine prise de parole par une question.
+Réglage du code : régie du tour 2, voir src/lib/phase-engine.ts (aucun repère pendant l'échange libre, compte à rebours seulement pendant les cartes emlyon et la question Impact de Clermont, message de la moitié, question de clôture tirée au sort).
 
 # ÉCOLE : BSB (Burgundy School of Business)
 
@@ -903,17 +610,5 @@ Le candidat a déposé son "Student's Path" avant l'entretien.
 Réglage du code : le bloc envoyé au jury est « CONDUITE PROPRE À L'ÉCOLE (elle prime sur la trame générique) », puis la consigne d'ouverture, une ligne vide, puis la conduite ; conductNote passe sur plusieurs lignes (« \n » avant chaque étape et chaque tiret). Dans le code, la chaîne est entre apostrophes simples (« Student\'s », « l\'entretien ») : le texte ci-dessus est la chaîne telle que le jury la reçoit.
 
 ## CONSIGNES ENVOYÉES PENDANT L'ENTRETIEN
+Réglage du code : régie du tour 2, voir src/lib/phase-engine.ts (aucun repère pendant l'échange libre, compte à rebours seulement pendant les cartes emlyon et la question Impact de Clermont, message de la moitié, question de clôture tirée au sort).
 
-Réglage du code : aucune consigne de phase propre à BSB (pas de calendrier de phases : phaseScheduleFor renvoie null). Restent les trois consignes communes ci-dessous, avec totalMinutes = 30.
-
-Réglage du code : moment = après chaque réponse du candidat (et, à l'oral, à la fin de chaque prise de parole du jury), jusqu'à la clôture.
-[RÉGIE — consigne interne, ne jamais la lire ni la mentionner]
-Temps écoulé : ${elapsed} min sur ${this.totalMinutes} min.
-Termine ta prochaine prise de parole par une question.
-
-Réglage du code : moment = une seule fois, au premier repère après 20 min (deux tiers de 30 min), ajouté au repère de temps. Texte commun (J31, partie commune), donné ici avec son changement.
-Rappel : d'ici la fin de l'entretien, au moins 3 expériences, la personnalité, le projet, les 4 points de l'école (pourquoi une école de commerce, pourquoi celle-ci, ce qu'il apportera, sa connaissance de l'école) et l'actualité doivent tous avoir été abordés. L'entretien continue jusqu'à la consigne de clôture.
-
-Réglage du code : moment = une seule fois, au premier repère à partir de la 28e minute (30 − 2), en plus du repère de temps.
-Il reste 2 minutes : pose maintenant ta question de clôture, seule. Tu diras la phrase de sortie après la réponse du candidat.
-Termine ta prochaine prise de parole par une question.
