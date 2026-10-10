@@ -10,6 +10,8 @@ export type Tirages = {
   clermont_impact?: { axe: string; question: string };
   tbs_article?: string;
   gem_personnage?: string;
+  /** Question de clôture tirée au sort (D4). */
+  question_cloture?: { variante: "A" | "B" | "C"; texte: string };
 };
 
 export function lireTirages(raw: unknown): Tirages {
@@ -33,11 +35,20 @@ export function blocTirages(raw: unknown): string {
   if (t.clermont_impact) l.push(`- Question Impact (axe ${t.clermont_impact.axe}) : « ${t.clermont_impact.question} »`);
   if (t.tbs_article) l.push(`- Article : « ${t.tbs_article} »`);
   if (t.gem_personnage) l.push(`- Personnage de l'interview inversée : ${t.gem_personnage.replace(/\n/g, " ")}`);
+  const cloture = blocClotureTiree(t);
+  if (cloture) l.push(`- ${cloture}`);
   return l.length ? ["CE QUE L'APPLICATION A TIRÉ", ...l].join("\n") : "";
 }
 
-/** Bloc des cartes emlyon pour l'évaluateur ; vide hors emlyon. */
+/** « Question de clôture tirée : A « … » » ; vide si rien n'a été tiré. */
+export function blocClotureTiree(raw: unknown): string {
+  const q = lireTirages(raw).question_cloture;
+  return q ? `Question de clôture tirée : ${q.variante} « ${q.texte} »` : "";
+}
+
+/** Bloc des cartes emlyon et de la question de clôture pour l'évaluateur. */
 export function blocCartesEvaluateur(raw: unknown): string {
   const l = lignesCartesEmlyon(lireTirages(raw));
-  return l.length ? ["Cartes tirées (critère où chaque carte se note) :", ...l].join("\n") : "";
+  const cartes = l.length ? ["Cartes tirées (critère où chaque carte se note) :", ...l].join("\n") : "";
+  return [cartes, blocClotureTiree(raw)].filter(Boolean).join("\n\n");
 }
