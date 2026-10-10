@@ -186,11 +186,11 @@ describe("buildAnswerSendPlan", () => {
     const plan = buildAnswerSendPlan({
       before: ["[RÉGIE] Ta prochaine prise de parole commence par cette phrase…"],
       answer: "Voilà ce que j'ai fait pendant ce stage.",
-      after: ["[RÉGIE] Temps écoulé : 6 min sur 25 min."],
+      after: ["[RÉGIE] Temps écoulé : 6 min."],
     });
     expect(plan).toEqual([
       { kind: "context", text: "[RÉGIE] Ta prochaine prise de parole commence par cette phrase…" },
-      { kind: "context", text: "[RÉGIE] Temps écoulé : 6 min sur 25 min." },
+      { kind: "context", text: "[RÉGIE] Temps écoulé : 6 min." },
       { kind: "user", text: "Voilà ce que j'ai fait pendant ce stage." },
     ]);
   });

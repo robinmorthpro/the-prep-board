@@ -59,7 +59,7 @@ const PHRASES = {
   emlyonFin: "Nous avons terminé avec les 4 cartes et pouvons passer maintenant à la dernière partie de l'entretien, avec un échange plus libre.",
   kedgeAutoportrait: "Voici vos cartes. Commençons par la carte Autoportrait : présentez-vous à partir de ce mot.",
   kedgeCartes: "Merci. Il nous reste trois cartes : Trait d'Action, Trait de Pensée, Trait d'Esprit. Par laquelle voulez-vous commencer ?",
-  kedgeConclusion: "Avez-vous une question à me poser, ou quelque chose à ajouter ?",
+  kedgeConclusion: "L'entretien touche à sa fin, avez-vous quelque chose à ajouter avant de terminer l'entretien ou une question à poser au jury ?",
   essecSituation: "Je vous propose maintenant une petite mise en situation.",
   essecSortie: "Changeons de sujet. Parlons de votre rapport au collectif.",
 } as const;
