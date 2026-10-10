@@ -41,7 +41,16 @@ export const PROFIL_PAR_ECOLE: Record<string, Profil> = {
   "Brest Business School": "passif",
 };
 
-export type Scenario = { id: string; consigne: string; presentationS?: number; impactS?: number; stopMinute?: number; reponseS?: [number, number] };
+export type Scenario = {
+  id: string;
+  consigne: string;
+  presentationS?: number;
+  impactS?: number;
+  stopMinute?: number;
+  reponseS?: [number, number];
+  /** Scénario volontaire : le candidat commence sa présentation dès l'accueil (D17). */
+  commenceDesAccueil?: boolean;
+};
 
 export const SCENARIO_NORMAL: Scenario = { id: "normal", consigne: "" };
 
@@ -60,6 +69,33 @@ export const CAS_LIMITES: { ecole: string; jury: Jury; profil: Profil; graine: n
   { ecole: "Brest Business School", jury: "classique_dur", profil: "bon", graine: 1, scenario: { id: "effleure", consigne: "Une seule fois, en passant, tu mentionnes une association de l'école sans la développer." } },
   { ecole: "ISC Paris", jury: "classique", profil: "bon", graine: 12, scenario: SCENARIO_NORMAL },
   { ecole: "ISC Paris", jury: "classique", profil: "bon", graine: 13, scenario: SCENARIO_NORMAL },
+];
+
+/** Essais éclair (corrections du tour 1). */
+export const ECLAIRS: { ecole: string; jury: Jury; profil: Profil; graine: number; scenario: Scenario }[] = [
+  {
+    ecole: "GEM (Grenoble EM)",
+    jury: "classique",
+    profil: "bon",
+    graine: 1,
+    scenario: {
+      id: "inversee-close-tot",
+      consigne:
+        "Pendant l'interview inversée, tu poses seulement deux questions au jury, puis tu dis : « Merci, j'ai fait le tour, ça répond à mes questions. »",
+    },
+  },
+  {
+    ecole: "EM Strasbourg",
+    jury: "classique",
+    profil: "bon",
+    graine: 1,
+    scenario: {
+      id: "presentation-des-accueil",
+      consigne:
+        "Au premier message du jury (« Est-ce que c'est clair pour vous ? »), tu réponds oui puis tu enchaînes aussitôt sur ton pitch : la réussite dont tu es le plus fier, sans attendre qu'on te le demande.",
+      commenceDesAccueil: true,
+    },
+  },
 ];
 
 /** Durée de la présentation imposée (en secondes), par école (décision du fondateur). */
