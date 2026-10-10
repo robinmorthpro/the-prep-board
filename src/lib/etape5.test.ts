@@ -168,8 +168,9 @@ describe("E. jury et régie", () => {
     e.onJuryMessage("Racontez-moi une réussite personnelle.", 3000);
     // Pitch d'EM Strasbourg en cours : toujours aucun suffixe.
     expect(e.onCandidateAnswer("Mon pitch…", 60_000).join(" ")).not.toContain(END_WITH_QUESTION);
+    // D1 : après le pitch, échange libre sans repère.
     e.onJuryMessage("Merci. Parlons de votre parcours.", 200_000);
-    expect(e.onCandidateAnswer("Je suis en prépa.", 220_000).join(" ")).toContain(END_WITH_QUESTION);
+    expect(e.onCandidateAnswer("Je suis en prépa.", 220_000)).toEqual([]);
   });
 
   it("Montpellier : pas de suffixe au repère qui suit la phrase de passage", () => {
