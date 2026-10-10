@@ -11,6 +11,11 @@ import { controlerClassement, controlerTexte, filtrerVerbatims, insererPercentil
 export const DEFAULT_REDACTEUR_MODEL = "anthropic/claude-sonnet-5";
 
 /** D23 : le rédacteur ne reçoit jamais les pénalités écrites par l'évaluateur. */
+/** R13 : avertissements enregistrés, complétés par l'alerte des mots internes du rédacteur. */
+export function avertissementsAvecAlertes(warnings: unknown[], alertes: string[]): unknown[] {
+  return alertes.length ? [...warnings, { source: "redacteur", mots_internes: alertes }] : warnings;
+}
+
 export function sortieSansPenalites(raw: unknown): unknown {
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) return raw;
   const { penalites: _penalites, ...reste } = raw as Record<string, unknown>;
