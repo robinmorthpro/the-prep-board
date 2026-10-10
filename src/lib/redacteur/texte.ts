@@ -101,13 +101,27 @@ export function insererPercentile(text: string, percentile: number | null, inter
 }
 
 /** Une citation (éventuellement coupée par […]) existe-t-elle mot pour mot dans les sources ? */
+/**
+ * Forme comparable d'une citation et de sa source : sans différence de casse,
+ * de points de suspension (« … » ou « ... ») ni d'espaces autour des guillemets
+ * (« mot » ou "mot"). Les mots eux-mêmes doivent rester identiques.
+ */
+export function formeCitation(s: string): string {
+  return normaliser(s)
+    .toLowerCase()
+    .replace(/…/g, "...")
+    .replace(/"\s+/g, '"')
+    .replace(/\s+"/g, '"');
+}
+
 export function citationTrouvee(citation: string, sources: string): boolean {
+  const source = formeCitation(sources);
   const morceaux = citation
     .split(/\[(?:…|\.\.\.)\]/)
-    .map((m) => normaliser(m).replace(/^[\s.,;:!?…]+|[\s.,;:!?…]+$/g, ""))
+    .map((m) => formeCitation(m).replace(/^[\s.,;:!?]+|[\s.,;:!?]+$/g, "").replace(/^\.+|\.+$/g, ""))
     .filter(Boolean);
   if (!morceaux.length) return true;
-  return morceaux.every((m) => sources.includes(m));
+  return morceaux.every((m) => source.includes(m));
 }
 
 /**
