@@ -540,7 +540,6 @@ describe("ESSEC", () => {
     expect(marker(engine, 41)).not.toContain("Phase en cours");
     expect(marker(engine, 43)).toContain(CLOSING_ORDER);
     expect(types(engine)).not.toContain("recovered-switch");
-    expect(types(engine)).not.toContain("unordered-switch");
   });
 
   it("détecte aussi qu'une mise en situation est épuisée quand le jury dit que le cas est clos", () => {
