@@ -121,6 +121,7 @@ export type EngineEvent = {
   type:
     | "switch-ordered"
     | "early-ordered-dry"
+    | "early-ordered-candidate-closed"
     | "early-ordered-nothing-to-add"
     | "phase-confirmed"
     | "unordered-switch"
@@ -233,7 +234,7 @@ export class PhaseEngine {
     /** L'école a une deuxième réplique imposée (déduit de l'école par défaut). */
     hasSecondReply?: boolean;
     /** Question de clôture tirée au sort (variante A par défaut). */
-    closingQuestion?: string;
+    closingQuestion?: string | undefined;
   }) {
     this.closingQuestion = opts.closingQuestion ?? CLOSING_QUESTIONS.A;
     this.school = opts.school;
@@ -741,7 +742,7 @@ export class PhaseEngine {
     this.eventList.push(phaseId ? { at, type, phaseId } : { at, type });
   }
 
-  private orderEarlySwitch(at: number, type: "early-ordered-dry" | "early-ordered-nothing-to-add") {
+  private orderEarlySwitch(at: number, type: "early-ordered-dry" | "early-ordered-nothing-to-add" | "early-ordered-candidate-closed") {
     if (this.pendingIndex !== null) return;
     const next = this.schedule[this.phaseIndex + 1];
     if (!next) return;

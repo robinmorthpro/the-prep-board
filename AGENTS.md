@@ -21,3 +21,4 @@
 - Module Questions clés et jury tirent dans des listes disjointes issues d'une seule source par école (emlyon, EDHEC, Clermont, ESSEC). Pourquoi : le jury ne pose jamais une question déjà travaillée.
 - Le rédacteur ne note jamais : la ligne du percentile est insérée par le code et les citations VERBATIMS non retrouvées sont retirées par le code. Pourquoi : le percentile affiché doit être exactement celui calculé.
 - Les textes du rédacteur (src/lib/redacteur/textes/) sont copiés octet pour octet et exclus de Prettier. Pourquoi : vérification par empreinte avec les originaux.
+- Le secours « main rendue sans question » passe par `src/lib/main-rendue.ts`, partagé par l'écran d'entretien et le banc. Pourquoi : les deux bloquent le secours exactement dans les mêmes cas.

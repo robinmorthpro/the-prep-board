@@ -12,7 +12,8 @@
  *
  * Usage :
  *   bun scripts/jury-bench-run.ts --plan=pilote [--lot=pilote]
- *   bun scripts/jury-bench-run.ts --plan=principal|limites|stabilite --lot=<nom>
+ *   bun scripts/jury-bench-run.ts --plan=principal|limites|stabilite|eclair --lot=<nom>
+ *   bun scripts/jury-bench-run.ts --plan=renoter --source=tour-1 --scenario=normal --modele=google/gemini-3.7-flash --essai=2
  * Reprise : relancer la même commande ; ce qui est « ok » n'est pas refait.
  *
  * ---------------------------------------------------------------------------
@@ -23,14 +24,23 @@
  *  3. Clermont : axe repéré dans la réponse du candidat ;
  *  4. detectImpactAxis ;
  *  5. emlyon : consigne du tirage des cartes ;
- *  6. clôture (« bonne continuation ») et secours « main rendue sans question » ;
+ *  6. clôture (phrase de sortie) et secours « main rendue sans question » ;
  *  7. EDHEC : fin de la présentation ;
  *  8. Montpellier : message envoyé au jury au clic sur une situation.
  * Tout le reste est importé de `src/`.
  * ---------------------------------------------------------------------------
  */
 import { createClient } from "@supabase/supabase-js";
-import { PhaseEngine, REGIE_PREFIX, isRegieMessage, MONTPELLIER_PASSAGE_RE } from "../src/lib/phase-engine";
+import {
+  CLOSING_QUESTIONS,
+  EXIT_SENTENCE_RE,
+  PhaseEngine,
+  REGIE_PREFIX,
+  isRegieMessage,
+  MONTPELLIER_PASSAGE_RE,
+  pickClosingVariant,
+} from "../src/lib/phase-engine";
+import { MAIN_RENDUE_NUDGE, mainRendueBloquee } from "../src/lib/main-rendue";
 import {
   buildAnswerSendPlan,
   cleanJuryMessage,
@@ -71,6 +81,7 @@ import type { Tirages } from "../src/lib/tirages";
 import {
   CANDIDAT_MODELE,
   CAS_LIMITES,
+  ECLAIRS,
   MODELES_NOTATION,
   REPONSE_FERMEE_S,
   estQuestionFermee,
@@ -231,7 +242,7 @@ async function direCandidat(system: string, historique: Message[], cibleMots: nu
   throw new Error("Candidat : réponse impossible.");
 }
 
-function systemeCandidat(p: ProfilDef, ecole: string, scenario: Scenario, document: string) {
+function systemeCandidat(p: ProfilDef, ecole: string, scenario: Scenario, document: string, article?: string | null) {
   return `Tu es ${p.prenom} ${p.nom}, candidat(e) en ${p.classe}, à l'oral d'admission de ${ecole}. Tu passes un entretien face à un jury.
 
 TON PROFIL (tu ne connais rien d'autre de toi-même) :
@@ -244,7 +255,11 @@ RÈGLES :
 - Tu ne sors jamais de ton rôle. Tu ne commentes jamais l'exercice.
 - Tu n'inventes rien de précis sur l'école (noms de cours, de masters, d'associations, chiffres) au-delà de ce que ton profil te donne.
 - Tu réponds à la dernière prise de parole du jury, y compris aux exercices et mises en situation.
-- Tu respectes la longueur indiquée entre parenthèses à la fin du message du jury.`;
+- Tu respectes la longueur indiquée entre parenthèses à la fin du message du jury.${
+    scenario.commenceDesAccueil
+      ? ""
+      : "\n- Tu attends que le jury t'invite à te présenter avant de le faire : à « Est-ce que c'est clair pour vous ? », tu réponds seulement que c'est clair."
+  }${article ? `\n- Tu commences l'entretien en présentant l'article de presse que tu as choisi : « ${article} ».` : ""}`;
 }
 
 // ------------------------------------------------- documents des écoles
@@ -310,6 +325,7 @@ async function jouerEntretien(plan: Plan, document: { label: string; texte: stri
     planet: clermontVariables.clermont_q_planet,
     profit: clermontVariables.clermont_q_profit,
   };
+  const closingVariant = pickClosingVariant(rnd);
   let tirages: Tirages = {
     ...(emlyonDraw ? { emlyon_cartes: emlyonCartesEtiquetees(emlyonDraw) } : {}),
     ...(kedgeDraw
@@ -327,6 +343,7 @@ async function jouerEntretien(plan: Plan, document: { label: string; texte: stri
     ...(essecTiree ? { essec_situation: essecTiree } : {}),
     ...(chosenArticle ? { tbs_article: chosenArticle.title } : {}),
     ...(gemPersona ? { gem_personnage: gemPersona } : {}),
+    question_cloture: { variante: closingVariant, texte: CLOSING_QUESTIONS[closingVariant] },
   };
   const context = { school: config.school, studentName: `${profil.prenom} ${profil.nom}` };
   const hasDifficulties = difficultiesFor(config).length > 0;
@@ -378,6 +395,7 @@ async function jouerEntretien(plan: Plan, document: { label: string; texte: stri
     totalMinutes,
     startedAt: t0,
     variables: dynamicVariables,
+    closingQuestion: CLOSING_QUESTIONS[closingVariant],
   });
 
   type Turn = { question: string; answer: string; askedAt: string; answeredAt: string };
@@ -488,7 +506,7 @@ async function jouerEntretien(plan: Plan, document: { label: string; texte: stri
       mbsActive = null;
     }
     // RECOPIE partie-8 : clôture et secours « main rendue »
-    if (juryCount > 1 && /bonne continuation/.test(normalized)) {
+    if (juryCount > 1 && EXIT_SENTENCE_RE.test(normalized)) {
       if ((now - t0) / 1000 >= totalMinutes * 60 - 180 || engine.closingSent) {
         closed = true;
         return;
@@ -503,11 +521,17 @@ async function jouerEntretien(plan: Plan, document: { label: string; texte: stri
       juryCount > 1 &&
       !justNudged &&
       !INVITATION_RE.test(normalized) &&
+      !mainRendueBloquee({
+        normalized,
+        phrases: (phaseScheduleFor(config) ?? []).flatMap((step) => [step.phrase, step.earlyPhrase]),
+        closingQuestion: tirages.question_cloture?.texte,
+        closingSent: engine.closingSent,
+        phaseId: engine.currentPhaseId,
+      }) &&
       !(config.school === "EDHEC" && edhecStage !== "after") &&
       !(config.school === "GEM (Grenoble EM)" && turns.length === 0);
     if (eligible) {
-      handRescue =
-        "Tu viens de rendre la main sans poser de question. Pose immédiatement ta question suivante, en une phrase, sans revenir sur ce que tu as déjà dit.";
+      handRescue = MAIN_RENDUE_NUDGE;
     }
   }
 
@@ -591,7 +615,7 @@ async function jouerEntretien(plan: Plan, document: { label: string; texte: stri
     }
   }
 
-  const systeme = systemeCandidat(profil, school, scenario, document.texte);
+  const systeme = systemeCandidat(profil, school, scenario, document.texte, school === "TBS Education" ? chosenArticle?.title ?? null : null);
   const phaseMaxMin = totalMinutes + 10;
   while ((now - t0) / 60_000 <= phaseMaxMin && !closed && socket.readyState <= 1) {
     await waitForJury();
@@ -639,10 +663,10 @@ async function jouerEntretien(plan: Plan, document: { label: string; texte: stri
       !presentationFaite &&
       (kedgeAutoportrait ||
         (school !== "KEDGE" &&
-          // Message d'accueil qui annonce la structure (« Est-ce que c'est clair pour vous ? ») : pas encore la présentation.
-          !/est-ce que c'est clair/.test(demande) &&
-          /presentez|presenter|pitch|presentation|expose/.test(demande) &&
-          turns.length <= 2));
+          // Message d'accueil qui annonce la structure (« Est-ce que c'est clair pour vous ? ») : pas encore la présentation,
+          // sauf scénario volontaire « commence dès l'accueil ».
+          ((scenario.commenceDesAccueil && turns.length === 0) ||
+            (!/est-ce que c'est clair/.test(demande) && /presentez|presenter|pitch|presentation|expose/.test(demande) && turns.length <= 2))));
     if (estPresentation) {
       [a, b] = fourchettePresentation(school, Boolean(config.support), scenario.presentationS);
       presentationFaite = true;
@@ -869,17 +893,23 @@ if (quel === "pilote") {
 } else if (quel === "principal") {
   for (const [ecole, profil] of Object.entries(PROFIL_PAR_ECOLE))
     for (const jury of juries) plans.push({ lot, ecole, jury, profil, scenario: SCENARIO_NORMAL, graine: graineEcole(ecole, 1) });
+} else if (quel === "eclair") {
+  for (const c of ECLAIRS) plans.push({ lot, ecole: c.ecole, jury: c.jury, profil: c.profil, scenario: c.scenario, graine: graineEcole(c.ecole, c.graine) });
 } else if (quel === "limites") {
   for (const c of CAS_LIMITES) plans.push({ lot, ecole: c.ecole, jury: c.jury, profil: c.profil, scenario: c.scenario, graine: graineEcole(c.ecole, c.graine) });
 }
 
 if (quel === "renoter") {
-  // Rejoue la notation (évaluateur + rédacteur) d'un lot existant pour un seul modèle.
+  // Rejoue la notation (évaluateur + rédacteur) d'un lot existant, avec les textes actuels.
+  // D18 : `--essai=2` écrit un lot de résultats distinct (essai_n), sans toucher à l'essai 1.
   const modeles = arg("modele") ? [arg("modele")!] : [...MODELES_NOTATION];
-  const { data: runs } = await db.from("bench_runs").select("*").eq("lot", arg("source") ?? "pilote").order("created_at");
+  const essai = Number(arg("essai") ?? "1");
+  let requete = db.from("bench_runs").select("*").eq("lot", arg("source") ?? "pilote");
+  if (arg("scenario")) requete = requete.eq("scenario", arg("scenario")!);
+  const { data: runs } = await requete.order("created_at");
   for (const r of runs ?? []) {
     console.log(`${r.ecole} / ${r.jury}`);
-    for (const modele of modeles) await noterRun(r.id, r, modele, 1, true);
+    for (const modele of modeles) await noterRun(r.id, r, modele, essai, true);
   }
 } else if (quel === "journal") {
   // Reconstitue le journal d'entretiens déjà joués à partir de la transcription ElevenLabs.

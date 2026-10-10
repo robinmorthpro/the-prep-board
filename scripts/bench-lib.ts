@@ -41,7 +41,16 @@ export const PROFIL_PAR_ECOLE: Record<string, Profil> = {
   "Brest Business School": "passif",
 };
 
-export type Scenario = { id: string; consigne: string; presentationS?: number; impactS?: number; stopMinute?: number; reponseS?: [number, number] };
+export type Scenario = {
+  id: string;
+  consigne: string;
+  presentationS?: number;
+  impactS?: number;
+  stopMinute?: number;
+  reponseS?: [number, number];
+  /** Scénario volontaire : le candidat commence sa présentation dès l'accueil (D17). */
+  commenceDesAccueil?: boolean;
+};
 
 export const SCENARIO_NORMAL: Scenario = { id: "normal", consigne: "" };
 
@@ -60,6 +69,33 @@ export const CAS_LIMITES: { ecole: string; jury: Jury; profil: Profil; graine: n
   { ecole: "Brest Business School", jury: "classique_dur", profil: "bon", graine: 1, scenario: { id: "effleure", consigne: "Une seule fois, en passant, tu mentionnes une association de l'école sans la développer." } },
   { ecole: "ISC Paris", jury: "classique", profil: "bon", graine: 12, scenario: SCENARIO_NORMAL },
   { ecole: "ISC Paris", jury: "classique", profil: "bon", graine: 13, scenario: SCENARIO_NORMAL },
+];
+
+/** Essais éclair (corrections du tour 1). */
+export const ECLAIRS: { ecole: string; jury: Jury; profil: Profil; graine: number; scenario: Scenario }[] = [
+  {
+    ecole: "GEM (Grenoble EM)",
+    jury: "classique",
+    profil: "bon",
+    graine: 1,
+    scenario: {
+      id: "inversee-close-tot",
+      consigne:
+        "Pendant l'interview inversée, tu poses seulement deux questions au jury, puis tu dis : « Merci, j'ai fait le tour, ça répond à mes questions. »",
+    },
+  },
+  {
+    ecole: "EM Strasbourg",
+    jury: "classique",
+    profil: "bon",
+    graine: 1,
+    scenario: {
+      id: "presentation-des-accueil",
+      consigne:
+        "Au premier message du jury (« Est-ce que c'est clair pour vous ? »), tu réponds oui puis tu enchaînes aussitôt sur ton pitch : la réussite dont tu es le plus fier, sans attendre qu'on te le demande.",
+      commenceDesAccueil: true,
+    },
+  },
 ];
 
 /** Durée de la présentation imposée (en secondes), par école (décision du fondateur). */
@@ -166,7 +202,7 @@ export const RECOPIES: { nom: string; debut: string; fin: string; sha256: string
   { nom: "Clermont : axe repéré dans la réponse du candidat", debut: "    if (config.school === \"ESC Clermont BS\" && clermontAxisOfferedRef.current && !clermontAxisSentRef.current) {", fin: "    // emlyon : l'épreuve des 4 cartes est lancée par l'application dès la fin", sha256: "522cdb855f70266684b7465729c2b2cfb199860e56a14b9a5c4d9d604e6b36b2" },
   { nom: "detectImpactAxis", debut: "  function detectImpactAxis(t: string, loose = false): ImpactAxis | null {", fin: "   * Démarrage de l'entretien, déclenché depuis le popup de structure.", sha256: "67d521c789060cc666ce2942d5b5b07f3b20621bb83aa090675c48bf9c29d225" },
   { nom: "emlyon : consigne du tirage des cartes", debut: "  function triggerEmlyonCards() {", fin: "  const agent = useJuryAgent({", sha256: "301b3a155b5cc3c1922f000c3a9c688ab534f3658e6df79eb0569d987e81ea20" },
-  { nom: "clôture et secours « main rendue »", debut: "    if (juryMessageCountRef.current > 1 && /bonne continuation/.test(normalized)) {", fin: "  /** Le candidat vient de finir sa prise de parole : le fil est complété. */", sha256: "a466f2dfe333a707747b71835bad5c4e32838ed0edc3cf4d34dae45e7479cefb" },
+  { nom: "clôture et secours « main rendue »", debut: "    if (juryMessageCountRef.current > 1 && EXIT_SENTENCE_RE.test(normalized)) {", fin: "  /** Le candidat vient de finir sa prise de parole : le fil est complété. */", sha256: "6a459f4accee3a222111bdd611774dd265d1ada7cf162a4a4399a4506330305a" },
   { nom: "Montpellier : message au clic sur une situation", debut: "                            agent.notifyContext(", fin: "                          }}", sha256: "94f8bb4c70daaf769158be001a897f80721be81ee8895e09ca4be273b23779bc" },
   { nom: "EDHEC : fin de la présentation", debut: "    if (juryMessageCountRef.current > 1 && /nous passons maintenant a l'entretien individuel/.test(normalized)) {", fin: "    if (juryMessageCountRef.current > 1 && /nous avons termine avec les (4|quatre) cartes/.test(normalized)) setCardsStage(\"after\");", sha256: "711e148e40006b04badb2228d954692a842656e0a9999c1aef430a064caeda8f" },
 ];
