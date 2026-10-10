@@ -74,7 +74,7 @@ import { INSEEC_IMAGES } from "../src/lib/inseec-kb";
 import { drawMontpellierSituations } from "../src/lib/montpellier-kb";
 import { supportForSchool, PROJECTIVE_CV, PROJECTIVE_CV_SCHOOL } from "../src/lib/supports-kb";
 import { evaluerSession } from "../src/lib/evaluateur/run";
-import { redigerFeedbackSession } from "../src/lib/redacteur/run";
+import { avertissementsAvecAlertes, redigerFeedbackSession } from "../src/lib/redacteur/run";
 import { callEvaluator, createRunIdFetch, type Message } from "../src/lib/evaluateur/gateway";
 import { contextBlock } from "../src/lib/ai.functions";
 import type { Tirages } from "../src/lib/tirages";
