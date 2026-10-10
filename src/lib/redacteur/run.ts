@@ -1,6 +1,6 @@
 // Rédaction du feedback à partir d'une évaluation « ok ». Serveur uniquement.
 import { BAREME } from "../evaluateur/bareme";
-import { callEvaluator, createRunIdFetch, DEFAULT_EVAL_MODEL, type Message } from "../evaluateur/gateway";
+import { callEvaluator, createRunIdFetch, type Message } from "../evaluateur/gateway";
 import { repliques, transcriptionHorodatee, type TourEnregistre } from "../evaluateur/transcription";
 import type { PenaliteAppliquee } from "../evaluateur/calcul";
 import { systemPromptRedacteur } from "./textes";
