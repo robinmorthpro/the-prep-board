@@ -24,6 +24,9 @@ const at = (minutes: number) => T0 + Math.round(minutes * 60_000);
 
 const LONG = "Je pense que cet élément est important parce qu'il montre comment j'ai construit mon raisonnement avec des exemples concrets et une vraie prise de recul sur mon parcours.";
 const DRY = "Je ne sais pas.";
+/** Question du candidat pendant l'interview inversée GEM. */
+const QUESTION = "Comment se passe une journée type dans votre métier ?";
+const CLOSING_ORDER = "Pose maintenant, mot pour mot, la question de clôture";
 
 function engineFor(school: string, totalMinutes: number) {
   return new PhaseEngine({
@@ -195,7 +198,8 @@ const SCHOOLS: Array<{
     dueMinute: 35,
     phrase: PHRASES.essecSituation,
     orderSnippet: "mise en situation finale",
-    ongoingSnippet: "Échange libre",
+    // D1 : aucun repère pendant l'échange libre.
+    ongoingSnippet: "",
     targetStepId: "essec-situation-1",
   },
 ];
@@ -379,7 +383,8 @@ describe("cas 4b — trois réponses sèches consécutives", () => {
 });
 
 describe("bascule du jury sans ordre de l'application", () => {
-  for (const m of MONOLOGUES) {
+  // D21 : TBS reconnaît la bascule faite par le jury, sans rattrapage.
+  for (const m of MONOLOGUES.filter((item) => item.school !== "TBS Education")) {
     it(`${m.name} : rattrapée deux fois, puis confirmée sans malus`, () => {
       const engine = engineFor(m.school, m.totalMinutes);
       m.open(engine);
@@ -519,17 +524,21 @@ describe("ESSEC", () => {
     marker(engine, 35.2);
     jury(engine, PHRASES.essecSituation, 35.5);
     expect(marker(engine, 42)).not.toContain("question de clôture");
-    expect(marker(engine, 43)).toContain("pose maintenant ta question de clôture");
+    expect(marker(engine, 43)).toContain(CLOSING_ORDER);
   });
 
-  it("sortie anticipée du jury : consigne de clôture immédiate", () => {
+  it("D27 — sortie anticipée du jury à plus de 2 min de la fin : retour à l'échange libre, sans clôture", () => {
     const engine = engineFor("ESSEC", 45);
     open(engine);
     marker(engine, 35.2);
     jury(engine, PHRASES.essecSituation, 35.5);
     marker(engine, 39);
-    expect(jury(engine, PHRASES.essecSortie, 40).join(" ")).toContain("question de clôture");
-    expect(engine.closingSent).toBe(true);
+    expect(jury(engine, PHRASES.essecSortie, 40)).toEqual([]);
+    expect(engine.closingSent).toBe(false);
+    expect(engine.currentPhaseId).toBe("essec-sortie");
+    // Échange libre : aucun repère, puis clôture normale à Y−2.
+    expect(marker(engine, 41)).toBe("");
+    expect(marker(engine, 43)).toContain(CLOSING_ORDER);
     expect(types(engine)).not.toContain("recovered-switch");
     expect(types(engine)).not.toContain("unordered-switch");
   });
@@ -539,8 +548,9 @@ describe("ESSEC", () => {
     open(engine);
     marker(engine, 35.2);
     jury(engine, PHRASES.essecSituation, 35.5);
-    expect(jury(engine, "Le cas est clos.", 40).join(" ")).toContain("question de clôture");
-    expect(engine.closingSent).toBe(true);
+    expect(jury(engine, "Le cas est clos.", 40)).toEqual([]);
+    expect(engine.currentPhaseId).toBe("essec-sortie");
+    expect(engine.closingSent).toBe(false);
   });
 
   it("n'a qu'une seule phase de mise en situation, sans malus de durée", () => {
@@ -573,12 +583,12 @@ describe("ESSEC", () => {
   });
 });
 
-describe("rappel des thèmes aux deux tiers", () => {
-  it("est envoyé une seule fois dans un entretien classique", () => {
+describe("D2 — message de la moitié de l'échange libre", () => {
+  it("est envoyé une seule fois dans un entretien classique, seul", () => {
     const engine = engineFor("ICN Business School", 30);
-    expect(marker(engine, 19)).not.toContain(THEME_REMINDER);
-    expect(marker(engine, 20)).toContain(THEME_REMINDER);
-    expect(marker(engine, 21)).not.toContain(THEME_REMINDER);
+    expect(marker(engine, 14)).toBe("");
+    expect(answer(engine, LONG, 15)).toEqual([`[RÉGIE — consigne interne, ne jamais la lire ni la mentionner] ${THEME_REMINDER}`]);
+    expect(marker(engine, 16)).toBe("");
   });
 
   it("utilise le rappel spécifique à Montpellier", () => {
@@ -587,28 +597,28 @@ describe("rappel des thèmes aux deux tiers", () => {
     expect(marker(engine, 18)).not.toContain(MONTPELLIER_THEME_REMINDER);
   });
 
-  it("part vers 23 minutes à l'ESSEC, aux deux tiers des 35 minutes d'échange libre", () => {
+  it("part à la moitié des 35 minutes d'échange libre à l'ESSEC", () => {
     const engine = engineFor("ESSEC", 45);
-    expect(marker(engine, 23)).not.toContain(THEME_REMINDER);
-    expect(marker(engine, 23.4)).toContain(THEME_REMINDER);
+    expect(marker(engine, 17.4)).not.toContain(THEME_REMINDER);
+    expect(marker(engine, 17.6)).toContain(THEME_REMINDER);
   });
 
-  it("part aux deux tiers du traitement des cartes KEDGE", () => {
+  it("part à la moitié du traitement des cartes KEDGE", () => {
     const engine = engineFor("KEDGE", 30);
     jury(engine, "Bienvenue.", 0);
     engine.markPhaseStart("kedge-autoportrait", at(4));
     marker(engine, 7.1);
     jury(engine, PHRASES.kedgeCartes, 7.2);
-    expect(marker(engine, 20)).not.toContain(THEME_REMINDER);
-    expect(marker(engine, 23)).toContain(THEME_REMINDER);
+    expect(marker(engine, 18.5)).not.toContain(THEME_REMINDER);
+    expect(marker(engine, 18.7)).toContain(THEME_REMINDER);
   });
 
   it.each([
-    ["TBS Education", 20, 15, "tbs-libre", PHRASES.tbs],
-    ["ESC Clermont BS", 30, 25, "clermont-discussion", PHRASES.clermontDiscussion],
-    ["GEM (Grenoble EM)", 30, 25, "gem-classique", PHRASES.gemClassique],
-    ["emlyon", 28, 25.4, "emlyon-libre", PHRASES.emlyonFin],
-  ] as const)("attend les deux tiers de l'échange libre pour %s", (school, total, minute, phaseId, phrase) => {
+    ["TBS Education", 20, 12.6, "tbs-libre", PHRASES.tbs],
+    ["ESC Clermont BS", 30, 22.6, "clermont-discussion", PHRASES.clermontDiscussion],
+    ["GEM (Grenoble EM)", 30, 22.6, "gem-classique", PHRASES.gemClassique],
+    ["emlyon", 28, 24.1, "emlyon-libre", PHRASES.emlyonFin],
+  ] as const)("attend la moitié de l'échange libre pour %s", (school, total, minute, phaseId, phrase) => {
     const engine = engineFor(school, total);
     jury(engine, "Ouverture.", 0);
     engine.markPhaseStart(phaseId, at(total === 28 ? 20 : total === 30 ? 15 : 5));
@@ -637,8 +647,8 @@ describe("GEM", () => {
   it("flux normal : minute de restitution à +9, échange classique à +10", () => {
     const engine = engineFor("GEM (Grenoble EM)", 30);
     openInversee(engine);
-    expect(marker(engine, 15)).not.toContain("Il vous reste une minute");
-    expect(marker(engine, 16.3)).toContain("Il vous reste une minute");
+    expect(marker(engine, 15, QUESTION)).not.toContain("Il vous reste une minute");
+    expect(marker(engine, 16.3, QUESTION)).toContain("Il vous reste une minute");
     jury(engine, PHRASES.gemMinute, 16.5);
     expect(marker(engine, 17.6)).toContain("échange plus classique");
   });
@@ -661,12 +671,25 @@ describe("GEM", () => {
   it("minute de restitution jamais détectée : classique après inversée + 10", () => {
     const engine = engineFor("GEM (Grenoble EM)", 30);
     openInversee(engine);
-    marker(engine, 16.3);
+    marker(engine, 16.3, QUESTION);
     // Le repère de la minute n'est sauté qu'après une minute de retard : le
     // candidat ne perd pas sa synthèse quand les tours de parole sont longs.
-    expect(marker(engine, 17.3)).not.toContain("l'échange classique");
+    expect(marker(engine, 17.3, QUESTION)).not.toContain("l'échange classique");
     // Au 2e repère non suivi d'effet, le garde-fou considère la partie commencée.
-    expect(marker(engine, 18.3)).toContain("l'échange classique");
+    expect(marker(engine, 18.3, QUESTION)).toContain("l'échange classique");
+  });
+
+  it.each([
+    "Merci, j'ai fait le tour, ça répond à mes questions.",
+    "D'accord, c'est très clair pour moi.",
+  ])("D7 — le candidat clôt l'interview inversée (« %s ») : synthèse tout de suite", (text) => {
+    const engine = engineFor("GEM (Grenoble EM)", 30);
+    openInversee(engine);
+    marker(engine, 8, QUESTION);
+    jury(engine, "Je dirige une équipe de cinq personnes.", 8.5);
+    const order = answer(engine, text, 9).join(" ");
+    expect(order).toContain("C'est le moment de faire votre synthèse.");
+    expect(types(engine)).toContain("early-ordered-candidate-closed");
   });
 });
 
@@ -682,7 +705,7 @@ describe("KEDGE", () => {
     expect(engine.timings.some((t) => t.phaseId === "kedge-cartes")).toBe(false);
     expect(marker(engine, 26)).not.toContain("question de clôture");
     expect(marker(engine, 27.2)).not.toContain("moment de passer à la conclusion");
-    expect(marker(engine, 28)).toContain("Il reste 2 minutes");
+    expect(marker(engine, 28)).toContain(CLOSING_ORDER);
     const block = measuredPhaseDurationsBlock("KEDGE", engine.timings);
     expect(block).not.toContain("Traitement des cartes");
   });
@@ -693,8 +716,9 @@ describe("clôture", () => {
     const engine = engineFor("TBS Education", 20);
     jury(engine, "Vous avez choisi l'article, nous vous écoutons.", 0);
     const first = answer(engine, LONG, 18);
-    expect(first).toHaveLength(2);
-    expect(first[1]).toContain("Il reste 2 minutes");
+    expect(first).toHaveLength(1);
+    expect(first[0]).toContain(CLOSING_ORDER);
+    expect(first[0]).not.toContain("Il reste 2 minutes");
     expect(engine.closingSent).toBe(true);
     const second = answer(engine, LONG, 19);
     expect(second).toHaveLength(1);
@@ -803,17 +827,19 @@ describe("type du repère : ongoing vs switch", () => {
     jury(engine, "Vous avez choisi l'article, nous vous écoutons.", 0);
     const text = marker(engine, 2);
     expect(engine.lastMarker?.kind).toBe("ongoing");
-    expect(engine.lastMarker?.timeOnly).toBe("Temps écoulé : 2 min sur 20 min.");
+    expect(engine.lastMarker?.timeOnly).toBe("Temps écoulé : 2 min.");
     expect(text).toContain("INTERDICTION DE CHANGER DE PARTIE");
     expect(text).toContain("Ta prochaine prise de parole doit être une relance sur ce sujet, jamais une transition.");
-    expect(text).toContain("Temps écoulé : 2 min sur 20 min.");
+    expect(text).toContain("Temps écoulé : 2 min.");
+    expect(text).not.toContain("min sur");
   });
 
-  it("ajoute le temps restant arrondi au supérieur quand l'échéance suivante est calculable", () => {
+  it("D1 — n'ajoute plus le compte à rebours hors cartes emlyon", () => {
     const engine = engineFor("TBS Education", 20);
     jury(engine, "Vous avez choisi l'article, nous vous écoutons.", 0);
     const text = marker(engine, 2.2);
-    expect(text).toContain("Tu es en « l'article de presse » encore environ 3 min.");
+    expect(text).toContain("Tu es en « l'article de presse ».");
+    expect(text).not.toContain("encore environ");
   });
 
   it("annonce « switch » quand la bascule est ordonnée", () => {
@@ -1152,7 +1178,7 @@ describe("repère pré-envoyé (markerAtJuryTurnEnd)", () => {
     const engine = engineFor("TBS Education", 20);
     jury(engine, "Vous avez choisi l'article, nous vous écoutons.", 0);
     const updates = engine.markerAtJuryTurnEnd(at(18));
-    expect(updates.join(" ")).toContain("Il reste 2 minutes");
+    expect(updates.join(" ")).toContain(CLOSING_ORDER);
     expect(updates.join(" ")).not.toContain("deuxième partie");
     expect(types(engine)).toContain("closing");
     expect(engine.closingSent).toBe(true);
@@ -1290,8 +1316,9 @@ function simulate(
     }
     t += answerSeconds * 1_000;
     if (closingDeadline === null && Math.floor((t - T0) / 60_000) >= sim.totalMinutes - 2) closingDeadline = t;
-    if (mode === "oral") engine.onCandidateAnswerAfterPreSentMarker(LONG, t);
-    else engine.onCandidateAnswer(LONG, t);
+    const reply = engine.currentPhaseId === "gem-inversee" ? QUESTION : LONG;
+    if (mode === "oral") engine.onCandidateAnswerAfterPreSentMarker(reply, t);
+    else engine.onCandidateAnswer(reply, t);
     drain();
     if (t - T0 > (sim.totalMinutes + 6) * 60_000) break;
   }
@@ -1469,9 +1496,9 @@ describe("clôture due pendant la réponse du candidat (oral)", () => {
     engine.markerAtJuryTurnEnd(at(17.5));
     expect(engine.closingSent).toBe(false);
     const updates = engine.onCandidateAnswerAfterPreSentMarker(LONG, at(18.2)).join(" ");
-    expect(updates).toContain("Il reste 2 minutes");
+    expect(updates).toContain(CLOSING_ORDER);
     expect(engine.closingSent).toBe(true);
-    expect(engine.onCandidateAnswerAfterPreSentMarker(LONG, at(19)).join(" ")).not.toContain("Il reste 2 minutes");
+    expect(engine.onCandidateAnswerAfterPreSentMarker(LONG, at(19)).join(" ")).not.toContain(CLOSING_ORDER);
     expect(types(engine).filter((type) => type === "closing")).toHaveLength(1);
   });
 });
