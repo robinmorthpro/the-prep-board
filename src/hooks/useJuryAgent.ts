@@ -34,6 +34,8 @@ type StartOptions = {
    * l'appelant : on ignore alors les éventuels échos côté ElevenLabs.
    */
   textOnly?: boolean;
+  /** Question de clôture tirée au sort pour cet entretien. */
+  closingQuestion?: string;
 };
 
 
@@ -376,6 +378,7 @@ export function useJuryAgent({
         totalMinutes: opts.totalMinutes ?? 0,
         startedAt: Date.now(),
         variables: opts.dynamicVariables,
+        closingQuestion: opts.closingQuestion,
       });
 
       try {
@@ -564,6 +567,12 @@ function logEngineEvent(event: EngineEvent) {
       break;
     case "closing":
       console.info("[jury vocal] clôture demandée au jury");
+      break;
+    case "early-ordered-candidate-closed":
+      console.info(`[jury vocal] le candidat a clos l'interview inversée : synthèse ordonnée${suffix}`);
+      break;
+    case "second-reply-skipped":
+      console.info("[jury vocal] le candidat s'est déjà présenté : deuxième réplique non attendue");
       break;
   }
 }
