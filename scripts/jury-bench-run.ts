@@ -12,7 +12,8 @@
  *
  * Usage :
  *   bun scripts/jury-bench-run.ts --plan=pilote [--lot=pilote]
- *   bun scripts/jury-bench-run.ts --plan=principal|limites|stabilite|eclair --lot=<nom>
+ *   bun scripts/jury-bench-run.ts --plan=principal|limites|stabilite|eclair|tour2 --lot=<nom> [--modele=<évaluateur>]
+ *   bun scripts/jury-bench-run.ts --plan=stabilite --source=tour-2 --modele=google/gemini-3.7-flash --essais=2,3
  *   bun scripts/jury-bench-run.ts --plan=renoter --source=tour-1 --scenario=normal --modele=google/gemini-3.7-flash --essai=2
  * Reprise : relancer la même commande ; ce qui est « ok » n'est pas refait.
  *
@@ -83,6 +84,8 @@ import {
   CAS_LIMITES,
   ECLAIRS,
   essaiRenotation,
+  essaisStabilite,
+  plansTour2,
   feedbackSurListe,
   redacteurPourPlan,
   regleOuvertureCandidat,
@@ -897,6 +900,8 @@ const quel = arg("plan") ?? "pilote";
 const redacteur = redacteurPourPlan(quel, arg("redacteur"));
 const feedbackSur = feedbackSurListe(arg("feedback-sur"));
 const redacteurPour = (runId: string) => (feedbackSur && !feedbackSur.has(runId) ? null : redacteur);
+// Tour 2 : « --modele » limite aussi la notation des entretiens joués et la stabilité (une seule notation).
+const modelesNotation: string[] = arg("modele") ? [arg("modele")!] : [...MODELES_NOTATION];
 const lot = arg("lot") ?? quel;
 const plans: Plan[] = [];
 const juries: Jury[] = ["classique", "classique_dur"];
@@ -907,6 +912,8 @@ if (quel === "pilote") {
     for (const jury of juries) plans.push({ lot, ecole, jury, profil, scenario: SCENARIO_NORMAL, graine: graineEcole(ecole, 1) });
 } else if (quel === "eclair") {
   for (const c of ECLAIRS) plans.push({ lot, ecole: c.ecole, jury: c.jury, profil: c.profil, scenario: c.scenario, graine: graineEcole(c.ecole, c.graine) });
+} else if (quel === "tour2") {
+  for (const c of plansTour2()) plans.push({ lot, ecole: c.ecole, jury: c.jury, profil: c.profil, scenario: c.scenario, graine: graineEcole(c.ecole, c.graine) });
 } else if (quel === "limites") {
   for (const c of CAS_LIMITES) plans.push({ lot, ecole: c.ecole, jury: c.jury, profil: c.profil, scenario: c.scenario, graine: graineEcole(c.ecole, c.graine) });
 }
@@ -965,7 +972,7 @@ if (quel === "renoter") {
   const { data: runs } = await db.from("bench_runs").select("*").eq("lot", source).eq("statut", "ok").order("created_at");
   const vus = new Set<string>();
   const choisis = (runs ?? []).filter((r) => !vus.has(r.ecole) && vus.add(r.ecole)).slice(0, 10);
-  for (const r of choisis) for (const m of MODELES_NOTATION) for (const n of [2, 3, 4]) await noterRun(r.id, r, m, n, null);
+  for (const r of choisis) for (const m of modelesNotation) for (const n of essaisStabilite(arg("essais"))) await noterRun(r.id, r, m, n, null);
 } else {
   const docs = new Map<string, { label: string; texte: string }>();
   for (const p of plans) {
@@ -973,7 +980,7 @@ if (quel === "renoter") {
     try {
       const run = await executer(p, docs);
       if (run)
-        for (const m of MODELES_NOTATION) {
+        for (const m of modelesNotation) {
           try {
             await noterRun(run["id"], run, m, 1, redacteurPour(run["id"]));
           } catch (e) {
