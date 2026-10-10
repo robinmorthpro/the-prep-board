@@ -147,8 +147,11 @@ export async function evaluerSession(
     const accepte = v0.ok ? { sortie: v0.sortie, retires: [] } : i === 1 && !v0.bloquant ? { sortie: v0.sortieNettoyee, retires: v0.retires } : null;
     if (accepte) {
       const v = accepte;
-      const { penalites, controles } = mesurerPenalites(grilleKey, (session.phase_timings ?? []) as TimingEnregistre[]);
       const interrompu = v.sortie.entretien_interrompu || session.status !== "done";
+      // D12 : entretien interrompu → aucune pénalité de durée calculée ni transmise.
+      const { penalites, controles } = interrompu
+        ? { penalites: [], controles: [] }
+        : mesurerPenalites(grilleKey, (session.phase_timings ?? []) as TimingEnregistre[]);
       const r = calculerNote(grille, v.sortie.niveaux, { interrompu, penalites });
       return {
         ...base,

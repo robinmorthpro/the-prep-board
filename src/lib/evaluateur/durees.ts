@@ -18,20 +18,30 @@ export type ControleDuree = {
 };
 
 /**
- * Partie du barème → mesures enregistrées par l'app (phase_timings), par ordre
- * de préférence : le monologue du candidat d'abord, puis la phase chronométrée.
+ * Partie du barème → mesures enregistrées par l'app (phase_timings) :
+ * `parole` = temps de parole du candidat seul (monologue), `partie` = toute la
+ * partie, relances du jury comprises. Le champ « mesure » du barème décide (D11).
  */
-const MESURES: Record<string, Record<string, string[]>> = {
-  tbs: { article: ["tbs-article-monologue", "tbs-article"] },
-  gem: { expose: ["gem-expose-monologue", "gem-expose"], interview_inversee: ["gem-inversee"] },
-  emlyon: { cartes: ["emlyon-cartes"] },
-  kedge: { autoportrait: ["kedge-autoportrait-monologue", "kedge-autoportrait"] },
-  edhec: { presentation_mot: ["edhec-presentation"] },
-  essec: { presentation_longue: ["essec-presentation"] },
-  clermont: { question_impact: ["clermont-impact"] },
-  inseec: { image: ["inseec-image-monologue", "inseec-image"] },
-  em_strasbourg: { pitch: ["em-strasbourg-pitch"] },
+const MESURES: Record<string, Record<string, { parole?: string; partie?: string }>> = {
+  tbs: { article: { parole: "tbs-article-monologue", partie: "tbs-article" } },
+  gem: { expose: { parole: "gem-expose-monologue", partie: "gem-expose" }, interview_inversee: { partie: "gem-inversee" } },
+  emlyon: { cartes: { partie: "emlyon-cartes" } },
+  kedge: { autoportrait: { parole: "kedge-autoportrait-monologue", partie: "kedge-autoportrait" } },
+  edhec: { presentation_mot: { parole: "edhec-presentation" } },
+  essec: { presentation_longue: { parole: "essec-presentation" } },
+  clermont: { question_impact: { partie: "clermont-impact" } },
+  inseec: { image: { parole: "inseec-image-monologue", partie: "inseec-image" } },
+  em_strasbourg: { pitch: { parole: "em-strasbourg-pitch" } },
 };
+
+/** Identifiants à lire, dans l'ordre, selon le champ « mesure » du barème. */
+export function mesuresPour(grille: string, partie: string, mesure: string | undefined): string[] {
+  const m = MESURES[grille]?.[partie];
+  if (!m) return [];
+  const paroleSeule = (mesure ?? "").startsWith("temps de parole du candidat seul");
+  const ordre = paroleSeule ? [m.parole, m.partie] : [m.partie, m.parole];
+  return ordre.filter((id): id is string => Boolean(id));
+}
 
 /** Durées mesurées par le code et pénalités qui en découlent. Dans le doute : aucune pénalité. */
 export function mesurerPenalites(
@@ -42,7 +52,7 @@ export function mesurerPenalites(
   const controles: ControleDuree[] = [];
   const parties = new Set<string>();
   for (const s of seuils) {
-    const ids = MESURES[grille]?.[s.partie] ?? [];
+    const ids = mesuresPour(grille, s.partie, s.mesure);
     const timing = ids
       .map((id) => timings.find((t) => t.phaseId === id && t.transitionDetectedAt))
       .find(Boolean);
