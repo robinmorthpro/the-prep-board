@@ -40,7 +40,7 @@ describe("références officielles du jury — étape 3", () => {
   });
 
   it("conserve la référence des 15 écoles octet pour octet", async () => {
-    expect(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(reference)).then((b) => Buffer.from(b).toString("hex"))).toBe("73f490992523b9a049e5de3259af138c33b7511782bd608f4baade44a7aac6b4");
+    expect(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(reference)).then((b) => Buffer.from(b).toString("hex"))).toBe("b075c0c14ae9effce7668d985c8a425187c8e9d08ba14265e94627defec6d569");
     expect(Object.keys(expected)).toHaveLength(15);
   });
 

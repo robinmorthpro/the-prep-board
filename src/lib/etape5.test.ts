@@ -20,7 +20,7 @@ import { EDHEC_WORDS, EDHEC_WORDS_JURY, EDHEC_WORDS_MODULE, pickEdhecWord } from
 import { CLERMONT_IMPACT_JURY, CLERMONT_IMPACT_MODULE } from "./esc-clermont-kb";
 import { buildClermontImpactVariables } from "./school-interviews";
 import { buildJuryAgentPrompt } from "./elevenlabs-agent-prompt";
-import { PhaseEngine, END_WITH_QUESTION } from "./phase-engine";
+import { PhaseEngine, END_WITH_QUESTION, closingInstruction } from "./phase-engine";
 import { monologueMeasuresFor, phaseScheduleFor, getSchoolInterviewConfig } from "./school-interviews";
 import { KEY_QUESTIONS } from "./vivaldi-data";
 
@@ -200,12 +200,12 @@ describe("E. jury et régie", () => {
     expect(e.events.some((ev) => ev.type === "early-ordered-dry")).toBe(false);
   });
 
-  it("ESSEC : sortie anticipée avec question de clôture, pas de seconde consigne", () => {
+  it("ESSEC : sortie du cas en fin d'entretien avec une question improvisée → consigne de clôture (question tirée)", () => {
     const e = engine("ESSEC");
     e.onJuryMessage("Bonjour.", 1000);
     e.markPhaseStart("essec-situation-1", 35 * 60_000, "Mise en situation");
     const out = e.onJuryMessage("Merci. La mise en situation est terminée. Qu'aimeriez-vous ajouter pour conclure ?", 38 * 60_000);
-    expect(out).toEqual([]);
+    expect(out).toEqual([closingInstruction(e.closingQuestionText)]);
     expect(e.closingSent).toBe(true);
   });
 

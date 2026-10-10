@@ -81,7 +81,10 @@ export const EDHEC_PASSAGE_RE = /nous passons maintenant a l'entretien individue
 
 /** GEM : le candidat clôt lui-même l'interview inversée (texte normalisé). */
 export const GEM_FIN_INVERSEE_RE =
-  /je n'ai plus de questions?|je n'ai pas d'autres? questions?|j'ai fait le tour|ca repond a mes questions|cela repond a mes questions|je pense avoir fait le tour|c'est tout pour moi|je n'ai plus d'autres? questions?|plus de questions? (?:a vous poser|pour vous)/;
+  /(?:je n'ai|j'ai) plus (?:de |d'autres? )?questions?\b(?! sur)|je n'ai pas d'autres? questions?\b(?! sur)|j'ai fait le tour|ca repond a mes questions|cela repond a mes questions|je pense avoir fait le tour|c'est tout pour moi|c'est bon pour moi/;
+
+/** Parties dont le repère garde le compte à rebours « encore environ N min ». */
+const COUNTDOWN_STEPS = ["emlyon-cartes", "clermont-impact"];
 
 /** Réponse assez longue pour être déjà la présentation (environ 60 mots). */
 export const PRESENTATION_MIN_WORDS = 60;
@@ -146,7 +149,7 @@ const ADD_QUESTION_RE = /autre chose a ajouter|d'autres questions a me poser/;
  */
 const SKIP_GRACE_MS = 60_000;
 const IMPROVISED_SWITCH_RE =
-  /(?:^|[.!?,]\s*|:\s*)(?:merci[,.]?\s*)?(?:passons (?:maintenant )?a (?:la|l'|notre|votre)|nous passons (?:maintenant )?a|parlons maintenant de|deuxieme partie|partie 2|la discussion)\b/;
+  /(?:^|[.!?,]\s*|:\s*)(?:merci[,.]?\s*)?(?:passons (?:maintenant )?a (?:la|l'|notre|votre)|nous passons (?:maintenant )?a|parlons maintenant de|changeons de sujet|deuxieme partie|partie 2|la discussion)\b/;
 
 /** Amorce de passage : le jury annonce qu'il quitte la partie en cours. */
 const TRANSITION_LEAD =
@@ -316,12 +319,14 @@ export class PhaseEngine {
       // ESSEC, dans les 2 dernières minutes : le jury a déjà dit « La mise en
       // situation est terminée » avec une question, ou a déjà posé la question
       // tirée : aucune seconde consigne de clôture.
+      // Seule la question TIRÉE compte comme posée ; une autre question du jury
+      // n'en tient pas lieu : la consigne de clôture part alors (question tirée).
       const asked = this.containsClosingQuestion(normalized);
-      if (this.school === "ESSEC" && ((/mise en situation est terminee/.test(normalized) && text.includes("?")) || asked)) {
-        this.markClosingWithoutInstruction(at, asked);
+      if (asked) {
+        this.markClosingWithoutInstruction(at, true);
         return [];
       }
-      return this.closeImmediately(at, asked);
+      return this.closeImmediately(at, false);
     }
     let detectedIndex: number | null = null;
     let improvised = false;
@@ -331,12 +336,14 @@ export class PhaseEngine {
     } else {
       const nextIndex = this.phaseIndex + 1;
       const next = this.schedule[nextIndex];
-      // R1 : depuis une partie libre, seule la regex `detect` d'une partie
-      // suivante à `allowEarly` vaut bascule avant l'échéance ; le reste est ignoré.
+      // R1 : sans ordre en attente, depuis une partie libre ou une partie que le
+      // jury peut quitter seul (`allowEarlyPhrase`), seule la regex `detect` d'une
+      // partie suivante à `allowEarly` vaut bascule ; les formules génériques
+      // (« Passons à… », « Parlons maintenant de… ») sont ignorées, avant comme
+      // après l'échéance : c'est l'ordre de l'application qui fait foi.
       const freeNow = Boolean(currentStep?.freeExchange || currentStep?.silentMarkers);
       const nextDue = next ? this.dueAtFor(next) : null;
-      const beforeDue = nextDue === null || at < nextDue;
-      const genericAllowed = !(freeNow && beforeDue);
+      const genericAllowed = !freeNow && !currentStep?.allowEarlyPhrase;
       if (next?.allowEarly && (next.detect?.test(normalized) || (genericAllowed && TRANSITION_PART_RE.test(normalized))))
         detectedIndex = nextIndex;
       if (
@@ -916,9 +923,10 @@ export class PhaseEngine {
     if (!step) return "";
     const next = this.schedule[index + 1];
     const dueAt = next ? this.dueAtFor(next) : null;
-    // Compte à rebours : seulement pour les cartes emlyon (D1).
+    // Compte à rebours : seulement pour les cartes emlyon (D1) et la question
+    // Impact de Clermont, dont la conduite s'appuie sur « encore environ 2 min ».
     const remaining =
-      dueAt === null || step.id !== "emlyon-cartes" ? "" : ` encore environ ${Math.max(1, Math.ceil((dueAt - at) / 60_000))} min`;
+      dueAt === null || !COUNTDOWN_STEPS.includes(step.id) ? "" : ` encore environ ${Math.max(1, Math.ceil((dueAt - at) / 60_000))} min`;
     const frame = step.freeExchange
       ? `Tu es dans « ${step.topic ?? step.name} »${remaining} : ne change pas de partie.`
       : `INTERDICTION DE CHANGER DE PARTIE. Tu es en « ${step.topic ?? step.name} »${remaining}. ${step.ongoingRule ?? "Ta prochaine prise de parole doit être une relance sur ce sujet, jamais une transition."}`;
