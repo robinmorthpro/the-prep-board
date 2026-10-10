@@ -16,7 +16,7 @@ export function mainRendueBloquee(opts: {
   /** Phrases imposées du calendrier de l'école (transitions). */
   phrases?: (string | undefined)[];
   /** Question de clôture tirée. */
-  closingQuestion?: string;
+  closingQuestion?: string | undefined;
   /** La consigne de clôture est partie. */
   closingSent?: boolean;
   /** Partie en cours (moteur de phases). */
