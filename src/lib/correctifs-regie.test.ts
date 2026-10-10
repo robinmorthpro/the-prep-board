@@ -181,10 +181,18 @@ describe("R5 — ESSEC : conduite alignée sur D27", () => {
     expect(e.closingSent).toBe(false);
     expect(marker(e, 43)).toContain(CLOSING_QUESTIONS.C);
   });
-  it("même phrase à 43 min 30 : clôture sans seconde consigne", () => {
+  it("même phrase à 43 min 30 : la question du jury n'est pas la question tirée → consigne de clôture (question tirée)", () => {
     const e = engineFor("ESSEC", 45);
     ESSEC_CAS(e);
-    expect(jury(e, "Merci. La mise en situation est terminée. Qu'avez-vous retenu de votre stage ?", 43.5)).toEqual([]);
+    expect(jury(e, "Merci. La mise en situation est terminée. Qu'avez-vous retenu de votre stage ?", 43.5)).toEqual([
+      closingInstruction(CLOSING_QUESTIONS.A),
+    ]);
+    expect(e.closingSent).toBe(true);
+  });
+  it("à 43 min 30, le jury pose lui-même la question tirée : aucune seconde consigne", () => {
+    const e = engineFor("ESSEC", 45);
+    ESSEC_CAS(e);
+    expect(jury(e, `Merci. La mise en situation est terminée. ${CLOSING_QUESTIONS.A}`, 43.5)).toEqual([]);
     expect(e.closingSent).toBe(true);
   });
 });
