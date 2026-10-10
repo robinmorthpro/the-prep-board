@@ -35,10 +35,10 @@ import {
   CLOSING_QUESTIONS,
   EXIT_SENTENCE_RE,
   PhaseEngine,
+  PRESENTATION_MIN_WORDS,
   REGIE_PREFIX,
   isRegieMessage,
   MONTPELLIER_PASSAGE_RE,
-  pickClosingVariant,
 } from "../src/lib/phase-engine";
 import { MAIN_RENDUE_NUDGE, mainRendueBloquee } from "../src/lib/main-rendue";
 import {
@@ -82,6 +82,11 @@ import {
   CANDIDAT_MODELE,
   CAS_LIMITES,
   ECLAIRS,
+  essaiRenotation,
+  feedbackSurListe,
+  redacteurPourPlan,
+  regleOuvertureCandidat,
+  tirerClotureBanc,
   MODELES_NOTATION,
   REPONSE_FERMEE_S,
   estQuestionFermee,
@@ -255,11 +260,7 @@ RÈGLES :
 - Tu ne sors jamais de ton rôle. Tu ne commentes jamais l'exercice.
 - Tu n'inventes rien de précis sur l'école (noms de cours, de masters, d'associations, chiffres) au-delà de ce que ton profil te donne.
 - Tu réponds à la dernière prise de parole du jury, y compris aux exercices et mises en situation.
-- Tu respectes la longueur indiquée entre parenthèses à la fin du message du jury.${
-    scenario.commenceDesAccueil
-      ? ""
-      : "\n- Tu attends que le jury t'invite à te présenter avant de le faire : à « Est-ce que c'est clair pour vous ? », tu réponds seulement que c'est clair."
-  }${article ? `\n- Tu commences l'entretien en présentant l'article de presse que tu as choisi : « ${article} ».` : ""}`;
+- Tu respectes la longueur indiquée entre parenthèses à la fin du message du jury.${regleOuvertureCandidat(scenario, article)}`;
 }
 
 // ------------------------------------------------- documents des écoles
@@ -325,7 +326,8 @@ async function jouerEntretien(plan: Plan, document: { label: string; texte: stri
     planet: clermontVariables.clermont_q_planet,
     profit: clermontVariables.clermont_q_profit,
   };
-  const closingVariant = pickClosingVariant(rnd);
+  // R11 : générateur séparé ; les autres tirages restent ceux du tour 1.
+  const closingVariant = tirerClotureBanc(plan.graine);
   let tirages: Tirages = {
     ...(emlyonDraw ? { emlyon_cartes: emlyonCartesEtiquetees(emlyonDraw) } : {}),
     ...(kedgeDraw
@@ -568,7 +570,10 @@ async function jouerEntretien(plan: Plan, document: { label: string; texte: stri
     }
     const answeredPresentation = emlyonPresentationAsked && /presentez-vous|presentation/.test(normalizeInterviewText(question));
     if (config.school === "emlyon" && !emlyonTriggered) {
-      if (answeredPresentation || (!emlyonPresentationAsked && turns.length >= 2)) emlyonArmed = true;
+      // RECOPIE partie-8 : emlyon : armement des cartes
+      // D8 : la réponse à « c'est clair ? » est déjà la présentation (≥ 60 mots).
+      const alreadyPresented = turns.length === 1 && text.trim().split(/\s+/).length >= PRESENTATION_MIN_WORDS;
+      if (answeredPresentation || alreadyPresented || (!emlyonPresentationAsked && turns.length >= 2)) emlyonArmed = true;
       if (emlyonArmed) {
         // Mode écrit : 5 s de silence à partir de l'envoi, sur l'horloge virtuelle.
         // Mode écrit : 5 s de silence à partir de l'envoi (horloge virtuelle).
@@ -751,7 +756,8 @@ async function jouerEntretien(plan: Plan, document: { label: string; texte: stri
 }
 
 // ---------------------------------------------------------- notation
-async function noterRun(runId: string, run: Record<string, any>, modele: string, essai: number, avecRedaction: boolean) {
+async function noterRun(runId: string, run: Record<string, any>, modele: string, essai: number, redacteur: string | null) {
+  const avecRedaction = redacteur !== null;
   const { data: deja } = await db.from("bench_results").select("id,status").eq("run_id", runId).eq("modele", modele).eq("essai_n", essai).maybeSingle();
   if (deja?.status === "ok" && !process.argv.includes("--force")) return;
   const p = PROFILS[run["profil"] as Profil];
@@ -775,6 +781,7 @@ async function noterRun(runId: string, run: Record<string, any>, modele: string,
   await sleep(1500);
   let feedback = "";
   let retirees: unknown[] = [];
+  let alertes: string[] = [];
   let dureeRed = 0;
   const pr = `red:${runId}:${modele}:${essai}`;
   if (avecRedaction && ev.status === "ok") {
@@ -789,9 +796,10 @@ async function noterRun(runId: string, run: Record<string, any>, modele: string,
         experiences: p.experiences.map((e) => `${e.titre} (${e.dates}) : ${e.anecdotes}`).join("\n"),
         newsTopics: p.actualite,
       });
-      const r = await redigerFeedbackSession(session, { ...ev, id: crypto.randomUUID() } as never, contexte, { model: modele });
+      const r = await redigerFeedbackSession(session, { ...ev, id: crypto.randomUUID() } as never, contexte, { model: redacteur! });
       feedback = r.debrief;
       retirees = r.citations_retirees;
+      alertes = r.alertes;
       dureeRed = r.duration_ms;
     } catch (e) {
       erreurs.push(`Rédacteur : ${e instanceof Error ? e.message : String(e)}`);
@@ -813,7 +821,8 @@ async function noterRun(runId: string, run: Record<string, any>, modele: string,
     criterion_points: ev.criterion_points as never,
     unrated_criteria: ev.unrated_criteria as never,
     penalties: ev.penalties as never,
-    warnings: ev.warnings as never,
+    // R13 : alerte des mots internes du rédacteur, avec les avertissements.
+    warnings: avertissementsAvecAlertes((ev.warnings ?? []) as unknown[], alertes) as never,
     score_20: ev.score_20,
     final_score: ev.final_score,
     percentile: ev.percentile,
@@ -885,6 +894,9 @@ async function executer(plan: Plan, docCache: Map<string, { label: string; texte
 
 // ---------------------------------------------------------- lancement
 const quel = arg("plan") ?? "pilote";
+const redacteur = redacteurPourPlan(quel, arg("redacteur"));
+const feedbackSur = feedbackSurListe(arg("feedback-sur"));
+const redacteurPour = (runId: string) => (feedbackSur && !feedbackSur.has(runId) ? null : redacteur);
 const lot = arg("lot") ?? quel;
 const plans: Plan[] = [];
 const juries: Jury[] = ["classique", "classique_dur"];
@@ -903,13 +915,13 @@ if (quel === "renoter") {
   // Rejoue la notation (évaluateur + rédacteur) d'un lot existant, avec les textes actuels.
   // D18 : `--essai=2` écrit un lot de résultats distinct (essai_n), sans toucher à l'essai 1.
   const modeles = arg("modele") ? [arg("modele")!] : [...MODELES_NOTATION];
-  const essai = Number(arg("essai") ?? "1");
+  const essai = essaiRenotation(arg("essai"));
   let requete = db.from("bench_runs").select("*").eq("lot", arg("source") ?? "pilote");
   if (arg("scenario")) requete = requete.eq("scenario", arg("scenario")!);
   const { data: runs } = await requete.order("created_at");
   for (const r of runs ?? []) {
     console.log(`${r.ecole} / ${r.jury}`);
-    for (const modele of modeles) await noterRun(r.id, r, modele, essai, true);
+    for (const modele of modeles) await noterRun(r.id, r, modele, essai, redacteurPour(r.id));
   }
 } else if (quel === "journal") {
   // Reconstitue le journal d'entretiens déjà joués à partir de la transcription ElevenLabs.
@@ -953,7 +965,7 @@ if (quel === "renoter") {
   const { data: runs } = await db.from("bench_runs").select("*").eq("lot", source).eq("statut", "ok").order("created_at");
   const vus = new Set<string>();
   const choisis = (runs ?? []).filter((r) => !vus.has(r.ecole) && vus.add(r.ecole)).slice(0, 10);
-  for (const r of choisis) for (const m of MODELES_NOTATION) for (const n of [2, 3, 4]) await noterRun(r.id, r, m, n, false);
+  for (const r of choisis) for (const m of MODELES_NOTATION) for (const n of [2, 3, 4]) await noterRun(r.id, r, m, n, null);
 } else {
   const docs = new Map<string, { label: string; texte: string }>();
   for (const p of plans) {
@@ -963,7 +975,7 @@ if (quel === "renoter") {
       if (run)
         for (const m of MODELES_NOTATION) {
           try {
-            await noterRun(run["id"], run, m, 1, true);
+            await noterRun(run["id"], run, m, 1, redacteurPour(run["id"]));
           } catch (e) {
             const msg = `Notation ${m} : ${e instanceof Error ? e.message : String(e)}`;
             console.log(`  ${msg}`);
