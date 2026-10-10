@@ -131,10 +131,10 @@ describe("D16 — modèles et chaîne en échec", () => {
 });
 
 describe("D19 — critères du rédacteur dans l'ordre du bloc de l'école", () => {
-  it("GEM commence par l'exposé, Montpellier n'a ni École ni Projet", () => {
-    const gem = criteresPourEcole("GEM (Grenoble EM)");
-    expect(gem.indexOf("Exposé")).toBeGreaterThanOrEqual(0);
-    expect(gem.indexOf("Exposé")).toBeLessThan(gem.indexOf("Clarté"));
+  it("ordre commun respecté, Montpellier n'a ni École ni Projet (critères propres dans le bloc de l'école)", () => {
+    const titres = (s: string) => s.match(/^## .*/gm) ?? [];
+    expect(titres(criteresPourEcole("GEM (Grenoble EM)"))[0]).toBe("## Présentation");
+    expect(titres(criteresPourEcole("GEM (Grenoble EM)")).at(-1)).toBe("## Clarté");
     const mbs = criteresPourEcole("Montpellier BS");
     expect(mbs).not.toMatch(/^## École$/m);
     expect(mbs).not.toMatch(/^## Projet professionnel$/m);
