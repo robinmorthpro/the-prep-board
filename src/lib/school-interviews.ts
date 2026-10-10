@@ -593,7 +593,7 @@ const CONFIGS: SchoolInterviewConfig[] = [
     requiresUpload: false,
     useHouseJuryPrompt: true,
     conductNote:
-      "CONDUITE SPÉCIFIQUE EMLYON :\n1) Présentation initiale : la présentation est libre, sans minutage strict. Une brève relance est possible mais le creusement approfondi n'a pas lieu ici : l'essentiel du creusement se fait dans les deux parties suivantes.\n2) Transition vers les 4 cartes : le lancement du tirage te sera dicté mot pour mot par l'application au bon moment : tu ne l'anticipes jamais et tu n'annonces jamais les cartes avant. Une fois le tirage lancé, annonce que le candidat va tirer 4 cartes, une par thème (Expérience, Personnalité, Projet, Créativité), puis énonce les 4 questions suivantes telles quelles, sans les reformuler ni les résumer à l'avance :\nExpérience : {{card_experience}}\nPersonnalité : {{card_personnalite}}\nProjet : {{card_projet}}\nCréativité : {{card_creativite}}\nLe candidat choisit lui-même l'ordre de traitement des 4 questions et le temps passé sur chacune (à titre indicatif 3 à 4 minutes chacune). Pour chaque carte : le candidat répond ; tu peux ensuite engager un court échange sur cette réponse, de une à trois questions maximum (un exemple, un pourquoi, un rebond sur un de ses mots) — tous les jurys ne le font pas, varie d'une carte à l'autre. Puis tu lui rends la main en demandant : « Quelle carte souhaitez-vous prendre ensuite ? » Tu ne passes jamais toi-même à la carte suivante : c'est toujours le candidat qui choisit. Veille à ce que les quatre cartes puissent être traitées dans la quinzaine de minutes prévue. Si une réponse est très courte, creuse une fois avant de le laisser continuer. Tu ne coupes jamais le candidat : tu attends toujours la fin de sa réponse pour parler, même si elle dépasse largement 4 minutes.\n3) Transition obligatoire vers la dernière partie : une fois les 4 questions traitées, ou dès que l'application t'ordonne la bascule dans un repère de temps, annonce clairement que les 4 cartes sont terminées et que vous passez à la dernière partie de l'entretien, un échange plus libre, par exemple : « Nous avons terminé avec les 4 cartes et pouvons passer maintenant à la dernière partie de l'entretien, avec un échange plus libre. » Tu peux la formuler à ta manière, mais tu ne l'annonces qu'une seule fois, à ce moment précis.\n4) Dernière partie, échange libre (8 à 10 minutes visées) : échange libre plus court et plus léger qu'un format classique standard. Dans la partie libre, vérifie les thèmes que les cartes n'ont pas couverts : toujours l'école et une question d'actualité ou de culture générale, puis les thèmes restés incomplets. Comme pour TOUTES les écoles sans exception, tu termines impérativement par une question de clôture de la famille C avant de clore l'entretien — ne l'oublie jamais, y compris sur ce format resserré. Le candidat s'est déjà présenté en tout début d'entretien : ne lui redemande jamais de se présenter (n'utilise jamais P1 « Présentez-vous » ni P2 « Vous avez cinq minutes pour vous présenter ») ; ouvre directement un thème encore incomplet.\n5) Interdits spécifiques à cette école, valables sur tout l'entretien : aucune question personnelle indiscrète, aucune question sur la prépa ou le lycée d'origine du candidat, jamais de question du type « à quelles autres écoles avez-vous candidaté » ou « préférez-vous l'emlyon ou telle autre école ». Exception pour l'épreuve des cartes : tu énonces chaque carte tirée exactement telle qu'elle est écrite, même si elle touche à la politique, à la religion, à la famille ou à la mort, et tu laisses le candidat y répondre librement.\n6) Garde-fou : si le candidat se ferme, se dévalorise ou perd le fil deux fois de suite, repasse immédiatement en attitude bienveillante et ramène-le sur un terrain plus facile, quel que soit le niveau de difficulté joué et la partie en cours.",
+      "CONDUITE SPÉCIFIQUE EMLYON :\n1) Présentation initiale : la présentation est libre, sans minutage strict. Une brève relance est possible mais le creusement approfondi n'a pas lieu ici : l'essentiel du creusement se fait dans les deux parties suivantes.\n2) Transition vers les 4 cartes : le lancement du tirage te sera dicté mot pour mot par l'application au bon moment : tu ne l'anticipes jamais et tu n'annonces jamais les cartes avant. Une fois le tirage lancé, annonce que le candidat va tirer 4 cartes, une par thème (Expérience, Personnalité, Projet, Créativité), puis énonce les 4 questions suivantes telles quelles, sans les reformuler ni les résumer à l'avance :\nExpérience : {{card_experience}}\nPersonnalité : {{card_personnalite}}\nProjet : {{card_projet}}\nCréativité : {{card_creativite}}\nLe candidat choisit lui-même l'ordre de traitement des 4 questions et le temps passé sur chacune (à titre indicatif 3 à 4 minutes chacune). Pour chaque carte : le candidat répond ; tu peux ensuite engager un court échange sur cette réponse, de une à trois questions maximum (un exemple, un pourquoi, un rebond sur un de ses mots) — tous les jurys ne le font pas, varie d'une carte à l'autre. Puis tu lui rends la main en demandant : « Quelle carte souhaitez-vous prendre ensuite ? » Tu ne passes jamais toi-même à la carte suivante : c'est toujours le candidat qui choisit. Veille à ce que les quatre cartes puissent être traitées dans la quinzaine de minutes prévue. Si une réponse est très courte, creuse une fois avant de le laisser continuer. Tu ne coupes jamais le candidat : tu attends toujours la fin de sa réponse pour parler, même si elle dépasse largement 4 minutes.\n3) Transition obligatoire vers la dernière partie : une fois les 4 questions traitées, ou dès que l'application t'ordonne la bascule dans un repère de temps, annonce clairement que les 4 cartes sont terminées et que vous passez à la dernière partie de l'entretien, un échange plus libre, par exemple : « Nous avons terminé avec les 4 cartes et pouvons passer maintenant à la dernière partie de l'entretien, avec un échange plus libre. » Tu peux la formuler à ta manière, mais tu ne l'annonces qu'une seule fois, à ce moment précis.\n4) Dernière partie, échange libre (8 à 10 minutes visées) : échange libre plus court et plus léger qu'un format classique standard. Dans la partie libre, vérifie les thèmes que les cartes n'ont pas couverts : toujours l'école et une question d'actualité ou de culture générale, puis les thèmes restés incomplets. Comme pour TOUTES les écoles sans exception, tu termines impérativement par la question de clôture de la règle commune (CLÔTURE) avant de clore l'entretien — ne l'oublie jamais, y compris sur ce format resserré. Le candidat s'est déjà présenté en tout début d'entretien : ne lui redemande jamais de se présenter (n'utilise jamais P1 « Présentez-vous » ni P2 « Vous avez cinq minutes pour vous présenter ») ; ouvre directement un thème encore incomplet.\n5) Interdits spécifiques à cette école, valables sur tout l'entretien : aucune question personnelle indiscrète, aucune question sur la prépa ou le lycée d'origine du candidat, jamais de question du type « à quelles autres écoles avez-vous candidaté » ou « préférez-vous l'emlyon ou telle autre école ». Exception pour l'épreuve des cartes : tu énonces chaque carte tirée exactement telle qu'elle est écrite, même si elle touche à la politique, à la religion, à la famille ou à la mort, et tu laisses le candidat y répondre librement.\n6) Garde-fou : si le candidat se ferme, se dévalorise ou perd le fil deux fois de suite, repasse immédiatement en attitude bienveillante et ramène-le sur un terrain plus facile, quel que soit le niveau de difficulté joué et la partie en cours.",
     debriefSupplement:
       "CONTEXTE SPÉCIFIQUE EMLYON — BARÈME ÉTENDU (/23 AVANT CONVERSION) : cet entretien comporte une présentation initiale, l'épreuve des 4 cartes, puis un échange libre. Il interdit structurellement toute question sur la prépa ou le lycée d'origine du candidat, ainsi que sur les autres écoles auxquelles il candidate.\n\nC1 (présentation initiale) : évaluée normalement sur la présentation d'ouverture, avec la même grille que le format classique. Sa brièveté relative (2-3 minutes visées plutôt que 1min30-2min30) ne doit jamais être pénalisée en soi : c'est la contrainte du format.\n\nC10 — L'épreuve des cartes (/3), critère ad hoc propre à l'emlyon :\n- N1 (0 pt) : ne sait pas répondre au sujet de la carte — reste sec, hors-sujet, ou incapable de développer, quel que soit le thème.\n- N2 (1 pt) : répond au sujet mais de façon factuelle ou générique, sans se raccrocher à sa propre expérience, personnalité ou projet ; aucun lien passé-présent-futur ; la Créativité reste hors-sol.\n- N3 (2 pts) : réussit la personnalisation (se raccroche à soi, tend une perche, construit un lien passé-présent-futur) sur 2 ou 3 des 4 cartes ; les autres restent plus factuelles ou moins abouties ; temps globalement équilibré.\n- N4 (3 pts) : réussit la personnalisation sur les 4 cartes sans exception, sans point faible identifiable, y compris sur la Créativité ramenée vers lui-même, l'école ou son projet ; temps parfaitement équilibré.\n\nIMPORTANT — les 4 cartes alimentent aussi les autres critères, contrairement à la mise en situation ESSEC qui reste isolée : le contenu des réponses du candidat sur les 4 cartes est une matière à part entière pour C2 (récit de ses expériences, carte Expérience notamment), C3 (recul sur soi), C4 (projet professionnel, carte Projet) et C9 (curiosité et ouverture, notamment carte Créativité) — ne te limite donc pas à la présentation et à l'échange libre pour noter ces critères. C10 évalue spécifiquement la capacité de personnalisation transversale sur les 4 cartes ; C2-C9 évaluent le contenu de chaque réponse selon leur grille habituelle, où qu'il apparaisse dans l'entretien.\n\nC5 (connaissance de l'école) : l'interdiction de questionner sur l'établissement d'origine n'empêche pas le candidat de mobiliser sa connaissance de l'emlyon, notamment en dernière partie. C5 est toujours évalué : l'école est abordée dans la partie libre.\n\nC6 (tenue à la contradiction) : si le jury relance ou contredit le candidat sur la carte Créativité, juge uniquement sa capacité à tenir sans se fermer, avec aisance — jamais le fond de sa réponse, qui relève de C10.\n\nCALCUL DU SCORE FINAL EMLYON : additionne les points obtenus sur C1-C9 (/20, malus classiques déjà appliqués) et sur C10 (/3), tu obtiens un score brut sur 23. Convertis ce score brut sur 23 en équivalent sur 20 par un produit en croix : score_sur_20 = score_brut × 20 ÷ 23. Applique ensuite ce score sur 20 à la MÊME table de conversion en percentile que celle donnée plus haut dans la grille officielle (INTERVIEW_GRID) — n'utilise aucune autre table. Fais ce calcul avec précision et vérifie-le avant de l'utiliser.\n\nATTENTION FORMAT DE SORTIE : insère la sous-section \"### 2. L'épreuve des cartes\" immédiatement après \"### 1. La présentation\" et avant \"### 3. Le récit de ses expériences\". La numérotation va de 1 à 10 sans interruption : 1 la présentation, 2 l'épreuve des cartes, 3 le récit de ses expériences, 4 le recul sur soi, 5 le projet professionnel, 6 la connaissance de l'école, 7 la tenue à la contradiction, 8 la conduite de l'échange, 9 la clarté du discours, 10 la curiosité et l'ouverture d'esprit.",
     phases: [
@@ -711,7 +711,7 @@ Gestion du temps : le moment de la synthèse te sera indiqué par l'application,
 7. PARTIE 3 — L'ÉCHANGE CLASSIQUE : c'est la première fois dans cet oral que le candidat se présente personnellement à toi (les parties 1 et 2 ne portaient pas sur lui) : la règle « ne redemande jamais de présentation », utilisée pour d'autres écoles à format spécial, NE S'APPLIQUE PAS ici — tu DOIS lui demander de se présenter, en le prévenant du format court : « Vous avez environ une minute trente pour vous présenter, allez-y quand vous êtes prêt. »
 Format très court (15 minutes) : couvre tous les thèmes restants, plus vite, dont une question d'actualité ou de culture générale. Utilise la banque de questions, à l'exception des familles suivantes qui restent FERMÉES sur cette école : famille R (région), famille M (management), ainsi que E5, F5 et D3 à D7.
 Tu peux, une fois, relier une réponse du candidat à ce qu'il a évoqué en partie 1 (son sujet d'actualité) ou en partie 2 (un thème creusé pendant l'interview inversée) s'il y a un lien naturel — c'est la seule porte qui puisse venir des parties précédentes.
-La clôture et la phrase de sortie restent celles de la trame générique (une question de la famille C, puis « Merci pour cet échange, et bonne continuation dans vos oraux. »).`,
+La clôture et la phrase de sortie restent celles de la règle commune (CLÔTURE).`,
     phases: [
       {
         label: "Exposé",
@@ -798,7 +798,7 @@ Tu ne poses que la question de l'axe choisi, tu ne mentionnes jamais les deux au
 
 6) Partie 3 « La Discussion » (environ 18 minutes) : entretien classique standard sur le parcours, la personnalité, la motivation et le projet du candidat, et l'école. La question Impact tient lieu de question d'ouverture : pas de question d'actualité supplémentaire. Utilise la banque de questions et le principe des portes du tronc commun. Le candidat s'est déjà présenté en partie 1 : ne lui redemande jamais de se présenter (jamais P1 « Présentez-vous » ni P2 « Vous avez cinq minutes pour vous présenter »). Tu peux, une fois, relier une réponse de la partie 2 à son projet ou à sa motivation si le lien est naturel (« vous disiez tout à l'heure que [...], est-ce cohérent avec ce que vous cherchez ici ? »), sans jamais forcer ce rapprochement.
 
-7) Clôture standard du tronc commun (question de la famille C, puis phrase verbatim finale).`,
+7) Clôture standard de la règle commune (CLÔTURE).`,
     phases: [
       {
         label: "Le Pitch",
@@ -957,7 +957,7 @@ ATTENTION FORMAT DE SORTIE : dans le feedback détaillé, place la section de C1
 
 5. DURÉE PAR SITUATION : environ 5 minutes maximum. À l'approche de cette limite, même si le sujet n'est pas totalement épuisé, propose de passer à la suite avec la phrase verbatim : « Merci pour ce récit. On peut passer à une autre situation si vous le souhaitez. »
 
-6. CLÔTURE : après environ 25 minutes au total (présentation + situations), avant la question de clôture, pose une question d'actualité ou de culture générale. Pose ensuite la question de clôture obligatoire : « Avez-vous une question à me poser, ou quelque chose à ajouter ? » puis conclus, verbatim : « Merci pour cet échange, et bonne continuation dans vos oraux. »`,
+6. CLÔTURE : après environ 25 minutes au total (présentation + situations), avant la question de clôture, pose une question d'actualité ou de culture générale. Pose ensuite la question de clôture de la règle commune (CLÔTURE).`,
     debriefSupplement: `SUPPLÉMENT SPÉCIFIQUE — MONTPELLIER BS (présentation + situations choisies par le candidat)
 
 Format : présentation initiale courte (1-2 min), puis partie « situations » où le candidat choisit lui-même, parmi une sélection affichée à l'écran, la situation comportementale qu'il souhaite développer — contrairement à un entretien classique où c'est le jury qui pose les questions. Le contenu de fond reste cependant celui d'un entretien classique : ce n'est que la manière de déclencher chaque sujet qui change.
@@ -991,7 +991,7 @@ ATTENTION FORMAT DE SORTIE : C4 et C5 sont structurellement absents — ne produ
 
 4) Partie 2 (~20 minutes) : entretien classique standard, banque de questions et principe des portes du tronc commun. Le candidat s'est déjà présenté en partie 1 : ne lui redemande jamais de se présenter (jamais P1 « Présentez-vous » ni P2 « Vous avez cinq minutes pour vous présenter »). Ouvre directement une autre porte (projet professionnel, école, une autre expérience, actualité...).
 
-5) Clôture standard du tronc commun (question de la famille C, puis phrase verbatim finale).`,
+5) Clôture standard de la règle commune (CLÔTURE).`,
     phases: [
       {
         label: "Temps non détaillé par les sources",
@@ -1055,7 +1055,7 @@ ATTENTION FORMAT DE SORTIE : dans la section « Feedback détaillé », titre la
 1) Ouverture et lancement : le premier message est déjà construit et envoyé par l'application. Dis-le tel quel. Dès que le candidat confirme qu'il est prêt, dis exactement : « Parfait, commençons. Voici vos cinq cartes. » puis enchaîne directement sur l'annonce des cartes (point 2). Ne te présente jamais comme le jury, ne dis jamais « nous » ni n'évoque plusieurs examinateurs, et ne reformule pas la durée ou le principe déjà donnés par le message d'ouverture.
 
 2) Annonce des cartes (environ 1 minute) : les cinq cartes sont déjà tirées par l'application et te sont fournies ci-dessous en variables — tu ne tires JAMAIS toi-même, tu n'inventes aucune carte, tu n'as aucune liste interne. Annonce-les toutes à la suite, dans cet ordre, comme si tu venais de les retourner (ne dis jamais qu'elles viennent d'une liste) :
-« Carte Trait d'Union : {{kedge_odd}}. » — précise en une phrase que cet objectif de développement durable sert de fil conducteur pour tout l'entretien, sans donner plus d'explication.
+« Carte Trait d'Union : {{kedge_odd}}. » — précise en une phrase que cet objectif de développement durable sert de fil conducteur pour tout l'entretien, sans donner plus d'explication. Au moins une fois dans l'entretien, tu relies une de tes questions à cet objectif.
 « Carte Autoportrait : {{kedge_autoportrait}}. »
 « Carte Trait d'Action : {{kedge_action}}. »
 « Carte Trait de Pensée : {{kedge_pensee}}. »
@@ -1075,7 +1075,7 @@ Dès qu'une carte a ouvert une perche personnelle claire, tu peux enchaîner sur
 Couverture obligatoire du projet professionnel et de la connaissance de l'école : comme dans un entretien classique, ces deux sujets doivent être abordés avant la fin de l'entretien. Si le candidat ne les amène pas spontanément par une perche, pose-lui une question directe à ce sujet — typiquement vers la fin de ce point, ou au plus tard en conclusion. Leur absence n'est jamais acceptable. Une question d'actualité ou de culture générale est posée au cours de l'entretien.
 Si les trois cartes sont épuisées avant la fin du temps imparti et que le projet professionnel et la connaissance de l'école ont déjà été abordés, enchaîne sur d'autres sujets classiques de motivation non encore couverts plutôt que de t'arrêter en avance.
 
-6) Conclusion (quand l'application t'ordonne la bascule vers la conclusion dans un repère de temps) : pose une question de clôture ouverte : « Avez-vous une question à me poser, ou quelque chose à ajouter ? » Réponds brièvement si le candidat en pose une, sans avis personnel engageant sur KEDGE, puis conclus, verbatim : « Merci pour cet échange, et bonne continuation dans vos oraux. » N'ajoute rien après.
+6) Conclusion (quand l'application t'ordonne la bascule vers la conclusion dans un repère de temps) : pose la question de clôture de la règle commune (CLÔTURE). Réponds brièvement si le candidat en pose une, sans avis personnel engageant sur KEDGE, puis dis la phrase de sortie de la règle commune (CLÔTURE).
 
 7) Durée : la seule contrainte est le total de l'entretien, environ 30 minutes (± 2). La présentation Autoportrait dure environ 3 minutes et c'est l'application qui t'indique quand passer aux cartes ; le traitement des cartes n'a pas de durée imposée, il s'étend jusqu'à ce que l'application t'ordonne la conclusion.`,
   phases: [
@@ -1246,8 +1246,10 @@ export type PhaseStep = {
    * alors ADD_QUESTION au texte du repère.
    */
   addQuestionAllowed?: boolean;
-  /** Phase éligible au rappel des thèmes. */
+  /** Phase d'échange libre : aucun repère, message de la moitié. */
   freeExchange?: boolean;
+  /** Partie libre hors calcul de la moitié (ESSEC après le cas) : aucun repère. */
+  silentMarkers?: boolean;
   /** Ce repère impose une phrase seule ou un silence : aucun suffixe-question. */
   omitEndWithQuestion?: boolean;
   /** Ne jamais forcer cette bascule après deux repères (emlyon). */
@@ -1341,7 +1343,6 @@ const P_GEM_MINUTE_EARLY = "Très bien. C'est le moment de faire votre synthèse
 const P_GEM_CLASSIQUE = "Merci. Nous passons maintenant à un échange plus classique.";
 const P_EMLYON_LIBRE = "Nous avons terminé avec les 4 cartes et pouvons passer maintenant à la dernière partie de l'entretien, avec un échange plus libre.";
 const P_KEDGE_CARTES = "Merci. Il nous reste trois cartes : Trait d'Action, Trait de Pensée, Trait d'Esprit. Par laquelle voulez-vous commencer ?";
-const P_KEDGE_CLOTURE = "Avez-vous une question à me poser, ou quelque chose à ajouter ?";
 
 /**
  * Consigne de bascule. Le verbatim n'est exigé que sur les textes de CONTENU
@@ -1371,6 +1372,8 @@ const PHASE_SCHEDULES: Record<string, PhaseStep[]> = {
       ongoing: `Reste sur l'article : ne change pas de phase. ${RELANCES} Axes à couvrir sur cet article : le journal et le contexte, sans résumé ; les enjeux et les parties prenantes ; un avis appuyé par un fait à lui ; pourquoi cet article.`,
       dryEarlySwitch: true,
       addQuestionAllowed: true,
+      // D21 : le jury peut passer de lui-même à la partie 2 (demande de présentation).
+      allowEarlyPhrase: true,
       timing: { plannedMinutes: 5, criterion: "l'article de presse", penalizeEarly: true },
     },
     {
@@ -1380,7 +1383,7 @@ const PHASE_SCHEDULES: Record<string, PhaseStep[]> = {
       startMinute: 5,
       phrase: P_TBS_LIBRE,
       switchInstruction: switchTo("la partie 2, l'échange libre", P_TBS_LIBRE, "Invite le candidat à se présenter."),
-      detect: /deuxieme partie|premiere partie sur l'article est terminee|echange plus libre/,
+      detect: /deuxieme partie|premiere partie sur l'article est terminee|echange plus libre|presentez-vous|vous presenter/,
       allowEarly: true,
       ongoing: FREE_EXCHANGE,
     },
@@ -1450,7 +1453,7 @@ const PHASE_SCHEDULES: Record<string, PhaseStep[]> = {
       // épuisé : aucune phrase anticipée rattrapée, aucun malus.
       allowEarlyPhrase: true,
       detect: /mise en situation/,
-      closeOnExit: /bonne continuation|au revoir|(?:le )?cas est clos|mise en situation est terminee|fin de la mise en situation|terminons cette mise en situation|changeons de sujet|revenons a vous|autre sujet|parlons (maintenant )?d'autre chose/,
+      closeOnExit: /bonne continuation|desormais termine|au revoir|(?:le )?cas est clos|mise en situation est terminee|fin de la mise en situation|terminons cette mise en situation|changeons de sujet|revenons a vous|autre sujet|parlons (maintenant )?d'autre chose/,
       ongoing: "Mise en situation en cours : reste exclusivement sur le cas ; creuse la décision, les options et les risques. Ne pose aucune question étrangère au cas.",
     },
     {
@@ -1460,11 +1463,15 @@ const PHASE_SCHEDULES: Record<string, PhaseStep[]> = {
       relativeToPhaseId: "essec-situation-1",
       afterMinutes: 8,
       phrase: P_ESSEC_SORTIE,
-      switchInstruction:
-        "Remercie le candidat et mets un terme au cas. La mise en situation est terminée. Pose maintenant ta question de clôture, seule. Tu diras la phrase de sortie après la réponse du candidat.",
-      detect: /question a me poser|quelque chose a ajouter|bonne continuation/,
+      // D27 : rempli par le moteur selon le temps restant (retour à l'échange
+      // libre, ou question de clôture tirée).
+      switchInstruction: "{essec_sortie}",
+      detect: /mise en situation est terminee|touche a sa fin|mot de la fin|aime qu'on vous pose|desormais termine|bonne continuation/,
+      // La clôture n'est immédiate que dans les 2 dernières minutes (moteur).
       closeOnEnter: true,
-      ongoing: "Clôture : pose maintenant ta question de clôture, seule. Tu diras la phrase de sortie après la réponse du candidat.",
+      // Retour à l'échange libre : aucun repère après les réponses.
+      silentMarkers: true,
+      ongoing: "Échange libre : aborde un point pas encore traité, sans nouvelle mise en situation, jusqu'à la consigne de clôture.",
     },
   ],
   "INSEEC Grande École": [
@@ -1587,6 +1594,8 @@ const PHASE_SCHEDULES: Record<string, PhaseStep[]> = {
       topic: "la présentation",
       startMinute: 0,
       ongoing: "Reste sur la présentation jusqu'au tirage des cartes déclenché par l'application. Ta prochaine prise de parole est la deuxième réplique fournie par l'application, sans rien ajouter.",
+      // D10 : avant le tirage des cartes, jamais « Termine ta prochaine prise de parole par une question ».
+      omitEndWithQuestion: true,
     },
     {
       id: "emlyon-cartes",
@@ -1847,7 +1856,7 @@ export function phaseScheduleForSchool(school: string): PhaseStep[] {
 export function promptFor(config: SchoolInterviewConfig, difficulty: InterviewVariant): string | null {
   if (!config.useHouseJuryPrompt) return null;
   const conduct = [openingNote(config), config.conductNote].filter(Boolean).join("\n\n");
-  return buildJuryAgentPrompt(difficulty, simulatedMinutes(config), conduct);
+  return buildJuryAgentPrompt(difficulty, simulatedMinutes(config), conduct, config.school);
 }
 
 /**
@@ -2004,5 +2013,5 @@ export function openingNote(config: SchoolInterviewConfig): string {
   if (!second) {
     return "OUVERTURE : le premier message est fourni par l'application. Dis-le tel quel, n'ajoute rien avant ni après. Aucune deuxième réplique imposée n'existe sauf si l'application la fournit explicitement dans cette consigne.";
   }
-  return `OUVERTURE : le premier message est fourni par l'application et se termine par « Est-ce que c'est clair pour vous ? ». Dès que le candidat confirme, ta deuxième prise de parole est exactement et uniquement : « ${second} » — aucun autre mot. S'il dit que ce n'est pas clair, reformule en UNE phrase puis dis cette réplique mot pour mot. Cette deuxième réplique n'existe que parce que l'application la fournit explicitement ici.`;
+  return `OUVERTURE : le premier message est fourni par l'application et se termine par « Est-ce que c'est clair pour vous ? ». Dès que le candidat confirme, ta deuxième prise de parole est exactement et uniquement : « ${second} » — aucun autre mot. S'il dit que ce n'est pas clair, reformule en UNE phrase puis dis cette réplique mot pour mot. S'il a déjà commencé à se présenter, tu ne dis pas cette réplique : tu le laisses finir, puis tu poses ta première question. Cette deuxième réplique n'existe que parce que l'application la fournit explicitement ici.`;
 }
