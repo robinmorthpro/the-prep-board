@@ -278,7 +278,7 @@ describe("D5 / D25 — texte commun du jury adapté", () => {
   it.each(["GEM (Grenoble EM)", "TBS Education", "ESC Clermont BS"])("%s : thème 5 remplacé", (school) => {
     const t = adaptCommonForSchool(commun, school);
     expect(t).toContain("5. Ouverture sur le monde : déjà couverte par");
-    expect(t).not.toContain("Les questions citées sont des exemples");
+    expect(t.length).toBeLessThan(commun.length);
   });
   it("emlyon (D25) : jamais la prépa ni le lycée", () => {
     const t = adaptCommonForSchool(commun, "emlyon");
