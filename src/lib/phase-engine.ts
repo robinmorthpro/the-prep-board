@@ -75,13 +75,13 @@ export function essecSortieCloture(question: string): string {
 }
 
 /** EDHEC : consigne jointe au repère qui suit le passage à l'entretien individuel. */
-export const EDHEC_INDIVIDUEL = "Entretien individuel : la présentation est terminée. Ne reprends jamais le mot tiré.";
+export const EDHEC_INDIVIDUEL = "Ne reprends jamais le mot tiré.";
 /** Phrase de passage EDHEC (texte normalisé). */
 export const EDHEC_PASSAGE_RE = /nous passons maintenant a l'entretien individuel/;
 
 /** GEM : le candidat clôt lui-même l'interview inversée (texte normalisé). */
 export const GEM_FIN_INVERSEE_RE =
-  /je n'ai plus de questions?|je n'ai pas d'autres? questions?|j'ai fait le tour|ca repond a mes questions|cela repond a mes questions/;
+  /je n'ai plus de questions?|je n'ai pas d'autres? questions?|j'ai fait le tour|ca repond a mes questions|cela repond a mes questions|je pense avoir fait le tour|c'est tout pour moi|je n'ai plus d'autres? questions?|plus de questions? (?:a vous poser|pour vous)/;
 
 /** Réponse assez longue pour être déjà la présentation (environ 60 mots). */
 export const PRESENTATION_MIN_WORDS = 60;
@@ -146,7 +146,7 @@ const ADD_QUESTION_RE = /autre chose a ajouter|d'autres questions a me poser/;
  */
 const SKIP_GRACE_MS = 60_000;
 const IMPROVISED_SWITCH_RE =
-  /(?:^|[.!?,]\s*|:\s*)(?:merci[,.]?\s*)?(?:passons (?:maintenant )?a (?:la|l'|notre|votre)|nous passons (?:maintenant )?a|parlons maintenant de|changeons de sujet|deuxieme partie|partie 2|la discussion)\b/;
+  /(?:^|[.!?,]\s*|:\s*)(?:merci[,.]?\s*)?(?:passons (?:maintenant )?a (?:la|l'|notre|votre)|nous passons (?:maintenant )?a|parlons maintenant de|deuxieme partie|partie 2|la discussion)\b/;
 
 /** Amorce de passage : le jury annonce qu'il quitte la partie en cours. */
 const TRANSITION_LEAD =
@@ -161,6 +161,10 @@ const TRANSITION_TARGET =
  * propres à chaque école restent, en complément précis.
  */
 export const TRANSITION_RE = new RegExp(`\\b${TRANSITION_LEAD}\\b[\\s\\S]{0,60}?\\b${TRANSITION_TARGET}\\b`);
+/** R1 bis : même détection, sans la cible « de sujet » (jamais un changement de partie). */
+const TRANSITION_PART_RE = new RegExp(
+  `\\b${TRANSITION_LEAD}\\b[\\s\\S]{0,60}?\\b${TRANSITION_TARGET.replace("|de sujet)", ")")}\\b`,
+);
 
 type MonologueState = {
   measure: MonologueMeasure;
@@ -222,6 +226,12 @@ export class PhaseEngine {
   private montpellierLateMarkerSent = false;
   /** La deuxième réplique n'est plus attendue : le candidat s'est déjà présenté. */
   private secondReplySkipped = false;
+  /** R3 : nombre de messages du jury au moment de la clôture. */
+  private closingJuryCount = 0;
+  /** R3 : la question de clôture est déjà posée dans le message qui a clos. */
+  private closingAskedAtTrigger = false;
+  /** R9 : fin de la dernière prise de parole du jury (oral). */
+  private lastJurySpeechEndAt: number | null = null;
 
   constructor(opts: {
     school: string;
@@ -303,27 +313,39 @@ export class PhaseEngine {
       }
       // ESSEC : le jury a déjà dit « La mise en situation est terminée » et posé
       // sa question de clôture : aucune seconde consigne de clôture.
-      if (this.school === "ESSEC" && /mise en situation est terminee/.test(normalized) && text.includes("?")) {
-        this.markClosingWithoutInstruction(at);
+      // ESSEC, dans les 2 dernières minutes : le jury a déjà dit « La mise en
+      // situation est terminée » avec une question, ou a déjà posé la question
+      // tirée : aucune seconde consigne de clôture.
+      const asked = this.containsClosingQuestion(normalized);
+      if (this.school === "ESSEC" && ((/mise en situation est terminee/.test(normalized) && text.includes("?")) || asked)) {
+        this.markClosingWithoutInstruction(at, asked);
         return [];
       }
-      return this.closeImmediately(at);
+      return this.closeImmediately(at, asked);
     }
     let detectedIndex: number | null = null;
     let improvised = false;
     if (this.pendingIndex !== null) {
       const detect = this.schedule[this.pendingIndex]?.detect;
-      if (!detect || detect.test(normalized) || TRANSITION_RE.test(normalized)) detectedIndex = this.pendingIndex;
+      if (!detect || detect.test(normalized) || TRANSITION_PART_RE.test(normalized)) detectedIndex = this.pendingIndex;
     } else {
       const nextIndex = this.phaseIndex + 1;
       const next = this.schedule[nextIndex];
-      if (next?.allowEarly && (next.detect?.test(normalized) || TRANSITION_RE.test(normalized))) detectedIndex = nextIndex;
+      // R1 : depuis une partie libre, seule la regex `detect` d'une partie
+      // suivante à `allowEarly` vaut bascule avant l'échéance ; le reste est ignoré.
+      const freeNow = Boolean(currentStep?.freeExchange || currentStep?.silentMarkers);
+      const nextDue = next ? this.dueAtFor(next) : null;
+      const beforeDue = nextDue === null || at < nextDue;
+      const genericAllowed = !(freeNow && beforeDue);
+      if (next?.allowEarly && (next.detect?.test(normalized) || (genericAllowed && TRANSITION_PART_RE.test(normalized))))
+        detectedIndex = nextIndex;
       if (
         detectedIndex === null &&
+        genericAllowed &&
         next &&
-        this.dueAtFor(next) !== null &&
+        nextDue !== null &&
         !next.detect?.test(normalized) &&
-        (IMPROVISED_SWITCH_RE.test(normalized) || TRANSITION_RE.test(normalized))
+        (IMPROVISED_SWITCH_RE.test(normalized) || TRANSITION_PART_RE.test(normalized))
       ) {
         detectedIndex = nextIndex;
         improvised = true;
@@ -349,7 +371,7 @@ export class PhaseEngine {
       if (recovery) return [recovery];
     }
     this.confirmPhase(detectedIndex, at, false, improvised);
-    if (next.closeOnEnter && this.remainingMs(at) <= 120_000) return this.closeImmediately(at);
+    if (next.closeOnEnter && this.remainingMs(at) <= 120_000) return this.closeImmediately(at, this.containsClosingQuestion(normalized));
     if (next.closeOnEnter) return [];
     if (!orderedBefore && next.earlyEnterInstruction && dueAt !== null && at < dueAt) {
       // emlyon (D22) : jamais seule après la transition du jury, jointe au
@@ -357,6 +379,28 @@ export class PhaseEngine {
       this.attachToNextAnswer(this.fill(next.earlyEnterInstruction, at));
     }
     return [];
+  }
+
+  /** La question de clôture tirée figure dans ce texte (25 premiers caractères). */
+  private containsClosingQuestion(normalized: string): boolean {
+    const q = normalizeInterviewText(this.closingQuestion).slice(0, 25);
+    return Boolean(q) && normalized.includes(q);
+  }
+
+  /** R3 : la question de clôture a été posée après la consigne de clôture. */
+  private closingQuestionAsked(): boolean {
+    return this.closingAskedAtTrigger || this.juryMessageCount > this.closingJuryCount;
+  }
+
+  private setClosing(at: number, askedAtTrigger: boolean) {
+    this.closing = true;
+    this.closingJuryCount = this.juryMessageCount;
+    this.closingAskedAtTrigger = askedAtTrigger;
+    this.pendingIndex = null;
+    this.pendingMarkerCount = 0;
+    this.pendingOrderedAt = null;
+    this.attachments = [];
+    this.record("closing", at);
   }
 
   private attachToNextAnswer(text: string) {
@@ -413,6 +457,7 @@ export class PhaseEngine {
 
   /** Oral uniquement : la parole du jury s'arrête, le monologue démarre vraiment ici. */
   onJuryFinishedSpeaking(at: number): void {
+    this.lastJurySpeechEndAt = at;
     for (const state of this.monologueStates) {
       if (state.closed || state.answers > 0 || !state.awaitingSpeechEnd) continue;
       state.awaitingSpeechEnd = false;
@@ -497,7 +542,10 @@ export class PhaseEngine {
       this.record("second-reply-skipped", at);
       this.startMonologues(
         (measure) => "juryMessage" in measure.start && measure.start.juryMessage === 2,
-        this.lastJuryMessageAt ?? this.startedAt,
+        // R9 : à l'oral, la mesure part de la fin de la parole du jury.
+        this.lastJurySpeechEndAt !== null && this.lastJuryMessageAt !== null && this.lastJurySpeechEndAt >= this.lastJuryMessageAt
+          ? this.lastJurySpeechEndAt
+          : (this.lastJuryMessageAt ?? this.startedAt),
       );
       for (const state of this.monologueStates) {
         if (state.closed || state.answers > 0) continue;
@@ -515,7 +563,8 @@ export class PhaseEngine {
     // D7 : GEM, le candidat clôt lui-même l'interview inversée → synthèse.
     if (current?.id === "gem-inversee" && this.pendingIndex === null) {
       const normalized = normalizeInterviewText(text);
-      if (GEM_FIN_INVERSEE_RE.test(normalized) || !text.includes("?")) {
+      // R4 : seule une formule de fin clôt l'interview inversée.
+      if (GEM_FIN_INVERSEE_RE.test(normalized)) {
         this.orderEarlySwitch(at, "early-ordered-candidate-closed");
         return;
       }
@@ -555,19 +604,17 @@ export class PhaseEngine {
       this.lastMarkerValue = { kind: "none", timeOnly };
       if (!withExtras) return [];
       if (this.eventList.some((event) => event.type === "exit-phrase")) return [];
+      if (!this.closingQuestionAsked()) return [];
       this.record("exit-phrase", at);
       return [`${REGIE_PREFIX} ${EXIT_PHRASE_INSTRUCTION}`];
     }
     // Dans les deux dernières minutes, la clôture l'emporte sur tout le reste.
     if (elapsed >= this.totalMinutes - 2) {
-      this.closing = true;
-      this.pendingIndex = null;
-      this.pendingMarkerCount = 0;
-      this.pendingOrderedAt = null;
-      this.attachments = [];
-      this.record("closing", at);
+      // ESSEC, pendant le cas : la consigne met aussi un terme au cas (R6).
+      const inCase = this.school === "ESSEC" && this.currentPhaseId === "essec-situation-1";
+      this.setClosing(at, false);
       this.lastMarkerValue = { kind: "none", timeOnly };
-      return [`${REGIE_PREFIX} ${closingInstruction(this.closingQuestion)}`];
+      return [`${REGIE_PREFIX} ${inCase ? essecSortieCloture(this.closingQuestion) : closingInstruction(this.closingQuestion)}`];
     }
     const advanced = this.advance(at, elapsed);
     const extras = withExtras ? [...this.midpointNow(at, elapsed, advanced.kind), ...this.takeAttachments()] : [];
@@ -575,8 +622,16 @@ export class PhaseEngine {
     if (advanced.kind === "switch") {
       this.lastMarkerValue = { kind: "switch", timeOnly };
       const step = this.pendingIndex !== null ? this.schedule[this.pendingIndex] : undefined;
+      const filled = this.fill(advanced.text, at);
+      // R6 : une consigne qui contient la question de clôture part seule.
+      if (filled.includes(this.closingQuestion)) {
+        const instruction = filled.replace(/^\s*Phase en cours : [^.]*\.\s*/, "").trim();
+        this.setClosing(at, false);
+        this.lastMarkerValue = { kind: "none", timeOnly };
+        return [`${REGIE_PREFIX} ${instruction}`];
+      }
       const suffix = step?.omitEndWithQuestion || this.omitQuestionNow() ? "" : ` ${END_WITH_QUESTION}`;
-      return [`${REGIE_PREFIX} ${join(`${timeOnly}${this.fill(advanced.text, at)}${suffix}`)}`];
+      return [`${REGIE_PREFIX} ${join(`${timeOnly}${filled}${suffix}`)}`];
     }
     // D1 : partie libre ou école sans parties → aucun repère après les réponses,
     // sauf Montpellier pendant les situations (ses règles lisent le temps écoulé).
@@ -610,13 +665,9 @@ export class PhaseEngine {
     return false;
   }
 
-  private markClosingWithoutInstruction(at: number) {
+  private markClosingWithoutInstruction(at: number, askedAtTrigger = false) {
     if (this.closing) return;
-    this.closing = true;
-    this.pendingIndex = null;
-    this.pendingMarkerCount = 0;
-    this.pendingOrderedAt = null;
-    this.record("closing", at);
+    this.setClosing(at, askedAtTrigger);
   }
 
   /** Identifiant de la phase en cours (vide sans déroulé). */
@@ -629,14 +680,9 @@ export class PhaseEngine {
     return this.closingQuestion;
   }
 
-  private closeImmediately(at: number): string[] {
+  private closeImmediately(at: number, askedAtTrigger = false): string[] {
     if (this.closing) return [];
-    this.closing = true;
-    this.pendingIndex = null;
-    this.pendingMarkerCount = 0;
-    this.pendingOrderedAt = null;
-    this.attachments = [];
-    this.record("closing", at);
+    this.setClosing(at, askedAtTrigger);
     return [closingInstruction(this.closingQuestion)];
   }
 
@@ -663,6 +709,14 @@ export class PhaseEngine {
       if (!pres?.closedAt) return Number.POSITIVE_INFINITY;
       const end = this.startedAt + this.totalMinutes * 60_000;
       return pres.closedAt + (end - pres.closedAt) / 2;
+    }
+    // R7 : ESSEC, de la fin de la présentation au début du cas (35e minute).
+    if (this.school === "ESSEC") {
+      const pres = this.monologueStates.find((st) => st.measure.id === "essec-presentation" && st.closed);
+      const cas = this.schedule.find((step) => step.id === "essec-situation-1");
+      const casAt = cas ? this.dueAtFor(cas) : null;
+      if (!pres?.closedAt || casAt === null) return Number.POSITIVE_INFINITY;
+      return pres.closedAt + (casAt - pres.closedAt) / 2;
     }
     const eligible = this.schedule.filter((step) => step.freeExchange);
     if (!eligible.length) return this.startedAt + (this.totalMinutes * 60_000) / 2;
