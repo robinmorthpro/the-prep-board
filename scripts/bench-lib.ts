@@ -73,6 +73,8 @@ export const CAS_LIMITES: { ecole: string; jury: Jury; profil: Profil; graine: n
 
 /** Essais éclair (corrections du tour 1). */
 export const ECLAIRS: { ecole: string; jury: Jury; profil: Profil; graine: number; scenario: Scenario }[] = [
+  // Clôture : question tirée, dite mot pour mot, jamais avant la consigne.
+  { ecole: "KEDGE", jury: "classique", profil: "excellent", graine: 1, scenario: SCENARIO_NORMAL },
   {
     ecole: "GEM (Grenoble EM)",
     jury: "classique",
@@ -97,6 +99,35 @@ export const ECLAIRS: { ecole: string; jury: Jury; profil: Profil; graine: numbe
     },
   },
 ];
+
+/** Tour 2 : les 5 cas limites en échec au tour 1 (identifiants de scénario). */
+export const CAS_LIMITES_TOUR2 = ["interrompu", "refus", "expose-court", "pitch-court", "impact-court"];
+
+/**
+ * Tour 2 : les 23 écoles avec un seul jury chacune, en alternant neutre et dur dans
+ * l'ordre des profils (mêmes profils et graines qu'au tour 1), les 5 cas limites en
+ * échec, puis Clermont et Rennes en jury dur s'ils n'y sont pas déjà.
+ */
+export function plansTour2(): { ecole: string; jury: Jury; profil: Profil; graine: number; scenario: Scenario }[] {
+  const principaux = Object.entries(PROFIL_PAR_ECOLE).map(([ecole, profil], i) => ({
+    ecole,
+    jury: (i % 2 === 0 ? "classique" : "classique_dur") as Jury,
+    profil,
+    graine: 1,
+    scenario: SCENARIO_NORMAL,
+  }));
+  const limites = CAS_LIMITES.filter((c) => CAS_LIMITES_TOUR2.includes(c.scenario.id));
+  const verifies = ["ESC Clermont BS", "Rennes School of Business"]
+    .filter((ecole) => !principaux.some((p) => p.ecole === ecole && p.jury === "classique_dur"))
+    .map((ecole) => ({ ecole, jury: "classique_dur" as Jury, profil: PROFIL_PAR_ECOLE[ecole]!, graine: 1, scenario: SCENARIO_NORMAL }));
+  return [...principaux, ...limites, ...verifies];
+}
+
+/** Stabilité : essais de renotation (« --essais=2,3 »), jamais l'essai 1. */
+export function essaisStabilite(option: string | undefined): number[] {
+  const n = (option ?? "2,3,4").split(",").map((x) => Number(x.trim())).filter((x) => Number.isInteger(x) && x >= 2);
+  return n.length ? [...new Set(n)] : [2, 3, 4];
+}
 
 /** Durée de la présentation imposée (en secondes), par école (décision du fondateur). */
 export const PRESENTATION_S: Record<string, number> = {
