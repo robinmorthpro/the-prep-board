@@ -49,6 +49,8 @@ import {
   INVITATION_RE,
   CLERMONT_AXIS_OFFER_RE,
   isImposedQuestionAsked,
+  EMPTY_TURN_NUDGE,
+  IGNORED_NUDGE_NUDGE,
 } from "../src/lib/interview-text";
 import {
   CLASSIQUE_AGENT_ENV,
@@ -442,6 +444,11 @@ async function jouerEntretien(plan: Plan, document: { label: string; texte: stri
   let mbsActive: { id: string; text: string } | null = null;
   let mbsGrille = false;
   let attentesVides = 0;
+  // T2-16 : comme l'app (juryTurnRescueDue), une relance unique quand le jury ne reprend pas
+  // la parole après une réponse du candidat ou une consigne. `occasion` change à chaque envoi.
+  let occasion = 0;
+  let rattrapee = -1;
+  let derniereEstConsigne = false;
 
   const signedUrl = await signedUrlFor(school);
   const socket = new WebSocket(`${signedUrl}${signedUrl.includes("?") ? "&" : "?"}source=js_sdk&version=bench`);
@@ -633,6 +640,8 @@ async function jouerEntretien(plan: Plan, document: { label: string; texte: stri
       for (const i of n) {
         noterJournal("regie", `${REGIE_PREFIX} ${i}`);
         send({ type: "user_message", text: `${REGIE_PREFIX} ${i}` });
+        occasion += 1;
+        derniereEstConsigne = true;
       }
       lastMessageAt = 0;
       continue;
@@ -657,6 +666,14 @@ async function jouerEntretien(plan: Plan, document: { label: string; texte: stri
       lastMessageAt = 0;
       attentesVides += 1;
       console.log(`    … jury silencieux (${attentesVides})`);
+      // RECOPIE partie-8 : relance d'un tour de jury manquant (une par occasion)
+      if (occasion > 0 && rattrapee !== occasion) {
+        rattrapee = occasion;
+        const relance = derniereEstConsigne ? IGNORED_NUDGE_NUDGE : EMPTY_TURN_NUDGE;
+        noterJournal("regie", `${REGIE_PREFIX} ${relance}`);
+        send({ type: "user_message", text: `${REGIE_PREFIX} ${relance}` });
+        continue;
+      }
       if (attentesVides >= 3) break;
       continue;
     }
@@ -717,6 +734,8 @@ async function jouerEntretien(plan: Plan, document: { label: string; texte: stri
     }
     await sleep(300);
     send({ type: "user_message", text: answer });
+    occasion += 1;
+    derniereEstConsigne = false;
     if (emlyonDue) {
       emlyonDue = false;
       if (emlyonSilence.isDue(now + 5_000)) triggerEmlyonCards();
