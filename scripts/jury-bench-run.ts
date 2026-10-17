@@ -12,7 +12,8 @@
  *
  * Usage :
  *   bun scripts/jury-bench-run.ts --plan=pilote [--lot=pilote]
- *   bun scripts/jury-bench-run.ts --plan=principal|limites|stabilite|eclair --lot=<nom>
+ *   bun scripts/jury-bench-run.ts --plan=principal|limites|stabilite|eclair|tour2 --lot=<nom> [--modele=<évaluateur>]
+ *   bun scripts/jury-bench-run.ts --plan=stabilite --source=tour-2 --modele=google/gemini-3.7-flash --essais=2,3
  *   bun scripts/jury-bench-run.ts --plan=renoter --source=tour-1 --scenario=normal --modele=google/gemini-3.7-flash --essai=2
  * Reprise : relancer la même commande ; ce qui est « ok » n'est pas refait.
  *
@@ -48,6 +49,8 @@ import {
   INVITATION_RE,
   CLERMONT_AXIS_OFFER_RE,
   isImposedQuestionAsked,
+  EMPTY_TURN_NUDGE,
+  IGNORED_NUDGE_NUDGE,
 } from "../src/lib/interview-text";
 import {
   CLASSIQUE_AGENT_ENV,
@@ -83,6 +86,8 @@ import {
   CAS_LIMITES,
   ECLAIRS,
   essaiRenotation,
+  essaisStabilite,
+  plansTour2,
   feedbackSurListe,
   redacteurPourPlan,
   regleOuvertureCandidat,
@@ -439,6 +444,11 @@ async function jouerEntretien(plan: Plan, document: { label: string; texte: stri
   let mbsActive: { id: string; text: string } | null = null;
   let mbsGrille = false;
   let attentesVides = 0;
+  // T2-16 : comme l'app (juryTurnRescueDue), une relance unique quand le jury ne reprend pas
+  // la parole après une réponse du candidat ou une consigne. `occasion` change à chaque envoi.
+  let occasion = 0;
+  let rattrapee = -1;
+  let derniereEstConsigne = false;
 
   const signedUrl = await signedUrlFor(school);
   const socket = new WebSocket(`${signedUrl}${signedUrl.includes("?") ? "&" : "?"}source=js_sdk&version=bench`);
@@ -630,6 +640,8 @@ async function jouerEntretien(plan: Plan, document: { label: string; texte: stri
       for (const i of n) {
         noterJournal("regie", `${REGIE_PREFIX} ${i}`);
         send({ type: "user_message", text: `${REGIE_PREFIX} ${i}` });
+        occasion += 1;
+        derniereEstConsigne = true;
       }
       lastMessageAt = 0;
       continue;
@@ -654,6 +666,14 @@ async function jouerEntretien(plan: Plan, document: { label: string; texte: stri
       lastMessageAt = 0;
       attentesVides += 1;
       console.log(`    … jury silencieux (${attentesVides})`);
+      // RECOPIE partie-8 : relance d'un tour de jury manquant (une par occasion)
+      if (occasion > 0 && rattrapee !== occasion) {
+        rattrapee = occasion;
+        const relance = derniereEstConsigne ? IGNORED_NUDGE_NUDGE : EMPTY_TURN_NUDGE;
+        noterJournal("regie", `${REGIE_PREFIX} ${relance}`);
+        send({ type: "user_message", text: `${REGIE_PREFIX} ${relance}` });
+        continue;
+      }
       if (attentesVides >= 3) break;
       continue;
     }
@@ -714,6 +734,8 @@ async function jouerEntretien(plan: Plan, document: { label: string; texte: stri
     }
     await sleep(300);
     send({ type: "user_message", text: answer });
+    occasion += 1;
+    derniereEstConsigne = false;
     if (emlyonDue) {
       emlyonDue = false;
       if (emlyonSilence.isDue(now + 5_000)) triggerEmlyonCards();
@@ -897,6 +919,8 @@ const quel = arg("plan") ?? "pilote";
 const redacteur = redacteurPourPlan(quel, arg("redacteur"));
 const feedbackSur = feedbackSurListe(arg("feedback-sur"));
 const redacteurPour = (runId: string) => (feedbackSur && !feedbackSur.has(runId) ? null : redacteur);
+// Tour 2 : « --modele » limite aussi la notation des entretiens joués et la stabilité (une seule notation).
+const modelesNotation: string[] = arg("modele") ? [arg("modele")!] : [...MODELES_NOTATION];
 const lot = arg("lot") ?? quel;
 const plans: Plan[] = [];
 const juries: Jury[] = ["classique", "classique_dur"];
@@ -907,6 +931,8 @@ if (quel === "pilote") {
     for (const jury of juries) plans.push({ lot, ecole, jury, profil, scenario: SCENARIO_NORMAL, graine: graineEcole(ecole, 1) });
 } else if (quel === "eclair") {
   for (const c of ECLAIRS) plans.push({ lot, ecole: c.ecole, jury: c.jury, profil: c.profil, scenario: c.scenario, graine: graineEcole(c.ecole, c.graine) });
+} else if (quel === "tour2") {
+  for (const c of plansTour2()) plans.push({ lot, ecole: c.ecole, jury: c.jury, profil: c.profil, scenario: c.scenario, graine: graineEcole(c.ecole, c.graine) });
 } else if (quel === "limites") {
   for (const c of CAS_LIMITES) plans.push({ lot, ecole: c.ecole, jury: c.jury, profil: c.profil, scenario: c.scenario, graine: graineEcole(c.ecole, c.graine) });
 }
@@ -965,7 +991,7 @@ if (quel === "renoter") {
   const { data: runs } = await db.from("bench_runs").select("*").eq("lot", source).eq("statut", "ok").order("created_at");
   const vus = new Set<string>();
   const choisis = (runs ?? []).filter((r) => !vus.has(r.ecole) && vus.add(r.ecole)).slice(0, 10);
-  for (const r of choisis) for (const m of MODELES_NOTATION) for (const n of [2, 3, 4]) await noterRun(r.id, r, m, n, null);
+  for (const r of choisis) for (const m of modelesNotation) for (const n of essaisStabilite(arg("essais"))) await noterRun(r.id, r, m, n, null);
 } else {
   const docs = new Map<string, { label: string; texte: string }>();
   for (const p of plans) {
@@ -973,7 +999,7 @@ if (quel === "renoter") {
     try {
       const run = await executer(p, docs);
       if (run)
-        for (const m of MODELES_NOTATION) {
+        for (const m of modelesNotation) {
           try {
             await noterRun(run["id"], run, m, 1, redacteurPour(run["id"]));
           } catch (e) {

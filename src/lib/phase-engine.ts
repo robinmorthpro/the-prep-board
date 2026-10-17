@@ -66,9 +66,11 @@ export function closingInstruction(question: string): string {
 /** Phrase de sortie reconnue (ancienne et nouvelle), sur texte normalisé. */
 export const EXIT_SENTENCE_RE = /bonne continuation|l'entretien est desormais termine/;
 
+/** ESSEC : retour à l'échange libre après le cas (seconde phrase de ESSEC_RETOUR_LIBRE). */
+export const ESSEC_RETOUR_LIBRE_SEUL =
+  "Reviens à l'échange libre jusqu'à la consigne de clôture : aborde un point pas encore traité, sans nouvelle mise en situation.";
 /** ESSEC, fin du cas avec plus de 2 minutes restantes. */
-export const ESSEC_RETOUR_LIBRE =
-  "Remercie le candidat et mets un terme au cas. La mise en situation est terminée. Reviens à l'échange libre jusqu'à la consigne de clôture : aborde un point pas encore traité, sans nouvelle mise en situation.";
+export const ESSEC_RETOUR_LIBRE = `Remercie le candidat et mets un terme au cas. La mise en situation est terminée. ${ESSEC_RETOUR_LIBRE_SEUL}`;
 /** ESSEC, fin du cas dans les 2 dernières minutes. */
 export function essecSortieCloture(question: string): string {
   return `Remercie le candidat et mets un terme au cas. La mise en situation est terminée. ${closingInstruction(question)}`;
@@ -312,6 +314,9 @@ export class PhaseEngine {
       if (this.school === "ESSEC" && !EXIT_SENTENCE_RE.test(normalized) && this.remainingMs(at) > 120_000) {
         const nextIndex = this.phaseIndex + 1;
         if (this.schedule[nextIndex]) this.confirmPhase(nextIndex, at, false);
+        // T2-1 : le jury est sorti du cas de lui-même ; il revient à l'échange libre
+        // (consigne jointe à la réponse suivante du candidat).
+        this.attachToNextAnswer(ESSEC_RETOUR_LIBRE_SEUL);
         return [];
       }
       // ESSEC : le jury a déjà dit « La mise en situation est terminée » et posé
@@ -422,6 +427,11 @@ export class PhaseEngine {
     return due.map((item) => item.text);
   }
 
+  /** Les 2 dernières minutes sont atteintes (au temps exact, durées non entières comprises : ESSEC 45 min 30). */
+  private closingTimeReached(at: number): boolean {
+    return at - this.startedAt >= (this.totalMinutes - 2) * 60_000;
+  }
+
   private remainingMs(at: number): number {
     return this.startedAt + this.totalMinutes * 60_000 - at;
   }
@@ -504,7 +514,7 @@ export class PhaseEngine {
     const elapsed = this.elapsedMinutes(at);
     // Réponse à la question de clôture : consigne de sortie (D3), une fois.
     if (this.closing) return this.buildMarker(at, elapsed, true);
-    const closingDue = elapsed >= this.totalMinutes - 2;
+    const closingDue = this.closingTimeReached(at);
     const switchDue = !closingDue && !this.closing && this.pendingIndex === null && this.nextSwitchDue(at, elapsed);
     if (this.pendingIndex === pendingBefore && !closingDue && !switchDue) {
       // Le repère pré-envoyé reste la référence : seules les consignes propres à
@@ -616,7 +626,7 @@ export class PhaseEngine {
       return [`${REGIE_PREFIX} ${EXIT_PHRASE_INSTRUCTION}`];
     }
     // Dans les deux dernières minutes, la clôture l'emporte sur tout le reste.
-    if (elapsed >= this.totalMinutes - 2) {
+    if (this.closingTimeReached(at)) {
       // ESSEC, pendant le cas : la consigne met aussi un terme au cas (R6).
       const inCase = this.school === "ESSEC" && this.currentPhaseId === "essec-situation-1";
       this.setClosing(at, false);
@@ -698,7 +708,7 @@ export class PhaseEngine {
     if (this.themeReminderSent || this.closing || kind === "switch") return [];
     if (!this.inFreePart()) return [];
     const threshold = this.freeExchangeReminderAt();
-    if (at < threshold || elapsed >= this.totalMinutes - 2) return [];
+    if (at < threshold || this.closingTimeReached(at)) return [];
     this.themeReminderSent = true;
     const text =
       this.school === "Montpellier BS"

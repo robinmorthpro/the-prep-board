@@ -74,7 +74,13 @@ export function isNothingToAdd(text: string) {
   // La branche explicite ne compte que sur une réponse courte : « c'est tout
   // à fait ça » ou « rien d'autre qu'une solution : … » développent au contraire.
   if (words <= 12 && NOTHING_TO_ADD_RE.test(normalized)) return true;
-  return words <= 6 && NEGATIVE_START_RE.test(normalized);
+  if (words <= 6 && NEGATIVE_START_RE.test(normalized)) return true;
+  // T2-8 : on juge aussi la PREMIÈRE phrase seule (« Non, je pense avoir fait le
+  // tour. Juste que… ») : une réponse plus longue qui commence par la refuser.
+  const premiere = normalized.split(/(?<=[.!?])\s/)[0] ?? "";
+  const mots = premiere.split(" ").filter(Boolean).length;
+  if (premiere === normalized) return false;
+  return mots <= 12 && NOTHING_TO_ADD_RE.test(premiere);
 }
 
 /**
