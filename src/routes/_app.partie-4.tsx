@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { AlertTriangle, Check, ChevronDown, ChevronUp, Download, Loader2, Plus, Trash2 } from "lucide-react";
+import { AlertTriangle, Check, ChevronDown, ChevronUp, Download, Loader2, Plus, Sparkles, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -66,6 +66,8 @@ export const Route = createFileRoute("/_app/partie-4")({
       { name: "description", content: "Listez vos expériences puis creusez contexte, récit et trois anecdotes, avec un jury IA." },
       { property: "og:title", content: "Je travaille mes expériences personnelles | The Prepboard" },
       { property: "og:description", content: "Transformez vos expériences en munitions d'entretien." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Part4,
@@ -657,8 +659,8 @@ function ExperienceCard({
           <div className="rounded-lg border-2 border-accent/40 bg-secondary/40 p-4">
             <div className="flex flex-wrap items-center gap-3">
               <Button onClick={() => submit.mutate()} disabled={submit.isPending} className="gap-2">
-                {submit.isPending ? <Loader2 className="size-4 animate-spin" /> : null}
-              {isValidated ? "Valider mon expérience" : "Soumettre mon expérience"}
+                {submit.isPending ? <Loader2 className="size-4 animate-spin" /> : <Sparkles className="size-4" />}
+                Soumettre à l'IA
               </Button>
               {isValidated ? null : (
                 <Button variant="ghost" onClick={() => markUnfinished.mutate()} disabled={markUnfinished.isPending}>

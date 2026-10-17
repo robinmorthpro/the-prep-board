@@ -155,7 +155,6 @@ export function AiFeedback({ text }: { text: string }) {
     <div className="space-y-4 text-[17px] leading-[1.55] text-[var(--ink)]">
       {summary ? (
         <div className="rounded-[20px] bg-[var(--paper)] p-5 md:p-7">
-          <p className="mb-3 text-[22px] font-medium leading-[1.1] tracking-[-0.035em] md:text-[26px]">Synthèse</p>
           <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
             {summary}
           </ReactMarkdown>

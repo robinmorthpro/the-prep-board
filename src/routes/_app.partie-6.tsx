@@ -414,12 +414,12 @@ function QuestionnaireWorkspace({ kb, existing }: { kb: SupportSchool; existing:
       <Card className="flex flex-wrap items-center gap-3 p-6">
         <Button className="gap-2" onClick={() => submit.mutate()} disabled={submit.isPending}>
           {submit.isPending ? <Loader2 className="size-4 animate-spin" /> : <Sparkles className="size-4" />}
-          Faire évaluer mon support
+          Soumettre à l'IA
         </Button>
         {feedback ? (
           <Button variant="outline" size="sm" className="gap-2" onClick={() => submit.mutate()} disabled={submit.isPending}>
             <RotateCcw className="size-4" />
-            Relancer l'analyse
+            Soumettre à l'IA
           </Button>
         ) : null}
         <span className="text-xs text-muted-foreground">Vos réponses sont enregistrées automatiquement.</span>
@@ -686,7 +686,7 @@ function ProjectiveCvWorkspace({ existing }: { existing: InterviewSupport | null
             disabled={uploading || submit.isPending}
           >
             {uploading || submit.isPending ? <Loader2 className="size-4 animate-spin" /> : <FileUp className="size-4" />}
-            Importer mon CV et le faire évaluer
+            Soumettre à l'IA
           </Button>
         </Card>
       ) : null}
@@ -876,7 +876,7 @@ function ProjectiveCvWorkspace({ existing }: { existing: InterviewSupport | null
             title={!builderHasContent ? "Commencez à remplir votre CV projectif" : undefined}
           >
             {submit.isPending ? <Loader2 className="size-4 animate-spin" /> : <Sparkles className="size-4" />}
-            Faire évaluer mon CV projectif
+            Soumettre à l'IA
           </Button>
           <Button variant="outline" className="gap-2" onClick={() => downloadProjectiveCvPdf(cv)}>
             <Download className="size-4" />

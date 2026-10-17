@@ -44,11 +44,13 @@ export type CareerProject = {
   description: string;
   company_role: string;
   job_names: string;
+  motivation?: string;
   qualities: string;
   news: string;
   companies: string;
   extra_info: string;
   deepened: boolean;
+  ai_feedback?: string;
 };
 
 export const SHEET_ITEM_KINDS = [

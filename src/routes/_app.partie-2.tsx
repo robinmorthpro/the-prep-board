@@ -1,8 +1,11 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
+import { Loader2, Sparkles } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,7 +19,22 @@ import { supabase } from "@/integrations/supabase/client";
 import { isCareerDeepened, useCareerProject } from "@/lib/vivaldi-queries";
 import { CAREER_THEORY } from "@/lib/vivaldi-data";
 import { PartNav } from "@/components/vivaldi/PartNav";
+import { AiFeedback } from "@/components/vivaldi/AiFeedback";
+import { reviewCareerProject } from "@/lib/ai.functions";
+import { isSameInput, rememberInput } from "@/lib/feedback-cache";
 
+type VerdictLevel = "Validé" | "À perfectionner" | "À retravailler";
+
+function parseVerdict(feedback: string): VerdictLevel {
+  const match = feedback.match(/## Verdict\n\s*(Validé|À perfectionner|À retravailler)/i);
+  return (match?.[1] as VerdictLevel) ?? "À retravailler";
+}
+
+function verdictBadge(level: VerdictLevel) {
+  if (level === "Validé") return <Badge className="bg-success text-success-foreground">Validé</Badge>;
+  if (level === "À perfectionner") return <Badge className="bg-amber-500 text-white">À perfectionner</Badge>;
+  return <Badge variant="destructive">À retravailler</Badge>;
+}
 
 export const Route = createFileRoute("/_app/partie-2")({
   head: () => ({
@@ -25,6 +43,8 @@ export const Route = createFileRoute("/_app/partie-2")({
       { name: "description", content: "Métier ou domaine de métiers, rôle en entreprise, qualités nécessaires et actualité du métier." },
       { property: "og:title", content: "Je travaille mon projet professionnel | The Prepboard" },
       { property: "og:description", content: "Structurez un projet professionnel crédible pour les oraux CPGE." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Part2,
@@ -36,6 +56,7 @@ const EMPTY = {
   description: "",
   company_role: "",
   job_names: "",
+  motivation: "",
   qualities: "",
   news: "",
   companies: "",
@@ -48,15 +69,18 @@ function Part2() {
   const queryClient = useQueryClient();
   const { data: career } = useCareerProject(user?.id);
   const [form, setForm] = useState(EMPTY);
+  const [feedback, setFeedback] = useState("");
 
   useEffect(() => {
     if (!career) return;
+    setFeedback(career.ai_feedback ?? "");
     setForm({
       job_or_field: career.job_or_field,
       sector: career.sector,
       description: career.description,
       company_role: career.company_role,
       job_names: career.job_names,
+      motivation: career.motivation ?? "",
       qualities: career.qualities,
       news: career.news,
       companies: career.companies,
@@ -66,13 +90,14 @@ function Part2() {
 
   const save = useMutation({
     mutationFn: async (validate: boolean) => {
+      if (!user) throw new Error("Veuillez vous connecter pour enregistrer votre projet.");
       const { error } = await supabase
         .from("career_projects")
         .update({ ...form, ...(validate ? { deepened: true } : {}) })
-        .eq("user_id", user!.id);
+        .eq("user_id", user.id);
       if (error) throw error;
       if (validate) {
-        const { error: e2 } = await supabase.from("profiles").update({ part2_completed: true }).eq("id", user!.id);
+        const { error: e2 } = await supabase.from("profiles").update({ part2_completed: true }).eq("id", user.id);
         if (e2) throw e2;
       }
     },
@@ -85,6 +110,43 @@ function Part2() {
       } else {
         toast.success("Projet professionnel enregistré.");
       }
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const review = useServerFn(reviewCareerProject);
+
+  const submitReview = useMutation({
+    mutationFn: async () => {
+      if (!user) throw new Error("Veuillez vous connecter pour enregistrer votre projet.");
+      const signature = { ...form };
+      if (isSameInput("career", "career", signature, Boolean(feedback))) return feedback;
+      const res = await review({
+        data: {
+          jobOrField: form.job_or_field,
+          sector: form.sector,
+          description: form.description,
+          companyRole: form.company_role,
+          jobNames: form.job_names,
+          motivation: form.motivation,
+          qualities: form.qualities,
+          news: form.news,
+          companies: form.companies,
+          extraInfo: form.extra_info,
+        },
+      });
+      const { error } = await supabase
+        .from("career_projects")
+        .update({ ai_feedback: res.feedback })
+        .eq("user_id", user.id);
+      if (error) throw error;
+      rememberInput("career", "career", signature);
+      return res.feedback;
+    },
+    onSuccess: (fb) => {
+      setFeedback(fb);
+      queryClient.invalidateQueries({ queryKey: ["career", user?.id] });
+      toast.success("Le jury IA a relu votre projet professionnel.");
     },
     onError: (e: Error) => toast.error(e.message),
   });
@@ -161,6 +223,13 @@ function Part2() {
             placeholder="Parmi les métiers de la communication, le rôle de Community manager est de ..."
           />
           <Field
+            id="motivation"
+            label="Pourquoi j'ai choisi ce projet professionnel ?"
+            value={form.motivation}
+            onChange={(v) => setForm({ ...form, motivation: v })}
+            placeholder="Des expériences, des rencontres, des matières… Quels éléments m'ont donné envie de suivre cette voie ? Développez plusieurs raisons ou axes de réponse."
+          />
+          <Field
             id="qualities"
             label="Citez au moins 3 qualités requises pour y exercer. Pour chaque qualité, entrez également une anecdote durant laquelle vous avez fait preuve de cette qualité"
             required
@@ -189,6 +258,15 @@ function Part2() {
             onChange={(v) => setForm({ ...form, extra_info: v })}
             placeholder="Des figures connues, des évènements spéciaux, etc"
           />
+          {feedback ? (
+            <Card className="border-accent/50 bg-secondary/50 p-4">
+              <div className="mb-3 flex flex-wrap items-center gap-3">
+                <p className="text-sm font-semibold">Retour du jury IA</p>
+                {verdictBadge(parseVerdict(feedback))}
+              </div>
+              <AiFeedback text={feedback} />
+            </Card>
+          ) : null}
           <div className="flex flex-wrap items-center gap-4 border-t border-[rgba(11,18,32,0.1)] pt-7">
             <Button variant="outline" size="lg" onClick={() => save.mutate(false)} disabled={save.isPending} className="gap-[10px]">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -196,6 +274,10 @@ function Part2() {
                 <path d="M8 3v5h7M8 21v-7h8v7" />
               </svg>
               Enregistrer
+            </Button>
+            <Button onClick={() => submitReview.mutate()} disabled={submitReview.isPending} className="gap-2">
+              {submitReview.isPending ? <Loader2 className="size-4 animate-spin" /> : <Sparkles className="size-4" />}
+              Soumettre à l'IA
             </Button>
             <Button
               size="lg"
@@ -239,6 +321,7 @@ function Field({
     id === "description" ||
     id === "role" ||
     id === "jobs" ||
+    id === "motivation" ||
     id === "qualities" ||
     id === "news" ||
     id === "companies" ||

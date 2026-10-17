@@ -1,5 +1,14 @@
 # Roadmap
 
+## Harmonisation du tableau de bord et des modules
+- [x] Appliquer le périmètre des 44 questions canoniques aux compteurs et objectifs ; 739 tests réussis.
+- [x] Harmoniser les boutons de vérification IA hors simulations complètes.
+- [x] Ajouter « Soumettre à l'IA » au module 1 (Projet professionnel) avec le même style que les autres modules.
+- [x] Afficher les titres de sujets d'actualité en entier (retour à la ligne, sans troncature).
+- [x] Renommer les consignes « À lire avant de commencer ».
+- [x] Mettre les exemples de motivation au pluriel et inviter à plusieurs axes de réponse.
+- [ ] Vérifier visuellement les pages connectées — session Supabase externe non disponible ici.
+
 ## Fait
 - [x] Partie 8 pilotée par l'école (configs par école, popup de structure, agent résolu par école)
   - [x] `src/lib/school-interviews.ts` : configs par école + défaut classique
@@ -91,5 +100,5 @@
 ## Étape 3.5 — banc d'essai
 - [x] Tables bench_runs / bench_results, banc remis à jour, tests
 - [x] Pilote Clermont (bon, neutre puis dur, Gemini puis Claude)
-- [ ] Lot principal, cas limites, stabilité (attendent la validation du pilote)
-- [ ] Claude Sonnet 5 coupé à 16 000 jetons par l'évaluateur : décision du fondateur attendue
+- [x] Lot principal, cas limites et stabilité exécutés lors des tours précédents.
+- [x] Limite évaluateur Claude portée à 32 000 jetons lors des tours précédents.

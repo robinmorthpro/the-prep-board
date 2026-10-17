@@ -12,6 +12,8 @@
 <!-- Reconstruction de l'aperçu pour relire les secrets (08/10/2026). -->
 - Load linked interview evaluations with session history because dashboard scores must use structured, canonical evaluation data rather than parsed feedback text.
 - Count completed simulations through one shared validity predicate so dashboard metrics and priorities cannot diverge.
+- Use the cockpit canonical question predicate and distinct-question statistics for all dashboard and journey question counters; school-specific practice must not inflate goals or theme coverage.
+- Store career-choice motivation in its own career_projects field, optional in the existing completion predicate, to preserve historical validation and keep answers separate.
 
 - L'évaluateur IA (src/lib/evaluateur/) ne rend que des niveaux par case ; points, note, pénalités de durée et percentile sont calculés par le code à partir de bareme.json : la note reste reproductible et vérifiable.
 - Les textes de l'évaluateur et bareme.json sont copiés octet pour octet depuis les originaux et ne sont jamais reformatés (exclus de Prettier).
@@ -22,3 +24,5 @@
 - Le rédacteur ne note jamais : la ligne du percentile est insérée par le code et les citations VERBATIMS non retrouvées sont retirées par le code. Pourquoi : le percentile affiché doit être exactement celui calculé.
 - Les textes du rédacteur (src/lib/redacteur/textes/) sont copiés octet pour octet et exclus de Prettier. Pourquoi : vérification par empreinte avec les originaux.
 - Le secours « main rendue sans question » passe par `src/lib/main-rendue.ts`, partagé par l'écran d'entretien et le banc. Pourquoi : les deux bloquent le secours exactement dans les mêmes cas.
+
+- Modules 1-4 theory and Ressources chapters share one source (src/lib/methode.ts; theory.ts derives from it); supports and key questions come from supports-kb.ts and canonical KEY_QUESTIONS, so module buttons and /ressources never diverge.

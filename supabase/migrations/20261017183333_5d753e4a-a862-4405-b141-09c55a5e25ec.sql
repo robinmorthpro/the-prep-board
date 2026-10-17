@@ -1,0 +1,1 @@
+ALTER TABLE public.career_projects ADD COLUMN IF NOT EXISTS ai_feedback text;

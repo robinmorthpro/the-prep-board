@@ -19,7 +19,8 @@ import { Button } from "@/components/ui/button";
 import { PageHero } from "@/components/vivaldi/PageHero";
 
 import { useSession } from "@/hooks/useSession";
-import { PARTS, TEST_MODE_PREMIUM_FREE, KEY_QUESTIONS, moduleNumber } from "@/lib/vivaldi-data";
+import { PARTS, TEST_MODE_PREMIUM_FREE, moduleNumber } from "@/lib/vivaldi-data";
+import { canonicalQuestionStats } from "@/lib/cockpit";
 import {
   computeProgress,
   useNewsTopics,
@@ -67,9 +68,8 @@ export function SectionHub({ title, subtitle, banner, parts }: SectionHubProps) 
   const progress = computeProgress(profile ?? null, experiences, career, sheets, newsTopics);
   const finishedSheets = sheets.filter(isSheetFinished).length;
   const submittedPct = Math.round(progress.submittedRatio * 100);
-  const workedQuestions = answers.filter((a) => (a.answer ?? "").trim().length > 0).length;
+  const { started: workedQuestions, total: totalKeyQuestions } = canonicalQuestionStats(answers);
   const finishedInterviews = sessions.filter((s) => s.status === "done").length;
-  const totalKeyQuestions = KEY_QUESTIONS.length;
   const finishedSupports = supports.filter(isSupportComplete).length;
 
   const detail: Record<number, string> = {

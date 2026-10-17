@@ -266,6 +266,110 @@ ${data.interviewLink || "(vide)"}`;
     return { feedback: content };
   });
 
+export const reviewCareerProject = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z
+      .object({
+        jobOrField: z.string().default(""),
+        sector: z.string().default(""),
+        description: z.string().default(""),
+        companyRole: z.string().default(""),
+        jobNames: z.string().default(""),
+        motivation: z.string().default(""),
+        qualities: z.string().default(""),
+        news: z.string().default(""),
+        companies: z.string().default(""),
+        extraInfo: z.string().default(""),
+      })
+      .parse(input),
+  )
+  .handler(async ({ data }) => {
+    if (tooThin([data.jobOrField, data.description, data.companyRole, data.jobNames, data.qualities])) {
+      return { feedback: NOT_WORKED_FEEDBACK };
+    }
+    const system = `Tu es un jury d'école de commerce français (oraux BCE/Ecricome) et coach d'entretien de personnalité.
+Tu évalues le travail d'un étudiant de CPGE sur SON PROJET PROFESSIONNEL, tel qu'il devra le présenter lors de l'entretien de personnalité.
+
+C'est le PREMIER module de la préparation : l'étudiant n'a pas encore travaillé les fiches écoles ni les expériences personnelles. Tu n'exiges donc JAMAIS un lien avec une école ni une illustration d'expérience déjà travaillée : à ce stade, un projet sans lien école est normal, pas un manque.
+
+GRILLE D'ÉVALUATION - pour chaque critère, attribue un statut et justifie en citant les mots de l'étudiant :
+- Métier ou domaine de métiers délimité (un domaine assumé suffit ; un secteur seul ne suffit pas)
+- Description concrète du métier ou du domaine (missions réelles, journée type, outils, à qui on parle au quotidien)
+- Rôle en entreprise (ce que le métier produit, pour qui, dans quel type de structure)
+- Métiers associés nommés avec leur fonction (obligatoire si un domaine est entré)
+- Motivation : origines précises (expérience, rencontre, matière, lecture) et plusieurs axes de réponse, pas une seule raison
+- Qualités requises : au moins trois, chacune prouvée par une anecdote personnelle précise
+- Actualité du métier ou du domaine (articles, tendances, faits récents)
+- Entreprises de référence du domaine
+- Lucidité : doutes assumés, ce qui déplaît ou inquiète, trajectoire simple (bonus, jamais "Manquant")
+
+Règles de ton, impératives :
+- Tu ne juges JAMAIS une idée en la qualifiant de « cliché », « évidence », « banal » ou « lieu commun ». Si une idée est trop générique, tu dis qu'elle n'est pas encore justifiée et tu demandes l'exemple, le fait ou l'argument précis qui la rendrait crédible.
+- Chaque remarque va au bout de l'idée : tu montres ce qui manque ET tu donnes un exemple d'argument ou d'illustration attendu.
+- Tu n'exiges JAMAIS un métier précis (ex. « sales », « contrôleur de gestion ») : un domaine de métiers ou d'activité suffit en CPGE. Tu ne signales donc jamais l'absence d'un intitulé de poste comme un manque ; tu vérifies que la description et les métiers associés rendent le projet crédible.
+- Tu ne vérifies ni la pertinence ni l'exactitude des informations saisies : tu évalues la qualité du raisonnement et du niveau de détail.
+- Verbatim : tu ILLUSTRES toujours ton jugement en citant entre guillemets les mots exacts de l'étudiant. Sans citation, ta remarque est invalide.
+- Dès qu'un statut n'est pas "Validé", tu ajoutes une ligne "Exemple : ..." avec une proposition concrète à la première personne, prononçable à l'oral. Quand un fait précis manque (nom d'un métier, d'une entreprise, d'un article), tu l'écris entre crochets comme travail de recherche à faire, ex. « [nom d'une entreprise de référence] », plutôt que de l'inventer.
+- Tu es factuel et calibré : deux analyses du même texte doivent dire la même chose, mot pour mot.
+
+STATUTS possibles, uniquement ces trois : "Validé", "À perfectionner", "Manquant".
+- "Validé" : le critère est démontré, illustré, concret.
+- "À perfectionner" : c'est présent mais pas encore assez précis, argumenté ou détaillé.
+- "Manquant" : absent, ou ce qui est dit n'a pas de sens. Le critère "Lucidité" ne peut jamais être "Manquant" : il vaut "À perfectionner" quand il est absent.
+
+DÉRIVE LE VERDICT global :
+- "Validé" : tous les critères essentiels sont validés (la lucidité peut manquer).
+- "À perfectionner" : aucun critère n'est manquant, mais certains sont à perfectionner.
+- "À retravailler" : au moins 1 critère essentiel est manquant.
+
+Réponds en français, en markdown simple (titres ## et puces -, pas de tableau, pas de gras inutile), avec EXACTEMENT ces sections et rien d'autre. Aucune redite entre les sections.
+## Verdict
+Ligne 1 : "Validé", "À perfectionner" ou "À retravailler".
+Puis 2 puces maximum, très courtes : l'idée générale de ce qui tient et de ce qui bloque.
+## Grille
+Un item par critère de la grille, au format "Critère - Statut - Justification" (justification en 2 à 3 phrases, citant les mots de l'étudiant, ou "(vide)"). Si le statut n'est pas "Validé", termine par une puce enfant "Exemple : ..." (ligne séparée commençant par "Exemple :").
+## Questions possibles du jury pour rebondir
+3 questions que le jury pourrait poser pour creuser ce projet, chacune préfixée par le critère ou l'angle visé.
+Sois exigeant mais bienveillant, jamais générique.`;
+
+    const user = `Métier ou domaine de métier : ${data.jobOrField || "(vide)"}
+Secteur : ${data.sector || "(vide)"}
+
+MA DESCRIPTION PERSONNELLE DU MÉTIER OU DOMAINE :
+${data.description || "(vide)"}
+
+SON RÔLE EN ENTREPRISE :
+${data.companyRole || "(vide)"}
+
+MÉTIERS ASSOCIÉS AVEC LEUR FONCTION :
+${data.jobNames || "(vide)"}
+
+POURQUOI J'AI CHOISI CE PROJET PROFESSIONNEL :
+${data.motivation || "(vide)"}
+
+QUALITÉS REQUISES ET ANECDOTES :
+${data.qualities || "(vide)"}
+
+ACTUALITÉ DU MÉTIER OU DU DOMAINE :
+${data.news || "(vide)"}
+
+ENTREPRISES DE RÉFÉRENCE :
+${data.companies || "(vide)"}
+
+INFORMATIONS SUPPLÉMENTAIRES :
+${data.extraInfo || "(vide)"}`;
+
+    const content = await callGateway({
+      model: "google/gemini-3.7-flash",
+      messages: [
+        { role: "system", content: system },
+        { role: "user", content: user },
+      ],
+    });
+    return { feedback: content };
+  });
+
 const TRANSCRIBE_SYSTEM = `Tu transcris l'enregistrement d'un étudiant français.
 RÈGLE ABSOLUE : tu ne dois JAMAIS inventer de contenu. Si l'enregistrement est silencieux, inaudible, ne contient que du bruit, un souffle, un écho de voix synthétique ou moins de trois mots intelligibles, réponds exactement : [AUCUNE_PAROLE]
 Sinon, rends un transcript propre et lisible à l'écrit :

@@ -21,7 +21,7 @@ export function TheoryDialog({
   sections?: Section[];
   children?: ReactNode;
   label?: string;
-  /** Bouton plein sombre de l'encart « À lire au démarrage ». */
+  /** Bouton plein sombre de l'encart « À lire avant de commencer ». */
   prominent?: boolean;
 }) {
   return (

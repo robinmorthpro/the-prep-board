@@ -1,12 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Check, Gem } from "lucide-react";
-import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useSession } from "@/hooks/useSession";
-import { supabase } from "@/integrations/supabase/client";
 import { PageHero } from "@/components/vivaldi/PageHero";
 import { useProfile } from "@/lib/vivaldi-queries";
 
@@ -25,20 +22,8 @@ export const Route = createFileRoute("/_app/premium")({
 function PremiumPage() {
   const { user } = useSession();
   const { data: profile } = useProfile(user?.id);
-  const queryClient = useQueryClient();
+  // La formule ne se change plus depuis l'app : la base refuse toute modification par le candidat.
   const isPremium = profile?.plan === "premium";
-
-  const toggle = useMutation({
-    mutationFn: async (plan: "free" | "premium") => {
-      const { error } = await supabase.from("profiles").update({ plan }).eq("id", user!.id);
-      if (error) throw error;
-    },
-    onSuccess: (_d, plan) => {
-      queryClient.invalidateQueries({ queryKey: ["profile", user?.id] });
-      toast.success(plan === "premium" ? "Formule complète activée (paiement simulé)" : "Retour à la formule gratuite");
-    },
-    onError: (e: Error) => toast.error(e.message),
-  });
 
   return (
     <div>
@@ -69,20 +54,11 @@ function PremiumPage() {
             </li>
           ))}
         </ul>
-        <div className="flex flex-wrap gap-3 pt-2">
-          {isPremium ? (
-            <Button variant="outline" onClick={() => toggle.mutate("free")} disabled={toggle.isPending}>
-              Désactiver (test)
-            </Button>
-          ) : (
-            <Button onClick={() => toggle.mutate("premium")} disabled={toggle.isPending}>
-              Payer 99 € (simulé)
-            </Button>
-          )}
-        </div>
-        <p className="text-[14px] text-[var(--gris-doux)]">
-          Prototype : aucun paiement réel n'est effectué, le bouton active simplement la formule sur votre compte.
-        </p>
+        {isPremium ? null : (
+          <div className="flex flex-wrap gap-3 pt-2">
+            <Button disabled>Le paiement en ligne arrive bientôt</Button>
+          </div>
+        )}
       </Card>
     </div>
   );

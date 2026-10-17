@@ -27,7 +27,8 @@ import trainImg from "@/assets/site/hero-oral.jpg";
 import resImg from "@/assets/site/amphi-vide.jpg";
 
 import { useSession } from "@/hooks/useSession";
-import { PARTS, PREP_PARTS, TRAIN_PARTS, TEST_MODE_PREMIUM_FREE, KEY_QUESTIONS, KNOWLEDGE, moduleNumber } from "@/lib/vivaldi-data";
+import { PARTS, PREP_PARTS, TRAIN_PARTS, TEST_MODE_PREMIUM_FREE, KNOWLEDGE, moduleNumber } from "@/lib/vivaldi-data";
+import { canonicalQuestionStats } from "@/lib/cockpit";
 import {
   computeProgress,
   useNewsTopics,
@@ -50,6 +51,8 @@ export const Route = createFileRoute("/_app/dashboard")({
       { name: "description", content: "Visualisez les 8 étapes de votre préparation aux oraux et ce qu'il reste à débloquer." },
       { property: "og:title", content: "Mon parcours - The Prepboard" },
       { property: "og:description", content: "Suivez votre progression vers les oraux BCE et Ecricome." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Dashboard,
@@ -91,9 +94,8 @@ function Dashboard() {
   const progress = computeProgress(profile ?? null, experiences, career, sheets, newsTopics);
   const finishedSheets = sheets.filter(isSheetFinished).length;
   const submittedPct = Math.round(progress.submittedRatio * 100);
-  const workedQuestions = answers.filter((a) => (a.answer ?? "").trim().length > 0).length;
+  const { started: workedQuestions, total: totalKeyQuestions } = canonicalQuestionStats(answers);
   const finishedInterviews = sessions.filter((s) => s.status === "done").length;
-  const totalKeyQuestions = KEY_QUESTIONS.length;
   const finishedSupports = supports.filter(isSupportComplete).length;
 
   const detail: Record<number, string> = {

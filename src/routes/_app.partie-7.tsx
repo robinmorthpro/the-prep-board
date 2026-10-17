@@ -156,6 +156,8 @@ export const Route = createFileRoute("/_app/partie-7")({
       { name: "description", content: "Entraînement question par question, à l'oral, avec correction IA." },
       { property: "og:title", content: "Je m'entraîne à l'oral sur les questions clés | The Prepboard" },
       { property: "og:description", content: "Les questions clés des oraux CPGE, travaillées une par une." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Part6,
@@ -498,7 +500,7 @@ function QuestionWorkspace({
         ) : (
           <Button variant="secondary" size="sm" onClick={evaluate} disabled={reviewing || !answer.trim()}>
             {reviewing ? <Loader2 className="size-4 animate-spin" /> : <Sparkles className="size-4" />}
-            Je soumets ma réponse
+            Soumettre à l'IA
           </Button>
         )}
         <Button

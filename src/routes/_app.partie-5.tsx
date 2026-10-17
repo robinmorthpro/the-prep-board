@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { Check, ChevronDown, ChevronUp, Link2, Loader2, Plus, Trash2 } from "lucide-react";
+import { Check, ChevronDown, ChevronUp, Link2, Loader2, Plus, Sparkles, Trash2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -65,6 +65,8 @@ export const Route = createFileRoute("/_app/partie-5")({
       },
       { property: "og:title", content: "Je travaille les sujets d'actualité | The Prepboard" },
       { property: "og:description", content: "Trois sujets d'actualité maîtrisés pour tenir tout un oral CPGE." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Part5,
@@ -273,7 +275,7 @@ function TopicCard({
     mutationFn: async () => {
       const signature = reviewSignature();
       if (isSameInput("news", topic.id, signature, Boolean(topic.ai_feedback))) {
-        await persist("submitted");
+        await persist(parseVerdict(topic.ai_feedback) === "Validé" ? "submitted" : "todo");
         return null;
       }
       const res = await review({
@@ -290,7 +292,8 @@ function TopicCard({
           schools,
         },
       });
-      await persist("submitted", res.feedback);
+      // Seul un verdict « Validé » valide le sujet ; sinon le candidat doit l'améliorer.
+      await persist(parseVerdict(res.feedback) === "Validé" ? "submitted" : "todo", res.feedback);
       rememberInput("news", topic.id, signature);
       return res.feedback;
     },
@@ -332,7 +335,7 @@ function TopicCard({
           className="min-w-0 cursor-pointer"
           onClick={() => setOpen(!open)}
         >
-          <h3 className="truncate text-2xl">{form.title?.trim() || "Nouveau sujet d'actualité"}</h3>
+          <h3 className="text-2xl leading-snug break-words">{form.title?.trim() || "Nouveau sujet d'actualité"}</h3>
           <p className="text-xs text-muted-foreground">
             {form.urls.filter((u) => u.trim()).length} lien(s) · {missing.length} rubrique(s) à compléter
           </p>
@@ -502,8 +505,8 @@ function TopicCard({
             ) : null}
             <div className="flex flex-wrap items-center gap-3">
               <Button onClick={() => submit.mutate()} disabled={submit.isPending || !complete} className="gap-2">
-                {submit.isPending ? <Loader2 className="size-4 animate-spin" /> : null}
-                {isValidated ? "Valider mon sujet d'actualité" : "Soumettre mon sujet d'actualité"}
+                {submit.isPending ? <Loader2 className="size-4 animate-spin" /> : <Sparkles className="size-4" />}
+                Soumettre à l'IA
               </Button>
               {isValidated ? null : (
                 <Button variant="ghost" onClick={() => markUnfinished.mutate()} disabled={markUnfinished.isPending}>

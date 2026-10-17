@@ -183,6 +183,7 @@ export type Database = {
       }
       career_projects: {
         Row: {
+          ai_feedback: string | null
           companies: string
           company_role: string
           created_at: string
@@ -191,6 +192,7 @@ export type Database = {
           extra_info: string
           job_names: string
           job_or_field: string
+          motivation: string
           news: string
           qualities: string
           sector: string
@@ -198,6 +200,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          ai_feedback?: string | null
           companies?: string
           company_role?: string
           created_at?: string
@@ -206,6 +209,7 @@ export type Database = {
           extra_info?: string
           job_names?: string
           job_or_field?: string
+          motivation?: string
           news?: string
           qualities?: string
           sector?: string
@@ -213,6 +217,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          ai_feedback?: string | null
           companies?: string
           company_role?: string
           created_at?: string
@@ -221,6 +226,7 @@ export type Database = {
           extra_info?: string
           job_names?: string
           job_or_field?: string
+          motivation?: string
           news?: string
           qualities?: string
           sector?: string

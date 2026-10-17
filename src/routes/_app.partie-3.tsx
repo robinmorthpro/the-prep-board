@@ -270,24 +270,6 @@ function SheetCard({ sheet, onSaved }: { sheet: SchoolSheet; onSaved: () => void
     },
   });
 
-  const markUnfinished = useMutation({
-    mutationFn: async () => {
-      const { id, ...rest } = f;
-      const payload = { ...rest, finished: false };
-      const { error } = await supabase.from("school_sheets").update(payload).eq("id", id);
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      setAutoState("saved");
-      setSaveErrors([]);
-      setOpen(false);
-      toast.message("Fiche marquée comme inachevée.");
-      onSaved();
-    },
-    onError: (e: Error) => toast.error(e.message),
-  });
-
-
   const del = useMutation({
     mutationFn: async () => {
       const { error } = await supabase.from("school_sheets").delete().eq("id", sheet.id);
@@ -505,13 +487,6 @@ function SheetCard({ sheet, onSaved }: { sheet: SchoolSheet; onSaved: () => void
           disabled={save.isPending}
         >
           Valider la fiche
-        </Button>
-        <Button
-          variant="ghost"
-          onClick={() => markUnfinished.mutate()}
-          disabled={markUnfinished.isPending}
-        >
-          Marquer comme inachevée
         </Button>
         <span className={`ml-auto text-xs ${autoState === "error" ? "text-destructive" : "text-muted-foreground"}`}>
           {autoLabel}

@@ -1,22 +1,11 @@
+import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageHero } from "@/components/vivaldi/PageHero";
 import {
-  PolarAngleAxis,
-  PolarGrid,
-  PolarRadiusAxis,
-  Radar,
-  RadarChart,
-  ResponsiveContainer,
-} from "recharts";
-import {
-  AlertTriangle,
   ArrowRight,
-  Compass,
   Flag,
   Gauge,
   ListChecks,
-  Mic,
-  Sparkles,
   Target,
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
@@ -28,10 +17,9 @@ import {
   computePriorities,
   computeThemeScores,
   completedSimulationLabel,
+  workProgress,
   isValidCompletedSimulation,
-  radarData,
-  readinessScore,
-  verdictOf,
+  canonicalQuestionStats,
   type Priority,
   type ThemeScore,
 } from "@/lib/cockpit";
@@ -75,7 +63,11 @@ const LEVEL_STYLE: Record<Priority["level"], { label: string; className: string 
   consolidation: { label: "Consolidation", className: "bg-muted text-muted-foreground" },
 };
 
+/** Percentile moyen à partir duquel une école est marquée « Prêt ». */
+const READY_PERCENTILE = 60;
+
 function CockpitPage() {
+  const [themeSchool, setThemeSchool] = useState("");
   const { user } = useSession();
   const { data: profile = null } = useProfile(user?.id);
   const { data: career = null } = useCareerProject(user?.id);
@@ -98,10 +90,8 @@ function CockpitPage() {
     sessions,
     themeScores,
   });
-  const readiness = readinessScore({ profile, career, sheets, experiences, newsTopics, supports, themeScores });
 
-  const correctedQuestions = answers.filter((a) => verdictOf(a.ai_feedback) !== null).length;
-  const validatedQuestions = answers.filter((a) => verdictOf(a.ai_feedback) === "Validé").length;
+  const { corrected: correctedQuestions, validated: validatedQuestions } = canonicalQuestionStats(answers);
   const doneSessions = sessions.filter(isValidCompletedSimulation);
   const percentiles = doneSessions
     .map((session) => session.percentile ?? session.evaluation?.percentile ?? null)
@@ -119,283 +109,143 @@ function CockpitPage() {
     (c): c is string => !!c && c.trim().length > 0,
   );
 
-  const scored = themeScores.filter((s) => s.score !== null);
-  const strongest = [...scored].sort((a, b) => (b.score ?? 0) - (a.score ?? 0))[0];
-  const weakest = [...scored].sort((a, b) => (a.score ?? 0) - (b.score ?? 0))[0];
+
+  const sessionSchools = [...new Set(doneSessions.map((s) => s.school))].sort();
+  const schoolThemeScores = themeSchool
+    ? computeThemeScores(answers, sessions.filter((s) => s.school === themeSchool))
+    : themeScores;
+  const schoolResults = sessionSchools.map((school) => {
+    const values = doneSessions
+      .filter((x) => x.school === school)
+      .map((x) => x.percentile ?? x.evaluation?.percentile ?? null)
+      .filter((v): v is number => typeof v === "number");
+    const avg = values.length ? Math.round(values.reduce((t, v) => t + v, 0) / values.length) : null;
+    return { school, avg, ready: (avg ?? 0) >= READY_PERCENTILE };
+  }).filter((r): r is { school: string; avg: number; ready: boolean } => r.avg !== null);
+  const work = workProgress({ profile, sheets, experiences, newsTopics, supports, answers, sessions });
+  const selectedSchool = themeSchool ? schoolResults.find((r) => r.school === themeSchool) : null;
+  const selectedSchoolCount = themeSchool
+    ? doneSessions.filter((x) => x.school === themeSchool).length
+    : 0;
+  const [mainPriority, ...otherPriorities] = priorities;
 
   return (
     <div>
       <PageHero image={MODULE_BANNERS["Tableau"]} eyebrow="Cockpit de progression" title="Mon tableau de bord">
-        Où vous en êtes, ce qu'il faut travailler maintenant, et votre niveau thème par thème d'après les
-        corrections du jury IA.
+        Ce que vous avez fait, ce qu'il reste à faire, et vos résultats.
       </PageHero>
 
-      {/* Indice de préparation + repères chiffrés */}
-      <div className="grid gap-5 lg:grid-cols-3">
-        <Card className="relative flex flex-col gap-4 overflow-hidden p-6 rounded-[24px] border-0 shadow-none">
-          <div className="flex items-center gap-2">
-            <Gauge className="size-5 text-accent" />
-            <p className="text-[15px] font-semibold text-[var(--bleu-texte)]">Indice de préparation</p>
-          </div>
-          <div className="flex items-end gap-3">
-            <span className="font-display text-5xl font-bold text-primary">{readiness}</span>
-            <span className="pb-2 text-sm text-muted-foreground">/ 100</span>
-          </div>
-          <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
-            <div className="h-full rounded-full bg-accent" style={{ width: `${Math.min(readiness, 100)}%` }} />
-          </div>
-          <p className="text-sm leading-relaxed text-muted-foreground">
-            {readiness < 35
-              ? "Vous êtes au tout début : concentrez-vous sur les modules de préparation."
-              : readiness < 65
-                ? "Bonne base de dossier. Il vous manque du volume d'entraînement oral."
-                : readiness < 85
-                  ? "Vous êtes en bonne voie : consolidez vos thèmes fragiles et enchaînez les simulations."
-                  : "Vous êtes prêt : entretenez le niveau avec des simulations régulières."}
-          </p>
-        </Card>
-
-        <Card className="relative overflow-hidden p-6 rounded-[24px] border-0 shadow-none lg:col-span-2">
-          <div className="flex items-center gap-2">
-            <Sparkles className="size-5 text-accent" />
-            <p className="text-[15px] font-semibold text-[var(--bleu-texte)]">Mes repères</p>
-          </div>
-          <div className="mt-5 grid grid-cols-2 gap-5 sm:grid-cols-4">
-            <Metric value={`${correctedQuestions}`} label="questions clés corrigées" />
-            <Metric value={`${validatedQuestions}`} label="réponses validées par le jury IA" />
-            <Metric
-              value={`${doneSessions.length}`}
-              label={completedSimulationLabel(doneSessions.length).replace(/^\d+\s/, "")}
-            />
-            <Metric
-              value={bestPercentile ? `P${bestPercentile}` : "-"}
-              label={
-                lastPercentile
-                  ? `meilleur percentile (dernier : P${lastPercentile})`
-                  : "meilleur percentile en simulation"
-              }
-            />
-          </div>
-          {trend !== null && scoreChange !== null ? (
-            <p className="mt-5 text-sm text-muted-foreground">
-              Évolution sur vos simulations :{" "}
-              {Math.abs(scoreChange) >= 1 ? (
-                <>
-                  <span className={trend >= 0 ? "font-medium text-success" : "font-medium text-destructive"}>
-                    {trend >= 0 ? "+" : ""}
-                    {trend} percentiles
-                  </span>{" "}
-                  entre votre première et votre dernière simulation.
-                </>
-              ) : (
-                "Niveau stable."
-              )}
-            </p>
-          ) : (
-            <p className="mt-5 text-sm text-muted-foreground">
-              Passez au moins deux simulations complètes pour visualiser votre progression.
-            </p>
-          )}
-        </Card>
-      </div>
-
-      {/* À travailler en priorité */}
-      <section className="mt-8">
-        <div className="mb-4 flex items-center gap-2">
-          <ListChecks className="size-5 text-accent" />
-          <h2 className="text-[1.65rem] leading-snug">À travailler en priorité</h2>
+      {/* Mon travail */}
+      <Card className="p-6 rounded-[24px] border-0 shadow-none">
+        <div className="flex items-center gap-2">
+          <Gauge className="size-5 text-accent" aria-hidden />
+          <h2 className="text-[1.65rem] leading-snug">Mon travail</h2>
         </div>
-        {priorities.length === 0 ? (
-          <Card className="p-6 rounded-[24px] border-0 shadow-none">
-            <p className="text-base text-muted-foreground">
-              Tout est à jour : continuez à enchaîner des simulations complètes pour entretenir votre niveau.
-            </p>
-          </Card>
-        ) : (
-          <div className="grid gap-5 md:grid-cols-2">
-            {priorities.map((p, index) => {
-              const style = LEVEL_STYLE[p.level];
-              return (
-                <Card
-                  key={p.id}
-                  className="relative flex flex-col gap-3 overflow-hidden p-6 rounded-[24px] border-0 shadow-none"
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary font-display text-sm font-bold text-primary-foreground">
-                      {index + 1}
-                    </span>
-                    <Badge className={style.className}>{style.label}</Badge>
+        <ul className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {work.map((w) => {
+            const ok = w.done >= w.target;
+            return (
+              <li key={w.id}>
+                <Link to={w.to} className="block rounded-[16px] bg-muted/50 p-4 transition-colors hover:bg-muted">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-sm font-medium">{w.label}</span>
+                    <Badge className={ok ? "bg-success text-success-foreground" : "bg-muted text-muted-foreground"}>
+                      {ok ? "Suffisant" : "Insuffisant"}
+                    </Badge>
                   </div>
-                  <h3 className="text-[1.35rem] leading-snug">
-                    <Link to={p.to} className="transition-colors hover:text-accent">
-                      {p.title}
-                    </Link>
-                  </h3>
-                  <p className="text-base leading-relaxed text-muted-foreground">{p.reason}</p>
-                  <div className="mt-auto pt-1">
-                    <Button asChild variant={p.level === "consolidation" ? "outline" : "default"}>
-                      <Link to={p.to}>
-                        {p.cta}
-                        <ArrowRight className="size-4" />
-                      </Link>
-                    </Button>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    <span className="font-display text-2xl font-bold text-primary">{w.done}</span> / {w.target} attendu{w.target > 1 ? "s" : ""}
+                  </p>
+                  <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-border" aria-hidden>
+                    <div className={`h-full rounded-full ${ok ? "bg-success" : "bg-accent"}`} style={{ width: `${Math.min(100, (w.done / w.target) * 100)}%` }} />
                   </div>
-                </Card>
-              );
-            })}
-          </div>
-        )}
-      </section>
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      </Card>
 
-      {/* Radar par thème */}
-      <section className="mt-8 grid gap-5 lg:grid-cols-5">
-        <Card className="relative overflow-hidden p-6 rounded-[24px] border-0 shadow-none lg:col-span-3">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="flex items-center gap-2">
-              <Compass className="size-5 text-accent" />
-              <h2 className="text-[1.65rem] leading-snug">Mon niveau par thème de l'entretien</h2>
-            </div>
-            <div className="flex items-center gap-4 text-xs text-muted-foreground">
-              <span className="flex items-center gap-1.5">
-                <span className="size-2.5 rounded-full bg-accent" /> Mon niveau
-              </span>
-              <span className="flex items-center gap-1.5">
-                <span className="size-2.5 rounded-full bg-primary" /> Objectif
-              </span>
-            </div>
-          </div>
-          <div className="mt-4 h-[340px] w-full">
-            {!scored.length ? (
-              <div className="flex h-full items-center justify-center px-6 text-center text-base text-muted-foreground">
-                Passez une simulation complète pour voir votre niveau par thème.
-              </div>
-            ) : (
-              <ResponsiveContainer width="100%" height="100%">
-              <RadarChart data={radarData(themeScores)} outerRadius="72%">
-                <PolarGrid stroke="var(--border)" />
-                <PolarAngleAxis dataKey="short" tick={{ fontSize: 12, fill: "var(--muted-foreground)" }} />
-                <PolarRadiusAxis domain={[0, 100]} tick={false} axisLine={false} />
-                <Radar
-                  name="Objectif"
-                  dataKey="objectif"
-                  stroke="var(--primary)"
-                  fill="var(--primary)"
-                  fillOpacity={0.08}
-                />
-                <Radar
-                  name="Mon niveau"
-                  dataKey="score"
-                  stroke="var(--accent)"
-                  fill="var(--accent)"
-                  fillOpacity={0.28}
-                />
-              </RadarChart>
-              </ResponsiveContainer>
-            )}
-          </div>
-          <p className="whitespace-pre-line text-sm leading-relaxed text-muted-foreground">
-            {`Chaque thème combine vos scores aux 3 dernières simulations complètes.
-Écoles = critère École
-Introspection = Présentation, Expériences et personnalité
-Projet pro = Projet professionnel
-Futur = votre projection
-Aisance orale = Conduite de l’échange, Clarté, Gestion des situations déstabilisantes.
-L’ouverture sur le monde et les épreuves propres à certaines écoles comptent dans votre percentile affiché à la fin de chaque entretien, mais ne sont pas affichés dans ce graphique.`}
+      {/* À faire */}
+      <Card className="mt-8 p-6 rounded-[24px] border-0 shadow-none" aria-labelledby="a-faire">
+        <div className="flex items-center gap-2">
+          <ListChecks className="size-5 text-accent" aria-hidden />
+          <h2 id="a-faire" className="text-[1.65rem] leading-snug">À faire</h2>
+        </div>
+        {!mainPriority ? (
+          <p className="mt-4 text-base text-muted-foreground">
+            Tout est à jour : continuez à enchaîner des simulations complètes pour entretenir votre niveau.
           </p>
-        </Card>
+        ) : (
+          <ul className="mt-4 flex flex-col divide-y divide-border">
+            {[mainPriority, ...otherPriorities].map((p, i) => (
+              <li key={p.id} className="flex flex-wrap items-center justify-between gap-4 py-4 first:pt-0 last:pb-0">
+                <div className="flex min-w-0 flex-1 flex-col gap-1">
+                  <Badge className={`w-fit ${LEVEL_STYLE[p.level].className}`}>{LEVEL_STYLE[p.level].label}</Badge>
+                  <p className="text-base font-medium">{p.title}</p>
+                  {i === 0 ? <p className="text-sm leading-relaxed text-muted-foreground">{p.reason}</p> : null}
+                </div>
+                <Button asChild variant={i === 0 ? "default" : "outline"} size="sm">
+                  <Link to={p.to}>
+                    {p.cta}
+                    <ArrowRight className="size-4" aria-hidden />
+                  </Link>
+                </Button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </Card>
 
-        <Card className="relative overflow-hidden p-6 rounded-[24px] border-0 shadow-none lg:col-span-2">
+      {/* Mes résultats */}
+      <section className="mt-8">
+        <Card className="p-6 rounded-[24px] border-0 shadow-none">
           <div className="flex items-center gap-2">
-            <Target className="size-5 text-accent" />
-            <p className="text-[15px] font-semibold text-[var(--bleu-texte)]">Détail par thème</p>
+            <Target className="size-5 text-accent" aria-hidden />
+            <h2 className="text-[1.65rem] leading-snug">Mes résultats aux simulations</h2>
           </div>
+          <p className="mt-3 text-sm text-muted-foreground">
+            {trend !== null && scoreChange !== null
+              ? Math.abs(scoreChange) >= 1
+                ? `Évolution : ${trend >= 0 ? "+" : ""}${trend} percentiles entre votre première et votre dernière simulation.`
+                : "Niveau stable sur vos simulations."
+              : "Passez au moins deux simulations complètes pour voir votre progression."}
+          </p>
+          <div className="mt-4 flex flex-wrap items-center gap-2">
+            <label htmlFor="filtre-ecole" className="text-sm text-muted-foreground">École</label>
+            <select
+              id="filtre-ecole"
+              value={themeSchool}
+              onChange={(e) => setThemeSchool(e.target.value)}
+              className="rounded-md border border-border bg-background px-3 py-1.5 text-sm"
+            >
+              <option value="">Toutes les écoles</option>
+              {sessionSchools.map((school) => (
+                <option key={school} value={school}>{school}</option>
+              ))}
+            </select>
+            {selectedSchool ? (
+              <Badge className={selectedSchool.ready ? "bg-success text-success-foreground" : "bg-destructive text-destructive-foreground"}>
+                {selectedSchool.ready ? "Prêt" : "À retravailler"}
+              </Badge>
+            ) : null}
+            {selectedSchool ? (
+              <span className="flex items-center gap-2 rounded-full bg-muted/50 py-1 pl-3 pr-1 text-sm">
+                Moyenne : P{selectedSchool.avg} (percentile) sur {selectedSchoolCount} entretien{selectedSchoolCount > 1 ? "s" : ""} achevé{selectedSchoolCount > 1 ? "s" : ""}
+              </span>
+            ) : null}
+          </div>
+          <p className="mt-3 text-sm text-muted-foreground">
+            Le percentile mesure votre position : P80 signifie que votre note est meilleure que celle de 80 % des candidats. Ce n'est pas une note sur 100. Les barres par thème ci-dessous, elles, sont notées sur 100 (part des points obtenus).
+          </p>
           <ul className="mt-4 flex flex-col gap-3">
-            {themeScores.map((s) => (
+            {schoolThemeScores.map((s) => (
               <ThemeRow key={s.theme} score={s} />
             ))}
           </ul>
-          {weakest && strongest ? (
-            <p className="mt-4 border-t border-border pt-4 text-sm leading-relaxed text-muted-foreground">
-              Point fort : <span className="font-medium text-foreground">{strongest.theme}</span>. Point de
-              vigilance : <span className="font-medium text-foreground">{weakest.theme}</span>.
-            </p>
-          ) : (
-            <p className="mt-4 border-t border-border pt-4 text-sm leading-relaxed text-muted-foreground">
-              Passez une simulation complète pour voir votre niveau par thème.
-            </p>
-          )}
-        </Card>
-      </section>
-
-      {/* Objectifs + prochaines actions */}
-      <section className="mt-8 grid gap-5 md:grid-cols-2">
-        <Card className="relative overflow-hidden p-6 rounded-[24px] border-0 shadow-none">
-          <div className="flex items-center gap-2">
-            <Flag className="size-5 text-accent" />
-            <h2 className="text-[1.65rem] leading-snug">Mes objectifs</h2>
-          </div>
-          {objectives.length ? (
-            <ol className="mt-4 flex flex-col gap-2">
-              {objectives.map((school, i) => (
-                <li key={school} className="flex items-center justify-between gap-3 rounded-md bg-muted/50 px-4 py-2.5">
-                  <span className="flex items-center gap-3 text-base">
-                    <span className="font-mono text-xs text-accent">Choix {i + 1}</span>
-                    {school}
-                  </span>
-                  {sheets.some((s) => s.school === school && isSheetFinished(s)) ? (
-                    <Badge className="bg-success text-success-foreground">Fiche prête</Badge>
-                  ) : (
-                    <Badge variant="secondary">Fiche à finir</Badge>
-                  )}
-                </li>
-              ))}
-            </ol>
-          ) : (
-            <p className="mt-4 text-base text-muted-foreground">
-              Renseignez vos écoles de cœur dans vos informations personnelles pour piloter votre préparation école
-              par école.
-            </p>
-          )}
-          <div className="mt-5">
-            <Button variant="outline" asChild>
-              <Link to="/informations-personnelles">Mettre à jour mes objectifs</Link>
-            </Button>
-          </div>
         </Card>
 
-        <Card className="relative overflow-hidden p-6 rounded-[24px] border-0 shadow-none">
-          <div className="flex items-center gap-2">
-            <Mic className="size-5 text-accent" />
-            <h2 className="text-[1.65rem] leading-snug">Mon entraînement</h2>
-          </div>
-          <ul className="mt-4 flex flex-col gap-3 text-base">
-            <li className="flex items-center justify-between gap-3">
-              <span className="text-muted-foreground">Supports d'entretien terminés</span>
-              <span className="font-medium">{supports.filter(isSupportComplete).length}</span>
-            </li>
-            <li className="flex items-center justify-between gap-3">
-              <span className="text-muted-foreground">Fiches écoles terminées</span>
-              <span className="font-medium">{sheets.filter(isSheetFinished).length}</span>
-            </li>
-            <li className="flex items-center justify-between gap-3">
-              <span className="text-muted-foreground">Réponses à retravailler</span>
-              <span className="flex items-center gap-2 font-medium">
-                {answers.filter((a) => verdictOf(a.ai_feedback) === "À retravailler").length}
-                {answers.some((a) => verdictOf(a.ai_feedback) === "À retravailler") ? (
-                  <AlertTriangle className="size-4 text-destructive" />
-                ) : null}
-              </span>
-            </li>
-          </ul>
-          <div className="mt-5 flex flex-wrap gap-3">
-            <Button asChild>
-              <Link to="/partie-7">Questions clés</Link>
-            </Button>
-            <Button variant="outline" asChild>
-              <Link to="/partie-8">Simulation complète</Link>
-            </Button>
-          </div>
-        </Card>
+
       </section>
     </div>
   );

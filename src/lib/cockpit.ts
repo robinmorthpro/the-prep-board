@@ -9,7 +9,6 @@
  * Aucun appel réseau ici : tout se calcule à partir des données déjà chargées.
  */
 
-import { KEY_QUESTIONS } from "@/lib/vivaldi-data";
 import { BAREME } from "@/lib/evaluateur/bareme";
 import {
   isCareerDeepened,
@@ -97,11 +96,32 @@ export function themeOfQuestion(questionId: string): CockpitTheme {
   return QUESTION_THEME[questionId] ?? "Introspection et récit personnel";
 }
 
-/** Nombre de questions clés disponibles par thème. */
+export function isCanonicalQuestion(questionId: string): boolean {
+  return Object.hasOwn(QUESTION_THEME, questionId);
+}
+
+export const CANONICAL_QUESTION_COUNT = Object.keys(QUESTION_THEME).length;
+const CORRECTED_QUESTION_TARGET = 10;
+
+/** Une question compte une seule fois, même travaillée pour plusieurs écoles. */
+export function canonicalQuestionStats(answers: Pick<QuestionAnswer, "question_id" | "answer" | "ai_feedback">[]) {
+  const canonical = answers.filter((answer) => isCanonicalQuestion(answer.question_id));
+  const count = (predicate: (answer: (typeof canonical)[number]) => boolean) =>
+    new Set(canonical.filter(predicate).map((answer) => answer.question_id)).size;
+  return {
+    total: CANONICAL_QUESTION_COUNT,
+    started: count((answer) => Boolean(answer.answer?.trim())),
+    corrected: count((answer) => verdictOf(answer.ai_feedback) !== null),
+    validated: count((answer) => verdictOf(answer.ai_feedback) === "Validé"),
+    toRework: count((answer) => verdictOf(answer.ai_feedback) === "À retravailler"),
+  };
+}
+
+/** Nombre de questions clés canoniques par thème (rattachement explicite uniquement). */
 export function questionCountByTheme(): Record<CockpitTheme, number> {
   const counts = Object.fromEntries(COCKPIT_THEMES.map((t) => [t, 0])) as Record<CockpitTheme, number>;
-  KEY_QUESTIONS.forEach((q) => {
-    counts[themeOfQuestion(q.id)] += 1;
+  Object.values(QUESTION_THEME).forEach((theme) => {
+    counts[theme] += 1;
   });
   return counts;
 }
@@ -181,15 +201,19 @@ function themeOfCase(criterion: string, caseKey: string): CockpitTheme | null {
 export function computeThemeScores(answers: QuestionAnswer[], sessions: InterviewSession[]): ThemeScore[] {
   const totals = questionCountByTheme();
   const questionStats = Object.fromEntries(
-    COCKPIT_THEMES.map((theme) => [theme, { worked: 0, toRework: 0 }]),
-  ) as Record<CockpitTheme, { worked: number; toRework: number }>;
+    COCKPIT_THEMES.map((theme) => [theme, { worked: new Set<string>(), toRework: new Set<string>() }]),
+  ) as Record<CockpitTheme, { worked: Set<string>; toRework: Set<string> }>;
 
   answers.forEach((a) => {
+    // Seules les questions clés canoniques comptent : les questions
+    // d'entraînement par école (mots EDHEC, cartes emlyon, situations ESSEC…)
+    // ne font pas partie des thèmes du tableau de bord.
+    if (!isCanonicalQuestion(a.question_id)) return;
     const theme = themeOfQuestion(a.question_id);
     const verdict = verdictOf(a.ai_feedback);
     if (!verdict) return;
-    questionStats[theme].worked += 1;
-    if (verdict === "À retravailler") questionStats[theme].toRework += 1;
+    questionStats[theme].worked.add(a.question_id);
+    if (verdict === "À retravailler") questionStats[theme].toRework.add(a.question_id);
   });
 
   const evaluations = sessions
@@ -227,7 +251,7 @@ export function computeThemeScores(answers: QuestionAnswer[], sessions: Intervie
   return COCKPIT_THEMES.map((theme) => {
     const values = perTheme[theme];
     const score = values.length ? Math.round(values.reduce((sum, value) => sum + value, 0) / values.length) : null;
-    return { theme, score, worked: questionStats[theme].worked, total: totals[theme], toRework: questionStats[theme].toRework };
+    return { theme, score, worked: questionStats[theme].worked.size, total: totals[theme], toRework: questionStats[theme].toRework.size };
   });
 }
 
@@ -338,22 +362,21 @@ export function computePriorities(input: {
     });
   }
 
-  const worked = answers.filter((a) => verdictOf(a.ai_feedback) !== null).length;
-  const toRework = answers.filter((a) => verdictOf(a.ai_feedback) === "À retravailler");
-  if (toRework.length > 0) {
+  const { corrected: worked, toRework } = canonicalQuestionStats(answers);
+  if (toRework > 0) {
     out.push({
       id: "questions-rework",
-      title: `Refaire ${toRework.length} question(s) clé(s) notée(s) « À retravailler »`,
+      title: `Refaire ${toRework} question(s) clé(s) notée(s) « À retravailler »`,
       reason: "Une réponse jugée à retravailler reste un point de fragilité tant qu'elle n'a pas été repassée.",
       to: "/partie-7",
       cta: "Repasser ces questions",
       level: "important",
     });
-  } else if (worked < 10) {
+  } else if (worked < CORRECTED_QUESTION_TARGET) {
     out.push({
       id: "questions",
       title: "Travailler davantage de questions clés",
-      reason: `${worked} question(s) corrigée(s) : visez-en au moins 10 avant les simulations.`,
+      reason: `${worked} question(s) corrigée(s) sur ${CANONICAL_QUESTION_COUNT} questions clés : visez-en au moins ${CORRECTED_QUESTION_TARGET} avant les simulations.`,
       to: "/partie-7",
       cta: "M'entraîner sur une question",
       level: "important",
@@ -398,7 +421,36 @@ export function computePriorities(input: {
     });
   }
 
-  return out.slice(0, 4);
+  const rank = { bloquant: 0, important: 1, consolidation: 2 } as const;
+  return out
+    .map((p, i) => ({ p, i }))
+    .sort((a, b) => rank[a.p.level] - rank[b.p.level] || a.i - b.i)
+    .map(({ p }) => p)
+    .slice(0, 4);
+}
+
+export type WorkItem = { id: string; label: string; done: number; target: number; to: string };
+
+/** Avancement par module, avec les mêmes seuils que les priorités. */
+export function workProgress(input: {
+  profile: Profile | null;
+  sheets: SchoolSheet[];
+  experiences: Experience[];
+  newsTopics: NewsTopic[];
+  supports: InterviewSupport[];
+  answers: Pick<QuestionAnswer, "question_id" | "answer" | "ai_feedback">[];
+  sessions: InterviewSession[];
+}): WorkItem[] {
+  const { profile, sheets, experiences, newsTopics, supports, answers, sessions } = input;
+  const targetSchools = (profile?.target_schools ?? []).length;
+  return [
+    { id: "fiches", label: "Fiches écoles", done: sheets.filter(isSheetFinished).length, target: Math.max(1, Math.min(targetSchools, 3)), to: "/partie-3" },
+    { id: "experiences", label: "Expériences perso", done: experiences.filter((e) => e.status === "submitted").length, target: Math.max(4, Math.ceil(experiences.length * 0.75)), to: "/partie-4" },
+    { id: "actu", label: "Sujets d'actualité", done: newsTopics.filter((t) => t.status === "submitted" && isNewsTopicComplete(t)).length, target: 3, to: "/partie-5" },
+    { id: "supports", label: "Supports d'entretien", done: supports.filter(isSupportComplete).length, target: 1, to: "/partie-6" },
+    { id: "questions", label: "Questions clés corrigées", done: canonicalQuestionStats(answers).corrected, target: CORRECTED_QUESTION_TARGET, to: "/partie-7" },
+    { id: "simulations", label: "Simulations complètes", done: sessions.filter(isValidCompletedSimulation).length, target: 3, to: "/partie-8" },
+  ];
 }
 
 /** Indice de préparation global (0-100), pondéré préparation / entraînement. */
