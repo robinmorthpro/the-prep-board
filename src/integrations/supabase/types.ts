@@ -781,6 +781,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_emails: {
+        Args: never
+        Returns: {
+          email: string
+          user_id: string
+        }[]
+      }
       claim_oauth_handoff: { Args: { p_nonce: string }; Returns: string }
       has_role: {
         Args: {
