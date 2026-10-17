@@ -5,6 +5,7 @@ import { Wordmark } from "@/components/repetia/Mark";
 import { useSession } from "@/hooks/useSession";
 import { supabase } from "@/integrations/supabase/client";
 import { PARTS, PREP_PARTS, TRAIN_PARTS, moduleNumber } from "@/lib/vivaldi-data";
+import { useIsAdmin } from "@/lib/pilotage-queries";
 
 export const Route = createFileRoute("/_app")({
   component: AppLayout,
@@ -63,20 +64,23 @@ const mainItem = (active: boolean) =>
   }`;
 
 function AppLayout() {
-  const { session, loading } = useSession();
+  const { session, user, loading } = useSession();
+  const { data: isAdmin, isLoading: roleLoading } = useIsAdmin(user?.id);
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [mobileOpen, setMobileOpen] = useState(false);
 
+  // Un compte admin n'a pas d'espace apprenant : il est renvoyé vers le pilotage.
   useEffect(() => {
     if (!loading && !session) navigate({ to: "/auth" });
-  }, [loading, session, navigate]);
+    else if (isAdmin) navigate({ to: "/pilotage", replace: true });
+  }, [loading, session, isAdmin, navigate]);
 
   useEffect(() => {
     setMobileOpen(false);
   }, [pathname]);
 
-  if (loading || !session) {
+  if (loading || !session || roleLoading || isAdmin) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[var(--paper)] text-sm text-muted-foreground">
         Chargement…
