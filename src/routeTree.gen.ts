@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as AdminRouteImport } from './routes/_admin'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as SiteRouteImport } from './routes/_site'
 import { Route as AuthRouteImport } from './routes/auth'
@@ -17,6 +18,7 @@ import { Route as McpRouteImport } from './routes/mcp'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
+import { Route as AdminPilotageRouteImport } from './routes/_admin.pilotage'
 import { Route as AppDashboardRouteImport } from './routes/_app.dashboard'
 import { Route as AppInformationsPersonnellesRouteImport } from './routes/_app.informations-personnelles'
 import { Route as AppJeMEntraineRouteImport } from './routes/_app.je-m-entraine'
@@ -38,8 +40,13 @@ import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
+import { Route as AdminCandidatsIdRouteImport } from './routes/_admin.candidats.$id'
 import { Route as SiteConcoursSlugRouteImport } from './routes/_site.concours.$slug'
 
+const AdminRoute = AdminRouteImport.update({
+  id: '/_admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AppRoute = AppRouteImport.update({
   id: '/_app',
   getParentRoute: () => rootRouteImport,
@@ -80,6 +87,11 @@ const Char91DotwellKnownChar93OauthProtectedResourceRoute =
     path: '/.well-known/oauth-protected-resource',
     getParentRoute: () => rootRouteImport,
   } as any)
+const AdminPilotageRoute = AdminPilotageRouteImport.update({
+  id: '/pilotage',
+  path: '/pilotage',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AppDashboardRoute = AppDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -187,6 +199,11 @@ const Char91DotmcpChar93InvokeToolToolRoute =
     path: '/.mcp/invoke-tool/$tool',
     getParentRoute: () => rootRouteImport,
   } as any)
+const AdminCandidatsIdRoute = AdminCandidatsIdRouteImport.update({
+  id: '/candidats/$id',
+  path: '/candidats/$id',
+  getParentRoute: () => AdminRoute,
+} as any)
 const SiteConcoursSlugRoute = SiteConcoursSlugRouteImport.update({
   id: '/concours/$slug',
   path: '/concours/$slug',
@@ -201,6 +218,7 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/pilotage': typeof AdminPilotageRoute
   '/dashboard': typeof AppDashboardRoute
   '/informations-personnelles': typeof AppInformationsPersonnellesRoute
   '/je-m-entraine': typeof AppJeMEntraineRoute
@@ -221,6 +239,7 @@ export interface FileRoutesByFullPath {
   '/blog/': typeof BlogIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/candidats/$id': typeof AdminCandidatsIdRoute
   '/concours/$slug': typeof SiteConcoursSlugRoute
 }
 export interface FileRoutesByTo {
@@ -231,6 +250,7 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/pilotage': typeof AdminPilotageRoute
   '/dashboard': typeof AppDashboardRoute
   '/informations-personnelles': typeof AppInformationsPersonnellesRoute
   '/je-m-entraine': typeof AppJeMEntraineRoute
@@ -251,10 +271,12 @@ export interface FileRoutesByTo {
   '/blog': typeof BlogIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/candidats/$id': typeof AdminCandidatsIdRoute
   '/concours/$slug': typeof SiteConcoursSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
+  '/_admin': typeof AdminRouteWithChildren
   '/_app': typeof AppRouteWithChildren
   '/_site': typeof SiteRouteWithChildren
   '/auth': typeof AuthRouteWithChildren
@@ -263,6 +285,7 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/_admin/pilotage': typeof AdminPilotageRoute
   '/_app/dashboard': typeof AppDashboardRoute
   '/_app/informations-personnelles': typeof AppInformationsPersonnellesRoute
   '/_app/je-m-entraine': typeof AppJeMEntraineRoute
@@ -284,6 +307,7 @@ export interface FileRoutesById {
   '/blog/': typeof BlogIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/_admin/candidats/$id': typeof AdminCandidatsIdRoute
   '/_site/concours/$slug': typeof SiteConcoursSlugRoute
 }
 export interface FileRouteTypes {
@@ -296,6 +320,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
+    | '/pilotage'
     | '/dashboard'
     | '/informations-personnelles'
     | '/je-m-entraine'
@@ -316,6 +341,7 @@ export interface FileRouteTypes {
     | '/blog/'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
+    | '/candidats/$id'
     | '/concours/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -326,6 +352,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
+    | '/pilotage'
     | '/dashboard'
     | '/informations-personnelles'
     | '/je-m-entraine'
@@ -346,9 +373,11 @@ export interface FileRouteTypes {
     | '/blog'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
+    | '/candidats/$id'
     | '/concours/$slug'
   id:
     | '__root__'
+    | '/_admin'
     | '/_app'
     | '/_site'
     | '/auth'
@@ -357,6 +386,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
+    | '/_admin/pilotage'
     | '/_app/dashboard'
     | '/_app/informations-personnelles'
     | '/_app/je-m-entraine'
@@ -378,10 +408,12 @@ export interface FileRouteTypes {
     | '/blog/'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
+    | '/_admin/candidats/$id'
     | '/_site/concours/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
+  AdminRoute: typeof AdminRouteWithChildren
   AppRoute: typeof AppRouteWithChildren
   SiteRoute: typeof SiteRouteWithChildren
   AuthRoute: typeof AuthRouteWithChildren
@@ -397,6 +429,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/_admin': {
+      id: '/_admin'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_app': {
       id: '/_app'
       path: ''
@@ -452,6 +491,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/.well-known/oauth-protected-resource'
       preLoaderRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_admin/pilotage': {
+      id: '/_admin/pilotage'
+      path: '/pilotage'
+      fullPath: '/pilotage'
+      preLoaderRoute: typeof AdminPilotageRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/_app/dashboard': {
       id: '/_app/dashboard'
@@ -600,6 +646,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char91DotmcpChar93InvokeToolToolRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_admin/candidats/$id': {
+      id: '/_admin/candidats/$id'
+      path: '/candidats/$id'
+      fullPath: '/candidats/$id'
+      preLoaderRoute: typeof AdminCandidatsIdRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/_site/concours/$slug': {
       id: '/_site/concours/$slug'
       path: '/concours/$slug'
@@ -609,6 +662,18 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface AdminRouteChildren {
+  AdminPilotageRoute: typeof AdminPilotageRoute
+  AdminCandidatsIdRoute: typeof AdminCandidatsIdRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminPilotageRoute: AdminPilotageRoute,
+  AdminCandidatsIdRoute: AdminCandidatsIdRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface AppRouteChildren {
   AppDashboardRoute: typeof AppDashboardRoute
@@ -673,6 +738,7 @@ const AuthRouteChildren: AuthRouteChildren = {
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
+  AdminRoute: AdminRouteWithChildren,
   AppRoute: AppRouteWithChildren,
   SiteRoute: SiteRouteWithChildren,
   AuthRoute: AuthRouteWithChildren,
