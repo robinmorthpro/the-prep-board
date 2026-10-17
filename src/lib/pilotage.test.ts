@@ -33,11 +33,22 @@ describe("completedModules", () => {
     expect(countCompleted(candidate())).toBe(0);
   });
 
+  // Mêmes seuils que le tableau de bord du candidat (workProgress) : 10 questions clés corrigées,
+  // 3 simulations valides, au moins 4 expériences soumises (et 75 % d'entre elles).
+  const QUESTIONS = [
+    "pourquoi-ecole-commerce", "pourquoi-notre-ecole", "qu-est-ce-que-notre-ecole-va-vous-apporter",
+    "quelle-est-la-devise-notre-ecole", "quelles-sont-les-valeurs-notre-ecole", "maire-ville-ecole",
+    "tissu-economique-ville-region", "apport-ecole", "entre-notre-ecole-et-une-autre-que-choisissez-vous",
+    "que-feriez-vous-si-vous-etiez-refuse-dans-notre-ecole",
+  ];
+  const corrected = (id: string) => ({ question_id: id, answer: "Ma réponse", ai_feedback: "## Verdict\nÀ perfectionner" });
+  const exp = (status: string) => ({ status, context: "", story: "", anecdotes: [] });
+
   it("compte les informations personnelles, les questions clés et les simulations valides", () => {
     const c = candidate({
       profile: { part1_completed: true },
-      answers: [{ answer: "Ma réponse" }] as never,
-      sessions: [session("ESSEC", 12)] as never,
+      answers: QUESTIONS.map(corrected) as never,
+      sessions: [session("ESSEC", 12), session("EDHEC", 13), session("KEDGE", 11)] as never,
     });
     const done = completedModules(c);
     expect(done[1]).toBe(true);
@@ -46,19 +57,36 @@ describe("completedModules", () => {
     expect(done[2]).toBe(false);
   });
 
-  it("une réponse vide ou une simulation interrompue ne terminent pas le module", () => {
+  it("en dessous des seuils du tableau de bord, le module n'est pas terminé", () => {
     const c = candidate({
-      answers: [{ answer: "   " }] as never,
-      sessions: [session("ESSEC", 12, { interrupted: true }), session("EDHEC", null, { status: "stopped" })] as never,
+      answers: QUESTIONS.slice(0, 9).map(corrected) as never,
+      sessions: [session("ESSEC", 12), session("EDHEC", 13)] as never,
     });
     expect(completedModules(c)[7]).toBe(false);
     expect(completedModules(c)[8]).toBe(false);
   });
 
-  it("les expériences comptent à partir de 75 % soumises", () => {
-    const exp = (status: string) => ({ status, context: "", story: "", anecdotes: [] });
-    expect(completedModules(candidate({ experiences: [exp("submitted"), exp("submitted"), exp("submitted"), exp("draft")] as never }))[4]).toBe(true);
-    expect(completedModules(candidate({ experiences: [exp("submitted"), exp("draft")] as never }))[4]).toBe(false);
+  it("une même question travaillée deux fois ne compte qu'une fois", () => {
+    const c = candidate({ answers: [...QUESTIONS.slice(0, 9), QUESTIONS[0]!].map(corrected) as never });
+    expect(completedModules(c)[7]).toBe(false);
+  });
+
+  it("une simulation interrompue ou non notée ne compte pas", () => {
+    const c = candidate({
+      sessions: [session("ESSEC", 12), session("EDHEC", 13), session("KEDGE", 11, { interrupted: true }), session("GEM", null, { status: "stopped" })] as never,
+    });
+    expect(completedModules(c)[8]).toBe(false);
+  });
+
+  it("les expériences comptent à partir de 4 soumises, et 75 % d'entre elles", () => {
+    expect(completedModules(candidate({ experiences: [exp("submitted"), exp("submitted"), exp("submitted"), exp("submitted"), exp("draft")] as never }))[4]).toBe(true);
+    expect(completedModules(candidate({ experiences: [exp("submitted"), exp("submitted"), exp("submitted"), exp("draft")] as never }))[4]).toBe(false);
+  });
+
+  it("donne le même avancement que le tableau de bord du candidat", () => {
+    const c = candidate({ answers: QUESTIONS.map(corrected) as never });
+    expect(completedModules(c)[7]).toBe(true);
+    expect(countCompleted(c)).toBe(1);
   });
 });
 
@@ -89,9 +117,11 @@ describe("overview", () => {
   });
 
   it("donne le pourcentage de complétion de chaque module", () => {
-    const o = overview([a, b, c]);
-    expect(o.completion.find((m) => m.id === 8)?.percent).toBe(67);
-    expect(o.completion.find((m) => m.id === 1)?.percent).toBe(0);
+    const d = candidate({ profile: { part1_completed: true }, sessions: [session("ESSEC", 12), session("EDHEC", 13), session("KEDGE", 11)] as never });
+    const o = overview([a, b, c, d]);
+    expect(o.completion.find((m) => m.id === 8)?.percent).toBe(25);
+    expect(o.completion.find((m) => m.id === 1)?.percent).toBe(25);
+    expect(o.completion.find((m) => m.id === 3)?.percent).toBe(0);
   });
 
   it("ne divise pas par zéro sans candidat", () => {

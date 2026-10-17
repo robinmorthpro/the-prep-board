@@ -3,9 +3,6 @@ import { PARTS } from "@/lib/vivaldi-data";
 import {
   isCareerDeepened,
   type Profile,
-  isNewsTopicComplete,
-  isSheetFinished,
-  isSupportComplete,
   type CareerProject,
   type Experience,
   type InterviewSession,
@@ -14,7 +11,7 @@ import {
   type QuestionAnswer,
   type SchoolSheet,
 } from "@/lib/vivaldi-queries";
-import { isValidCompletedSimulation } from "@/lib/cockpit";
+import { isValidCompletedSimulation, workProgress } from "@/lib/cockpit";
 
 export const MODULES = PARTS.map((p) => ({ id: p.id, title: p.title }));
 
@@ -30,19 +27,40 @@ export type CandidateData = {
   sessions: InterviewSession[];
 };
 
-/** Un module est terminé selon les mêmes seuils que ceux qui débloquent la suite dans l'app. */
+/** Module 3 à 8 → élément d'avancement du tableau de bord apprenant (`workProgress`). */
+const WORK_ITEM_OF_MODULE: Record<number, string> = {
+  3: "fiches",
+  4: "experiences",
+  5: "actu",
+  6: "supports",
+  7: "questions",
+  8: "simulations",
+};
+
+/**
+ * Un module est terminé selon les mêmes seuils que le tableau de bord du candidat :
+ * l'admin et le candidat voient le même avancement.
+ */
 export function completedModules(c: CandidateData): Record<number, boolean> {
-  const submitted = c.experiences.filter((e) => e.status === "submitted").length;
-  return {
+  const work = workProgress({
+    profile: c.profile,
+    sheets: c.sheets,
+    experiences: c.experiences,
+    newsTopics: c.news,
+    supports: c.supports,
+    answers: c.answers,
+    sessions: c.sessions,
+  });
+  const reached = (id: string) => {
+    const item = work.find((w) => w.id === id);
+    return !!item && item.done >= item.target;
+  };
+  const done: Record<number, boolean> = {
     1: !!c.profile.part1_completed,
     2: isCareerDeepened(c.career),
-    3: c.sheets.some(isSheetFinished),
-    4: c.experiences.length > 0 && submitted / c.experiences.length >= 0.75,
-    5: c.news.some((t) => t.status === "submitted" && isNewsTopicComplete(t)),
-    6: c.supports.some(isSupportComplete),
-    7: c.answers.some((a) => (a.answer ?? "").trim().length > 0),
-    8: c.sessions.some(isValidCompletedSimulation),
   };
+  for (const [module, id] of Object.entries(WORK_ITEM_OF_MODULE)) done[Number(module)] = reached(id);
+  return done;
 }
 
 export function countCompleted(c: CandidateData) {
