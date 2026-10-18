@@ -53,7 +53,8 @@ export function completedModules(c: CandidateData): Record<number, boolean> {
   });
   const reached = (id: string) => {
     const item = work.find((w) => w.id === id);
-    return !!item && item.done >= item.target;
+    // Même règle que le tableau de bord du candidat : « complete » prime quand il est fourni.
+    return !!item && (item.complete ?? item.done >= item.target);
   };
   const done: Record<number, boolean> = {
     1: !!c.profile.part1_completed,

@@ -1,14 +1,16 @@
 import { describe, expect, it } from "vitest";
 import { candidateName, completedModules, countCompleted, formatScore, overview, schoolOptions, validSessions, type CandidateData } from "./pilotage";
+import { KEY_QUESTIONS } from "./vivaldi-data";
+import { isCanonicalQuestion } from "./cockpit";
 
-const session = (school: string, score: number | null, opts: { status?: string; evalStatus?: string; interrupted?: boolean; date?: string } = {}) => ({
+const session = (school: string, score: number | null, opts: { status?: string; evalStatus?: string; interrupted?: boolean; date?: string; percentile?: number } = {}) => ({
   id: `${school}-${score}-${opts.date ?? "2026-10-10"}`,
   school,
   difficulty: null,
   turns: [],
   debrief: "",
   status: opts.status ?? "done",
-  percentile: null,
+  percentile: opts.percentile ?? null,
   feedback_evaluation_id: "e",
   created_at: opts.date ?? "2026-10-10T10:00:00Z",
   evaluation: { status: opts.evalStatus ?? "ok", interrupted: opts.interrupted ?? false, final_score: score },
@@ -33,22 +35,17 @@ describe("completedModules", () => {
     expect(countCompleted(candidate())).toBe(0);
   });
 
-  // Mêmes seuils que le tableau de bord du candidat (workProgress) : 10 questions clés corrigées,
-  // 3 simulations valides, au moins 4 expériences soumises (et 75 % d'entre elles).
-  const QUESTIONS = [
-    "pourquoi-ecole-commerce", "pourquoi-notre-ecole", "qu-est-ce-que-notre-ecole-va-vous-apporter",
-    "quelle-est-la-devise-notre-ecole", "quelles-sont-les-valeurs-notre-ecole", "maire-ville-ecole",
-    "tissu-economique-ville-region", "apport-ecole", "entre-notre-ecole-et-une-autre-que-choisissez-vous",
-    "que-feriez-vous-si-vous-etiez-refuse-dans-notre-ecole",
-  ];
+  // Mêmes seuils que le tableau de bord du candidat (workProgress) : toutes les questions clés corrigées,
+  // le percentile 90 atteint au moins une fois dans chaque école passée, au moins 4 expériences soumises (et 75 %).
+  const QUESTIONS = KEY_QUESTIONS.map((q) => q.id).filter(isCanonicalQuestion);
   const corrected = (id: string) => ({ question_id: id, answer: "Ma réponse", ai_feedback: "## Verdict\nÀ perfectionner" });
   const exp = (status: string) => ({ status, context: "", story: "", anecdotes: [] });
 
-  it("compte les informations personnelles, les questions clés et les simulations valides", () => {
+  it("compte les informations personnelles, les questions clés et les simulations réussies", () => {
     const c = candidate({
-      profile: { part1_completed: true },
+      profile: { part1_completed: true, choice_1: "ESSEC", choice_2: "EDHEC" },
       answers: QUESTIONS.map(corrected) as never,
-      sessions: [session("ESSEC", 12), session("EDHEC", 13), session("KEDGE", 11)] as never,
+      sessions: [session("ESSEC", 15, { percentile: 92 }), session("EDHEC", 16, { percentile: 95 })] as never,
     });
     const done = completedModules(c);
     expect(done[1]).toBe(true);
@@ -59,21 +56,23 @@ describe("completedModules", () => {
 
   it("en dessous des seuils du tableau de bord, le module n'est pas terminé", () => {
     const c = candidate({
-      answers: QUESTIONS.slice(0, 9).map(corrected) as never,
-      sessions: [session("ESSEC", 12), session("EDHEC", 13)] as never,
+      profile: { choice_1: "ESSEC", choice_2: "EDHEC" },
+      answers: QUESTIONS.slice(1).map(corrected) as never,
+      sessions: [session("ESSEC", 15, { percentile: 92 }), session("EDHEC", 12, { percentile: 70 })] as never,
     });
     expect(completedModules(c)[7]).toBe(false);
     expect(completedModules(c)[8]).toBe(false);
   });
 
   it("une même question travaillée deux fois ne compte qu'une fois", () => {
-    const c = candidate({ answers: [...QUESTIONS.slice(0, 9), QUESTIONS[0]!].map(corrected) as never });
+    const c = candidate({ answers: [...QUESTIONS.slice(1), QUESTIONS[1]!].map(corrected) as never });
     expect(completedModules(c)[7]).toBe(false);
   });
 
-  it("une simulation interrompue ou non notée ne compte pas", () => {
+  it("une simulation interrompue ou non notée ne compte pas, même au percentile 90", () => {
     const c = candidate({
-      sessions: [session("ESSEC", 12), session("EDHEC", 13), session("KEDGE", 11, { interrupted: true }), session("GEM", null, { status: "stopped" })] as never,
+      profile: { choice_1: "ESSEC" },
+      sessions: [session("ESSEC", 15, { percentile: 95, interrupted: true }), session("ESSEC", null, { status: "stopped", percentile: 95 })] as never,
     });
     expect(completedModules(c)[8]).toBe(false);
   });
@@ -117,7 +116,7 @@ describe("overview", () => {
   });
 
   it("donne le pourcentage de complétion de chaque module", () => {
-    const d = candidate({ profile: { part1_completed: true }, sessions: [session("ESSEC", 12), session("EDHEC", 13), session("KEDGE", 11)] as never });
+    const d = candidate({ profile: { part1_completed: true, choice_1: "ESSEC" }, sessions: [session("ESSEC", 16, { percentile: 93 })] as never });
     const o = overview([a, b, c, d]);
     expect(o.completion.find((m) => m.id === 8)?.percent).toBe(25);
     expect(o.completion.find((m) => m.id === 1)?.percent).toBe(25);
