@@ -26,3 +26,4 @@
 - Le secours « main rendue sans question » passe par `src/lib/main-rendue.ts`, partagé par l'écran d'entretien et le banc. Pourquoi : les deux bloquent le secours exactement dans les mêmes cas.
 
 - Modules 1-4 theory and Ressources chapters share one source (src/lib/methode.ts; theory.ts derives from it); supports and key questions come from supports-kb.ts and canonical KEY_QUESTIONS, so module buttons and /ressources never diverge.
+- Interview popup presentation lives in a browser-safe display-only module; never change school engine configuration to rewrite its copy, because interview timing and conduct must remain independent of presentation.

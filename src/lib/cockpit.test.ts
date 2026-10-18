@@ -7,6 +7,7 @@ import {
   isValidCompletedSimulation,
   questionCountByTheme,
   workProgress,
+  simulationsComplete,
 } from "./cockpit";
 import { BAREME } from "./evaluateur/bareme";
 import type { InterviewSession } from "./vivaldi-queries";
@@ -152,11 +153,11 @@ describe("périmètre canonique de tous les objectifs du tableau de bord", () =>
     job_names: "Métiers", qualities: "Qualités", news: "", companies: "", extra_info: "", deepened: true,
   };
 
-  it("exclut les questions école du compteur corrigé et conserve l'objectif de 10 questions canoniques", () => {
+  it("exclut les questions école du compteur corrigé et fixe l'objectif à 44 questions canoniques", () => {
     const work = workProgress({ profile: null, sheets: [], experiences: [], newsTopics: [], supports: [], sessions: [],
       answers: [answer("presentez-vous"), answer("edhec-mot-1"), answer("emlyon-projet-1")],
     });
-    expect(work.find((item) => item.id === "questions")).toMatchObject({ done: 1, target: 10 });
+    expect(work.find((item) => item.id === "questions")).toMatchObject({ done: 1, target: 44 });
   });
 
   it("ne crée pas de priorité de reprise pour une question école", () => {
@@ -199,5 +200,55 @@ describe("périmètre canonique de tous les objectifs du tableau de bord", () =>
     expect(out.some((item) => item.id === "questions-rework")).toBe(true);
     expect(canonicalQuestionStats([answer("presentez-vous", "À retravailler"), answer("edhec-mot-1", "À retravailler")])
       .toRework).toBe(1);
+  });
+});
+
+describe("supportsProgress", () => {
+  const sup = (school: string) => ({ school, status: "submitted" }) as never;
+  it("vise autant de supports que d'écoles présentées qui en demandent", async () => {
+    const { supportsProgress } = await import("./cockpit");
+    const profile = { choice_1: "ESCP", choice_2: "SKEMA", choice_3: null, target_schools: [] } as never;
+    const r = supportsProgress(profile, []);
+    expect(r.target).toBe(2);
+  });
+  it("vise 1 support sans école concernée", async () => {
+    const { supportsProgress } = await import("./cockpit");
+    expect(supportsProgress(null, [sup("ESCP")]).target).toBe(1);
+  });
+});
+
+describe("agenda À faire complet", () => {
+  it("affiche toutes les priorités, sans plafond, dont les supports manquants", async () => {
+    const { computePriorities: cp } = await import("./cockpit");
+    const out = cp({
+      profile: { part1_completed: false, choice_1: "ESCP", choice_2: "SKEMA", target_schools: [] } as never,
+      career: null, sheets: [], experiences: [], newsTopics: [],
+      supports: [{ school: "ESCP", status: "submitted" } as never],
+      answers: [], sessions: [], themeScores: [],
+    });
+    expect(out.length).toBeGreaterThan(4);
+    expect(out.some((p) => p.id === "supports")).toBe(true);
+  });
+});
+
+describe("objectif des fiches écoles", () => {
+  it("compte toutes les écoles passées et les fiches ouvertes, sans plafond à 3", async () => {
+    const { sheetsProgress } = await import("./cockpit");
+    const r = sheetsProgress(
+      { choice_1: "ESCP", choice_2: "SKEMA", choice_3: "NEOMA", target_schools: ["EDHEC", "ESCP"] } as never,
+      [{ school: "KEDGE", items: [] } as never],
+    );
+    expect(r.target).toBe(5);
+  });
+});
+
+describe("objectif des simulations complètes", () => {
+  const sess = (school: string, percentile: number) => ({ school, status: "done", percentile, evaluation: { status: "ok", interrupted: false, percentile, final_score: 15 } }) as never;
+  const profile = { choice_1: "NEOMA", choice_2: "SKEMA", choice_3: null, target_schools: [] } as never;
+  it("reste à compléter tant qu'une école passée n'a pas atteint le percentile 90", () => {
+    expect(simulationsComplete(profile, [sess("NEOMA", 92), sess("SKEMA", 89)])).toBe(false);
+  });
+  it("est terminé quand chaque école passée a au moins un entretien au percentile 90", () => {
+    expect(simulationsComplete(profile, [sess("NEOMA", 90), sess("SKEMA", 95), sess("SKEMA", 40)])).toBe(true);
   });
 });

@@ -10,6 +10,7 @@
  */
 
 import { BAREME } from "@/lib/evaluateur/bareme";
+import { SUPPORT_SCHOOL_NAMES } from "@/lib/supports-kb";
 import {
   isCareerDeepened,
   isNewsTopicComplete,
@@ -101,7 +102,7 @@ export function isCanonicalQuestion(questionId: string): boolean {
 }
 
 export const CANONICAL_QUESTION_COUNT = Object.keys(QUESTION_THEME).length;
-const CORRECTED_QUESTION_TARGET = 10;
+const CORRECTED_QUESTION_TARGET = CANONICAL_QUESTION_COUNT;
 
 /** Une question compte une seule fois, même travaillée pour plusieurs écoles. */
 export function canonicalQuestionStats(answers: Pick<QuestionAnswer, "question_id" | "answer" | "ai_feedback">[]) {
@@ -310,9 +311,9 @@ export function computePriorities(input: {
     });
   }
 
-  const finishedSheets = sheets.filter(isSheetFinished).length;
-  const targetSchools = (profile?.target_schools ?? []).length;
-  if (finishedSheets < Math.max(1, Math.min(targetSchools, 3))) {
+  const { done: finishedSheets, target: sheetTarget } = sheetsProgress(profile, sheets);
+  const targetSchools = sheetTarget;
+  if (finishedSheets < sheetTarget) {
     out.push({
       id: "fiches",
       title: "Terminer mes fiches écoles",
@@ -350,15 +351,15 @@ export function computePriorities(input: {
     });
   }
 
-  const finishedSupports = supports.filter(isSupportComplete).length;
-  if (finishedSupports === 0) {
+  const sp = supportsProgress(profile, supports);
+  if (sp.done < sp.target) {
     out.push({
       id: "supports",
-      title: "Finaliser un support d'entretien",
-      reason: "Questionnaire ou CV projectif : c'est le premier contact du jury avec votre profil.",
+      title: sp.target > 1 ? "Finaliser mes supports d'entretien" : "Finaliser un support d'entretien",
+      reason: `${sp.done}/${sp.target} support(s) prêt(s) : questionnaire ou CV projectif, c'est le premier contact du jury avec votre profil.`,
       to: "/partie-6",
       cta: "Travailler mes supports",
-      level: "important",
+      level: sp.done === 0 ? "important" : "consolidation",
     });
   }
 
@@ -376,7 +377,7 @@ export function computePriorities(input: {
     out.push({
       id: "questions",
       title: "Travailler davantage de questions clés",
-      reason: `${worked} question(s) corrigée(s) sur ${CANONICAL_QUESTION_COUNT} questions clés : visez-en au moins ${CORRECTED_QUESTION_TARGET} avant les simulations.`,
+      reason: `${worked} question(s) corrigée(s) sur ${CANONICAL_QUESTION_COUNT} questions clés : travaillez-les toutes.`,
       to: "/partie-7",
       cta: "M'entraîner sur une question",
       level: "important",
@@ -384,11 +385,11 @@ export function computePriorities(input: {
   }
 
   const doneInterviews = sessions.filter(isValidCompletedSimulation).length;
-  if (doneInterviews < 3) {
+  if (!simulationsComplete(profile, sessions)) {
     out.push({
       id: "simulations",
       title: "Passer une simulation complète",
-      reason: `${completedSimulationLabel(doneInterviews)} : c'est le seul exercice qui mesure votre tenue sur 30 minutes.`,
+      reason: `${completedSimulationLabel(doneInterviews)} : visez le percentile ${SIMULATION_GOAL_PERCENTILE} au moins une fois dans chacune de vos écoles.`,
       to: "/partie-8",
       cta: "Lancer une simulation",
       level: doneInterviews === 0 ? "important" : "consolidation",
@@ -425,11 +426,61 @@ export function computePriorities(input: {
   return out
     .map((p, i) => ({ p, i }))
     .sort((a, b) => rank[a.p.level] - rank[b.p.level] || a.i - b.i)
-    .map(({ p }) => p)
-    .slice(0, 4);
+    .map(({ p }) => p);
 }
 
-export type WorkItem = { id: string; label: string; done: number; target: number; to: string };
+/** Cible = toutes les écoles passées (profil) et toutes les fiches ouvertes au module (au moins 1). */
+export function sheetsProgress(
+  profile: Pick<Profile, "choice_1" | "choice_2" | "choice_3" | "target_schools"> | null,
+  sheets: SchoolSheet[],
+): { done: number; target: number } {
+  const schools = new Set(
+    [profile?.choice_1, profile?.choice_2, profile?.choice_3, ...(profile?.target_schools ?? []), ...sheets.map((s) => s.school)]
+      .filter((s): s is string => Boolean(s && s.trim())),
+  );
+  return { done: sheets.filter(isSheetFinished).length, target: Math.max(1, schools.size) };
+}
+
+export type WorkItem = { id: string; label: string; done: number; target: number; to: string; targetLabel?: string; complete?: boolean };
+
+/** Percentile à atteindre au moins une fois dans chaque école passée. */
+export const SIMULATION_GOAL_PERCENTILE = 90;
+
+/** Vrai quand chaque école passée (profil) a au moins une simulation valide au percentile 90 ou plus. */
+export function simulationsComplete(
+  profile: Pick<Profile, "choice_1" | "choice_2" | "choice_3" | "target_schools"> | null,
+  sessions: InterviewSession[],
+): boolean {
+  const reached = new Set(
+    sessions
+      .filter(isValidCompletedSimulation)
+      .filter((x) => (x.percentile ?? x.evaluation?.percentile ?? -1) >= SIMULATION_GOAL_PERCENTILE)
+      .map((x) => x.school),
+  );
+  const schools = [...new Set(
+    [profile?.choice_1, profile?.choice_2, profile?.choice_3, ...(profile?.target_schools ?? [])]
+      .filter((s): s is string => Boolean(s && s.trim())),
+  )];
+  if (schools.length === 0) return reached.size > 0;
+  return schools.every((s) => reached.has(s));
+}
+
+/** Cible = écoles présentées par le candidat qui demandent un support (au moins 1). */
+export function supportsProgress(
+  profile: Pick<Profile, "choice_1" | "choice_2" | "choice_3" | "target_schools"> | null,
+  supports: InterviewSupport[],
+): { done: number; target: number } {
+  const presented = new Set(
+    [profile?.choice_1, profile?.choice_2, profile?.choice_3, ...(profile?.target_schools ?? [])]
+      .filter((s): s is string => Boolean(s && s.trim())),
+  );
+  const concerned = SUPPORT_SCHOOL_NAMES.filter((s) => presented.has(s));
+  if (concerned.length === 0) {
+    return { done: Math.min(1, supports.filter(isSupportComplete).length), target: 1 };
+  }
+  const done = new Set(supports.filter((s) => isSupportComplete(s) && concerned.includes(s.school)).map((s) => s.school)).size;
+  return { done, target: concerned.length };
+}
 
 /** Avancement par module, avec les mêmes seuils que les priorités. */
 export function workProgress(input: {
@@ -442,14 +493,13 @@ export function workProgress(input: {
   sessions: InterviewSession[];
 }): WorkItem[] {
   const { profile, sheets, experiences, newsTopics, supports, answers, sessions } = input;
-  const targetSchools = (profile?.target_schools ?? []).length;
   return [
-    { id: "fiches", label: "Fiches écoles", done: sheets.filter(isSheetFinished).length, target: Math.max(1, Math.min(targetSchools, 3)), to: "/partie-3" },
+    { id: "fiches", label: "Fiches écoles", ...sheetsProgress(profile, sheets), to: "/partie-3" },
     { id: "experiences", label: "Expériences perso", done: experiences.filter((e) => e.status === "submitted").length, target: Math.max(4, Math.ceil(experiences.length * 0.75)), to: "/partie-4" },
     { id: "actu", label: "Sujets d'actualité", done: newsTopics.filter((t) => t.status === "submitted" && isNewsTopicComplete(t)).length, target: 3, to: "/partie-5" },
-    { id: "supports", label: "Supports d'entretien", done: supports.filter(isSupportComplete).length, target: 1, to: "/partie-6" },
+    { id: "supports", label: "Supports d'entretien", ...supportsProgress(profile, supports), to: "/partie-6" },
     { id: "questions", label: "Questions clés corrigées", done: canonicalQuestionStats(answers).corrected, target: CORRECTED_QUESTION_TARGET, to: "/partie-7" },
-    { id: "simulations", label: "Simulations complètes", done: sessions.filter(isValidCompletedSimulation).length, target: 3, to: "/partie-8" },
+    { id: "simulations", label: "Simulations complètes", done: sessions.filter(isValidCompletedSimulation).length, target: 1, targetLabel: "autant que vous voulez !", complete: simulationsComplete(profile, sessions), to: "/partie-8" },
   ];
 }
 

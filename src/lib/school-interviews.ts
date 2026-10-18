@@ -589,7 +589,7 @@ const CONFIGS: SchoolInterviewConfig[] = [
     school: "emlyon",
     format: "special",
     agentIdEnv: CLASSIQUE_AGENT_ENV,
-    durationSeconds: 1680,
+    durationSeconds: 1620,
     requiresUpload: false,
     useHouseJuryPrompt: true,
     conductNote:

@@ -1,5 +1,11 @@
 # Roadmap
 
+## Fenêtres avant entretien
+- [x] Appliquer les précisions validées (GEM, Montpellier, ESSEC, Clermont, mentions collectives), affichage uniquement ; six tests et sept fenêtres isolées vérifiés, aucun entretien lancé, empreinte du moteur inchangée.
+- [x] Clarifier emlyon / INSEEC : emlyon environ 25 minutes documentées contre 28 simulées ; INSEEC 25 minutes dans le guide disponible et la simulation, sans confirmation officielle récente des 30 minutes.
+- [x] Réorganiser les fenêtres et reformuler le déroulé par école sans modifier le moteur.
+- [x] Vérifier les durées affichées (4 tests) et les sélections obligatoires d’image/article ; affichage isolé EDHEC, INSEEC et TBS contrôlé sur ordinateur et petit écran.
+
 ## Harmonisation du tableau de bord et des modules
 - [x] Appliquer le périmètre des 44 questions canoniques aux compteurs et objectifs ; 739 tests réussis.
 - [x] Harmoniser les boutons de vérification IA hors simulations complètes.
@@ -102,3 +108,7 @@
 - [x] Pilote Clermont (bon, neutre puis dur, Gemini puis Claude)
 - [x] Lot principal, cas limites et stabilité exécutés lors des tours précédents.
 - [x] Limite évaluateur Claude portée à 32 000 jetons lors des tours précédents.
+
+## Commentaires — 18 octobre
+- [x] Durée affichée à côté du titre de chaque étape de la fenêtre d’entretien, phrase du dessous reformulée sans durée
+- [x] Mention du module supports : une seule ligne en gras commençant par le nom du support (« Questionnaire NEOMA — ce support est travaillé au module « Mes supports d’entretien » ») suivie du lien « Ouvrir le module ↗ » ; six écoles concernées, TBS sans mention (article choisi dans la fenêtre)

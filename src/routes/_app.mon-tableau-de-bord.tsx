@@ -143,21 +143,21 @@ function CockpitPage() {
         </div>
         <ul className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {work.map((w) => {
-            const ok = w.done >= w.target;
+            const ok = w.complete ?? w.done >= w.target;
             return (
               <li key={w.id}>
                 <Link to={w.to} className="block rounded-[16px] bg-muted/50 p-4 transition-colors hover:bg-muted">
                   <div className="flex items-center justify-between gap-2">
                     <span className="text-sm font-medium">{w.label}</span>
-                    <Badge className={ok ? "bg-success text-success-foreground" : "bg-muted text-muted-foreground"}>
-                      {ok ? "Suffisant" : "Insuffisant"}
+                    <Badge className={ok ? "bg-success text-success-foreground" : "bg-amber-500 text-white"}>
+                      {ok ? "Terminé" : "À compléter"}
                     </Badge>
                   </div>
                   <p className="mt-2 text-sm text-muted-foreground">
-                    <span className="font-display text-2xl font-bold text-primary">{w.done}</span> / {w.target} attendu{w.target > 1 ? "s" : ""}
+                    <span className="font-display text-2xl font-bold text-primary">{w.done}</span> / {w.targetLabel ?? `${w.target} attendu${w.target > 1 ? "s" : ""}`}
                   </p>
                   <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-border" aria-hidden>
-                    <div className={`h-full rounded-full ${ok ? "bg-success" : "bg-accent"}`} style={{ width: `${Math.min(100, (w.done / w.target) * 100)}%` }} />
+                    <div className={`h-full rounded-full ${ok ? "bg-success" : "bg-accent"}`} style={{ width: `${ok ? 100 : Math.min(100, (w.done / w.target) * 100)}%` }} />
                   </div>
                 </Link>
               </li>
@@ -183,7 +183,7 @@ function CockpitPage() {
                 <div className="flex min-w-0 flex-1 flex-col gap-1">
                   <Badge className={`w-fit ${LEVEL_STYLE[p.level].className}`}>{LEVEL_STYLE[p.level].label}</Badge>
                   <p className="text-base font-medium">{p.title}</p>
-                  {i === 0 ? <p className="text-sm leading-relaxed text-muted-foreground">{p.reason}</p> : null}
+                  <p className="text-sm leading-relaxed text-muted-foreground">{p.reason}</p>
                 </div>
                 <Button asChild variant={i === 0 ? "default" : "outline"} size="sm">
                   <Link to={p.to}>

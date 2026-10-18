@@ -95,7 +95,7 @@ export function HomeHero() {
             Entraînez-vous aux oraux d'admission, <span className="text-[var(--ciel)]">sans limite</span>
           </h1>
           <p className="mt-7 max-w-[640px] text-[18px] leading-[1.55] text-[#E1E6EF] md:text-[20px]">
-            The Prepboard est la première plateforme de préparation aux concours qui allie l'expertise des
+            The Prepboard est la première plateforme de préparation aux oraux d'admission des grandes écoles qui allie l'expertise des
             meilleurs spécialistes et la puissance de l'IA.
             <br />
             Suivez une préparation 100% personnalisée, un entraînement 100% illimité, une progression 100%
