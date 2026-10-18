@@ -11,27 +11,28 @@ import {
 } from "@/lib/interview-kb";
 import { PROJECTIVE_CV, SUPPORT_PRINCIPLES } from "@/lib/supports-kb";
 import { getSchoolInterviewConfig, measuredPhaseDurationsBlock, type PhaseTiming } from "@/lib/school-interviews";
+import { AiProviderError, geminiChat, type ChatMessage } from "@/lib/ai/providers";
 
-const GATEWAY = "https://ai.gateway.lovable.dev/v1/chat/completions";
-
-async function callGateway(body: unknown) {
-  const key = process.env["LOVABLE_API_KEY"];
-  if (!key) throw new Error("LOVABLE_API_KEY manquante");
-  const res = await fetch(GATEWAY, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
+/**
+ * Retours IA des modules : appel direct à Gemini (Google), comme aux tests, sans la passerelle Lovable.
+ * Le format des messages reste celui de l'app (system / user, texte, image ou fichier en data URL).
+ */
+async function callGateway(body: { model: string; messages: ChatMessage[]; response_format?: { type: string } }) {
+  try {
     // temperature 0 : une même réponse d'étudiant produit toujours la même analyse
-    body: JSON.stringify({ temperature: 0, ...(body as Record<string, unknown>) }),
-  });
-  if (!res.ok) {
-    const text = await res.text();
-    console.error(`AI gateway ${res.status}: ${text}`);
-    if (res.status === 429) throw new Error("Trop de demandes à l'IA, réessayez dans un instant.");
-    if (res.status === 402) throw new Error("Crédits IA épuisés sur cet espace de travail.");
-    throw new Error(`Erreur IA (${res.status}).`);
+    return await geminiChat({
+      model: body.model,
+      messages: body.messages,
+      temperature: 0,
+      json: body.response_format?.type === "json_object",
+    });
+  } catch (error) {
+    if (error instanceof AiProviderError && error.status === 429) {
+      throw new Error("Trop de demandes à l'IA, réessayez dans un instant.");
+    }
+    if (error instanceof AiProviderError) throw new Error(error.message);
+    throw error;
   }
-  const json = (await res.json()) as { choices?: Array<{ message?: { content?: string } }> };
-  return json.choices?.[0]?.message?.content ?? "";
 }
 
 const NOT_WORKED_FEEDBACK = `## Verdict

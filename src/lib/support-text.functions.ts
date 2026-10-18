@@ -9,8 +9,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-
-const GATEWAY = "https://ai.gateway.lovable.dev/v1/chat/completions";
+import { geminiChat, type ChatPart } from "@/lib/ai/providers";
 
 const EXTRACTION_PROMPT = `Tu es un lecteur de documents. On te remet un document préparé par un candidat avant un oral d'école de commerce (questionnaire, dossier de motivation, CV projectif, cartographie, fiche…).
 
@@ -40,9 +39,8 @@ export const extractSupportText = createServerFn({ method: "POST" })
       throw new Error("Support introuvable.");
     }
 
-    const key = process.env["LOVABLE_API_KEY"];
-    if (!key) {
-      console.error("[extractSupportText] LOVABLE_API_KEY manquante");
+    if (!process.env["GEMINI_API_KEY"]) {
+      console.error("[extractSupportText] GEMINI_API_KEY manquante");
       return { text: "" };
     }
 
@@ -56,33 +54,23 @@ export const extractSupportText = createServerFn({ method: "POST" })
       if (!base64.length) return { text: "" };
       const dataUrl = `data:${mime};base64,${base64}`;
 
-      const block = mime.startsWith("image/")
+      const block: ChatPart = mime.startsWith("image/")
         ? { type: "image_url", image_url: { url: dataUrl } }
         : { type: "file", file: { filename: `${data.label}.pdf`, file_data: dataUrl } };
 
-      const res = await fetch(GATEWAY, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
-        body: JSON.stringify({
-          model: "google/gemini-3.7-flash",
-          temperature: 0,
-          messages: [
-            { role: "system", content: EXTRACTION_PROMPT },
-            {
-              role: "user",
-              content: [{ type: "text", text: `Document remis : ${data.label}. Restitue son texte.` }, block],
-            },
-          ],
-        }),
+      // Appel direct à Gemini (Google), sans la passerelle Lovable ; en cas d'erreur, le catch renvoie un texte vide.
+      const answer = await geminiChat({
+        model: "google/gemini-3.7-flash",
+        temperature: 0,
+        messages: [
+          { role: "system", content: EXTRACTION_PROMPT },
+          {
+            role: "user",
+            content: [{ type: "text", text: `Document remis : ${data.label}. Restitue son texte.` }, block],
+          },
+        ],
       });
-
-      if (!res.ok) {
-        console.error(`[extractSupportText] AI gateway ${res.status}: ${await res.text()}`);
-        return { text: "" };
-      }
-
-      const json = (await res.json()) as { choices?: Array<{ message?: { content?: string } }> };
-      const text = (json.choices?.[0]?.message?.content ?? "").trim();
+      const text = answer.trim();
       if (!text || text === "(document vide ou illisible)") return { text: "" };
       return { text };
     } catch (error) {

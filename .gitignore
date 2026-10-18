@@ -33,3 +33,6 @@ dist-ssr
 
 # Banc d'essai : aucun résultat dans le dépôt
 scripts/bench-output/
+
+# Build Vercel local
+.vercel
