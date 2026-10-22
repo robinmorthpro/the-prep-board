@@ -8,7 +8,7 @@ export const Route = createFileRoute("/_admin/pilotage")({
   component: Pilotage,
 });
 
-const card = "flex flex-col gap-4 rounded-[24px] bg-white p-7";
+const card = "flex min-w-0 flex-col gap-4 rounded-[24px] bg-white p-5 md:p-7";
 const h2 = "m-0 text-[26px] font-medium tracking-[-0.03em]";
 
 function Kpi({ label, value, suffix }: { label: string; value: string; suffix?: string | undefined }) {
@@ -64,7 +64,7 @@ function Pilotage() {
             En direct
           </span>
         </div>
-        <div className="flex items-center gap-2.5">
+        <div className="flex w-full items-center gap-2.5 sm:w-auto">
           <label htmlFor="ecole" className="text-[16px] text-[#4A5568]">
             École
           </label>
@@ -72,7 +72,7 @@ function Pilotage() {
             id="ecole"
             value={school}
             onChange={(e) => setSchool(e.target.value)}
-            className="rounded-[12px] border border-[#CBD2DD] bg-white px-3 py-2 text-[16px] text-[var(--ink)]"
+            className="min-w-0 flex-1 rounded-[12px] border border-[#CBD2DD] bg-white px-3 py-2 text-[16px] text-[var(--ink)] sm:flex-none"
           >
             <option value="">Toutes les écoles</option>
             {options.map((s) => (
@@ -84,13 +84,13 @@ function Pilotage() {
         </div>
       </header>
 
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         <Kpi label="Candidats inscrits" value={String(stats.candidateCount)} />
         <Kpi label="Entretiens" value={String(stats.interviewCount)} />
         <Kpi label="Note moyenne" value={formatScore(stats.averageScore)} suffix={stats.averageScore == null ? undefined : "/20"} />
       </div>
 
-      <div className="grid items-start gap-4 lg:grid-cols-2">
+      <div className="grid grid-cols-1 items-start gap-4 lg:grid-cols-2">
         <section aria-labelledby="ecoles-t" className={card}>
           <h2 id="ecoles-t" className={h2}>
             Note moyenne par école
@@ -147,7 +147,7 @@ function Pilotage() {
         {rows.length === 0 ? (
           <p className="m-0 text-[17px] text-[#4A5568]">Aucun candidat pour l'instant.</p>
         ) : (
-          <div className="overflow-x-auto">
+          <div className="relative overflow-x-auto">
             <table className="w-full border-collapse text-[17px]">
               <thead>
                 <tr className="text-left text-[15px] text-[#4A5568]">

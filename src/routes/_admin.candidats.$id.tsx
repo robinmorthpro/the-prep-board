@@ -7,7 +7,7 @@ export const Route = createFileRoute("/_admin/candidats/$id")({
   component: FicheCandidat,
 });
 
-const card = "flex flex-col gap-4 rounded-[24px] bg-white p-7";
+const card = "flex min-w-0 flex-col gap-4 rounded-[24px] bg-white p-5 md:p-7";
 const h2 = "m-0 text-[26px] font-medium tracking-[-0.03em]";
 
 function Kpi({ label, value, suffix }: { label: string; value: string; suffix?: string | undefined }) {
@@ -73,13 +73,13 @@ function FicheCandidat() {
         </p>
       </header>
 
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         <Kpi label="Modules terminés" value={String(countCompleted(c))} suffix={`/${MODULES.length}`} />
         <Kpi label="Entretiens" value={String(sessions.length)} />
         <Kpi label="Note moyenne" value={formatScore(avg)} suffix={avg == null ? undefined : "/20"} />
       </div>
 
-      <div className="grid items-start gap-4 lg:grid-cols-2">
+      <div className="grid grid-cols-1 items-start gap-4 lg:grid-cols-2">
         <section aria-labelledby="fm-t" className={card}>
           <h2 id="fm-t" className={h2}>
             Modules
