@@ -39,6 +39,8 @@ function AuthPage() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [busy, setBusy] = useState(false);
+  // Adresse à laquelle le lien de confirmation vient d'être envoyé : remplace le formulaire.
+  const [sentTo, setSentTo] = useState<string | null>(null);
 
   const destination = next ?? "/dashboard";
 
@@ -115,7 +117,23 @@ function AuthPage() {
       navigate({ to: destination, replace: true });
       return;
     }
-    toast.success("Compte créé. Confirmez votre email pour accéder à votre espace.");
+    setSentTo(email);
+  }
+
+  async function resendConfirmation() {
+    if (!sentTo) return;
+    setBusy(true);
+    const { error } = await supabase.auth.resend({
+      type: "signup",
+      email: sentTo,
+      options: { emailRedirectTo: callbackUrl() },
+    });
+    setBusy(false);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    toast.success("E-mail renvoyé.");
   }
 
   async function google() {
@@ -184,44 +202,66 @@ function AuthPage() {
       <Card className="w-full max-w-md rounded-[28px] border-0 p-6 md:p-8">
         <p className="pill-label inline-flex rounded-full bg-[var(--bleu-pale)] px-3 py-1 text-[var(--bleu-texte)]">The Prepboard</p>
         <h1 className="mt-4 text-[32px] leading-[1.05] font-medium tracking-[-0.04em]">Votre préparation aux oraux</h1>
-        <Tabs defaultValue={mode === "signin" ? "signin" : "signup"} className="mt-6">
-          <TabsList className="w-full">
-            <TabsTrigger value="signup" className="flex-1">
-              Inscription
-            </TabsTrigger>
-            <TabsTrigger value="signin" className="flex-1">
-              Connexion
-            </TabsTrigger>
-          </TabsList>
-          <TabsContent value="signup" className="space-y-4 pt-5">
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="firstName">Prénom</Label>
-                <Input id="firstName" value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="Camille" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="lastName">Nom</Label>
-                <Input id="lastName" value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Durand" />
-              </div>
+        {sentTo ? (
+          <div className="mt-6 space-y-4" role="status">
+            <h2 className="text-xl font-medium">Vérifiez votre boîte mail</h2>
+            <p>
+              {"Nous venons d'envoyer un lien de confirmation à "}
+              <strong className="font-medium break-words">{sentTo}</strong>
+              {". Cliquez dessus pour activer votre compte."}
+            </p>
+            <p className="text-muted-foreground">Vous ne le voyez pas ? Regardez dans vos spams.</p>
+            <Button
+              variant="outline"
+              className="w-full"
+              disabled={busy}
+              onClick={resendConfirmation}
+            >
+              {"Renvoyer l'e-mail"}
+            </Button>
+          </div>
+        ) : (
+          <>
+            <Tabs defaultValue={mode === "signin" ? "signin" : "signup"} className="mt-6">
+              <TabsList className="w-full">
+                <TabsTrigger value="signup" className="flex-1">
+                  Inscription
+                </TabsTrigger>
+                <TabsTrigger value="signin" className="flex-1">
+                  Connexion
+                </TabsTrigger>
+              </TabsList>
+              <TabsContent value="signup" className="space-y-4 pt-5">
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="firstName">Prénom</Label>
+                    <Input id="firstName" value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="Camille" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="lastName">Nom</Label>
+                    <Input id="lastName" value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Durand" />
+                  </div>
+                </div>
+                <EmailPassword {...{ email, setEmail, password, setPassword }} />
+                <Button className="w-full" disabled={busy} onClick={signUp}>
+                  Créer mon compte (formule gratuite)
+                </Button>
+              </TabsContent>
+              <TabsContent value="signin" className="space-y-4 pt-5">
+                <EmailPassword {...{ email, setEmail, password, setPassword }} />
+                <Button className="w-full" disabled={busy} onClick={signIn}>
+                  Me connecter
+                </Button>
+              </TabsContent>
+            </Tabs>
+            <div className="my-5 flex items-center gap-3 text-xs uppercase tracking-widest text-muted-foreground">
+              <span className="h-px flex-1 bg-border" /> ou <span className="h-px flex-1 bg-border" />
             </div>
-            <EmailPassword {...{ email, setEmail, password, setPassword }} />
-            <Button className="w-full" disabled={busy} onClick={signUp}>
-              Créer mon compte (formule gratuite)
+            <Button variant="outline" className="w-full" onClick={google}>
+              Continuer avec Google
             </Button>
-          </TabsContent>
-          <TabsContent value="signin" className="space-y-4 pt-5">
-            <EmailPassword {...{ email, setEmail, password, setPassword }} />
-            <Button className="w-full" disabled={busy} onClick={signIn}>
-              Me connecter
-            </Button>
-          </TabsContent>
-        </Tabs>
-        <div className="my-5 flex items-center gap-3 text-xs uppercase tracking-widest text-muted-foreground">
-          <span className="h-px flex-1 bg-border" /> ou <span className="h-px flex-1 bg-border" />
-        </div>
-        <Button variant="outline" className="w-full" onClick={google}>
-          Continuer avec Google
-        </Button>
+          </>
+        )}
       </Card>
     </main>
   );
