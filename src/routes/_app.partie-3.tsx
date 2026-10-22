@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AlertTriangle, Check, ChevronDown, ChevronUp, Download, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
@@ -500,10 +500,11 @@ function SheetCard({ sheet, onSaved }: { sheet: SchoolSheet; onSaved: () => void
 }
 
 function Text({ label, value, onChange }: { label: React.ReactNode; value: string; onChange: (v: string) => void }) {
+  const id = useId();
   return (
     <div className="space-y-1.5">
-      <Label>{label}</Label>
-      <Input value={value ?? ""} onChange={(e) => onChange(e.target.value)} />
+      <Label htmlFor={id}>{label}</Label>
+      <Input id={id} value={value ?? ""} onChange={(e) => onChange(e.target.value)} />
     </div>
   );
 }
@@ -519,10 +520,11 @@ function Area({
   onChange: (v: string) => void;
   placeholder?: string;
 }) {
+  const id = useId();
   return (
     <div className="space-y-1.5">
-      <Label>{label}</Label>
-      <Textarea rows={2} value={value ?? ""} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} />
+      <Label htmlFor={id}>{label}</Label>
+      <Textarea id={id} rows={2} value={value ?? ""} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} />
     </div>
   );
 }
@@ -587,6 +589,7 @@ function ItemCard({
             <Label><ReqLabel>URL de référence</ReqLabel></Label>
             <Input
               type="url"
+              aria-label="URL de référence"
               value={item.url ?? ""}
               onChange={(e) => onChange({ url: e.target.value })}
               placeholder="https://..."

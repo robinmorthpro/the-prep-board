@@ -80,7 +80,7 @@ function parseFeedback(input: string) {
 function statusBadge(status: Status) {
   if (status === "Validé") {
     return (
-      <Badge variant="outline" className="gap-1 border-success/60 bg-success/10 text-success">
+      <Badge variant="outline" className="gap-1 border-success/60 bg-success/10 text-[#166534]">
         <Check className="size-3" /> Validé
       </Badge>
     );

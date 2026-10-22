@@ -1275,7 +1275,7 @@ function Part7() {
           <div className="flex flex-col gap-[10px]">
             <Label className="text-[18px] font-semibold tracking-[-0.01em] text-[var(--ink)] md:text-[20px]">Format de l'école</Label>
             <p className="m-0 text-[18px] font-medium text-[var(--bleu-texte,#2E46C8)] md:text-[20px]">{formatLabel(config.format)}</p>
-            <p className="m-0 text-[16px] text-[var(--gris-doux)]">
+            <p className="m-0 text-[16px] text-[var(--gris-texte)]">
               {simulatedMinutes(config)} min simulées
               {agentState?.usesFallback ? " · jury classique en attendant le jury dédié" : ""}
             </p>
@@ -1338,7 +1338,7 @@ function Part7() {
 
         </div>
         {!schoolOptions.length ? (
-          <p className="m-0 text-[16px] text-[var(--gris-doux)]">
+          <p className="m-0 text-[16px] text-[var(--gris-texte)]">
             Renseignez d'abord vos écoles visées (module 1) ou une fiche école (module 3).
           </p>
         ) : null}
@@ -1410,7 +1410,7 @@ function Part7() {
             <div className="flex flex-1 flex-col gap-3">
               <p className="m-0 text-[18px] font-semibold tracking-[-0.01em] text-[#2E46C8] md:text-[20px]">Le jury</p>
               {busy && !question ? (
-                <p className="m-0 flex items-center gap-2 text-[17px] text-[var(--gris-doux)]">
+                <p className="m-0 flex items-center gap-2 text-[17px] text-[var(--gris-texte)]">
                   <Loader2 className="size-4 animate-spin" /> Connexion au jury…
                 </p>
               ) : (
@@ -1535,7 +1535,7 @@ function Part7() {
                 alt={inseecChosen.description}
                 className="mt-4 w-full max-w-lg rounded-[18px] object-cover"
               />
-              <p className="mt-3 text-[16px] leading-snug text-[var(--gris-doux)]">{inseecChosen.description}</p>
+              <p className="mt-3 text-[16px] leading-snug text-[var(--gris-texte)]">{inseecChosen.description}</p>
             </div>
           ) : null}
 
@@ -1611,7 +1611,7 @@ function Part7() {
                   La clôture est passée : cliquez sur « Terminer l'entretien » pour accéder à votre évaluation complète.
                 </p>
               ) : (
-                <p className="m-0 flex-1 text-[16px] text-[var(--gris-doux)] md:text-[17px]">
+                <p className="m-0 flex-1 text-[16px] text-[var(--gris-texte)] md:text-[17px]">
                   Si vous terminez maintenant, l'évaluation sera produite mais signalée comme incomplète.
                 </p>
               )}
@@ -1627,7 +1627,7 @@ function Part7() {
               </div>
             </div>
           ) : (
-            <p className="m-0 flex items-center gap-2 border-t border-[rgba(11,18,32,0.1)] pt-6 text-[17px] text-[var(--gris-doux)]">
+            <p className="m-0 flex items-center gap-2 border-t border-[rgba(11,18,32,0.1)] pt-6 text-[17px] text-[var(--gris-texte)]">
               <Loader2 className="size-4 animate-spin" /> Le jury rédige votre débrief…
             </p>
           )}
@@ -1682,7 +1682,7 @@ function Part7() {
           <h2 className="m-0 text-[28px] font-medium leading-[1.1] tracking-[-0.035em] md:text-[36px]">
             Historique de mes entretiens
           </h2>
-          <p className="mt-2 text-[16px] text-[var(--gris-doux)] md:text-[17px]">
+          <p className="mt-2 text-[16px] text-[var(--gris-texte)] md:text-[17px]">
             Retrouve chacun de tes entraînements avec son feedback détaillé, ton classement en percentile et son fil complet.
           </p>
           {!historySchool ? (
@@ -1704,7 +1704,7 @@ function Part7() {
                   ) : null}
                   <span className="min-w-0">
                     <span className="block truncate text-[17px] font-medium text-[var(--ink)] md:text-[18px]">{school}</span>
-                    <span className="block text-[14px] text-[var(--gris-doux)] md:text-[15px]">
+                    <span className="block text-[14px] text-[var(--gris-texte)] md:text-[15px]">
                       {count} entretien{count > 1 ? "s" : ""}
                     </span>
                   </span>
@@ -1716,7 +1716,7 @@ function Part7() {
               <button
                 type="button"
                 onClick={() => setHistorySchool(null)}
-                className="mt-5 inline-flex items-center gap-1 text-[15px] font-medium text-[var(--gris-doux)] transition hover:text-[var(--ink)]"
+                className="mt-5 inline-flex items-center gap-1 text-[15px] font-medium text-[var(--gris-texte)] transition hover:text-[var(--ink)]"
               >
                 <ChevronRight className="size-3 rotate-180" />
                 Toutes les écoles
@@ -1732,7 +1732,7 @@ function Part7() {
                 ) : null}
                 <div className="min-w-0">
                   <h3 className="m-0 truncate text-[20px] font-medium tracking-[-0.01em] text-[var(--ink)]">{historySchool}</h3>
-                  <p className="m-0 text-[14px] text-[var(--gris-doux)] md:text-[15px]">
+                  <p className="m-0 text-[14px] text-[var(--gris-texte)] md:text-[15px]">
                     {visibleSessions.length} entretien{visibleSessions.length > 1 ? "s" : ""} enregistré
                     {visibleSessions.length > 1 ? "s" : ""}
                   </p>
@@ -1776,7 +1776,7 @@ function Part7() {
                           <span className="shrink-0 rounded-full border border-[rgba(11,18,32,0.2)] bg-white px-3 py-1 text-[13px] font-medium text-[var(--graphite)] md:text-[14px]">
                             {formatLabel(s.format)}
                           </span>
-                          <span className="text-[14px] text-[var(--gris-doux)] md:text-[15px]">
+                          <span className="text-[14px] text-[var(--gris-texte)] md:text-[15px]">
                             {s.status === "done" ? "entretien achevé" : "entretien interrompu"}
                           </span>
                         </button>

@@ -73,6 +73,8 @@
   --craie: #ffffff;
   --graphite: #4a5568;
   --gris-doux: #8a94a6;
+  /* Gris pour du texte sur fond clair : 5,4:1 sur blanc, 4,6:1 sur bleu pâle (WCAG AA, audit du 22/10). */
+  --gris-texte: #5f6b7f;
   --gris-sombre: #aeb8c9;
   --line: #d3dae6;
   --seyes: #dde3ec;
@@ -168,6 +170,14 @@
     font-family: var(--font-display);
     font-weight: 500;
     letter-spacing: -0.035em;
+  }
+
+  /* Focus clavier toujours visible (WCAG 2.4.7, audit du 22/10) : contour de la couleur du texte,
+     donc lisible sur fond clair comme sur fond sombre. Les composants qui ont leur propre anneau
+     de focus (classes focus-visible:*) gardent le leur : les utilitaires passent avant cette couche. */
+  :where(a[href], button, [role="button"], [role="tab"], [role="checkbox"], [role="radio"], [role="switch"], [role="combobox"], input, select, textarea, summary, [tabindex]:not([tabindex="-1"])):focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
   }
 }
 

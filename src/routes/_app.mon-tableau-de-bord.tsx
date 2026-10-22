@@ -59,7 +59,7 @@ export const Route = createFileRoute("/_app/mon-tableau-de-bord")({
 
 const LEVEL_STYLE: Record<Priority["level"], { label: string; className: string }> = {
   bloquant: { label: "Bloquant", className: "bg-destructive text-destructive-foreground" },
-  important: { label: "Prioritaire", className: "bg-amber-500 text-white" },
+  important: { label: "Prioritaire", className: "bg-amber-500 text-amber-950" },
   consolidation: { label: "Consolidation", className: "bg-muted text-muted-foreground" },
 };
 
@@ -149,7 +149,7 @@ function CockpitPage() {
                 <Link to={w.to} className="block rounded-[16px] bg-muted/50 p-4 transition-colors hover:bg-muted">
                   <div className="flex items-center justify-between gap-2">
                     <span className="text-sm font-medium">{w.label}</span>
-                    <Badge className={ok ? "bg-success text-success-foreground" : "bg-amber-500 text-white"}>
+                    <Badge className={ok ? "bg-success text-success-foreground" : "bg-amber-500 text-amber-950"}>
                       {ok ? "Terminé" : "À compléter"}
                     </Badge>
                   </div>

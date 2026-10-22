@@ -51,7 +51,7 @@ function parseVerdict(feedback: string): VerdictLevel {
 
 function verdictBadge(level: VerdictLevel) {
   if (level === "Validé") return <Badge className="bg-success text-success-foreground">Validé</Badge>;
-  if (level === "À perfectionner") return <Badge className="bg-amber-500 text-white">À perfectionner</Badge>;
+  if (level === "À perfectionner") return <Badge className="bg-amber-500 text-amber-950">À perfectionner</Badge>;
   return <Badge variant="destructive">À retravailler</Badge>;
 }
 
@@ -402,6 +402,7 @@ function TopicCard({
                       <Link2 className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
                       <Input
                         className="pl-9"
+                        aria-label={`Lien ${i + 1}`}
                         value={url}
                         placeholder="https://…"
                         onChange={(e) => set({ urls: form.urls.map((u, j) => (j === i ? e.target.value : u)) })}
@@ -413,6 +414,7 @@ function TopicCard({
                         size="sm"
                         className="gap-1 text-destructive hover:text-destructive"
                         onClick={() => set({ urls: form.urls.filter((_, j) => j !== i) })}
+                        aria-label={`Supprimer le lien ${i + 1}`}
                       >
                         <Trash2 className="size-4" />
                       </Button>

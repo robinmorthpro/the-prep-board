@@ -64,7 +64,7 @@ function parseVerdict(feedback: string): VerdictLevel {
 
 function verdictBadge(level: VerdictLevel) {
   if (level === "Validé") return <Badge className="bg-success text-success-foreground">Validé</Badge>;
-  if (level === "À perfectionner") return <Badge className="bg-amber-500 text-white">À perfectionner</Badge>;
+  if (level === "À perfectionner") return <Badge className="bg-amber-500 text-amber-950">À perfectionner</Badge>;
   return <Badge variant="destructive">À retravailler</Badge>;
 }
 

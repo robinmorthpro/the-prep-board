@@ -183,7 +183,7 @@ export function HomeMethode() {
                   <span
                     className={cn(
                       "mt-1.5 block text-[40px] leading-[1.05] font-medium tracking-[-0.035em] transition-colors",
-                      active === k ? "text-[var(--ink)]" : "text-[#9AA3B2]",
+                      active === k ? "text-[var(--ink)]" : "text-[var(--gris-doux)]",
                     )}
                   >
                     {e.titre}
@@ -257,7 +257,7 @@ function Ligne({ nom, texte, statut, top }: { nom: string; texte: string; statut
         top ? "bg-[#DCE8FF] p-3.5 text-[var(--ink)] shadow-[inset_0_0_0_1.5px_var(--ciel)]" : "bg-white px-3.5 py-3",
       )}
     >
-      <span className={cn("flex items-center gap-2.5 text-[16px] font-semibold", top ? "text-[var(--bleu-texte)]" : "text-[var(--gris-doux)]")}>
+      <span className={cn("flex items-center gap-2.5 text-[16px] font-semibold", top ? "text-[var(--bleu-texte)]" : "text-[var(--gris-texte)]")}>
         <StatutIcon statut={statut} />
         {nom}
       </span>
@@ -400,7 +400,7 @@ export function HomePrix() {
             <p className="m-0 text-[18px] leading-[1.55] md:text-[20px]">
               Paiement unique, accès jusqu'à votre concours. Le nombre de passages n'entre pas dans le prix.
             </p>
-            <p className="m-0 text-[18px] leading-[1.55] text-[var(--graphite)] md:text-[20px]">
+            <p className="m-0 text-[18px] leading-[1.55] text-[var(--ink-2)] md:text-[20px]">
               <span className="font-bold text-[var(--ink)]">{BRAND.priceBoursier} € pour les boursiers</span>, sur présentation de
               la notification de bourse. Mêmes fonctionnalités, sans restriction.
             </p>

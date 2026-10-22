@@ -242,7 +242,7 @@ export function CompareTable({
         <div key={l.critere} className="grid gap-3 rounded-[22px] bg-white p-5 md:grid-cols-[200px_1fr_1fr] md:gap-6 md:p-6">
           <p className="m-0 text-[18px] font-semibold tracking-[-0.01em]">{l.critere}</p>
           <div className="text-[15.5px] leading-relaxed text-[var(--graphite)]">
-            <p className="pill-label mb-1.5 text-[var(--gris-doux)]">{colonnes[0]}</p>
+            <p className="pill-label mb-1.5 text-[var(--gris-texte)]">{colonnes[0]}</p>
             <span className="flex gap-2">
               <Minus aria-hidden className="mt-1.5 size-3.5 shrink-0" />
               {l.autre}

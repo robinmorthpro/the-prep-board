@@ -124,7 +124,7 @@ function verdictBadge(level: VerdictLevel) {
     return <Badge className="bg-success text-success-foreground">Validé</Badge>;
   }
   if (level === "À perfectionner") {
-    return <Badge className="bg-amber-500 text-white">À perfectionner</Badge>;
+    return <Badge className="bg-amber-500 text-amber-950">À perfectionner</Badge>;
   }
   return <Badge variant="destructive">À retravailler</Badge>;
 }
@@ -144,7 +144,7 @@ const STATUS_RANK: Record<QuestionStatus, number> = {
 
 function statusBadge(status: QuestionStatus) {
   if (status === "Validé") return <Badge className="bg-success text-success-foreground">Validé</Badge>;
-  if (status === "À perfectionner") return <Badge className="bg-amber-500 text-white">À perfectionner</Badge>;
+  if (status === "À perfectionner") return <Badge className="bg-amber-500 text-amber-950">À perfectionner</Badge>;
   if (status === "À revoir") return <Badge variant="destructive">À revoir</Badge>;
   return <Badge variant="secondary">Non commencé</Badge>;
 }

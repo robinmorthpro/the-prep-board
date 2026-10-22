@@ -53,7 +53,7 @@ export function StartPanel({
             <div className="flex flex-col items-start gap-4 border-t border-[rgba(46,70,200,0.18)] py-6 md:flex-row md:items-center md:gap-8">
               {theory}
               {recommendation ? (
-                <p className="m-0 flex-1 text-[16px] leading-[1.5] text-[var(--gris-doux)] md:text-[17px]">{recommendation}</p>
+                <p className="m-0 flex-1 text-[16px] leading-[1.5] text-[var(--gris-texte)] md:text-[17px]">{recommendation}</p>
               ) : null}
             </div>
           ) : null}

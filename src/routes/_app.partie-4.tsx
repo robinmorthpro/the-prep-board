@@ -46,7 +46,7 @@ function parseVerdict(feedback: string): VerdictLevel {
 
 function verdictBadge(level: VerdictLevel) {
   if (level === "Validé") return <Badge className="bg-success text-success-foreground">Validé</Badge>;
-  if (level === "À perfectionner") return <Badge className="bg-amber-500 text-white">À perfectionner</Badge>;
+  if (level === "À perfectionner") return <Badge className="bg-amber-500 text-amber-950">À perfectionner</Badge>;
   return <Badge variant="destructive">À retravailler</Badge>;
 }
 
@@ -592,6 +592,7 @@ function ExperienceCard({
               </Label>
               <Textarea
                 rows={9}
+                aria-label="Contexte et récit général de l'expérience"
                 value={f.context}
                 onChange={(e) => setF({ ...f, context: e.target.value })}
                 placeholder={CONTEXT_PLACEHOLDERS[f.category] ?? CONTEXT_PLACEHOLDERS["Sport"]}
