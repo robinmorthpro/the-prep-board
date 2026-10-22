@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useSession } from "@/hooks/useSession";
 import { HANDOFF_PARAM, claimHandoff, isFramed, newHandoffNonce } from "@/lib/oauth-popup";
+import { MESSAGE_CHAMPS_VIDES, authErrorMessage, champsVides } from "@/lib/auth-messages";
 
 export const Route = createFileRoute("/auth")({
   validateSearch: (search: Record<string, unknown>): { mode?: "signin" | "signup"; next?: string } => {
@@ -74,19 +75,27 @@ function AuthPage() {
   useEffect(() => stopHandoffPolling, []);
 
   async function signIn() {
+    if (champsVides(email, password)) {
+      toast.error(MESSAGE_CHAMPS_VIDES);
+      return;
+    }
     setBusy(true);
     rememberDestination();
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     setBusy(false);
     if (error) {
       window.sessionStorage.removeItem("repetia_auth_destination");
-      toast.error(error.message);
+      toast.error(authErrorMessage(error));
       return;
     }
     navigate({ to: destination, replace: true });
   }
 
   async function signUp() {
+    if (champsVides(email, password)) {
+      toast.error(MESSAGE_CHAMPS_VIDES);
+      return;
+    }
     setBusy(true);
     rememberDestination();
     const { data, error } = await supabase.auth.signUp({
@@ -104,7 +113,7 @@ function AuthPage() {
     setBusy(false);
     if (error) {
       window.sessionStorage.removeItem("repetia_auth_destination");
-      toast.error(error.message);
+      toast.error(authErrorMessage(error));
       return;
     }
     if (data.user && (data.user.identities?.length ?? 0) === 0) {
@@ -130,7 +139,7 @@ function AuthPage() {
     });
     setBusy(false);
     if (error) {
-      toast.error(error.message);
+      toast.error(authErrorMessage(error));
       return;
     }
     toast.success("E-mail renvoyé.");

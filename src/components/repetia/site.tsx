@@ -148,18 +148,22 @@ export function SectionTitle({
   intro,
   tone = "ink",
   className,
+  as = "h2",
 }: {
   kicker?: string;
   title: ReactNode;
   intro?: ReactNode;
   tone?: "ink" | "chalk";
   className?: string;
+  /** Titre principal de la page (h1) quand la section ouvre la page. */
+  as?: "h1" | "h2";
 }) {
+  const Heading = as;
   return (
     <header className={cn("max-w-[880px]", className)}>
-      <h2 className="m-0 text-[36px] leading-[1.02] font-medium tracking-[-0.045em] md:text-[56px]">
+      <Heading className="m-0 text-[36px] leading-[1.02] font-medium tracking-[-0.045em] md:text-[56px]">
         {title}
-      </h2>
+      </Heading>
       {intro ? (
         <p
           className={cn(
@@ -491,12 +495,13 @@ export function SiteHeader() {
         overlay ? "absolute inset-x-0 top-0 bg-transparent" : "sticky top-0 bg-[var(--ink)]",
       )}
     >
+      {/* Menu complet à partir de 1420 px : en dessous, il débordait (QA du 22/10) ; on passe au menu compact. */}
       <div className="mx-auto flex max-w-[1440px] items-center justify-between gap-14 px-5 py-5 text-[18px] font-medium whitespace-nowrap md:px-12 md:py-[26px]">
         <Link to="/" aria-label="The Prepboard, accueil" className="flex flex-none items-center">
           <img src="/brand/logo-fond-sombre.svg" alt="The Prepboard" className="block h-6 w-auto md:h-7" />
         </Link>
 
-        <nav aria-label="Navigation principale" className="hidden items-center gap-6 lg:flex">
+        <nav aria-label="Navigation principale" className="hidden items-center gap-6 min-[1420px]:flex">
           <div
             className="relative"
             onMouseEnter={() => setConcoursOpen(true)}
@@ -536,7 +541,7 @@ export function SiteHeader() {
           </Link>
         </nav>
 
-        <div className="hidden items-center gap-2 lg:flex">
+        <div className="hidden items-center gap-2 min-[1420px]:flex">
           {session ? (
             <Link to="/dashboard" className="rounded-full bg-[var(--ciel)] px-[22px] py-[13px] font-semibold text-[var(--ink)] hover:opacity-90">
               Mon espace d'entraînement
@@ -555,7 +560,7 @@ export function SiteHeader() {
 
         <button
           type="button"
-          className="lg:hidden"
+          className="min-[1420px]:hidden"
           aria-label={open ? "Fermer le menu" : "Ouvrir le menu"}
           aria-expanded={open}
           onClick={() => setOpen((v) => !v)}
@@ -565,7 +570,7 @@ export function SiteHeader() {
       </div>
 
       {open ? (
-        <div className="border-t border-white/12 bg-[var(--ink)] px-5 pt-5 pb-7 lg:hidden">
+        <div className="border-t border-white/12 bg-[var(--ink)] px-5 pt-5 pb-7 min-[1420px]:hidden">
           <p className="text-[13px] font-semibold tracking-[0.1em] text-[var(--gris-sombre)] uppercase">Concours préparés</p>
           <div className="mt-3 grid gap-2">
             {CONCOURS.map((c) => (

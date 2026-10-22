@@ -283,7 +283,7 @@ function Part2() {
               size="lg"
               onClick={() => save.mutate(true)}
               disabled={!ready || save.isPending}
-              className="gap-[10px] bg-[var(--ciel)] text-[var(--ink)] hover:bg-[var(--ciel)]/85"
+              className="h-auto min-h-10 gap-[10px] bg-[var(--ciel)] py-2 whitespace-normal text-[var(--ink)] hover:bg-[var(--ciel)]/85"
             >
               Valider et débloquer le module 3
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">

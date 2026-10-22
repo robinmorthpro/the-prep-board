@@ -34,6 +34,7 @@ function BlogPage() {
       <main className="flex-1">
         <Section tone="paper">
           <SectionTitle
+            as="h1"
             title="Le blog The Prepboard"
             intro="Conseils d'experts, méthodes et retours d'expérience pour transformer votre entraînement en admission. Bientôt en ligne."
           />

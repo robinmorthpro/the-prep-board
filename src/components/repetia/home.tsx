@@ -17,9 +17,9 @@ import essecAsset from "@/assets/site/essec-cergy.jpg";
 import neomaAsset from "@/assets/site/campus-neoma.jpg";
 import boutmyAsset from "@/assets/site/amphi-boutmy.jpg";
 import medecineAsset from "@/assets/site/fac-medecine.jpg";
-import prepAsset from "@/assets/site/app-preparation.jpg.asset.json";
-import entretienAsset from "@/assets/site/app-entretien.jpg.asset.json";
-import feedbackAsset from "@/assets/site/app-feedback.jpg.asset.json";
+import prepAsset from "@/assets/site/app-preparation.jpg";
+import entretienAsset from "@/assets/site/app-entretien.jpg";
+import feedbackAsset from "@/assets/site/app-feedback.jpg";
 
 /* ------------------------------------------------------------ primitives */
 
@@ -130,9 +130,9 @@ export function HomeHero() {
 /* --------------------------------------------------------------- méthode */
 
 const CAPTURES = [
-  { src: prepAsset.url, alt: "Écran Je me prépare de l'app The Prepboard : les modules de préparation et leur état", h: 500 },
-  { src: entretienAsset.url, alt: "Écran Mon entraînement illimité de l'app : choix de l'école, du format et de la difficulté avant l'entretien", h: 506 },
-  { src: feedbackAsset.url, alt: "Écran de débrief de l'app : percentile, feedback général et points à retravailler", h: 506 },
+  { src: prepAsset, alt: "Écran Je me prépare de l'app The Prepboard : les modules de préparation et leur état", h: 500 },
+  { src: entretienAsset, alt: "Écran Mon entraînement illimité de l'app : choix de l'école, du format et de la difficulté avant l'entretien", h: 506 },
+  { src: feedbackAsset, alt: "Écran de débrief de l'app : percentile, feedback général et points à retravailler", h: 506 },
 ];
 
 function Capture({ k }: { k: number }) {
