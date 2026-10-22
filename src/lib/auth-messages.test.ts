@@ -6,7 +6,7 @@ describe("authErrorMessage", () => {
     expect(authErrorMessage({ message: "Anonymous sign-ins are disabled" })).toBe(MESSAGE_CHAMPS_VIDES);
     expect(authErrorMessage({ message: "missing email or phone" })).toBe(MESSAGE_CHAMPS_VIDES);
     expect(authErrorMessage({ message: "Password should be at least 6 characters." })).toBe(
-      "Le mot de passe doit contenir au moins 6 caractères.",
+      "Le mot de passe doit contenir au moins 8 caractères, avec des lettres et des chiffres.",
     );
   });
 

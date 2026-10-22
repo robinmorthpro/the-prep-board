@@ -14,10 +14,7 @@ import { Route as AppRouteImport } from './routes/_app'
 import { Route as SiteRouteImport } from './routes/_site'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as LlmsDottxtRouteImport } from './routes/llms[.]txt'
-import { Route as McpRouteImport } from './routes/mcp'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
-import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as AdminPilotageRouteImport } from './routes/_admin.pilotage'
 import { Route as AppDashboardRouteImport } from './routes/_app.dashboard'
 import { Route as AppInformationsPersonnellesRouteImport } from './routes/_app.informations-personnelles'
@@ -39,7 +36,6 @@ import { Route as SiteTestGratuitRouteImport } from './routes/_site.test-gratuit
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
-import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as AdminCandidatsIdRouteImport } from './routes/_admin.candidats.$id'
 import { Route as SiteConcoursSlugRouteImport } from './routes/_site.concours.$slug'
 
@@ -65,28 +61,11 @@ const LlmsDottxtRoute = LlmsDottxtRouteImport.update({
   path: '/llms.txt',
   getParentRoute: () => rootRouteImport,
 } as any)
-const McpRoute = McpRouteImport.update({
-  id: '/mcp',
-  path: '/mcp',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
-const Char91DotmcpChar93ListToolsRoute =
-  Char91DotmcpChar93ListToolsRouteImport.update({
-    id: '/.mcp/list-tools',
-    path: '/.mcp/list-tools',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const Char91DotwellKnownChar93OauthProtectedResourceRoute =
-  Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
-    id: '/.well-known/oauth-protected-resource',
-    path: '/.well-known/oauth-protected-resource',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 const AdminPilotageRoute = AdminPilotageRouteImport.update({
   id: '/pilotage',
   path: '/pilotage',
@@ -193,12 +172,6 @@ const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
   path: '/.lovable/oauth/consent',
   getParentRoute: () => rootRouteImport,
 } as any)
-const Char91DotmcpChar93InvokeToolToolRoute =
-  Char91DotmcpChar93InvokeToolToolRouteImport.update({
-    id: '/.mcp/invoke-tool/$tool',
-    path: '/.mcp/invoke-tool/$tool',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 const AdminCandidatsIdRoute = AdminCandidatsIdRouteImport.update({
   id: '/candidats/$id',
   path: '/candidats/$id',
@@ -214,10 +187,7 @@ export interface FileRoutesByFullPath {
   '/': typeof SiteIndexRoute
   '/auth': typeof AuthRouteWithChildren
   '/llms.txt': typeof LlmsDottxtRoute
-  '/mcp': typeof McpRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
-  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/pilotage': typeof AdminPilotageRoute
   '/dashboard': typeof AppDashboardRoute
   '/informations-personnelles': typeof AppInformationsPersonnellesRoute
@@ -238,7 +208,6 @@ export interface FileRoutesByFullPath {
   '/auth/callback': typeof AuthCallbackRoute
   '/blog/': typeof BlogIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
-  '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/candidats/$id': typeof AdminCandidatsIdRoute
   '/concours/$slug': typeof SiteConcoursSlugRoute
 }
@@ -246,10 +215,7 @@ export interface FileRoutesByTo {
   '/': typeof SiteIndexRoute
   '/auth': typeof AuthRouteWithChildren
   '/llms.txt': typeof LlmsDottxtRoute
-  '/mcp': typeof McpRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
-  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/pilotage': typeof AdminPilotageRoute
   '/dashboard': typeof AppDashboardRoute
   '/informations-personnelles': typeof AppInformationsPersonnellesRoute
@@ -270,7 +236,6 @@ export interface FileRoutesByTo {
   '/auth/callback': typeof AuthCallbackRoute
   '/blog': typeof BlogIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
-  '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/candidats/$id': typeof AdminCandidatsIdRoute
   '/concours/$slug': typeof SiteConcoursSlugRoute
 }
@@ -281,10 +246,7 @@ export interface FileRoutesById {
   '/_site': typeof SiteRouteWithChildren
   '/auth': typeof AuthRouteWithChildren
   '/llms.txt': typeof LlmsDottxtRoute
-  '/mcp': typeof McpRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
-  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/_admin/pilotage': typeof AdminPilotageRoute
   '/_app/dashboard': typeof AppDashboardRoute
   '/_app/informations-personnelles': typeof AppInformationsPersonnellesRoute
@@ -306,7 +268,6 @@ export interface FileRoutesById {
   '/_site/': typeof SiteIndexRoute
   '/blog/': typeof BlogIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
-  '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/_admin/candidats/$id': typeof AdminCandidatsIdRoute
   '/_site/concours/$slug': typeof SiteConcoursSlugRoute
 }
@@ -316,10 +277,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/llms.txt'
-    | '/mcp'
     | '/sitemap.xml'
-    | '/.mcp/list-tools'
-    | '/.well-known/oauth-protected-resource'
     | '/pilotage'
     | '/dashboard'
     | '/informations-personnelles'
@@ -340,7 +298,6 @@ export interface FileRouteTypes {
     | '/auth/callback'
     | '/blog/'
     | '/.lovable/oauth/consent'
-    | '/.mcp/invoke-tool/$tool'
     | '/candidats/$id'
     | '/concours/$slug'
   fileRoutesByTo: FileRoutesByTo
@@ -348,10 +305,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/llms.txt'
-    | '/mcp'
     | '/sitemap.xml'
-    | '/.mcp/list-tools'
-    | '/.well-known/oauth-protected-resource'
     | '/pilotage'
     | '/dashboard'
     | '/informations-personnelles'
@@ -372,7 +326,6 @@ export interface FileRouteTypes {
     | '/auth/callback'
     | '/blog'
     | '/.lovable/oauth/consent'
-    | '/.mcp/invoke-tool/$tool'
     | '/candidats/$id'
     | '/concours/$slug'
   id:
@@ -382,10 +335,7 @@ export interface FileRouteTypes {
     | '/_site'
     | '/auth'
     | '/llms.txt'
-    | '/mcp'
     | '/sitemap.xml'
-    | '/.mcp/list-tools'
-    | '/.well-known/oauth-protected-resource'
     | '/_admin/pilotage'
     | '/_app/dashboard'
     | '/_app/informations-personnelles'
@@ -407,7 +357,6 @@ export interface FileRouteTypes {
     | '/_site/'
     | '/blog/'
     | '/.lovable/oauth/consent'
-    | '/.mcp/invoke-tool/$tool'
     | '/_admin/candidats/$id'
     | '/_site/concours/$slug'
   fileRoutesById: FileRoutesById
@@ -418,13 +367,9 @@ export interface RootRouteChildren {
   SiteRoute: typeof SiteRouteWithChildren
   AuthRoute: typeof AuthRouteWithChildren
   LlmsDottxtRoute: typeof LlmsDottxtRoute
-  McpRoute: typeof McpRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
-  Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
-  Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   BlogIndexRoute: typeof BlogIndexRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
-  Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -464,32 +409,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LlmsDottxtRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/mcp': {
-      id: '/mcp'
-      path: '/mcp'
-      fullPath: '/mcp'
-      preLoaderRoute: typeof McpRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/sitemap.xml': {
       id: '/sitemap.xml'
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/.mcp/list-tools': {
-      id: '/.mcp/list-tools'
-      path: '/.mcp/list-tools'
-      fullPath: '/.mcp/list-tools'
-      preLoaderRoute: typeof Char91DotmcpChar93ListToolsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/.well-known/oauth-protected-resource': {
-      id: '/.well-known/oauth-protected-resource'
-      path: '/.well-known/oauth-protected-resource'
-      fullPath: '/.well-known/oauth-protected-resource'
-      preLoaderRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_admin/pilotage': {
@@ -639,13 +563,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DotlovableOauthConsentRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/.mcp/invoke-tool/$tool': {
-      id: '/.mcp/invoke-tool/$tool'
-      path: '/.mcp/invoke-tool/$tool'
-      fullPath: '/.mcp/invoke-tool/$tool'
-      preLoaderRoute: typeof Char91DotmcpChar93InvokeToolToolRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/_admin/candidats/$id': {
       id: '/_admin/candidats/$id'
       path: '/candidats/$id'
@@ -743,14 +660,9 @@ const rootRouteChildren: RootRouteChildren = {
   SiteRoute: SiteRouteWithChildren,
   AuthRoute: AuthRouteWithChildren,
   LlmsDottxtRoute: LlmsDottxtRoute,
-  McpRoute: McpRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
-  Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
-  Char91DotwellKnownChar93OauthProtectedResourceRoute:
-    Char91DotwellKnownChar93OauthProtectedResourceRoute,
   BlogIndexRoute: BlogIndexRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
-  Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

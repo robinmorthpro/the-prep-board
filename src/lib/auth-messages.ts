@@ -7,7 +7,7 @@ const PAR_CODE: Record<string, string> = {
   anonymous_provider_disabled: MESSAGE_CHAMPS_VIDES,
   validation_failed: MESSAGE_CHAMPS_VIDES,
   email_address_invalid: "Cette adresse e-mail n'est pas valide.",
-  weak_password: "Le mot de passe doit contenir au moins 6 caractères.",
+  weak_password: "Le mot de passe doit contenir au moins 8 caractères, avec des lettres et des chiffres.",
   invalid_credentials: "E-mail ou mot de passe incorrect.",
   email_not_confirmed: "Confirmez d'abord votre adresse e-mail grâce au lien reçu.",
   over_email_send_rate_limit: "Patientez une minute avant de redemander l'e-mail.",
@@ -17,7 +17,7 @@ const PAR_CODE: Record<string, string> = {
 const PAR_TEXTE: Array<[RegExp, string]> = [
   [/anonymous sign-ins are disabled|missing email or phone/i, MESSAGE_CHAMPS_VIDES],
   [/unable to validate email address|invalid format|email address .* is invalid/i, PAR_CODE["email_address_invalid"]!],
-  [/password should be at least/i, PAR_CODE["weak_password"]!],
+  [/password should be at least|password should contain/i, PAR_CODE["weak_password"]!],
   [/invalid login credentials/i, PAR_CODE["invalid_credentials"]!],
   [/email not confirmed/i, PAR_CODE["email_not_confirmed"]!],
   [/for security purposes, you can only request this after|rate limit/i, PAR_CODE["over_email_send_rate_limit"]!],

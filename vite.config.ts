@@ -5,7 +5,6 @@
 //     React/TanStack dedupe, error logger plugins, and sandbox detection (port/host/strictPort).
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
-import { mcpPlugin } from "@lovable.dev/mcp-js/stacks/tanstack/vite";
 
 export default defineConfig({
   tanstackStart: {
@@ -13,7 +12,8 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
-  vite: {
-    plugins: [mcpPlugin()],
-  },
+  // Fonctions serveur Vercel à Londres, au plus près de la base Supabase (eu-west-2) : audit de sécurité du 22/10.
+  // Le type exposé par la config Lovable est volontairement étroit, mais l'option est bien transmise à Nitro,
+  // qui l'écrit dans .vercel/output/functions/__server.func/.vc-config.json (vérifié au build).
+  nitro: { vercel: { functions: { regions: ["lhr1"] } } } as unknown as { preset?: string },
 });
