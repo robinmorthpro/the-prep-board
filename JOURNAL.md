@@ -27,3 +27,16 @@ Trace conservée par les migrations SQL datées (`supabase/migrations/`).
 - 09/10/2026 : M4 - Itérations sur le jury vocal ([055035c](https://github.com/robinmorthpro/the-prep-board/commit/055035c))
 - 09/10/2026 : M5 - README complet ([51ef313](https://github.com/robinmorthpro/the-prep-board/commit/51ef313))
 - 09/10/2026 : M5 - Journal du projet : jalons M0 à M4
+- 10/10/2026 : M4 - Corrections du jury après le tour 1 de tests ([6069d00](https://github.com/robinmorthpro/the-prep-board/commit/6069d00), [1cc6b41](https://github.com/robinmorthpro/the-prep-board/commit/1cc6b41))
+- 17/10/2026 : M4 - Correctifs et banc du tour 2 du jury ([aeeb83a](https://github.com/robinmorthpro/the-prep-board/commit/aeeb83a))
+- 17/10/2026 : M5 - Page Pilotage admin en temps réel ([ff4e5a5](https://github.com/robinmorthpro/the-prep-board/commit/ff4e5a5))
+- 18/10/2026 : M5 - Pilotage aligné sur les objectifs du tableau de bord ([2756d3c](https://github.com/robinmorthpro/the-prep-board/commit/2756d3c))
+
+## Mise en production et audits
+
+- 18/10/2026 : IA appelée en direct (Gemini et Claude), déploiement Vercel sur www.theprepboard.fr ([f82d8ee](https://github.com/robinmorthpro/the-prep-board/commit/f82d8ee))
+- 22/10/2026 : Message « Vérifiez votre boîte mail » après l'inscription ([5e20ff9](https://github.com/robinmorthpro/the-prep-board/commit/5e20ff9))
+- 22/10/2026 : QA avec Playwright, corrections et rapport ([90e4b8e](https://github.com/robinmorthpro/the-prep-board/commit/90e4b8e), [6ae6c61](https://github.com/robinmorthpro/the-prep-board/commit/6ae6c61))
+- 22/10/2026 : Audit de sécurité, correctifs et rapport ([189f511](https://github.com/robinmorthpro/the-prep-board/commit/189f511), [b4eb1b3](https://github.com/robinmorthpro/the-prep-board/commit/b4eb1b3))
+- 22/10/2026 : Audit d'accessibilité WCAG AA, corrections et rapport ([eff1e3f](https://github.com/robinmorthpro/the-prep-board/commit/eff1e3f))
+- 23/10/2026 : README à jour, avec l'historique par étape
